@@ -26,7 +26,7 @@
 
 package org.geysermc.packconverter.api;
 
-import org.geysermc.packconverter.ZipUtils;
+import org.geysermc.packconverter.api.utils.ZipUtils;
 import org.geysermc.packconverter.api.converters.AbstractConverter;
 
 import javax.imageio.ImageIO;

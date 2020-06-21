@@ -24,7 +24,7 @@
  *
  */
 
-package org.geysermc.packconverter;
+package org.geysermc.packconverter.api.utils;
 
 import java.io.File;
 import java.io.FileInputStream;

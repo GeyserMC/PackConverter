@@ -24,7 +24,7 @@
  *
  */
 
-package org.geysermc.packconverter;
+package org.geysermc.packconverter.api.utils;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -32,11 +32,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.Getter;
-import org.geysermc.packconverter.ResourcePackManifest;
+import org.geysermc.packconverter.api.utils.ResourcePackManifest;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -102,7 +101,7 @@ public class MetadataConverter extends AbstractConverter {
 
             delete.add(new DeleteConverter(storage, new Object[] {from}));
 
-            System.out.println(String.format("Create metadata %s", from));
+            System.out.println(String.format("Create metadata %s", to));
         } catch (IOException e) {
             e.printStackTrace();
         }

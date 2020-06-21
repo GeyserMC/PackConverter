@@ -24,7 +24,7 @@
  *
  */
 
-package org.geysermc.packconverter.api;
+package org.geysermc.packconverter.api.utils;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
