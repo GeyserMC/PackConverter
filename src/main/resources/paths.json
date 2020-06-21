@@ -1,7 +1,0 @@
-{
-  "\\/assets\\/minecraft\\/textures\\/block\\/([a-z0-9_]+)\\.png": "\\/textures\\/blocks\\/$1.png",
-  "\\/assets\\/minecraft\\/textures\\/item\\/([a-z0-9_]+)\\.png": "\\/textures\\/items\\/$1.png",
-  "\\/assets\\/minecraft\\/textures\\/entity\\/([a-z0-9_]+)\\.png": "\\/textures\\/entity\\/$1.png",
-  "\\/assets\\/minecraft\\/textures\\/entity\\/([a-z_]+)\\/([a-z0-9_]+)\\.png": "\\/textures\\/entity\\/$1\\/$2.png",
-  "(.*)\\/pack.png": "$1\\/pack_icon.png"
-}

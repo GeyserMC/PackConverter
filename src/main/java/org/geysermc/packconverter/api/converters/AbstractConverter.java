@@ -24,23 +24,22 @@
  *
  */
 
-package org.geysermc.packconverter;
+package org.geysermc.packconverter.api.converters;
 
-import org.geysermc.packconverter.api.PackConverter;
+import lombok.AllArgsConstructor;
 
-import java.io.IOException;
-import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
-public class Main {
-    private static final String packname = "Faithful-1.15";
+@AllArgsConstructor
+public abstract class AbstractConverter {
+    Path storage;
+    Object[] data;
 
-    public static void main(String[] args) {
-        try {
-            PackConverter packConverter = new PackConverter(Paths.get(packname + ".zip"), Paths.get(packname + ".mcpack"));
-            packConverter.convert();
-            //packConverter.pack();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    public static List<Object[]> getDefaultData() {
+        return new ArrayList<>();
+    };
+
+    public abstract List<AbstractConverter> convert();
 }

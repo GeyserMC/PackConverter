@@ -24,23 +24,31 @@
  *
  */
 
-package org.geysermc.packconverter;
+package org.geysermc.packconverter.api;
 
-import org.geysermc.packconverter.api.PackConverter;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 
-import java.io.IOException;
-import java.nio.file.Paths;
+public class ImageUtils {
 
-public class Main {
-    private static final String packname = "Faithful-1.15";
+    public static BufferedImage crop(BufferedImage img, int width, int height) {
+        BufferedImage dest = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = dest.getGraphics();
+        g.drawImage(img, 0, 0, width, height, 0, 0, width, height, null);
+        g.dispose();
+        return dest;
+    }
 
-    public static void main(String[] args) {
-        try {
-            PackConverter packConverter = new PackConverter(Paths.get(packname + ".zip"), Paths.get(packname + ".mcpack"));
-            packConverter.convert();
-            //packConverter.pack();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static int colorToARGB(Color color) {
+        int newPixel = 0;
+        newPixel += color.getAlpha();
+        newPixel = newPixel << 8;
+        newPixel += color.getRed();
+        newPixel = newPixel << 8;
+        newPixel += color.getGreen();
+        newPixel = newPixel << 8;
+        newPixel += color.getBlue();
+
+        return newPixel;
     }
 }
