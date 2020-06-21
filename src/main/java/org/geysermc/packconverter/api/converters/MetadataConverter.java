@@ -1,0 +1,112 @@
+/*
+ * Copyright (c) 2019-2020 GeyserMC. http://geysermc.org
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in
+ *  all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *  THE SOFTWARE.
+ *
+ *  @author GeyserMC
+ *  @link https://github.com/GeyserMC/PackConverter
+ *
+ */
+
+package org.geysermc.packconverter.api.converters;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import lombok.Getter;
+import org.geysermc.packconverter.ResourcePackManifest;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
+
+public class MetadataConverter extends AbstractConverter {
+
+    @Getter
+    public static final List<Object[]> defaultData = new ArrayList<>();
+
+    static {
+        defaultData.add(new Object[] {"pack.mcmeta", "manifest.json"});
+    }
+
+    public MetadataConverter(Path storage, Object[] data) {
+        super(storage, data);
+    }
+
+    @Override
+    public List<AbstractConverter> convert() {
+        List<AbstractConverter> delete = new ArrayList<>();
+
+        try {
+            String from = (String) this.data[0];
+            String to = (String) this.data[1];
+
+            if (!storage.resolve(from).toFile().exists()) {
+                throw new FileNotFoundException(String.format("Missing %s! Is this really a java texture pack?", from));
+            }
+
+            ObjectMapper mapper = new ObjectMapper().enable(JsonParser.Feature.ALLOW_COMMENTS);
+
+            JsonNode packmeta = mapper.readTree(storage.resolve(from).toFile()).get("pack");
+            int packFormat = packmeta.get("pack_format").asInt();
+            String packDesc = packmeta.get("description").asText();
+
+            if (packFormat != 4 && packFormat != 5) {
+                throw new AssertionError("Only supports pack_format 4 (v1.13 and v1.14) or 5 (v1.15)!");
+            }
+
+            ResourcePackManifest.Header header = new ResourcePackManifest.Header();
+            header.setName(storage.getFileName().toString().replace(".zip_mcpack", ""));
+            header.setDescription(packDesc);
+            header.setUuid(UUID.randomUUID());
+            header.setVersion(new int[] { 1, 0, 0});
+
+            ResourcePackManifest.Module module = new ResourcePackManifest.Module();
+            module.setDescription(packDesc);
+            module.setType("resources");
+            module.setUuid(UUID.randomUUID());
+            module.setVersion(new int[] { 1, 0, 0});
+
+            ResourcePackManifest manifest = new ResourcePackManifest();
+            manifest.setFormatVersion(1);
+            manifest.setHeader(header);
+            Collection<ResourcePackManifest.Module> modules = new ArrayList();
+            modules.add(module);
+            manifest.setModules(modules);
+
+            ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
+            writer.writeValue(storage.resolve(to).toFile(), manifest);
+
+            delete.add(new DeleteConverter(storage, new Object[] {from}));
+
+            System.out.println(String.format("Create metadata %s", from));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return delete;
+    }
+}

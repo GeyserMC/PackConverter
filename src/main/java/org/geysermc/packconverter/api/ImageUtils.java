@@ -39,6 +39,14 @@ public class ImageUtils {
         return dest;
     }
 
+    public static BufferedImage crop(BufferedImage img, int x, int y, int width, int height) {
+        BufferedImage dest = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = dest.getGraphics();
+        g.drawImage(img, 0, 0, width, height, x, y, x + width, y+ height, null);
+        g.dispose();
+        return dest;
+    }
+
     public static int colorToARGB(Color color) {
         int newPixel = 0;
         newPixel += color.getAlpha();

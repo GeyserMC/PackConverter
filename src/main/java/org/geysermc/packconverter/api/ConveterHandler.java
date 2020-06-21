@@ -35,7 +35,10 @@ public class ConveterHandler {
     public static final List<Class<? extends AbstractConverter>> converterList = new ArrayList<>();
 
     static {
+        converterList.add(MetadataConverter.class);
         converterList.add(RenameConverter.class);
+        converterList.add(AtlasConverter.class);
+        converterList.add(BannerPatternConverter.class);
 
         converterList.add(OverlayToTranslateConverter.class);
 

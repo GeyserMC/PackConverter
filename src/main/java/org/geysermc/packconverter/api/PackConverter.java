@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -86,18 +87,23 @@ public class PackConverter {
     }
 
     public void convert() {
+        List<AbstractConverter> additionalConverters = new ArrayList<>();
+
         for (Class<? extends AbstractConverter> converterClass : ConveterHandler.converterList) {
             try {
-                List<Object[]> defaultData = null;
+                List<Object[]> defaultData = (List<Object[]>) converterClass.getMethod("getDefaultData").invoke(null);
 
-                AbstractConverter converter = converterClass.getDeclaredConstructor(Path.class, Object[].class).newInstance(tmpDir, new Object[0]);
-                defaultData = (List<Object[]>) converterClass.getMethod("getDefaultData").invoke(converter);
-
+                AbstractConverter converter;
                 for (Object[] data : defaultData) {
                     converter = converterClass.getDeclaredConstructor(Path.class, Object[].class).newInstance(tmpDir, data);
-                    converter.convert();
+
+                    additionalConverters.addAll(converter.convert());
                 }
             } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) { }
+        }
+
+        for (AbstractConverter converter : additionalConverters) {
+            converter.convert();
         }
     }
 
