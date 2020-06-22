@@ -59,8 +59,6 @@ public class OpaqueConverter extends AbstractConverter {
 
     @Override
     public List<AbstractConverter> convert() {
-        List<AbstractConverter> delete = new ArrayList<>();
-
         try {
             String from = (String) this.data[0];
             String to = (String) this.data[1];
@@ -68,7 +66,7 @@ public class OpaqueConverter extends AbstractConverter {
             File fromFile = storage.resolve(from).toFile();
 
             if (!fromFile.exists()) {
-                return delete;
+                return new ArrayList<>();
             }
 
             BufferedImage fromImage = ImageIO.read(fromFile);

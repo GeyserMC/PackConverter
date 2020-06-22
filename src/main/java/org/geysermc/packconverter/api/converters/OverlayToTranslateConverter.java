@@ -115,7 +115,6 @@ public class OverlayToTranslateConverter extends AbstractConverter {
                 }
             }
 
-
             ImageUtils.write(image, "png", storage.resolve(to).toFile());
 
             if (!dontDelete) {

@@ -152,6 +152,27 @@ public class ImageUtils {
     }
 
     /**
+     * Tint a {@link BufferedImage} by a given {@link Color}
+     *
+     * @param img
+     * @param color
+     * @return
+     */
+    public static BufferedImage colorize(BufferedImage img, Color color) {
+        BufferedImage newImage = grayscale(img);
+
+        for (int x = 0; x < newImage.getWidth(); x++) {
+            for (int y = 0; y < newImage.getHeight(); y++) {
+                Color newCol = new Color(newImage.getRGB(x, y));
+                newCol = new Color(newCol.getRed() / 255 * color.getRed(), newCol.getGreen() / 255 * color.getGreen(), newCol.getBlue() / 255 * color.getBlue());
+                newImage.setRGB(x, y, ImageUtils.colorToARGB(newCol));
+            }
+        }
+
+        return newImage;
+    }
+
+    /**
      * Convert an {@link Image} to {@link BufferedImage}
      *
      * @param img
@@ -168,5 +189,27 @@ public class ImageUtils {
         g.drawImage(img, 0, 0, null);
 
         return newImage;
+    }
+
+    /**
+     * Rotate a given {@link BufferedImage} by an angle
+     *
+     * @param img
+     * @param angle
+     * @return
+     */
+    public static BufferedImage rotate(BufferedImage img, int angle) {
+        final double rads = Math.toRadians(angle);
+        final double sin = Math.abs(Math.sin(rads));
+        final double cos = Math.abs(Math.cos(rads));
+        final int w = (int) Math.floor(img.getWidth() * cos + img.getHeight() * sin);
+        final int h = (int) Math.floor(img.getHeight() * cos + img.getWidth() * sin);
+        final BufferedImage rotatedImage = new BufferedImage(w, h, img.getType());
+        final AffineTransform at = new AffineTransform();
+        at.translate(w / 2, h / 2);
+        at.rotate(rads,0, 0);
+        at.translate(-img.getWidth() / 2, -img.getHeight() / 2);
+        final AffineTransformOp rotateOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
+        return rotateOp.filter(img, rotatedImage);
     }
 }

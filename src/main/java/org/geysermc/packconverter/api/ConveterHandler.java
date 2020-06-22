@@ -53,7 +53,7 @@ public class ConveterHandler {
         //converterList.add(BarConverter.class);
 
         converterList.add(OverlayToTranslateConverter.class);
-        //converterList.add(ColorizeOverlayConverter.class);
+        converterList.add(ColorizeOverlayConverter.class);
 
         converterList.add(PlaceholderConverter.class);
 
