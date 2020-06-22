@@ -82,7 +82,7 @@ public class OpaqueConverter extends AbstractConverter {
 
             ImageUtils.write(toImage, "png", storage.resolve(to).toFile());
 
-            System.out.println("Convert weather");
+            System.out.println(String.format("Create opaque %s", to));
         } catch (IOException e) { }
 
         return new ArrayList<>();
