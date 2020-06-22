@@ -57,6 +57,7 @@ public class PackConverter {
         ImageIO.scanForPlugins();
 
         // Extract the zip to a temp location
+        // This is quite slow, maybe try and find a faster method?
         tmpDir = input.toAbsolutePath().getParent().resolve(input.getFileName() + "_mcpack/");
         ZipFile zipFile = new ZipFile(input.toFile());
 

@@ -98,7 +98,7 @@ public class OverlayToTranslateConverter extends AbstractConverter {
             String overlay = (String) this.data[1];
             String to = (String) this.data[2];
             boolean reverse = (boolean) this.data[3];
-            boolean dont_delete = this.data.length > 4 ? (boolean) this.data[4] : false;
+            boolean dontDelete = this.data.length > 4 ? (boolean) this.data[4] : false;
 
             BufferedImage image = ImageIO.read(storage.resolve(from).toFile());
             BufferedImage imageOverlay = ImageIO.read(storage.resolve(overlay).toFile());
@@ -116,9 +116,9 @@ public class OverlayToTranslateConverter extends AbstractConverter {
             }
 
 
-            ImageIO.write(image, "png", storage.resolve(to).toFile());
+            ImageUtils.write(image, "png", storage.resolve(to).toFile());
 
-            if (!dont_delete) {
+            if (!dontDelete) {
                 delete.add(new DeleteConverter(storage, new Object[] {overlay}));
             }
 

@@ -86,11 +86,11 @@ public class BannerPatternConverter extends AbstractConverter {
                 if (bannerImage == null) {
                     bannerImage = ImageIO.read(storage.resolve(base).toFile());
 
-                    float factor = (bannerImage.getWidth() / 64);
+                    int factor = bannerImage.getWidth() / 64;
 
                     Graphics g = bannerImage.getGraphics();
-                    g.drawImage(ImageUtils.crop(bannerImage, Math.round(44 * factor), 0, Math.round(8 * factor), Math.round(44 * factor)), Math.round(52 * factor), 0, null);
-                    g.drawImage(ImageUtils.crop(bannerImage, Math.round(44 * factor), Math.round(5 * factor), Math.round(8 * factor), Math.round(20 * factor)), Math.round(52 * factor), Math.round(44 * factor), null);
+                    g.drawImage(ImageUtils.crop(bannerImage, (44 * factor), 0, (8 * factor), (44 * factor)), (52 * factor), 0, null);
+                    g.drawImage(ImageUtils.crop(bannerImage, (44 * factor), (5 * factor), (8 * factor), (20 * factor)), (52 * factor), (44 * factor), null);
                 }
 
                 for (int x = 0; x < bannerImage.getWidth(); x++) {
@@ -104,10 +104,10 @@ public class BannerPatternConverter extends AbstractConverter {
             }
 
             if (bannerImage != null) {
-                ImageIO.write(bannerImage, "png", storage.resolve(to).toFile());
+                ImageUtils.write(bannerImage, "png", storage.resolve(to).toFile());
                 System.out.println(String.format("Create pattern banner %s", to));
             }
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (IOException e) { }
 
         return new ArrayList<>();
     }

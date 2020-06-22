@@ -30,6 +30,7 @@ import lombok.Getter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -37,39 +38,50 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CropConverter extends AbstractConverter {
+public class WaterConverter extends AbstractConverter {
 
     @Getter
     public static final List<Object[]> defaultData = new ArrayList<>();
 
     static {
-        // Conduit
-        defaultData.add(new Object[] {"textures/blocks/conduit_base.png", 0.75f, 0.75f});
-        defaultData.add(new Object[] {"textures/blocks/conduit_closed.png", 0.5f, 0.5f});
-        defaultData.add(new Object[] {"textures/blocks/conduit_open.png", 0.5f, 0.5f});
+        defaultData.add(new Object[] {"textures/blocks/lava_flow.png", "textures/blocks/lava_flow.png", 32});
+        defaultData.add(new Object[] {"textures/blocks/lava_still.png", "textures/blocks/lava_still.png", 16});
+        defaultData.add(new Object[] {"textures/blocks/water_flow_grey.png", "textures/blocks/water_flow_grey.png", 32, true});
+        defaultData.add(new Object[] {"textures/blocks/water_still_grey.png", "textures/blocks/water_still_grey.png", 16, true});
     }
 
-    public CropConverter(Path storage, Object[] data) {
+    public WaterConverter(Path storage, Object[] data) {
         super(storage, data);
     }
 
     @Override
     public List<AbstractConverter> convert() {
+        List<AbstractConverter> delete = new ArrayList<>();
+
         try {
             String from = (String) this.data[0];
-            float width = (float) this.data[1];
-            float height = (float) this.data[2];
+            String to = (String) this.data[1];
+            int minWidth = (int) this.data[2];
+            boolean grayscale = this.data.length > 3 ? (boolean) this.data[3] : false;
 
-            File imgFile = storage.resolve(from).toFile();
-            BufferedImage image = ImageIO.read(imgFile);
+            File waterFile = storage.resolve(from).toFile();
 
-            int newWidth = Math.round(image.getWidth() * width);
-            int newHeight = Math.round(image.getHeight() * height);
+            if (!waterFile.exists()) {
+                return delete;
+            }
 
-            ImageIO.write(ImageUtils.crop(image, newWidth, newHeight), "png", imgFile);
+            BufferedImage waterImage = ImageIO.read(waterFile);
 
-            System.out.println(String.format("Crop %s to %dx%d", from, newWidth, newHeight));
-        } catch (IOException e) { e.printStackTrace(); }
+            if (grayscale) {
+                waterImage = ImageUtils.grayscale(waterImage);
+            }
+
+            waterImage = ImageUtils.ensureMinWidth(waterImage, minWidth);
+
+            ImageUtils.write(waterImage, "png", storage.resolve(to).toFile());
+
+            System.out.println(String.format("Convert water %s", from));
+        } catch (IOException e) { }
 
         return new ArrayList<>();
     }

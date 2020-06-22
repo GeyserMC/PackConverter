@@ -40,11 +40,25 @@ public class ConveterHandler {
         converterList.add(AtlasConverter.class);
         converterList.add(BannerPatternConverter.class);
 
+        converterList.add(IconsConverter.class);
+        converterList.add(MapIconsConverter.class);
+
+        converterList.add(WeatherConverter.class);
+        converterList.add(OpaqueConverter.class);
+        converterList.add(WaterConverter.class);
+
+        //converterList.add(TitleConverter.class);
+        //converterList.add(DespriteConverter.class);
+        //converterList.add(DespriteExperimentalConverter.class);
+        //converterList.add(BarConverter.class);
+
         converterList.add(OverlayToTranslateConverter.class);
+        //converterList.add(ColorizeOverlayConverter.class);
+
+        converterList.add(PlaceholderConverter.class);
 
         converterList.add(PngToTgaConverter.class);
         converterList.add(CopyConverter.class);
-        converterList.add(CropConverter.class);
         converterList.add(DeleteConverter.class);
     }
 }

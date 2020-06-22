@@ -34,61 +34,49 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AtlasConverter extends AbstractConverter {
+public class IconsConverter extends AbstractConverter {
 
     @Getter
     public static final List<Object[]> defaultData = new ArrayList<>();
 
     static {
-        defaultData.add(new Object[] {"textures/items/clock_", 63, "textures/items/watch_atlas.png"});
-        defaultData.add(new Object[] {"textures/items/compass_", 31, "textures/items/compass_atlas.png"});
+        defaultData.add(new Object[] {"textures/gui/icons.png"});
     }
 
-    public AtlasConverter(Path storage, Object[] data) {
+    public IconsConverter(Path storage, Object[] data) {
         super(storage, data);
     }
 
     @Override
     public List<AbstractConverter> convert() {
-        List<AbstractConverter> delete = new ArrayList<>();
-
         try {
-            String base = (String) this.data[0];
-            int count = (int) this.data[1];
-            String to = (String) this.data[2];
-            
-            BufferedImage atlasImage = null;
+            String from = (String) this.data[0];
 
-            for (int i = 0; i <= count; i++) {
-                String step = base + String.format("%1$2s", i).replace(" ", "0") + ".png";
-                File stepFile = storage.resolve(step).toFile();
-                
-                if (!stepFile.exists()) {
-                    continue;
-                }
+            File iconsFile = storage.resolve(from).toFile();
 
-                BufferedImage stepImage = ImageIO.read(stepFile);
-                
-                if (atlasImage == null) {
-                    atlasImage = new BufferedImage(stepImage.getWidth(), stepImage.getHeight() * (count + 1), BufferedImage.TYPE_INT_ARGB);
-                }
-
-                atlasImage.getGraphics().drawImage(stepImage, 0, (stepImage.getHeight() * i), null);
-
-                delete.add(new DeleteConverter(storage, new Object[] {step}));
+            if (!iconsFile.exists()) {
+                return new ArrayList<>();
             }
 
-            if (atlasImage != null) {
-                ImageUtils.write(atlasImage, "png", storage.resolve(to).toFile());
-                System.out.println(String.format("Create atlas %s", to));
+            BufferedImage iconsImage = ImageIO.read(iconsFile);
+
+            for (int x = 0; x < iconsImage.getWidth(); x++) {
+                for (int y = 0; y < iconsImage.getHeight(); y++) {
+                    Color c = new Color(iconsImage.getRGB(x, y), true);
+                    if (c.getAlpha() == 0) {
+                        iconsImage.setRGB(x, y, Color.TRANSLUCENT);
+                    }
+                }
             }
+
+            ImageUtils.write(iconsImage, "png", iconsFile);
+            System.out.println(String.format("Convert icons %s", from));
         } catch (IOException e) { }
 
-        return delete;
+        return new ArrayList<>();
     }
 }

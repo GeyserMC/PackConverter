@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -167,7 +168,7 @@ public class PngToTgaConverter extends AbstractConverter {
             boolean dont_delete = this.data.length > 2 ? (boolean) this.data[2] : false;
 
             BufferedImage fromImage = ImageIO.read(storage.resolve(from).toFile());
-            ImageIO.write(fromImage, "tga", storage.resolve(to).toFile());
+            ImageUtils.write(fromImage, "tga", storage.resolve(to).toFile());
 
             if (!dont_delete) {
                 delete.add(new DeleteConverter(storage, new Object[] {from}));

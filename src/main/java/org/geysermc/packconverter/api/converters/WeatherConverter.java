@@ -34,22 +34,21 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AtlasConverter extends AbstractConverter {
+public class WeatherConverter extends AbstractConverter {
 
     @Getter
     public static final List<Object[]> defaultData = new ArrayList<>();
 
     static {
-        defaultData.add(new Object[] {"textures/items/clock_", 63, "textures/items/watch_atlas.png"});
-        defaultData.add(new Object[] {"textures/items/compass_", 31, "textures/items/compass_atlas.png"});
+        // Bed
+        defaultData.add(new Object[] {"textures/environment/snow.png", "textures/environment/rain.png", "textures/environment/weather.png"});
     }
 
-    public AtlasConverter(Path storage, Object[] data) {
+    public WeatherConverter(Path storage, Object[] data) {
         super(storage, data);
     }
 
@@ -58,37 +57,41 @@ public class AtlasConverter extends AbstractConverter {
         List<AbstractConverter> delete = new ArrayList<>();
 
         try {
-            String base = (String) this.data[0];
-            int count = (int) this.data[1];
+            String snow = (String) this.data[0];
+            String rain = (String) this.data[1];
             String to = (String) this.data[2];
-            
-            BufferedImage atlasImage = null;
 
-            for (int i = 0; i <= count; i++) {
-                String step = base + String.format("%1$2s", i).replace(" ", "0") + ".png";
-                File stepFile = storage.resolve(step).toFile();
-                
-                if (!stepFile.exists()) {
-                    continue;
-                }
+            File snowFile = storage.resolve(snow).toFile();
+            File rainFile = storage.resolve(rain).toFile();
 
-                BufferedImage stepImage = ImageIO.read(stepFile);
-                
-                if (atlasImage == null) {
-                    atlasImage = new BufferedImage(stepImage.getWidth(), stepImage.getHeight() * (count + 1), BufferedImage.TYPE_INT_ARGB);
-                }
-
-                atlasImage.getGraphics().drawImage(stepImage, 0, (stepImage.getHeight() * i), null);
-
-                delete.add(new DeleteConverter(storage, new Object[] {step}));
+            if (!snowFile.exists() || !rainFile.exists()) {
+                return delete;
             }
 
-            if (atlasImage != null) {
-                ImageUtils.write(atlasImage, "png", storage.resolve(to).toFile());
-                System.out.println(String.format("Create atlas %s", to));
-            }
+            BufferedImage snowImage = ImageIO.read(snowFile);
+            BufferedImage rainImage = ImageIO.read(rainFile);
+
+            int factor = snowImage.getWidth() / 64;
+
+            BufferedImage weatherImage = new BufferedImage((32 * factor), (32 * factor), BufferedImage.TYPE_INT_ARGB);
+
+            Graphics g = weatherImage.getGraphics();
+
+            // Snow
+            g.drawImage(ImageUtils.cover(ImageUtils.crop(snowImage, snowImage.getWidth(), (3 * factor)), weatherImage.getWidth(), (3 * factor)), 0, 0, null);
+
+            delete.add(new DeleteConverter(storage, new Object[] {snow}));
+
+            // Rain
+            g.drawImage(ImageUtils.cover(ImageUtils.crop(rainImage, rainImage.getWidth(), (5 * factor)), weatherImage.getWidth(), (5 * factor)), 0, (5 * factor), null);
+
+            delete.add(new DeleteConverter(storage, new Object[] {rain}));
+
+            ImageUtils.write(weatherImage, "png", storage.resolve(to).toFile());
+
+            System.out.println("Convert weather");
         } catch (IOException e) { }
 
-        return delete;
+        return new ArrayList<>();
     }
 }
