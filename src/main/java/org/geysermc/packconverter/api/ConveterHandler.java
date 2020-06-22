@@ -43,6 +43,8 @@ public class ConveterHandler {
         converterList.add(IconsConverter.class);
         converterList.add(MapIconsConverter.class);
 
+        converterList.add(RedstoneDustConverter.class);
+
         converterList.add(WeatherConverter.class);
         converterList.add(OpaqueConverter.class);
         converterList.add(WaterConverter.class);

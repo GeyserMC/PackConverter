@@ -160,14 +160,21 @@ public class ImageUtils {
      */
     public static BufferedImage colorize(BufferedImage img, Color color) {
         BufferedImage newImage = grayscale(img);
+        try {
+            ImageIO.write(newImage, "png", new File("colorize_tmp.png"));
+        } catch (IOException e) { }
 
         for (int x = 0; x < newImage.getWidth(); x++) {
             for (int y = 0; y < newImage.getHeight(); y++) {
-                Color newCol = new Color(newImage.getRGB(x, y));
-                newCol = new Color(newCol.getRed() / 255 * color.getRed(), newCol.getGreen() / 255 * color.getGreen(), newCol.getBlue() / 255 * color.getBlue());
+                Color newCol = new Color(newImage.getRGB(x, y), true);
+                newCol = new Color(Math.round(newCol.getRed() / 255f * color.getRed()), Math.round(newCol.getGreen() / 255f * color.getGreen()), Math.round(newCol.getBlue() / 255f * color.getBlue()), newCol.getAlpha());
                 newImage.setRGB(x, y, ImageUtils.colorToARGB(newCol));
             }
         }
+
+        try {
+            ImageIO.write(newImage, "png", new File("colorize_tmp2.png"));
+        } catch (IOException e) { }
 
         return newImage;
     }
@@ -211,5 +218,28 @@ public class ImageUtils {
         at.translate(-img.getWidth() / 2, -img.getHeight() / 2);
         final AffineTransformOp rotateOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
         return rotateOp.filter(img, rotatedImage);
+    }
+
+    /**
+     * Check if a given area is empty
+     *
+     * @param img
+     * @param subX
+     * @param subY
+     * @param width
+     * @param height
+     * @return
+     */
+    public static boolean isEmptyArea(BufferedImage img, int subX, int subY, int width, int height) {
+        BufferedImage subImage = img.getSubimage(subX, subY, width, height);
+        for (int x = 0; x < subImage.getWidth(); x++) {
+            for (int y = 0; y < subImage.getHeight(); y++) {
+                if (!(new Color(subImage.getRGB(x, y), true).equals(Color.TRANSLUCENT))) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }
