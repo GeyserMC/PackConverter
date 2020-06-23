@@ -49,10 +49,10 @@ public class ConveterHandler {
         converterList.add(OpaqueConverter.class);
         converterList.add(WaterConverter.class);
 
-        //converterList.add(TitleConverter.class);
-        //converterList.add(DespriteConverter.class);
-        //converterList.add(DespriteExperimentalConverter.class);
-        //converterList.add(BarConverter.class);
+        converterList.add(TitleConverter.class);
+        converterList.add(DespriteConverter.class);
+        //converterList.add(DespriteExperimentalConverter.class); // Experimental
+        converterList.add(BarConverter.class);
 
         converterList.add(OverlayToTranslateConverter.class);
         converterList.add(ColorizeOverlayConverter.class);

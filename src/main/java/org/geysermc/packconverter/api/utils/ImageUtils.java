@@ -95,6 +95,21 @@ public class ImageUtils {
     }
 
     /**
+     * Scale the image so it has a height that is at least the min
+     *
+     * @param img
+     * @param minHeight
+     * @return
+     */
+    public static BufferedImage ensureMinHeight(BufferedImage img, int minHeight) {
+        if (img.getHeight() < minHeight) {
+            return scale(img, (minHeight / img.getHeight()));
+        }
+
+        return img;
+    }
+
+    /**
      * Scale the image to fill the required size, may result in clipping
      *
      * @param img
@@ -146,9 +161,21 @@ public class ImageUtils {
      * @return
      */
     public static BufferedImage grayscale(BufferedImage img) {
-        ImageFilter filter = new GrayFilter(true, 50);
-        ImageProducer producer = new FilteredImageSource(img.getSource(), filter);
-        return toBufferedImage(Toolkit.getDefaultToolkit().createImage(producer));
+        BufferedImage newImage = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        for (int x = 0; x < newImage.getWidth(); x++) {
+            for (int y = 0; y < newImage.getHeight(); y++) {
+                Color newCol = new Color(img.getRGB(x, y), true);
+
+                int grey = Math.round(0.2126f * newCol.getRed() +
+                        0.7152f * newCol.getGreen() +
+                        0.0722f * newCol.getBlue());
+
+                newCol = new Color(grey, grey, grey, newCol.getAlpha());
+                newImage.setRGB(x, y, colorToARGB(newCol));
+            }
+        }
+
+        return newImage;
     }
 
     /**
@@ -168,32 +195,13 @@ public class ImageUtils {
             for (int y = 0; y < newImage.getHeight(); y++) {
                 Color newCol = new Color(newImage.getRGB(x, y), true);
                 newCol = new Color(Math.round(newCol.getRed() / 255f * color.getRed()), Math.round(newCol.getGreen() / 255f * color.getGreen()), Math.round(newCol.getBlue() / 255f * color.getBlue()), newCol.getAlpha());
-                newImage.setRGB(x, y, ImageUtils.colorToARGB(newCol));
+                newImage.setRGB(x, y, colorToARGB(newCol));
             }
         }
 
         try {
             ImageIO.write(newImage, "png", new File("colorize_tmp2.png"));
         } catch (IOException e) { }
-
-        return newImage;
-    }
-
-    /**
-     * Convert an {@link Image} to {@link BufferedImage}
-     *
-     * @param img
-     * @return
-     */
-    private static BufferedImage toBufferedImage(Image img) {
-        if (img instanceof BufferedImage) {
-            return (BufferedImage) img;
-        }
-
-        BufferedImage newImage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-
-        Graphics g = newImage.getGraphics();
-        g.drawImage(img, 0, 0, null);
 
         return newImage;
     }
