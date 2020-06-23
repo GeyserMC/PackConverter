@@ -53,7 +53,8 @@ public class ConveterHandler {
         converterList.add(DespriteConverter.class);
         //converterList.add(DespriteExperimentalConverter.class); // Experimental
         converterList.add(BarConverter.class);
-
+        //converterList.add(NineSliceConverter.class); // Experimental
+        //converterList.add(DialogConverter.class); // Experimental
         converterList.add(OverlayToTranslateConverter.class);
         converterList.add(ColorizeOverlayConverter.class);
 

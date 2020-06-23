@@ -187,9 +187,6 @@ public class ImageUtils {
      */
     public static BufferedImage colorize(BufferedImage img, Color color) {
         BufferedImage newImage = grayscale(img);
-        try {
-            ImageIO.write(newImage, "png", new File("colorize_tmp.png"));
-        } catch (IOException e) { }
 
         for (int x = 0; x < newImage.getWidth(); x++) {
             for (int y = 0; y < newImage.getHeight(); y++) {
@@ -199,9 +196,24 @@ public class ImageUtils {
             }
         }
 
-        try {
-            ImageIO.write(newImage, "png", new File("colorize_tmp2.png"));
-        } catch (IOException e) { }
+        return newImage;
+    }
+
+    /**
+     * Convert an {@link Image} to {@link BufferedImage}
+     *
+     * @param img
+     * @return
+     */
+    private static BufferedImage toBufferedImage(Image img) {
+        if (img instanceof BufferedImage) {
+            return (BufferedImage) img;
+        }
+
+        BufferedImage newImage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        Graphics g = newImage.getGraphics();
+        g.drawImage(img, 0, 0, null);
 
         return newImage;
     }
@@ -249,5 +261,58 @@ public class ImageUtils {
         }
 
         return true;
+    }
+
+    /**
+     * Create new image from border image
+     *
+     * @param img
+     * @param borderLeft
+     * @param borderTop
+     * @param borderRight
+     * @param borderBottom
+     * @param newWidth
+     * @param newHeight
+     * @return
+     */
+    public static BufferedImage borderImage(BufferedImage img, int borderLeft, int borderTop, int borderRight, int borderBottom, int newWidth, int newHeight) {
+        try {
+            ImageIO.write(img, "png", new File("borderImage_test1.png"));
+        } catch (IOException e) { }
+
+        BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = newImage.getGraphics();
+
+        g.drawImage(crop(img, 0, 0, borderLeft, borderTop), 0, 0, null);
+        g.drawImage(resize(crop(img, borderLeft, 0, (img.getWidth() - borderLeft - borderRight), borderTop), (newWidth - borderLeft - borderRight), borderTop), borderLeft, 0, null);
+        g.drawImage(crop(img, (img.getWidth() - borderRight), 0, borderRight, borderTop), (newWidth - borderRight), 0, null);
+
+        g.drawImage(resize(crop(img, 0, borderTop, borderLeft, (img.getHeight() - borderTop - borderBottom)), borderLeft, (newHeight - borderTop - borderBottom)), 0, borderTop, null);
+        g.drawImage(resize(crop(img, borderLeft, borderTop, (img.getWidth() - borderLeft - borderRight), (img.getHeight() - borderTop - borderBottom)), (newWidth - borderLeft - borderRight), (newHeight - borderTop - borderBottom)), borderLeft, borderTop, null);
+        g.drawImage(resize(crop(img, (img.getWidth() - borderRight), borderTop, borderRight, (img.getHeight() - borderTop - borderBottom)), borderRight, (newHeight - borderTop - borderBottom)), (newWidth - borderRight), borderTop, null);
+
+        g.drawImage(crop(img, 0, (img.getHeight() - borderBottom), borderLeft, borderRight), 0, (newHeight - borderBottom), null);
+        g.drawImage(resize(crop(img, borderLeft, (img.getHeight() - borderBottom), (img.getWidth() - borderLeft - borderRight), borderRight), (newWidth - borderLeft - borderRight), borderRight), borderLeft, (newHeight - borderBottom), null);
+        g.drawImage(crop(img, (img.getWidth() - borderRight), (img.getHeight() - borderBottom), borderRight, borderRight), (newWidth - borderRight), (newHeight - borderBottom), null);
+
+        try {
+            ImageIO.write(newImage, "png", new File("borderImage_test2.png"));
+        } catch (IOException e) { }
+
+        return newImage;
+    }
+
+    /**
+     * Resize a {@link BufferedImage} to the requested size
+     * Doesnt replicate the jimp way of doing it but should give a simmilar output
+     *
+     * @param img
+     * @param newWidth
+     * @param netHeight
+     * @return
+     */
+    public static BufferedImage resize(BufferedImage img, int newWidth, int netHeight) {
+        Image scaled = img.getScaledInstance(newWidth, netHeight, BufferedImage.SCALE_SMOOTH);
+        return toBufferedImage(scaled);
     }
 }

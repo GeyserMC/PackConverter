@@ -105,9 +105,9 @@ public class BarConverter extends AbstractConverter {
             JsonNode metadata = mapper.readTree("{nineslice_size: [1, 0, 1, 0], base_size: [182, 5]}");
 
             for (Object bar : bars) {
-                Object[] spriteArr = (Object[]) bar;
-                int y = (int) spriteArr[0];
-                Object[] tos = (Object[]) spriteArr[1];
+                Object[] barArr = (Object[]) bar;
+                int y = (int) barArr[0];
+                Object[] tos = (Object[]) barArr[1];
 
                 BufferedImage toImage = ImageUtils.crop(fromImage, 0, (y * factor), (182 * factor), (5 * factor));
 
