@@ -121,7 +121,7 @@ public class DialogConverter extends AbstractConverter {
                     Graphics g = toImage.getGraphics();
 
                     // TODO: Fix and finish this
-                    //g.drawImage(ImageUtils.borderImage(ImageUtils.crop(dialogImage, sizes[0], sizes[1]), (2 * factor), (2 * factor), (2 * factor), (2 * factor), toSizes[0], toSizes[1]), 0, 0, null);
+                    g.drawImage(ImageUtils.borderImage(ImageUtils.crop(dialogImage, sizes[0], sizes[1]), (2 * factor), (2 * factor), (2 * factor), (2 * factor), toSizes[0], toSizes[1]), 0, 0, null);
 
                     JsonNode metadata = mapper.readTree("{nineslice_size: " + mapper.writeValueAsString(toSizes) + ", base_size: [" + (toImage.getWidth() / factor) + ", " + (toImage.getHeight() / factor) + "]}");
 

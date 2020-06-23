@@ -56,7 +56,6 @@ public class RedstoneDustConverter extends AbstractConverter {
         List<AbstractConverter> delete = new ArrayList<>();
 
         try {
-            // dot, line_0, line_1, to_cross, to_line
             String dot = (String) this.data[0];
             String line0 = (String) this.data[1];
             String line1 = (String) this.data[2];

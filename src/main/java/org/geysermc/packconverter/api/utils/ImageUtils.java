@@ -226,7 +226,7 @@ public class ImageUtils {
      * @return
      */
     public static BufferedImage rotate(BufferedImage img, int angle) {
-        final double rads = Math.toRadians(angle);
+        final double rads = Math.toRadians(-angle);
         final double sin = Math.abs(Math.sin(rads));
         final double cos = Math.abs(Math.cos(rads));
         final int w = (int) Math.floor(img.getWidth() * cos + img.getHeight() * sin);
@@ -276,10 +276,6 @@ public class ImageUtils {
      * @return
      */
     public static BufferedImage borderImage(BufferedImage img, int borderLeft, int borderTop, int borderRight, int borderBottom, int newWidth, int newHeight) {
-        try {
-            ImageIO.write(img, "png", new File("borderImage_test1.png"));
-        } catch (IOException e) { }
-
         BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
         Graphics g = newImage.getGraphics();
 
@@ -294,10 +290,6 @@ public class ImageUtils {
         g.drawImage(crop(img, 0, (img.getHeight() - borderBottom), borderLeft, borderRight), 0, (newHeight - borderBottom), null);
         g.drawImage(resize(crop(img, borderLeft, (img.getHeight() - borderBottom), (img.getWidth() - borderLeft - borderRight), borderRight), (newWidth - borderLeft - borderRight), borderRight), borderLeft, (newHeight - borderBottom), null);
         g.drawImage(crop(img, (img.getWidth() - borderRight), (img.getHeight() - borderBottom), borderRight, borderRight), (newWidth - borderRight), (newHeight - borderBottom), null);
-
-        try {
-            ImageIO.write(newImage, "png", new File("borderImage_test2.png"));
-        } catch (IOException e) { }
 
         return newImage;
     }
@@ -314,5 +306,42 @@ public class ImageUtils {
     public static BufferedImage resize(BufferedImage img, int newWidth, int netHeight) {
         Image scaled = img.getScaledInstance(newWidth, netHeight, BufferedImage.SCALE_SMOOTH);
         return toBufferedImage(scaled);
+    }
+
+    public static BufferedImage saturate(BufferedImage img, int amount) {
+        BufferedImage newImage = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+        for (int x = 0; x < newImage.getWidth(); x++) {
+            for (int y = 0; y < newImage.getHeight(); y++) {
+                Color newCol = new Color(img.getRGB(x, y), true);
+
+                float[] hsb = Color.RGBtoHSB(newCol.getRed(), newCol.getGreen(), newCol.getBlue(), null);
+                float hue = hsb[0];
+                float saturation = hsb[1];
+                float brightness = hsb[2];
+
+                saturation = Math.max(0f, saturation + (amount / 100f));
+
+                int pixel = Color.HSBtoRGB(hue, saturation, brightness);
+
+                int red = (0xff & (pixel >> 16));
+                int green = (0xff & (pixel >> 8));
+                int blue = (0xff & pixel);
+
+                red = clamp(red, 0, 255);
+                green = clamp(green, 0, 255);
+                blue = clamp(blue, 0, 255);
+
+                newCol = new Color(red, green, blue, newCol.getAlpha());
+
+                newImage.setRGB(x, y, colorToARGB(newCol));
+            }
+        }
+
+        return newImage;
+    }
+
+    private static int clamp(int val, int min, int max) {
+        return val > max ? max : val < min ? min : val;
     }
 }

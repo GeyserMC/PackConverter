@@ -60,6 +60,7 @@ public class ConveterHandler {
 
         converterList.add(PlaceholderConverter.class);
 
+        converterList.add(EnchantedItemGlintConverter.class);
         converterList.add(PngToTgaConverter.class);
         converterList.add(CopyConverter.class);
         converterList.add(DeleteConverter.class);
