@@ -108,7 +108,7 @@ public class OverlayToTranslateConverter extends AbstractConverter {
                     Color c = new Color(image.getRGB(x, y), true);
                     if (reverse ? c.getAlpha() > 0 : c.getAlpha() < 255) {
                         Color newCol = new Color(imageOverlay.getRGB(x, y), true);
-                        newCol = new Color(newCol.getRed(), newCol.getGreen(), newCol.getBlue(), Math.min(1, newCol.getAlpha()));
+                        newCol = new Color(newCol.getRed(), newCol.getGreen(), newCol.getBlue(), 2);
 
                         image.setRGB(x, y, ImageUtils.colorToARGB(newCol));
                     }

@@ -96,7 +96,7 @@ public class BannerPatternConverter extends AbstractConverter {
                 for (int x = 0; x < bannerImage.getWidth(); x++) {
                     for (int y = 0; y < bannerImage.getHeight(); y++) {
                         Color c = new Color(patternImage.getRGB(x, y), true);
-                        if (c.getAlpha() == 255) {
+                        if (c.getRed() > 0 && c.getAlpha() > 0) {
                             bannerImage.setRGB(x, y, color.getRGB());
                         }
                     }

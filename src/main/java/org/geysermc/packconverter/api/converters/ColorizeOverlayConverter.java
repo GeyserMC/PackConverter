@@ -129,6 +129,8 @@ public class ColorizeOverlayConverter extends AbstractConverter {
 
         // Saddle
         defaultData.add(new Object[] {new Object[] {new Object[] {"textures/entity/pig/pig.png"}, new Object[] {"textures/entity/saddle.png"}}, "textures/entity/pig/pig_saddle.png"});
+        defaultData.add(new Object[] {new Object[] {new Object[] {"textures/entity/strider/strider.png"}, new Object[] {"textures/entity/strider_saddle.png"}}, "textures/entity/strider/strider_saddled.png"});
+        defaultData.add(new Object[] {new Object[] {new Object[] {"textures/entity/strider/strider_suffocated.png"}, new Object[] {"textures/entity/strider_saddle.png", null, true}}, "textures/entity/strider/strider_suffocated_saddled.png"});
 
         // Splash potion (Colors from px 7/9 from original bedrock textures)
         defaultData.add(new Object[] {new Object[] {new Object[] {"textures/items/potion_overlay.png", new Color(88, 184, 255)}, new Object[] {"textures/items/potion_bottle_splash_empty.png"}}, "textures/items/potion_bottle_splash.png"});
@@ -161,6 +163,7 @@ public class ColorizeOverlayConverter extends AbstractConverter {
 
         // Spawn egg (Colors from px 8/9 and 5/9 from original bedrock textures)
         defaultData.add(new Object[] {new Object[] {new Object[] {"textures/items/spawn_egg.png", new Color(65, 53, 41)}, new Object[] {"textures/items/spawn_egg_overlay.png", new Color(13, 13, 13)}}, "textures/items/egg_bat.png"});
+        defaultData.add(new Object[] {new Object[] {new Object[] {"textures/items/spawn_egg.png", new Color(204, 167, 58)}, new Object[] {"textures/items/spawn_egg_overlay.png", new Color(59, 32, 24)}}, "textures/items/egg_bee.png"});
         defaultData.add(new Object[] {new Object[] {new Object[] {"textures/items/spawn_egg.png", new Color(211, 153, 1)}, new Object[] {"textures/items/spawn_egg_overlay.png", new Color(226, 220, 112)}}, "textures/items/egg_blaze.png"});
         defaultData.add(new Object[] {new Object[] {new Object[] {"textures/items/spawn_egg.png", new Color(239, 200, 142)}, new Object[] {"textures/items/spawn_egg_overlay.png", new Color(135, 101, 74)}}, "textures/items/egg_cat.png"});
         defaultData.add(new Object[] {new Object[] {new Object[] {"textures/items/spawn_egg.png", new Color(10, 57, 67)}, new Object[] {"textures/items/spawn_egg_overlay.png", new Color(149, 12, 12)}}, "textures/items/egg_cave_spider.png"});
@@ -184,7 +187,7 @@ public class ColorizeOverlayConverter extends AbstractConverter {
         defaultData.add(new Object[] {new Object[] {new Object[] {"textures/items/spawn_egg.png", new Color(102, 99, 83)}, new Object[] {"textures/items/spawn_egg_overlay.png", new Color(197, 191, 127)}}, "textures/items/egg_husk.png"});
         defaultData.add(new Object[] {new Object[] {new Object[] {"textures/items/spawn_egg.png", new Color(45, 0, 0)}, new Object[] {"textures/items/spawn_egg_overlay.png", new Color(223, 223, 0)}}, "textures/items/egg_lava_slime.png"});
         defaultData.add(new Object[] {new Object[] {new Object[] {"textures/items/spawn_egg.png", new Color(165, 136, 107)}, new Object[] {"textures/items/spawn_egg_overlay.png", new Color(136, 84, 57)}}, "textures/items/egg_llama.png"});
-        defaultData.add(new Object[] {new Object[] {new Object[] {"textures/items/spawn_egg.png"}, new Object[] {"textures/items/spawn_egg_overlay.png"}}, "textures/items/egg_mask.png"});
+        defaultData.add(new Object[] {new Object[] {new Object[] {"textures/items/spawn_egg.png", new Color(219, 0, 0)}, new Object[] {"textures/items/spawn_egg_overlay.png", new Color(240, 226, 0)}}, "textures/items/egg_mask.png"});
         defaultData.add(new Object[] {new Object[] {new Object[] {"textures/items/spawn_egg.png", new Color(23, 2, 0)}, new Object[] {"textures/items/spawn_egg_overlay.png", new Color(72, 45, 26)}}, "textures/items/egg_mule.png"});
         defaultData.add(new Object[] {new Object[] {new Object[] {"textures/items/spawn_egg.png", new Color(137, 13, 14)}, new Object[] {"textures/items/spawn_egg_overlay.png", new Color(162, 162, 162)}}, "textures/items/egg_mushroomcow.png"});
         defaultData.add(new Object[] {new Object[] {new Object[] {"textures/items/spawn_egg.png"}, new Object[] {"textures/items/spawn_egg_overlay.png"}}, "textures/items/egg_null.png"});

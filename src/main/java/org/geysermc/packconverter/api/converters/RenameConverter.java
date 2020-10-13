@@ -94,6 +94,8 @@ public class RenameConverter extends AbstractConverter {
         defaultData.add(new String[] {"textures/models/armor/leather_layer_1_overlay.png", "textures/models/armor/leather_1_overlay.png"});
         defaultData.add(new String[] {"textures/models/armor/leather_layer_2.png", "textures/models/armor/leather_2.png"});
         defaultData.add(new String[] {"textures/models/armor/leather_layer_2_overlay.png", "textures/models/armor/leather_2_overlay.png"});
+        defaultData.add(new String[] {"textures/models/armor/netherite_layer_1.png", "textures/models/armor/netherite_1.png"});
+        defaultData.add(new String[] {"textures/models/armor/netherite_layer_2.png", "textures/models/armor/netherite_2.png"});
         defaultData.add(new String[] {"textures/models/armor/turtle_layer_1.png", "textures/models/armor/turtle_1.png"});
 
         // Arrow
@@ -169,6 +171,7 @@ public class RenameConverter extends AbstractConverter {
 
         // Campfire
         defaultData.add(new String[] {"textures/blocks/campfire_fire.png", "textures/blocks/campfire.png"});
+        defaultData.add(new String[] {"textures/blocks/soul_campfire_fire.png", "textures/blocks/soul_campfire.png"});
 
         // Carrot
         defaultData.add(new String[] {"textures/blocks/carrots_stage0.png", "textures/blocks/carrots_stage_0.png"});
@@ -290,6 +293,14 @@ public class RenameConverter extends AbstractConverter {
         // Cow
         defaultData.add(new String[] {"textures/entity/cow/red_mooshroom.png", "textures/entity/cow/mooshroom.png"});
 
+        // Crimson
+        defaultData.add(new String[] {"textures/blocks/crimson_nylium.png", "textures/blocks/crimson_nylium_top.png"});
+        defaultData.add(new String[] {"textures/blocks/crimson_planks.png", "textures/blocks/huge_fungus/crimson_planks.png"});
+        defaultData.add(new String[] {"textures/blocks/crimson_stem.png", "textures/blocks/huge_fungus/crimson_log_side.png"});
+        defaultData.add(new String[] {"textures/blocks/crimson_stem_top.png", "textures/blocks/huge_fungus/crimson_log_top.png"});
+        defaultData.add(new String[] {"textures/blocks/stripped_crimson_stem.png", "textures/blocks/huge_fungus/stripped_crimson_stem_side.png"});
+        defaultData.add(new String[] {"textures/blocks/stripped_crimson_stem_top.png", "textures/blocks/huge_fungus/stripped_crimson_stem_top.png"});
+
         // Dead bush
         defaultData.add(new String[] {"textures/blocks/dead_bush.png", "textures/blocks/deadbush.png"});
 
@@ -315,6 +326,8 @@ public class RenameConverter extends AbstractConverter {
         // Door
         defaultData.add(new String[] {"textures/blocks/acacia_door_bottom.png", "textures/blocks/door_acacia_lower.png"});
         defaultData.add(new String[] {"textures/blocks/birch_door_bottom.png", "textures/blocks/door_birch_lower.png"});
+        defaultData.add(new String[] {"textures/blocks/crimson_door_bottom.png", "textures/blocks/huge_fungus/crimson_door_lower.png"});
+        defaultData.add(new String[] {"textures/blocks/crimson_door_top.png", "textures/blocks/huge_fungus/crimson_door_top.png"});
         defaultData.add(new String[] {"textures/blocks/dark_oak_door_bottom.png", "textures/blocks/door_dark_oak_lower.png"});
         defaultData.add(new String[] {"textures/blocks/iron_door_bottom.png", "textures/blocks/door_iron_lower.png"});
         defaultData.add(new String[] {"textures/blocks/jungle_door_bottom.png", "textures/blocks/door_jungle_lower.png"});
@@ -327,6 +340,8 @@ public class RenameConverter extends AbstractConverter {
         defaultData.add(new String[] {"textures/blocks/jungle_door_top.png", "textures/blocks/door_jungle_upper.png"});
         defaultData.add(new String[] {"textures/blocks/oak_door_top.png", "textures/blocks/door_wood_upper.png"});
         defaultData.add(new String[] {"textures/blocks/spruce_door_top.png", "textures/blocks/door_spruce_upper.png"});
+        defaultData.add(new String[] {"textures/blocks/warped_door_bottom.png", "textures/blocks/huge_fungus/warped_door_lower.png"});
+        defaultData.add(new String[] {"textures/blocks/warped_door_top.png", "textures/blocks/huge_fungus/warped_door_top.png"});
         defaultData.add(new String[] {"textures/items/acacia_door.png", "textures/items/door_acacia.png"});
         defaultData.add(new String[] {"textures/items/birch_door.png", "textures/items/door_birch.png"});
         defaultData.add(new String[] {"textures/items/dark_oak_door.png", "textures/items/door_dark_oak.png"});
@@ -516,6 +531,9 @@ public class RenameConverter extends AbstractConverter {
         defaultData.add(new String[] {"textures/blocks/tall_grass_bottom.png", "textures/blocks/double_plant_grass_bottom.png"});
         defaultData.add(new String[] {"textures/blocks/tall_grass_top.png", "textures/blocks/double_plant_grass_top.png"});
 
+        // Hoglin
+        defaultData.add(new String[] {"textures/entity/hoglin/zoglin.png", "textures/entity/zoglin/zoglin.png"});
+
         // Honey
         defaultData.add(new String[] {"textures/blocks/honey_block_bottom.png", "textures/blocks/honey_bottom.png"});
         defaultData.add(new String[] {"textures/blocks/honey_block_side.png", "textures/blocks/honey_side.png"});
@@ -675,6 +693,7 @@ public class RenameConverter extends AbstractConverter {
         defaultData.add(new String[] {"textures/items/music_disc_far.png", "textures/items/record_far.png"});
         defaultData.add(new String[] {"textures/items/music_disc_mall.png", "textures/items/record_mall.png"});
         defaultData.add(new String[] {"textures/items/music_disc_mellohi.png", "textures/items/record_mellohi.png"});
+        defaultData.add(new String[] {"textures/items/music_disc_pigstep.png", "textures/items/record_pigstep.png"});
         defaultData.add(new String[] {"textures/items/music_disc_stal.png", "textures/items/record_stal.png"});
         defaultData.add(new String[] {"textures/items/music_disc_strad.png", "textures/items/record_strad.png"});
         defaultData.add(new String[] {"textures/items/music_disc_wait.png", "textures/items/record_wait.png"});
@@ -712,6 +731,9 @@ public class RenameConverter extends AbstractConverter {
         defaultData.add(new String[] {"textures/entity/panda/playful_panda.png", "textures/entity/panda/panda_playful.png"});
         defaultData.add(new String[] {"textures/entity/panda/weak_panda.png", "textures/entity/panda/panda_sneezy.png"});
         defaultData.add(new String[] {"textures/entity/panda/worried_panda.png", "textures/entity/panda/panda_worried.png"});
+
+        // Piglin
+        defaultData.add(new String[] {"textures/entity/piglin/zombified_piglin.png", "textures/entity/piglin/zombie_piglin.png"});
 
         // Piston
         defaultData.add(new String[] {"textures/blocks/piston_top.png", "textures/blocks/piston_top_normal.png"});
@@ -841,16 +863,20 @@ public class RenameConverter extends AbstractConverter {
         // Sign
         defaultData.add(new String[] {"textures/entity/signs/acacia.png", "textures/entity/sign_acacia.png"});
         defaultData.add(new String[] {"textures/entity/signs/birch.png", "textures/entity/sign_birch.png"});
+        defaultData.add(new String[] {"textures/entity/signs/crimson.png", "textures/entity/sign_crimson.png"});
         defaultData.add(new String[] {"textures/entity/signs/dark_oak.png", "textures/entity/sign_darkoak.png"});
         defaultData.add(new String[] {"textures/entity/signs/jungle.png", "textures/entity/sign_jungle.png"});
         defaultData.add(new String[] {"textures/entity/signs/oak.png", "textures/entity/sign.png"});
         defaultData.add(new String[] {"textures/entity/signs/spruce.png", "textures/entity/sign_spruce.png"});
+        defaultData.add(new String[] {"textures/entity/signs/warped.png", "textures/entity/sign_warped.png"});
         defaultData.add(new String[] {"textures/items/acacia_sign.png", "textures/items/sign_acacia.png"});
         defaultData.add(new String[] {"textures/items/birch_sign.png", "textures/items/sign_birch.png"});
+        defaultData.add(new String[] {"textures/items/crimson_sign.png", "textures/items/sign_crimson.png"});
         defaultData.add(new String[] {"textures/items/dark_oak_sign.png", "textures/items/sign_darkoak.png"});
         defaultData.add(new String[] {"textures/items/jungle_sign.png", "textures/items/sign_jungle.png"});
         defaultData.add(new String[] {"textures/items/oak_sign.png", "textures/items/sign.png"});
         defaultData.add(new String[] {"textures/items/spruce_sign.png", "textures/items/sign_spruce.png"});
+        defaultData.add(new String[] {"textures/items/warped_sign.png", "textures/items/sign_warped.png"});
 
         // Slime
         defaultData.add(new String[] {"textures/blocks/slime_block.png", "textures/blocks/slime.png"});
@@ -880,6 +906,9 @@ public class RenameConverter extends AbstractConverter {
         defaultData.add(new String[] {"textures/blocks/stonecutter_saw.png", "textures/blocks/stonecutter2_saw.png"});
         defaultData.add(new String[] {"textures/blocks/stonecutter_side.png", "textures/blocks/stonecutter2_side.png"});
         defaultData.add(new String[] {"textures/blocks/stonecutter_top.png", "textures/blocks/stonecutter2_top.png"});
+
+        // Strider
+        defaultData.add(new String[] {"textures/entity/strider/strider_cold.png", "textures/entity/strider/strider_suffocated.png"});
 
         // Structure
         defaultData.add(new String[] {"textures/items/structure_void.png", "textures/blocks/structure_void.png"});
@@ -915,7 +944,9 @@ public class RenameConverter extends AbstractConverter {
         defaultData.add(new String[] {"textures/items/totem_of_undying.png", "textures/items/totem.png"});
 
         // Trapdoor
+        defaultData.add(new String[] {"textures/blocks/crimson_trapdoor.png", "textures/blocks/huge_fungus/crimson_trapdoor.png"});
         defaultData.add(new String[] {"textures/blocks/oak_trapdoor.png", "textures/blocks/trapdoor.png"});
+        defaultData.add(new String[] {"textures/blocks/warped_trapdoor.png", "textures/blocks/huge_fungus/warped_trapdoor.png"});
 
         // Tripwire
         defaultData.add(new String[] {"textures/blocks/tripwire.png", "textures/blocks/trip_wire.png"});
@@ -955,6 +986,20 @@ public class RenameConverter extends AbstractConverter {
         defaultData.add(new String[] {"textures/entity/villager2/levels/stone.png", "textures/entity/villager2/levels/level_stone.png"});
         defaultData.add(new String[] {"textures/entity/villager2/professions/mason.png", "textures/entity/villager2/professions/stonemason.png"});
 
+        // Vine
+        defaultData.add(new Object[] {"textures/blocks/twisting_vines.png", "textures/blocks/twisting_vines_bottom.png"});
+        defaultData.add(new Object[] {"textures/blocks/twisting_vines_plant.png", "textures/blocks/twisting_vines_base.png"});
+        defaultData.add(new Object[] {"textures/blocks/weeping_vines.png", "textures/blocks/weeping_vines_bottom.png"});
+        defaultData.add(new Object[] {"textures/blocks/weeping_vines_plant.png", "textures/blocks/weeping_vines_base.png"});
+
+        // Warped
+        defaultData.add(new Object[] {"textures/blocks/stripped_warped_stem.png", "textures/blocks/huge_fungus/stripped_warped_stem_side.png"});
+        defaultData.add(new Object[] {"textures/blocks/stripped_warped_stem_top.png", "textures/blocks/huge_fungus/stripped_warped_stem_top.png"});
+        defaultData.add(new Object[] {"textures/blocks/warped_nylium.png", "textures/blocks/warped_nylium_top.png"});
+        defaultData.add(new Object[] {"textures/blocks/warped_planks.png", "textures/blocks/huge_fungus/warped_planks.png"});
+        defaultData.add(new Object[] {"textures/blocks/warped_stem.png", "textures/blocks/huge_fungus/warped_stem_side.png"});
+        defaultData.add(new Object[] {"textures/blocks/warped_stem_top.png", "textures/blocks/huge_fungus/warped_stem_top.png"});
+
         // Water
         defaultData.add(new String[] {"textures/blocks/water_flow.png", "textures/blocks/water_flow_grey.png"});
         defaultData.add(new String[] {"textures/blocks/water_still.png", "textures/blocks/water_still_grey.png"});
@@ -971,6 +1016,7 @@ public class RenameConverter extends AbstractConverter {
 
         // Wither
         defaultData.add(new String[] {"textures/entity/wither/", "textures/entity/wither_boss/"});
+        defaultData.add(new String[] {"textures/entity/wither_boss/wither_armor.png", "textures/entity/wither_boss/wither_armor_white.png"});
 
         // Wool
         defaultData.add(new String[] {"textures/blocks/black_wool.png", "textures/blocks/wool_colored_black.png"});

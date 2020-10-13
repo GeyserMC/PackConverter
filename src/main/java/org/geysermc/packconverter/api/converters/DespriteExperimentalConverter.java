@@ -154,6 +154,15 @@ public class DespriteExperimentalConverter extends AbstractConverter {
                         new Object[] {208, 0, 16, 16, "textures/ui/loom_pattern_item_empty.png", new int[] {23, 45, 16, 16}}
                 }
         });
+        defaultData.add(new Object[] {
+                "textures/gui/container/smithing.png",
+                256,
+                new Object[] {
+                        new Object[] {17, 7, 30, 30, "textures/ui/smithing_icon.png"},
+                        new Object[] {53, 49, 13, 13, "textures/ui/smithing-table-plus.png"},
+                        new Object[] {76, 47, 16, 16, "textures/ui/ingot_image.png"}
+                }
+        });
     }
 
     public DespriteExperimentalConverter(Path storage, Object[] data) {

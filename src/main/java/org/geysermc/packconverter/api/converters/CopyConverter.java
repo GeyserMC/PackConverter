@@ -40,6 +40,13 @@ public class CopyConverter extends AbstractConverter {
     public static final List<Object[]> defaultData = new ArrayList<>();
 
     static {
+        // Battern
+        defaultData.add(new String[] {"textures/entity/banner/banner_pattern_illager.tga", "textures/entity/banner/banner_illager.tga"});
+
+        // Beef
+        defaultData.add(new String[] {"textures/items/beef_cooked.png", "textures/items/hoglin_meat_cooked.png"});
+        defaultData.add(new String[] {"textures/items/beef_raw.png", "textures/items/hoglin_meat_raw.png"});
+
         // Cat
         defaultData.add(new String[] {"textures/entity/cat/redtabby.png","textures/entity/cat/red.png"});
         defaultData.add(new String[] {"textures/entity/cat/siamesecat.png", "textures/entity/cat/siamese.png"});
@@ -50,6 +57,10 @@ public class CopyConverter extends AbstractConverter {
 
         // Command block
         defaultData.add(new String[] {"textures/blocks/command_block_back_mipmap.png", "textures/blocks/command_block.png"});
+
+        // Compass & clock
+        defaultData.add(new String[] {"textures/items/compass_atlas.png", "textures/items/lodestonecompass_atlas.png"});
+        defaultData.add(new String[] {"textures/items/compass_item.png", "textures/items/lodestonecompass_item.png"});
 
         // Fire
         defaultData.add(new String[] {"textures/blocks/fire_0.png", "textures/flame_atlas.png"});
@@ -88,6 +99,10 @@ public class CopyConverter extends AbstractConverter {
         defaultData.add(new String[] {"textures/items/empty_armor_slot_helmet.png", "textures/ui/empty_armor_slot_helmet.png"});
         defaultData.add(new String[] {"textures/items/empty_armor_slot_leggings.png", "textures/ui/empty_armor_slot_leggings.png"});
         defaultData.add(new String[] {"textures/items/empty_armor_slot_shield.png", "textures/ui/empty_armor_slot_shield.png"});
+
+        // Wither
+        defaultData.add(new String[] {"textures/entity/creeper/creeper_armor.png", "textures/entity/wither_boss/wither_armor_blue.png"});
+
         defaultData.add(new String[] {"bedrock_textures/", "textures/"});
     }
 

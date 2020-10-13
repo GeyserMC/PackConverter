@@ -64,7 +64,7 @@ public class MetadataConverter extends AbstractConverter {
             String to = (String) this.data[1];
 
             if (!storage.resolve(from).toFile().exists()) {
-                throw new FileNotFoundException(String.format("Missing %s! Is this really a java texture pack?", from));
+                throw new FileNotFoundException(String.format("Missing %s! Is this really a Java texture pack?", from));
             }
 
             ObjectMapper mapper = new ObjectMapper().enable(JsonParser.Feature.ALLOW_COMMENTS);
@@ -74,7 +74,7 @@ public class MetadataConverter extends AbstractConverter {
             String packDesc = packmeta.get("description").asText();
 
             if (packFormat != 4 && packFormat != 5 && packFormat != 6) {
-                throw new AssertionError("Only supports pack_format 4 (v1.13 and v1.14) or 5 (v1.15 or v1.16) or 6 (>= v1.16.2)!");
+                throw new AssertionError("Only supports pack_format 4 (v1.13 or v1.14) or 5 (v1.15 or v1.16) or 6 (>= v1.16.2)!");
             }
 
             ResourcePackManifest.Header header = new ResourcePackManifest.Header();

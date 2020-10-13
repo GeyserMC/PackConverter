@@ -70,14 +70,18 @@ public class PlaceholderConverter extends AbstractConverter {
         defaultData.add(new Object[] {"textures/entity/bed/white.png", 6, 6, 16, 32, 64, "textures/items/bed_white.png"});
         defaultData.add(new Object[] {"textures/entity/bed/yellow.png", 6, 6, 16, 32, 64, "textures/items/bed_yellow.png"});
 
+        // Chain
+        defaultData.add(new Object[] {"textures/blocks/chain.png", 3, 0, 3, 16, 16, "textures/blocks/chain1.png", 1});
+        defaultData.add(new Object[] {"textures/blocks/chain.png", 0, 0, 3, 16, 16, "textures/blocks/chain2.png", 1});
+
         // Chest
         defaultData.add(new Object[] {"textures/entity/chest/normal.png", 14, 0, 14, 14, 64, "textures/blocks/chest_top.png"});
         defaultData.add(new Object[] {"textures/entity/chest/ender.png", 14, 0, 14, 14, 64, "textures/blocks/ender_chest_top.png"});
 
         // Conduit
-        defaultData.add(new Object[] {"textures/blocks/conduit_base.png", 0, 0, 24, 12, 32, "textures/blocks/conduit_base.png", true});
-        defaultData.add(new Object[] {"textures/blocks/conduit_closed.png", 0, 0, 8, 8, 16, "textures/blocks/conduit_closed.png", true});
-        defaultData.add(new Object[] {"textures/blocks/conduit_open.png", 0, 0, 8, 8, 16, "textures/blocks/conduit_open.png", true});
+        defaultData.add(new Object[] {"textures/blocks/conduit_base.png", 0, 0, 24, 12, 32, "textures/blocks/conduit_base.png", 2});
+        defaultData.add(new Object[] {"textures/blocks/conduit_closed.png", 0, 0, 8, 8, 16, "textures/blocks/conduit_closed.png", 2, 5});
+        defaultData.add(new Object[] {"textures/blocks/conduit_open.png", 0, 0, 8, 8, 16, "textures/blocks/conduit_open.png", 2, 5});
 
         // Command block
         defaultData.add(new Object[] {"textures/blocks/chain_command_block_back.png", 0, 0, 16, 16, 16, "textures/blocks/chain_command_block_back_mipmap.png"});
@@ -98,12 +102,14 @@ public class PlaceholderConverter extends AbstractConverter {
         defaultData.add(new Object[] {"textures/items/watch_atlas.png", 0, 0, 16, 16, 16, "textures/items/clock_item.png"});
 
         // Sign
-        defaultData.add(new Object[] {"textures/entity/sign_acacia.png", 2, 2, 24, 12, 64, "textures/ui/sign_acacia.png", true});
-        defaultData.add(new Object[] {"textures/entity/sign_birch.png", 2, 2, 24, 12, 64, "textures/ui/sign_birch.png", true});
-        defaultData.add(new Object[] {"textures/entity/sign_darkoak.png", 2, 2, 24, 12, 64, "textures/ui/sign_darkoak.png", true});
-        defaultData.add(new Object[] {"textures/entity/sign_jungle.png", 2, 2, 24, 12, 64, "textures/ui/sign_jungle.png", true});
-        defaultData.add(new Object[] {"textures/entity/sign.png", 2, 2, 24, 12, 64, "textures/ui/sign.png", true});
-        defaultData.add(new Object[] {"textures/entity/sign_spruce.png", 2, 2, 24, 12, 64, "textures/ui/sign_spruce.png", true});
+        defaultData.add(new Object[] {"textures/entity/sign_acacia.png", 2, 2, 24, 12, 64, "textures/ui/sign_acacia.png", 2});
+        defaultData.add(new Object[] {"textures/entity/sign_birch.png", 2, 2, 24, 12, 64, "textures/ui/sign_birch.png", 2});
+        defaultData.add(new Object[] {"textures/entity/sign_crimson.png", 2, 2, 24, 12, 64, "textures/ui/sign_crimson.png", 2});
+        defaultData.add(new Object[] {"textures/entity/sign_darkoak.png", 2, 2, 24, 12, 64, "textures/ui/sign_darkoak.png", 2});
+        defaultData.add(new Object[] {"textures/entity/sign_jungle.png", 2, 2, 24, 12, 64, "textures/ui/sign_jungle.png", 2});
+        defaultData.add(new Object[] {"textures/entity/sign.png", 2, 2, 24, 12, 64, "textures/ui/sign.png", 2});
+        defaultData.add(new Object[] {"textures/entity/sign_spruce.png", 2, 2, 24, 12, 64, "textures/ui/sign_spruce.png", 2});
+        defaultData.add(new Object[] {"textures/entity/sign_warped.png", 2, 2, 24, 12, 64, "textures/ui/sign_warped.png", 2});
 
         // Water, lava & co.
         defaultData.add(new Object[] {"textures/blocks/cauldron_water.png", 0, 0, 16, 16, 16, "textures/blocks/cauldron_water_placeholder.png"});
@@ -114,9 +120,9 @@ public class PlaceholderConverter extends AbstractConverter {
         defaultData.add(new Object[] {"textures/blocks/water_still.png", 0, 0, 16, 16, 16, "textures/blocks/water_placeholder.png"});
 
         // Zombie
-        defaultData.add(new Object[] {"textures/entity/pig/pigzombie.png", 0, 0, 64, 32, 64, "textures/entity/pig/pigzombie.png", true});
-        defaultData.add(new Object[] {"textures/entity/zombie/husk.png", 0, 0, 64, 32, 64, "textures/entity/zombie/husk.png", true});
-        defaultData.add(new Object[] {"textures/entity/zombie/zombie.png", 0, 0, 64, 32, 64, "textures/entity/zombie/zombie.png", true});
+        defaultData.add(new Object[] {"textures/entity/pig/pigzombie.png", 0, 0, 64, 32, 64, "textures/entity/pig/pigzombie.png", 2});
+        defaultData.add(new Object[] {"textures/entity/zombie/husk.png", 0, 0, 64, 32, 64, "textures/entity/zombie/husk.png", 2});
+        defaultData.add(new Object[] {"textures/entity/zombie/zombie.png", 0, 0, 64, 32, 64, "textures/entity/zombie/zombie.png", 2});
     }
 
     public PlaceholderConverter(Path storage, Object[] data) {
@@ -133,7 +139,12 @@ public class PlaceholderConverter extends AbstractConverter {
             int height = (int) this.data[4];
             int factorDetect = (int) this.data[5];
             String to = (String) this.data[6];
-            boolean dontCenter = this.data.length > 7 ? (boolean) this.data[7] : false;
+            int squareMode = this.data.length > 7 ? (int) this.data[7] : 0;
+            int minPackFormat = this.data.length > 8 ? (int) this.data[8] : -1;
+
+            if (minPackFormat > -1) {
+                // TODO: Add support for min pack format
+            }
 
             File placeholderFile = storage.resolve(from).toFile();
 
@@ -147,13 +158,32 @@ public class PlaceholderConverter extends AbstractConverter {
 
             placeholderImage = ImageUtils.crop(placeholderImage, (x * factor), (y * factor), (width * factor), (height * factor));
 
-            if (!dontCenter) {
-                int size = Math.max(width, height);
-                BufferedImage newPlaceholderImage = new BufferedImage((size * factor), (size * factor), BufferedImage.TYPE_INT_ARGB);
+            int size;
+            BufferedImage newPlaceholderImage;
+            switch (squareMode) {
+                case 1:
+                    // Left top
+                    size = Math.max(width, height);
+                    newPlaceholderImage = new BufferedImage((size * factor), (size * factor), BufferedImage.TYPE_INT_ARGB);
 
-                newPlaceholderImage.getGraphics().drawImage(placeholderImage, (((size * factor) - (width * factor)) / 2), (((size * factor) - (height * factor)) / 2), null);
+                    newPlaceholderImage.getGraphics().drawImage(placeholderImage, 0, 0, null);
 
-                placeholderImage = newPlaceholderImage;
+                    placeholderImage = newPlaceholderImage;
+                    break;
+
+                case 2:
+                    // No
+                    break;
+
+                case 0:
+                default:
+                    // Center
+                    size = Math.max(width, height);
+                    newPlaceholderImage = new BufferedImage((size * factor), (size * factor), BufferedImage.TYPE_INT_ARGB);
+
+                    newPlaceholderImage.getGraphics().drawImage(placeholderImage, (((size * factor) - (width * factor)) / 2), (((size * factor) - (height * factor)) / 2), null);
+
+                    placeholderImage = newPlaceholderImage;
             }
 
             ImageUtils.write(placeholderImage, "png", storage.resolve(to).toFile());

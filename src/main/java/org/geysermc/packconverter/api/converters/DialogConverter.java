@@ -57,6 +57,7 @@ public class DialogConverter extends AbstractConverter {
                     new Object[] {"textures/ui/dialog_background_hollow_2", new int[] {8, 23, 8, 42}},
                     new Object[] {"textures/ui/dialog_background_hollow_3", new int[] {8, 23, 8, 8}},
                     new Object[] {"textures/ui/dialog_background_hollow_4", new int[] {8, 8, 8, 8}},
+                    new Object[] {"textures/ui/dialog_background_hollow_4_thin", new int[] {6, 6, 6, 6}},
                     new Object[] {"textures/ui/dialog_background_hollow_5", new int[] {8, 17, 8, 42}},
                     new Object[] {"textures/ui/dialog_background_hollow_6", new int[] {8, 23, 8, 104}},
                     new Object[] {"textures/ui/dialog_background_hollow_7", new int[] {8, 66, 8, 8}},
