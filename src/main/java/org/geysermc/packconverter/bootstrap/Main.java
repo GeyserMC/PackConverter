@@ -32,7 +32,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 
 public class Main {
-    private static final String packname = "Faithful-1.15";
+    private static final String packname = "Faithful-1.16.3";
 
     public static void main(String[] args) {
         try {

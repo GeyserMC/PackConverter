@@ -73,8 +73,8 @@ public class MetadataConverter extends AbstractConverter {
             int packFormat = packmeta.get("pack_format").asInt();
             String packDesc = packmeta.get("description").asText();
 
-            if (packFormat != 4 && packFormat != 5) {
-                throw new AssertionError("Only supports pack_format 4 (v1.13 and v1.14) or 5 (v1.15)!");
+            if (packFormat != 4 && packFormat != 5 && packFormat != 6) {
+                throw new AssertionError("Only supports pack_format 4 (v1.13 and v1.14) or 5 (v1.15 or v1.16) or 6 (>= v1.16.2)!");
             }
 
             ResourcePackManifest.Header header = new ResourcePackManifest.Header();
