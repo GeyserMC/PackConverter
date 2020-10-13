@@ -90,7 +90,7 @@ public class PackConverter {
     public void convert() {
         List<AbstractConverter> additionalConverters = new ArrayList<>();
 
-        for (Class<? extends AbstractConverter> converterClass : ConveterHandler.converterList) {
+        for (Class<? extends AbstractConverter> converterClass : ConverterHandler.converterList) {
             try {
                 List<Object[]> defaultData = (List<Object[]>) converterClass.getMethod("getDefaultData").invoke(null);
 

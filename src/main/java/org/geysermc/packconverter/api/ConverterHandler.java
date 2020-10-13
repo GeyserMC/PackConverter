@@ -31,7 +31,7 @@ import org.geysermc.packconverter.api.converters.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConveterHandler {
+public class ConverterHandler {
     public static final List<Class<? extends AbstractConverter>> converterList = new ArrayList<>();
 
     public static boolean enableExperimental = false;
