@@ -341,7 +341,33 @@ public class ImageUtils {
         return newImage;
     }
 
+    /**
+     * Flip the image
+     *
+     * @param horizontal If true the image will be flipped horizontally
+     * @param vertical If true the image will be flipped vertically
+     * @return
+     */
+    public static BufferedImage flip(BufferedImage image, boolean horizontal, boolean vertical) {
+        AffineTransform at = AffineTransform.getScaleInstance(horizontal ? -1 : 1, vertical ? -1 : 1);
+
+        if (horizontal) {
+            at.translate(-image.getWidth(null), 0);
+        }
+
+        if (vertical) {
+            at.translate(0, -image.getHeight(null));
+        }
+
+        BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = newImage.createGraphics();
+        g.transform(at);
+        g.drawImage(image, 0, 0, null);
+        g.dispose();
+        return newImage;
+    }
+
     private static int clamp(int val, int min, int max) {
-        return val > max ? max : val < min ? min : val;
+        return val > max ? max : Math.max(val, min);
     }
 }

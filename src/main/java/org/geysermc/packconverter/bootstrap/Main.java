@@ -38,7 +38,7 @@ public class Main {
         try {
             PackConverter packConverter = new PackConverter(Paths.get(packname + ".zip"), Paths.get(packname + ".mcpack"));
             packConverter.convert();
-            //packConverter.pack();
+            packConverter.pack();
         } catch (IOException e) {
             e.printStackTrace();
         }

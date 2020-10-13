@@ -34,11 +34,20 @@ import java.util.List;
 public class ConveterHandler {
     public static final List<Class<? extends AbstractConverter>> converterList = new ArrayList<>();
 
+    public static boolean enableExperimental = false;
+
     static {
+        converterList.add(FixWrongRootFolderConverter.class);
         converterList.add(MetadataConverter.class);
         converterList.add(RenameConverter.class);
         converterList.add(AtlasConverter.class);
         converterList.add(BannerPatternConverter.class);
+        converterList.add(BedConverter.class);
+        converterList.add(ChestNormalConverter.class);
+        converterList.add(ChestLeftRightDoubleConverter.class);
+        converterList.add(ChestFrontConverter.class);
+        converterList.add(ChestSideConverter.class);
+        converterList.add(DrownedConverter.class);
 
         converterList.add(IconsConverter.class);
         converterList.add(MapIconsConverter.class);
@@ -51,14 +60,16 @@ public class ConveterHandler {
 
         converterList.add(TitleConverter.class);
         converterList.add(DespriteConverter.class);
-        //converterList.add(DespriteExperimentalConverter.class); // Experimental
+        if (enableExperimental) { converterList.add(DespriteExperimentalConverter.class); } // Experimental
         converterList.add(BarConverter.class);
-        //converterList.add(NineSliceConverter.class); // Experimental
-        //converterList.add(DialogConverter.class); // Experimental
+        if (enableExperimental) { converterList.add(NineSliceConverter.class); } // Experimental
+        if (enableExperimental) { converterList.add(DialogConverter.class); } // Experimental
         converterList.add(OverlayToTranslateConverter.class);
         converterList.add(ColorizeOverlayConverter.class);
 
         converterList.add(PlaceholderConverter.class);
+
+        //converterList.add(ArrowConverter.class); // This is disabled as its broken and the intended output it just the original
 
         converterList.add(EnchantedItemGlintConverter.class);
         converterList.add(PngToTgaConverter.class);
