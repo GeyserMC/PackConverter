@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -1058,8 +1059,8 @@ public class RenameConverter extends AbstractConverter {
         defaultData.add(new String[] {"textures/entity/zombie_villager2/professions/mason.png", "textures/entity/zombie_villager2/professions/stonemason.png"});
     }
 
-    public RenameConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public RenameConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override

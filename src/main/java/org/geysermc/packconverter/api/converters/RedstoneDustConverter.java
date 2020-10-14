@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
@@ -47,8 +48,8 @@ public class RedstoneDustConverter extends AbstractConverter {
         defaultData.add(new Object[] {"textures/blocks/redstone_dust_dot.png", "textures/blocks/redstone_dust_line0.png", "textures/blocks/redstone_dust_line1.png", "textures/blocks/redstone_dust_cross.png", "textures/blocks/redstone_dust_line.png"});
     }
 
-    public RedstoneDustConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public RedstoneDustConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override
@@ -86,9 +87,9 @@ public class RedstoneDustConverter extends AbstractConverter {
 
             ImageUtils.write(newImage, "png", storage.resolve(to_cross).toFile());
 
-            delete.add(new DeleteConverter(storage, new Object[] {dot}));
-            delete.add(new DeleteConverter(storage, new Object[] {line0}));
-            delete.add(new DeleteConverter(storage, new Object[] {line1}));
+            delete.add(new DeleteConverter(packConverter, storage, new Object[] {dot}));
+            delete.add(new DeleteConverter(packConverter, storage, new Object[] {line0}));
+            delete.add(new DeleteConverter(packConverter, storage, new Object[] {line1}));
 
             System.out.println("Convert redstone dust");
         } catch (IOException e) { }

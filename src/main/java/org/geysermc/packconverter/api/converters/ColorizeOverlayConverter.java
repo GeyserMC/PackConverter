@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
@@ -245,8 +246,8 @@ public class ColorizeOverlayConverter extends AbstractConverter {
         defaultData.add(new Object[] {new Object[] {new Object[] {"textures/items/tipped_arrow_base.png"}, new Object[] {"textures/items/tipped_arrow_head.png", new Color(50, 39, 36)}}, "textures/items/tipped_arrow_wither.png"});
     }
 
-    public ColorizeOverlayConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public ColorizeOverlayConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override
@@ -281,7 +282,7 @@ public class ColorizeOverlayConverter extends AbstractConverter {
                 finalImage.getGraphics().drawImage(overlayImage, 0, 0, null);
 
                 if (deleteOverlay) {
-                    delete.add(new DeleteConverter(storage, new Object[] {overlayPath}));
+                    delete.add(new DeleteConverter(packConverter, storage, new Object[] {overlayPath}));
                 }
             }
 

@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
@@ -53,8 +54,8 @@ public class OpaqueConverter extends AbstractConverter {
         defaultData.add(new Object[] {"textures/blocks/leaves_spruce.png", "textures/blocks/leaves_spruce_opaque.png"});
     }
 
-    public OpaqueConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public OpaqueConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override

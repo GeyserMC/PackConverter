@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
@@ -85,8 +86,8 @@ public class OverlayToTranslateConverter extends AbstractConverter {
         defaultData.add(new Object[] {"textures/entity/wolf/wolf_collar.png", "textures/entity/wolf/wolf_tame.png", "textures/entity/wolf/wolf_tame.png", false, true});
     }
 
-    public OverlayToTranslateConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public OverlayToTranslateConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override
@@ -118,7 +119,7 @@ public class OverlayToTranslateConverter extends AbstractConverter {
             ImageUtils.write(image, "png", storage.resolve(to).toFile());
 
             if (!dontDelete) {
-                delete.add(new DeleteConverter(storage, new Object[] {overlay}));
+                delete.add(new DeleteConverter(packConverter, storage, new Object[] {overlay}));
             }
 
             System.out.println(String.format("Create translated overlay %s", to));

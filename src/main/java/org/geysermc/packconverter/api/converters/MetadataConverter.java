@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ResourcePackManifest;
 
 import java.io.FileNotFoundException;
@@ -51,8 +52,8 @@ public class MetadataConverter extends AbstractConverter {
         defaultData.add(new Object[] {"pack.mcmeta", "manifest.json"});
     }
 
-    public MetadataConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public MetadataConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override
@@ -99,7 +100,7 @@ public class MetadataConverter extends AbstractConverter {
             ObjectWriter writer = mapper.writer(new DefaultPrettyPrinter());
             writer.writeValue(storage.resolve(to).toFile(), manifest);
 
-            delete.add(new DeleteConverter(storage, new Object[] {from}));
+            delete.add(new DeleteConverter(packConverter, storage, new Object[] {from}));
 
             System.out.println(String.format("Create metadata %s", to));
         } catch (IOException e) {

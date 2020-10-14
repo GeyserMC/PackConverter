@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
@@ -47,8 +48,8 @@ public class MapIconsConverter extends AbstractConverter {
         defaultData.add(new Object[] {"textures/map/map_icons.png", "textures/map/map_icons.png"});
     }
 
-    public MapIconsConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public MapIconsConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override

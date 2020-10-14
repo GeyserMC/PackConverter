@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
@@ -58,8 +59,8 @@ public class BannerPatternConverter extends AbstractConverter {
             }, "textures/entity/banner/banner_pattern_illager.png"});
     }
 
-    public BannerPatternConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public BannerPatternConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override

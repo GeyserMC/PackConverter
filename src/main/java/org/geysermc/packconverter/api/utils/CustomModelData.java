@@ -24,24 +24,19 @@
  *
  */
 
-package org.geysermc.packconverter.api.converters;
+package org.geysermc.packconverter.api.utils;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.AllArgsConstructor;
-import org.geysermc.packconverter.api.PackConverter;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
-
+@Getter
 @AllArgsConstructor
-public abstract class AbstractConverter {
-    PackConverter packConverter;
-    Path storage;
-    Object[] data;
+public class CustomModelData {
 
-    public static List<Object[]> getDefaultData() {
-        return new ArrayList<>();
-    };
+    private final int dataId;
+    private final String identifier;
 
-    public abstract List<AbstractConverter> convert();
 }

@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -53,8 +54,8 @@ public class DeleteConverter extends AbstractConverter {
         defaultData.add(new Object[] {"bedrock_textures/"});
     }
 
-    public DeleteConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public DeleteConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override

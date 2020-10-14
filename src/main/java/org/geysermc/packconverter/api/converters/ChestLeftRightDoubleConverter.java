@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
@@ -49,8 +50,8 @@ public class ChestLeftRightDoubleConverter extends AbstractConverter {
         defaultData.add(new Object[] {"textures/entity/chest/christmas_left.png", "textures/entity/chest/christmas_right.png", "textures/entity/chest/christmas_double.png"});
     }
 
-    public ChestLeftRightDoubleConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public ChestLeftRightDoubleConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override
@@ -116,8 +117,8 @@ public class ChestLeftRightDoubleConverter extends AbstractConverter {
 
             ImageUtils.write(newImage, "png", storage.resolve(to).toFile());
 
-            delete.add(new DeleteConverter(storage, new Object[] {fromLeft}));
-            delete.add(new DeleteConverter(storage, new Object[] {fromRight}));
+            delete.add(new DeleteConverter(packConverter, storage, new Object[] {fromLeft}));
+            delete.add(new DeleteConverter(packConverter, storage, new Object[] {fromRight}));
 
             System.out.println(String.format("Convert double chest %s", to));
         } catch (IOException e) { }

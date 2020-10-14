@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
@@ -125,8 +126,8 @@ public class PlaceholderConverter extends AbstractConverter {
         defaultData.add(new Object[] {"textures/entity/zombie/zombie.png", 0, 0, 64, 32, 64, "textures/entity/zombie/zombie.png", 2});
     }
 
-    public PlaceholderConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public PlaceholderConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override
