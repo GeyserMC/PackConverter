@@ -38,26 +38,35 @@ import java.nio.file.StandardOpenOption;
 public class CustomModelDataHandler {
 
     public static String handleItemData(ObjectMapper mapper, Path storage, String filePath) {
+        // Start the creation of the JSON that registers the object
         ObjectNode item = mapper.createObjectNode();
+        // Standard JSON
         item.put("format_version", "1.16.0");
         ObjectNode itemData = mapper.createObjectNode();
         ObjectNode itemDescription = mapper.createObjectNode();
 
-        // Full identifier with geysercmd prefix
+        // Full identifier with geysercmd prefix (cmd for CustomModelData - just in case it clashes with something we do in the future)
         String identifier = "geysercmd:" + filePath.replace("item/", "");
+        // Register the full identifier
         itemDescription.put("identifier", identifier);
         itemData.set("description", itemDescription);
         ObjectNode itemComponent = mapper.createObjectNode();
+        // Define which texture in item_texture.json this should use. We just set it to the "clean identifier"
         itemComponent.put("minecraft:icon", identifier.replace("geysercmd:", ""));
+        // TODO: Apply components based off the original item
+        // TODO: Components tell Bedrock how the item operates, how much you can stack, can you eat it, etc
+        // TODO: We can probably generate this from the mappings-generator as the Bedrock vanilla behavior pack doesn't define every item
         itemComponent.put("minecraft:render_offsets", "tools");
         itemData.set("components", itemComponent);
         item.set("minecraft:item", itemData);
 
+        // Create, if necessary, the folder that stores all item information
         File itemJsonFile = storage.resolve("items").toFile();
         if (!itemJsonFile.exists()) {
             itemJsonFile.mkdir();
         }
 
+        // Write our item information
         Path path = itemJsonFile.toPath().resolve(filePath.replace("item/", "") + ".json");
         try (OutputStream outputStream = Files.newOutputStream(path,
                 StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
