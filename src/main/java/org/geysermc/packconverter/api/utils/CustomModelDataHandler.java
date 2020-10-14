@@ -85,6 +85,7 @@ public class CustomModelDataHandler {
         InputStream stream;
         JsonNode textureFile;
         try {
+            // Read the model information for the Java CustomModelData
             stream = new FileInputStream(storage.resolve("assets/minecraft/models/" + filePath + ".json").toFile());
             textureFile = mapper.readTree(stream);
         } catch (IOException e) {
@@ -92,13 +93,15 @@ public class CustomModelDataHandler {
             return null;
         }
 
-        // TODO: Don't rely on getting the 0 texture
+        // TODO: This is called BSing it. It works but is it correct?
         if (textureFile.has("textures")) {
             if (textureFile.get("textures").has("0") || textureFile.get("textures").has("layer0")) {
                 String determine = textureFile.get("textures").has("0") ? "0" : "layer0";
                 ObjectNode textureData = mapper.createObjectNode();
                 ObjectNode textureName = mapper.createObjectNode();
+                // Make JSON data for Bedrock pointing to where texture data for this item is stored
                 textureName.put("textures", textureFile.get("textures").get(determine).textValue().replace("item/", "textures/items/"));
+                // Have the identifier point to that texture data
                 textureData.set(cleanIdentifier, textureName);
                 return textureData;
             }
