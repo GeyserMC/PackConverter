@@ -49,12 +49,17 @@ public class ConverterHandler {
         converterList.add(ChestSideConverter.class);
         converterList.add(DrownedConverter.class);
         converterList.add(DolphinConverter.class);
-
+        converterList.add(FireworksConverter.class);
+        converterList.add(FishHookConverter.class);
+        converterList.add(FoxConverter.class);
+        converterList.add(HorseConverter.class);
         converterList.add(IconsConverter.class);
         converterList.add(MapIconsConverter.class);
-
+        converterList.add(PistonArmConverter.class);
         converterList.add(RedstoneDustConverter.class);
-
+        converterList.add(SheepConverter.class);
+        converterList.add(VillagerConverter.class);
+        converterList.add(TurtleConverter.class);
         converterList.add(WeatherConverter.class);
         converterList.add(OpaqueConverter.class);
         converterList.add(WaterConverter.class);

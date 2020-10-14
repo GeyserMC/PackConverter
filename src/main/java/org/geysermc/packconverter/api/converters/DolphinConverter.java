@@ -75,45 +75,45 @@ public class DolphinConverter extends AbstractConverter {
             Graphics g = newImage.getGraphics();
 
             // Nose
-            g.drawImage(ImageUtils.crop(fromImage,0, (13 * factor), (12 * factor), (6 * factor)), 0, (13 * factor), null);
+            g.drawImage(ImageUtils.crop(fromImage, 0, (13 * factor), (12 * factor), (6 * factor)), 0, (13 * factor), null);
 
             // Head
-            g.drawImage(ImageUtils.crop(fromImage,0, 0, (28 * factor), (13 * factor)), 0, 0, null);
+            g.drawImage(ImageUtils.crop(fromImage, 0, 0, (28 * factor), (13 * factor)), 0, 0, null);
 
             // Body
-            g.drawImage(ImageUtils.crop(fromImage,(35 * factor), 0, (16 * factor), (13 * factor)), (13 * factor), (13 * factor), null);
-            g.drawImage(ImageUtils.crop(fromImage,(22 * factor), (13 * factor), (42 * factor), (7 * factor)), 0, (26 * factor), null);
+            g.drawImage(ImageUtils.crop(fromImage, (35 * factor), 0, (16 * factor), (13 * factor)), (13 * factor), (13 * factor), null);
+            g.drawImage(ImageUtils.crop(fromImage, (22 * factor), (13 * factor), (42 * factor), (7 * factor)), 0, (26 * factor), null);
 
             // Tail 1
-            g.drawImage(ImageUtils.crop(fromImage,(11 * factor), (19 * factor), (8 * factor), (11 * factor)), (11 * factor), (33 * factor), null);
+            g.drawImage(ImageUtils.crop(fromImage, (11 * factor), (19 * factor), (8 * factor), (11 * factor)), (11 * factor), (33 * factor), null);
             g.drawImage(ImageUtils.crop(fromImage,0, (30 * factor), (30 * factor), (5 * factor)), 0, (44 * factor), null);
 
             // Tail 2
-            g.drawImage(ImageUtils.crop(fromImage,(19 * factor), (20 * factor), (32 * factor), (7 * factor)), 0, (49 * factor), null);
+            g.drawImage(ImageUtils.crop(fromImage, (19 * factor), (20 * factor), (32 * factor), (7 * factor)), 0, (49 * factor), null);
 
             // Top
-            g.drawImage(ImageUtils.crop(fromImage,(62 * factor), (5 * factor), factor, (4 * factor)), (33 * factor), 0, null);
-            g.drawImage(ImageUtils.crop(fromImage,(56 * factor), (5 * factor), factor, (4 * factor)), (34 * factor), 0, null);
-            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage,(51 * factor), (5 * factor), (5 * factor), (4 * factor)),-90), (29 * factor), (4 * factor), null);
-            g.drawImage(ImageUtils.crop(fromImage,(56 * factor), 0, factor, (5 * factor)), (33 * factor), (4 * factor), null);
-            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage,(57 * factor), (5 * factor), (5 * factor), (4 * factor)),90), (34 * factor), (4 * factor), null);
-            g.drawImage(ImageUtils.crop(fromImage,(57 * factor), 0, factor, (5 * factor)), (38 * factor), (4 * factor), null);
+            g.drawImage(ImageUtils.crop(fromImage, (62 * factor), (5 * factor), factor, (4 * factor)), (33 * factor), 0, null);
+            g.drawImage(ImageUtils.crop(fromImage, (56 * factor), (5 * factor), factor, (4 * factor)), (34 * factor), 0, null);
+            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage, (51 * factor), (5 * factor), (5 * factor), (4 * factor)),-90), (29 * factor), (4 * factor), null);
+            g.drawImage(ImageUtils.crop(fromImage, (56 * factor), 0, factor, (5 * factor)), (33 * factor), (4 * factor), null);
+            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage, (57 * factor), (5 * factor), (5 * factor), (4 * factor)),90), (34 * factor), (4 * factor), null);
+            g.drawImage(ImageUtils.crop(fromImage, (57 * factor), 0, factor, (5 * factor)), (38 * factor), (4 * factor), null);
 
             // Right
-            g.drawImage(ImageUtils.crop(fromImage,(56 * factor), (27 * factor), (8 * factor), (4 * factor)), (44 * factor), 0, null);
-            g.drawImage(ImageUtils.flip(ImageUtils.crop(fromImage,(48 * factor), (27 * factor), (8 * factor), (4 * factor)), true, false), (52 * factor), 0, null);
-            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage,(55 * factor), (20 * factor), factor, (7 * factor)),90), (40 * factor), (4 * factor), null);
-            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage,(55 * factor), (20 * factor), factor, (5 * factor)),90), (47 * factor), (4 * factor), null);
-            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage,(56 * factor), (20 * factor), factor, (7 * factor)),90), (52 * factor), (4 * factor), null);
-            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage,(56 * factor), (20 * factor), factor, (5 * factor)),90), (59 * factor), (4 * factor), null);
+            g.drawImage(ImageUtils.crop(fromImage, (56 * factor), (27 * factor), (8 * factor), (4 * factor)), (44 * factor), 0, null);
+            g.drawImage(ImageUtils.flip(ImageUtils.crop(fromImage, (48 * factor), (27 * factor), (8 * factor), (4 * factor)), true, false), (52 * factor), 0, null);
+            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage, (55 * factor), (20 * factor), factor, (7 * factor)),90), (40 * factor), (4 * factor), null);
+            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage, (55 * factor), (20 * factor), factor, (5 * factor)),90), (47 * factor), (4 * factor), null);
+            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage, (56 * factor), (20 * factor), factor, (7 * factor)),90), (52 * factor), (4 * factor), null);
+            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage, (56 * factor), (20 * factor), factor, (5 * factor)),90), (59 * factor), (4 * factor), null);
 
             // Left
-            g.drawImage(ImageUtils.flip(ImageUtils.crop(fromImage,(56 * factor), (27 * factor), (8 * factor), (4 * factor)), true, false), (44 * factor), (6 * factor), null);
-            g.drawImage(ImageUtils.crop(fromImage,(48 * factor), (27 * factor), (8 * factor), (4 * factor)), (52 * factor), (6 * factor), null);
-            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage,(55 * factor), (20 * factor), factor, (7 * factor)),90), (40 * factor), (10 * factor), null);
-            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage,(55 * factor), (20 * factor), factor, (5 * factor)),90), (47 * factor), (10 * factor), null);
-            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage,(56 * factor), (20 * factor), factor, (7 * factor)),90), (52 * factor), (10 * factor), null);
-            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage,(56 * factor), (20 * factor), factor, (5 * factor)),90), (59 * factor), (10 * factor), null);
+            g.drawImage(ImageUtils.flip(ImageUtils.crop(fromImage, (56 * factor), (27 * factor), (8 * factor), (4 * factor)), true, false), (44 * factor), (6 * factor), null);
+            g.drawImage(ImageUtils.crop(fromImage, (48 * factor), (27 * factor), (8 * factor), (4 * factor)), (52 * factor), (6 * factor), null);
+            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage, (55 * factor), (20 * factor), factor, (7 * factor)),90), (40 * factor), (10 * factor), null);
+            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage, (55 * factor), (20 * factor), factor, (5 * factor)),90), (47 * factor), (10 * factor), null);
+            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage, (56 * factor), (20 * factor), factor, (7 * factor)),90), (52 * factor), (10 * factor), null);
+            g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage, (56 * factor), (20 * factor), factor, (5 * factor)),90), (59 * factor), (10 * factor), null);
 
             ImageUtils.write(newImage, "png", fromFile);
 
