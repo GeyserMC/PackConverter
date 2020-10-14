@@ -48,6 +48,7 @@ public class ConverterHandler {
         converterList.add(ChestFrontConverter.class);
         converterList.add(ChestSideConverter.class);
         converterList.add(DrownedConverter.class);
+        converterList.add(DolphinConverter.class);
 
         converterList.add(IconsConverter.class);
         converterList.add(MapIconsConverter.class);
