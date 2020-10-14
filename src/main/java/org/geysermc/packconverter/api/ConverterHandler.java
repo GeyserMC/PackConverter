@@ -68,13 +68,16 @@ public class ConverterHandler {
         converterList.add(ColorizeOverlayConverter.class);
 
         converterList.add(PlaceholderConverter.class);
-        converterList.add(CustomModelDataConverter.class);
 
         //converterList.add(ArrowConverter.class); // This is disabled as its broken and the intended output it just the original
 
         converterList.add(EnchantedItemGlintConverter.class);
         converterList.add(PngToTgaConverter.class);
         converterList.add(CopyConverter.class);
+
+        // Custom, not part of the original lib
+        converterList.add(CustomModelDataConverter.class);
+
         converterList.add(DeleteConverter.class);
     }
 }

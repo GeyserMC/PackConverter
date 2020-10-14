@@ -50,7 +50,7 @@ public class CustomModelDataConverter extends AbstractConverter {
     public static final List<Object[]> defaultData = new ArrayList<>();
 
     static {
-        defaultData.add(new String[] {""});
+        defaultData.add(new String[] {"assets/minecraft/models/item", "textures/item_texture.json"});
     }
 
     public CustomModelDataConverter(PackConverter packConverter, Path storage, Object[] data) {
@@ -61,6 +61,9 @@ public class CustomModelDataConverter extends AbstractConverter {
     public List<AbstractConverter> convert() {
         System.out.println("Checking for custom model data");
         try {
+            String from = (String) this.data[0];
+            String to = (String) this.data[1];
+
             ObjectMapper mapper = new ObjectMapper();
 
             // Create the texture_data file that will map all textures
@@ -68,12 +71,11 @@ public class CustomModelDataConverter extends AbstractConverter {
             textureData.put("resource_pack_name", "geysercmd");
             textureData.put("texture_name", "atlas.items");
             ObjectNode allTextures = mapper.createObjectNode();
-            for (File file : storage.resolve("assets/minecraft/models/item").toFile().listFiles()) {
+            for (File file : storage.resolve(from).toFile().listFiles()) {
                 InputStream stream = new FileInputStream(file);
 
                 JsonNode node = mapper.readTree(stream);
                 if (node.has("overrides")) {
-                    System.out.println(node.get("overrides"));
                     for (JsonNode override : node.get("overrides")) {
                         JsonNode predicate = override.get("predicate");
                         if (predicate.has("custom_model_data")) {
@@ -83,8 +85,7 @@ public class CustomModelDataConverter extends AbstractConverter {
                             if (data == null) {
                                 Int2ObjectMap<String> map = new Int2ObjectOpenHashMap<>();
                                 map.put(id, identifier);
-                                packConverter.getCustomModelData().put(file.getName().replace(".json", ""),
-                                        map);
+                                packConverter.getCustomModelData().put(file.getName().replace(".json", ""), map);
                             } else {
                                 data.put(id, identifier);
                             }
@@ -97,17 +98,17 @@ public class CustomModelDataConverter extends AbstractConverter {
                     }
                 }
             }
+
             textureData.set("texture_data", allTextures);
-            try (OutputStream outputStream = Files.newOutputStream(storage.resolve("textures/item_texture.json"),
-                    StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
-                mapper.writer(new DefaultPrettyPrinter()).writeValue(outputStream, textureData);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
+
+            OutputStream outputStream = Files.newOutputStream(storage.resolve(to), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
+            mapper.writer(new DefaultPrettyPrinter()).writeValue(outputStream, textureData);
+
+            System.out.println(String.format("Converted models %s", from));
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return new ArrayList<>();
     }
 }

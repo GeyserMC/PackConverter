@@ -42,6 +42,7 @@ public class CustomModelDataHandler {
         item.put("format_version", "1.16.0");
         ObjectNode itemData = mapper.createObjectNode();
         ObjectNode itemDescription = mapper.createObjectNode();
+
         // Full identifier with geysercmd prefix
         String identifier = "geysercmd:" + filePath.replace("item/", "");
         itemDescription.put("identifier", identifier);
@@ -51,10 +52,12 @@ public class CustomModelDataHandler {
         itemComponent.put("minecraft:render_offsets", "tools");
         itemData.set("components", itemComponent);
         item.set("minecraft:item", itemData);
+
         File itemJsonFile = storage.resolve("items").toFile();
         if (!itemJsonFile.exists()) {
             itemJsonFile.mkdir();
         }
+
         Path path = itemJsonFile.toPath().resolve(filePath.replace("item/", "") + ".json");
         try (OutputStream outputStream = Files.newOutputStream(path,
                 StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
@@ -80,7 +83,6 @@ public class CustomModelDataHandler {
             return null;
         }
 
-        System.out.println(textureFile);
         // TODO: Don't rely on getting the 0 texture
         if (textureFile.has("textures")) {
             if (textureFile.get("textures").has("0") || textureFile.get("textures").has("layer0")) {
