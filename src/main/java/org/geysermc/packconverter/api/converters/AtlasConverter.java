@@ -27,14 +27,13 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -49,8 +48,8 @@ public class AtlasConverter extends AbstractConverter {
         defaultData.add(new Object[] {"textures/items/compass_", 31, "textures/items/compass_atlas.png"});
     }
 
-    public AtlasConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public AtlasConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override
@@ -80,7 +79,7 @@ public class AtlasConverter extends AbstractConverter {
 
                 atlasImage.getGraphics().drawImage(stepImage, 0, (stepImage.getHeight() * i), null);
 
-                delete.add(new DeleteConverter(storage, new Object[] {step}));
+                delete.add(new DeleteConverter(packConverter, storage, new Object[] {step}));
             }
 
             if (atlasImage != null) {

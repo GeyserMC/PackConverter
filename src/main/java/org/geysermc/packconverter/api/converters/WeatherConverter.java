@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
@@ -48,8 +49,8 @@ public class WeatherConverter extends AbstractConverter {
         defaultData.add(new Object[] {"textures/environment/snow.png", "textures/environment/rain.png", "textures/environment/weather.png"});
     }
 
-    public WeatherConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public WeatherConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override
@@ -80,12 +81,12 @@ public class WeatherConverter extends AbstractConverter {
             // Snow
             g.drawImage(ImageUtils.cover(ImageUtils.crop(snowImage, snowImage.getWidth(), (3 * factor)), weatherImage.getWidth(), (3 * factor)), 0, 0, null);
 
-            delete.add(new DeleteConverter(storage, new Object[] {snow}));
+            delete.add(new DeleteConverter(packConverter, storage, new Object[] {snow}));
 
             // Rain
             g.drawImage(ImageUtils.cover(ImageUtils.crop(rainImage, rainImage.getWidth(), (5 * factor)), weatherImage.getWidth(), (5 * factor)), 0, (5 * factor), null);
 
-            delete.add(new DeleteConverter(storage, new Object[] {rain}));
+            delete.add(new DeleteConverter(packConverter, storage, new Object[] {rain}));
 
             ImageUtils.write(weatherImage, "png", storage.resolve(to).toFile());
 

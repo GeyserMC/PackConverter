@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
@@ -47,8 +48,8 @@ public class ArrowConverter extends AbstractConverter {
         defaultData.add(new Object[] {"textures/entity/projectiles/arrow.png", "textures/entity/arrows.png"});
     }
 
-    public ArrowConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public ArrowConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override

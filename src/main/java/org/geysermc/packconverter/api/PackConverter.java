@@ -26,6 +26,8 @@
 
 package org.geysermc.packconverter.api;
 
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import lombok.Getter;
 import org.geysermc.packconverter.api.utils.ZipUtils;
 import org.geysermc.packconverter.api.converters.AbstractConverter;
 
@@ -36,13 +38,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.List;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class PackConverter {
+
+    @Getter
+    private final Map<String, Int2ObjectMap<String>> customModelData = new HashMap<>();
 
     private Path input;
     private Path output;
@@ -96,7 +99,7 @@ public class PackConverter {
 
                 AbstractConverter converter;
                 for (Object[] data : defaultData) {
-                    converter = converterClass.getDeclaredConstructor(Path.class, Object[].class).newInstance(tmpDir, data);
+                    converter = converterClass.getDeclaredConstructor(PackConverter.class, Path.class, Object[].class).newInstance(this, tmpDir, data);
 
                     additionalConverters.addAll(converter.convert());
                 }
@@ -106,6 +109,7 @@ public class PackConverter {
         for (AbstractConverter converter : additionalConverters) {
             converter.convert();
         }
+        System.out.println(customModelData);
     }
 
     public void pack() {

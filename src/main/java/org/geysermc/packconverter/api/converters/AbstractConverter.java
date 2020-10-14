@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.AllArgsConstructor;
+import org.geysermc.packconverter.api.PackConverter;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import java.util.List;
 
 @AllArgsConstructor
 public abstract class AbstractConverter {
+    PackConverter packConverter;
     Path storage;
     Object[] data;
 

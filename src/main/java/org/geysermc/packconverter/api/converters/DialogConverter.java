@@ -30,6 +30,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
@@ -71,8 +72,8 @@ public class DialogConverter extends AbstractConverter {
         });
     }
 
-    public DialogConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public DialogConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override

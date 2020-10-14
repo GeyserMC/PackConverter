@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
@@ -47,8 +48,8 @@ public class TitleConverter extends AbstractConverter {
         defaultData.add(new Object[] {"textures/gui/title/minecraft.png", "textures/ui/title.png"});
     }
 
-    public TitleConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public TitleConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override

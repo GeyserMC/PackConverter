@@ -26,6 +26,7 @@
 
 package org.geysermc.packconverter.api.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -36,14 +37,19 @@ import java.nio.file.StandardOpenOption;
 
 public class CustomModelDataHandler {
 
-    public static String handle(ObjectMapper mapper, Path storage, String filePath) {
+    public static String handleItemData(ObjectMapper mapper, Path storage, String filePath) {
         ObjectNode item = mapper.createObjectNode();
         item.put("format_version", "1.16.0");
         ObjectNode itemData = mapper.createObjectNode();
         ObjectNode itemDescription = mapper.createObjectNode();
+        // Full identifier with geysercmd prefix
         String identifier = "geysercmd:" + filePath.replace("item/", "");
         itemDescription.put("identifier", identifier);
         itemData.set("description", itemDescription);
+        ObjectNode itemComponent = mapper.createObjectNode();
+        itemComponent.put("minecraft:icon", identifier.replace("geysercmd:", ""));
+        itemComponent.put("minecraft:render_offsets", "tools");
+        itemData.set("components", itemComponent);
         item.set("minecraft:item", itemData);
         File itemJsonFile = storage.resolve("items").toFile();
         if (!itemJsonFile.exists()) {
@@ -57,7 +63,37 @@ public class CustomModelDataHandler {
             e.printStackTrace();
             return null;
         }
+
         return identifier;
+    }
+
+    public static ObjectNode handleItemTexture(ObjectMapper mapper, Path storage, String filePath) {
+        String cleanIdentifier = filePath.replace("item/", "");
+
+        InputStream stream;
+        JsonNode textureFile;
+        try {
+            stream = new FileInputStream(storage.resolve("assets/minecraft/models/" + filePath + ".json").toFile());
+            textureFile = mapper.readTree(stream);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        System.out.println(textureFile);
+        // TODO: Don't rely on getting the 0 texture
+        if (textureFile.has("textures")) {
+            if (textureFile.get("textures").has("0") || textureFile.get("textures").has("layer0")) {
+                String determine = textureFile.get("textures").has("0") ? "0" : "layer0";
+                ObjectNode textureData = mapper.createObjectNode();
+                ObjectNode textureName = mapper.createObjectNode();
+                textureName.put("textures", textureFile.get("textures").get(determine).textValue().replace("item/", "textures/items/"));
+                textureData.set(cleanIdentifier, textureName);
+                return textureData;
+            }
+        }
+
+        return null;
     }
 
 }

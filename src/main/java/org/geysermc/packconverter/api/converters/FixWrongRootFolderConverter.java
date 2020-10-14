@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ResourcePackManifest;
 
 import java.io.FileNotFoundException;
@@ -51,8 +52,8 @@ public class FixWrongRootFolderConverter extends AbstractConverter {
         defaultData.add(new Object[] {"pack.mcmeta", new String[] {"pack.png", "assets/", "bedrock_textures/", "bedrock_uuid_header", "bedrock_uuid_module"}});
     }
 
-    public FixWrongRootFolderConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public FixWrongRootFolderConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override

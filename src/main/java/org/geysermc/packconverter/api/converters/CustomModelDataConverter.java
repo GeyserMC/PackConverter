@@ -26,15 +26,21 @@
 
 package org.geysermc.packconverter.api.converters;
 
+import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.CustomModelDataHandler;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +53,8 @@ public class CustomModelDataConverter extends AbstractConverter {
         defaultData.add(new String[] {""});
     }
 
-    public CustomModelDataConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public CustomModelDataConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override
@@ -56,6 +62,12 @@ public class CustomModelDataConverter extends AbstractConverter {
         System.out.println("Checking for custom model data");
         try {
             ObjectMapper mapper = new ObjectMapper();
+
+            // Create the texture_data file that will map all textures
+            ObjectNode textureData = mapper.createObjectNode();
+            textureData.put("resource_pack_name", "geysercmd");
+            textureData.put("texture_name", "atlas.items");
+            ObjectNode allTextures = mapper.createObjectNode();
             for (File file : storage.resolve("assets/minecraft/models/item").toFile().listFiles()) {
                 InputStream stream = new FileInputStream(file);
 
@@ -66,10 +78,32 @@ public class CustomModelDataConverter extends AbstractConverter {
                         JsonNode predicate = override.get("predicate");
                         if (predicate.has("custom_model_data")) {
                             int id = predicate.get("custom_model_data").asInt();
-                            String identifier = CustomModelDataHandler.handle(mapper, storage, override.get("model").asText());
+                            String identifier = CustomModelDataHandler.handleItemData(mapper, storage, override.get("model").asText());
+                            Int2ObjectMap<String> data = packConverter.getCustomModelData().getOrDefault(file.getName().replace(".json", ""), null);
+                            if (data == null) {
+                                Int2ObjectMap<String> map = new Int2ObjectOpenHashMap<>();
+                                map.put(id, identifier);
+                                packConverter.getCustomModelData().put(file.getName().replace(".json", ""),
+                                        map);
+                            } else {
+                                data.put(id, identifier);
+                            }
+
+                            ObjectNode textureInfo = CustomModelDataHandler.handleItemTexture(mapper, storage, override.get("model").asText());
+                            if (textureInfo != null) {
+                                allTextures.setAll(textureInfo);
+                            }
                         }
                     }
                 }
+            }
+            textureData.set("texture_data", allTextures);
+            try (OutputStream outputStream = Files.newOutputStream(storage.resolve("textures/item_texture.json"),
+                    StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE)) {
+                mapper.writer(new DefaultPrettyPrinter()).writeValue(outputStream, textureData);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
             }
         } catch (Exception e) {
             e.printStackTrace();

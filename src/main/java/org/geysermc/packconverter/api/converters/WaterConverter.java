@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
@@ -50,8 +51,8 @@ public class WaterConverter extends AbstractConverter {
         defaultData.add(new Object[] {"textures/blocks/water_still_grey.png", "textures/blocks/water_still_grey.png", 16, true});
     }
 
-    public WaterConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public WaterConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override

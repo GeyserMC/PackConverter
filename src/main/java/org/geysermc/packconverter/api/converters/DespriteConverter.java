@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
@@ -88,8 +89,8 @@ public class DespriteConverter extends AbstractConverter {
         });
     }
 
-    public DespriteConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public DespriteConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override

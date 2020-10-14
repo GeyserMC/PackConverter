@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
@@ -194,8 +195,8 @@ public class PngToTgaConverter extends AbstractConverter {
         defaultData.add(new Object[] {"textures/models/armor/leather_2.png", "textures/models/armor/leather_2.tga"});
     }
 
-    public PngToTgaConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public PngToTgaConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override
@@ -211,7 +212,7 @@ public class PngToTgaConverter extends AbstractConverter {
             ImageUtils.write(fromImage, "tga", storage.resolve(to).toFile());
 
             if (!dont_delete) {
-                delete.add(new DeleteConverter(storage, new Object[] {from}));
+                delete.add(new DeleteConverter(packConverter, storage, new Object[] {from}));
             }
 
             System.out.println(String.format("Create tga %s", from));

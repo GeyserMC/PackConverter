@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
@@ -62,8 +63,8 @@ public class BedConverter extends AbstractConverter {
         defaultData.add(new Object[] {"textures/entity/bed/yellow.png"});
     }
 
-    public BedConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public BedConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override

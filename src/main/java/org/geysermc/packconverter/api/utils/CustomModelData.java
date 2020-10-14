@@ -33,11 +33,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
 @AllArgsConstructor
 public class CustomModelData {
 
-    private final String itemId;
-    //private final Int2ObjectMap<CustomModelDataItem> customModelData = new Int2ObjectOpenHashMap<>();
+    private final int dataId;
+    private final String identifier;
 
 }

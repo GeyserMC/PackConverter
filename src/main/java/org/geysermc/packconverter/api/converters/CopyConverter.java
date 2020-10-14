@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -106,8 +107,8 @@ public class CopyConverter extends AbstractConverter {
         defaultData.add(new String[] {"bedrock_textures/", "textures/"});
     }
 
-    public CopyConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public CopyConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override

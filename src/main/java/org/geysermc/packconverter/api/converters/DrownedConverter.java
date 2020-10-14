@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
@@ -47,8 +48,8 @@ public class DrownedConverter extends AbstractConverter {
         defaultData.add(new Object[] {"textures/entity/zombie/drowned.png", "textures/entity/zombie/drowned_outer_layer.png", "textures/entity/zombie/drowned.png"});
     }
 
-    public DrownedConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public DrownedConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override
@@ -89,7 +90,7 @@ public class DrownedConverter extends AbstractConverter {
 
             ImageUtils.write(newImage, "png", storage.resolve(to).toFile());
 
-            delete.add(new DeleteConverter(storage, new Object[] {overlay}));
+            delete.add(new DeleteConverter(packConverter, storage, new Object[] {overlay}));
 
             System.out.println("Convert drowned");
         } catch (IOException e) { }

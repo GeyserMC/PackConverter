@@ -27,6 +27,7 @@
 package org.geysermc.packconverter.api.converters;
 
 import lombok.Getter;
+import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
@@ -48,8 +49,8 @@ public class ChestSideConverter extends AbstractConverter {
         defaultData.add(new Object[] {"textures/entity/chest/ender.png", "textures/blocks/ender_chest_side.png"});
     }
 
-    public ChestSideConverter(Path storage, Object[] data) {
-        super(storage, data);
+    public ChestSideConverter(PackConverter packConverter, Path storage, Object[] data) {
+        super(packConverter, storage, data);
     }
 
     @Override
