@@ -64,7 +64,7 @@ public class ConverterHandler {
         converterList.add(WeatherConverter.class);
         converterList.add(OpaqueConverter.class);
         converterList.add(WaterConverter.class);
-
+        converterList.add(BeeConverter.class);
         converterList.add(TitleConverter.class);
         converterList.add(DespriteConverter.class);
         if (enableExperimental) { converterList.add(DespriteExperimentalConverter.class); } // Experimental
@@ -73,11 +73,12 @@ public class ConverterHandler {
         if (enableExperimental) { converterList.add(DialogConverter.class); } // Experimental
         converterList.add(OverlayToTranslateConverter.class);
         converterList.add(ColorizeOverlayConverter.class);
-
         converterList.add(PlaceholderConverter.class);
-
+        converterList.add(SideRotateConverter.class);
         //converterList.add(ArrowConverter.class); // This is disabled as its broken and the intended output it just the original
-
+        converterList.add(Particles1_13Converter.class);
+        converterList.add(SpriteConverter.class);
+        converterList.add(DestroyStageConverter.class);
         converterList.add(EnchantedItemGlintConverter.class);
         converterList.add(BannerPatternPreviewMaxSizeConverter.class);
         converterList.add(PngToTgaConverter.class);
