@@ -54,6 +54,7 @@ public class ConverterHandler {
         converterList.add(FoxConverter.class);
         converterList.add(HorseConverter.class);
         converterList.add(IconsConverter.class);
+        converterList.add(BannerPatternBlackConverter.class);
         converterList.add(MapIconsConverter.class);
         converterList.add(PistonArmConverter.class);
         converterList.add(RedstoneDustConverter.class);
@@ -78,6 +79,7 @@ public class ConverterHandler {
         //converterList.add(ArrowConverter.class); // This is disabled as its broken and the intended output it just the original
 
         converterList.add(EnchantedItemGlintConverter.class);
+        converterList.add(BannerPatternPreviewMaxSizeConverter.class);
         converterList.add(PngToTgaConverter.class);
         converterList.add(CopyConverter.class);
 

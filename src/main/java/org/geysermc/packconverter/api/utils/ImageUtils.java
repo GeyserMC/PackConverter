@@ -72,7 +72,7 @@ public class ImageUtils {
     public static BufferedImage scale(BufferedImage img, float scale) {
         int w = img.getWidth();
         int h = img.getHeight();
-        BufferedImage after = new BufferedImage(Math.round( w * scale), Math.round(h * scale), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage after = new BufferedImage(Math.round(w * scale), Math.round(h * scale), BufferedImage.TYPE_INT_ARGB);
         AffineTransform at = new AffineTransform();
         at.scale(scale, scale);
         AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
@@ -88,7 +88,7 @@ public class ImageUtils {
      */
     public static BufferedImage ensureMinWidth(BufferedImage img, int minWidth) {
         if (img.getWidth() < minWidth) {
-            return scale(img, (minWidth / img.getWidth()));
+            return scale(img, ((float) minWidth / img.getWidth()));
         }
 
         return img;
@@ -103,7 +103,37 @@ public class ImageUtils {
      */
     public static BufferedImage ensureMinHeight(BufferedImage img, int minHeight) {
         if (img.getHeight() < minHeight) {
-            return scale(img, (minHeight / img.getHeight()));
+            return scale(img, ((float) minHeight / img.getHeight()));
+        }
+
+        return img;
+    }
+
+    /**
+     * Scale the image so it has a width that is at less than the max
+     *
+     * @param img
+     * @param maxWidth
+     * @return
+     */
+    public static BufferedImage ensureMaxWidth(BufferedImage img, int maxWidth) {
+        if (img.getWidth() > maxWidth) {
+            return scale(img, ((float) maxWidth / img.getWidth()));
+        }
+
+        return img;
+    }
+
+    /**
+     * Scale the image so it has a height that is at less than the max
+     *
+     * @param img
+     * @param maxHeight
+     * @return
+     */
+    public static BufferedImage ensureMaxHeight(BufferedImage img, int maxHeight) {
+        if (img.getHeight() > maxHeight) {
+            return scale(img, ((float) maxHeight / img.getWidth()));
         }
 
         return img;
