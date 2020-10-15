@@ -64,6 +64,8 @@ public class ArrowConverter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
+            packConverter.log(String.format("Convert arrow %s", to));
+
             BufferedImage fromImage = ImageIO.read(fromFile);
 
             int factor = fromImage.getWidth() / 32;
@@ -92,7 +94,6 @@ public class ArrowConverter extends AbstractConverter {
             g.drawImage(fromImage, 0, 10 * factor, null);
 
             ImageUtils.write(newArrowImage, "png", storage.resolve(to).toFile());
-            System.out.println(String.format("Convert arrow %s", to));
         } catch (IOException e) { }
 
         return new ArrayList<>();

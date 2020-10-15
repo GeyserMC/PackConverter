@@ -116,8 +116,14 @@ public class CopyConverter extends AbstractConverter {
         try {
             String from = (String) this.data[0];
             String to = (String) this.data[1];
+
+            if (!storage.resolve(from).toFile().exists()) {
+                return new ArrayList<>();
+            }
+
+            packConverter.log(String.format("Copy %s to %s", from, to));
+
             Files.copy(storage.resolve(from), storage.resolve(to));
-            System.out.println(String.format("Copy %s to %s", from, to));
         } catch (IOException e) { }
 
         return new ArrayList<>();

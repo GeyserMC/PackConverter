@@ -65,6 +65,8 @@ public class DolphinConverter extends AbstractConverter {
                 return delete;
             }
 
+            packConverter.log("Convert dolphin");
+
             BufferedImage fromImage = ImageIO.read(fromFile);
 
             fromImage = ImageUtils.ensureMinWidth(fromImage, 64);
@@ -116,8 +118,6 @@ public class DolphinConverter extends AbstractConverter {
             g.drawImage(ImageUtils.rotate(ImageUtils.crop(fromImage, (56 * factor), (20 * factor), factor, (5 * factor)),90), (59 * factor), (10 * factor), null);
 
             ImageUtils.write(newImage, "png", fromFile);
-
-            System.out.println("Convert dolphin");
         } catch (IOException e) { }
 
         return delete;

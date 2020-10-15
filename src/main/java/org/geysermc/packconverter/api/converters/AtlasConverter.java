@@ -74,6 +74,8 @@ public class AtlasConverter extends AbstractConverter {
                 BufferedImage stepImage = ImageIO.read(stepFile);
                 
                 if (atlasImage == null) {
+                    packConverter.log(String.format("Create atlas %s", to));
+
                     atlasImage = new BufferedImage(stepImage.getWidth(), stepImage.getHeight() * (count + 1), BufferedImage.TYPE_INT_ARGB);
                 }
 
@@ -84,7 +86,6 @@ public class AtlasConverter extends AbstractConverter {
 
             if (atlasImage != null) {
                 ImageUtils.write(atlasImage, "png", storage.resolve(to).toFile());
-                System.out.println(String.format("Create atlas %s", to));
             }
         } catch (IOException e) { }
 

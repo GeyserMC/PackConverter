@@ -66,7 +66,7 @@ public class FixWrongRootFolderConverter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
-            System.out.println(String.format("%s not found in root folder (But are needed in the root folder, even in the Java version) - Try to lookup in sub folders ...", packMcmeta));
+            packConverter.log(String.format("%s not found in root folder (But are needed in the root folder, even in the Java version) - Try to lookup in sub folders ...", packMcmeta));
 
             Path rootPath = null;
             for (Path filePath : Files.walk(storage).filter(Files::isRegularFile).collect(Collectors.toList())) {
@@ -79,6 +79,8 @@ public class FixWrongRootFolderConverter extends AbstractConverter {
             if (rootPath == null) {
                 throw new AssertionError(String.format("%s not found! Is this really a Java texture pack?", packMcmeta));
             }
+
+            packConverter.log(String.format("Root folder found in sub folder %s", rootPath.relativize(storage).toString()));
 
             List<String> moveFilesList = new ArrayList<>();
             moveFilesList.add(packMcmeta);

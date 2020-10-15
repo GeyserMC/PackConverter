@@ -71,6 +71,8 @@ public class PistonArmConverter extends AbstractConverter {
                 return delete;
             }
 
+            packConverter.log(String.format("Create piston arm %s", to));
+
             BufferedImage top1Image = ImageIO.read(top1File);
             BufferedImage top2Image = ImageIO.read(top2File);
             BufferedImage sideImage = ImageIO.read(sideFile);
@@ -154,8 +156,6 @@ public class PistonArmConverter extends AbstractConverter {
             g.drawImage(side5Image, (83 * factor), (29 * factor), null);
 
             ImageUtils.write(newImage, "png", storage.resolve(to).toFile());
-
-            System.out.println(String.format("Create piston arm %s", to));
         } catch (IOException e) { }
 
         return delete;

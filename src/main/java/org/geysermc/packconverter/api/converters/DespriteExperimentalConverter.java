@@ -197,6 +197,8 @@ public class DespriteExperimentalConverter extends AbstractConverter {
                 int[] emptyOverlayAlt = spriteArr.length > 5 ? (int[]) spriteArr[5] : null;
                 int[] emptyOverlay = spriteArr.length > 6 ? (int[]) spriteArr[6] : null;
 
+                packConverter.log(String.format("Desprite %s (Experimental)", to));
+
                 BufferedImage spriteImage = ImageUtils.crop(fromImage, (x * factor), (y * factor), (width * factor), (height * factor));
 
                 if (emptyOverlayAlt != null && ImageUtils.isEmptyArea(spriteImage, 0, 0, spriteImage.getWidth(), spriteImage.getHeight())) {
@@ -210,8 +212,6 @@ public class DespriteExperimentalConverter extends AbstractConverter {
                 }
 
                 ImageUtils.write(spriteImage, "png", storage.resolve(to).toFile());
-
-                System.out.println(String.format("Desprite %s (Experimental)", to));
             }
         } catch (IOException e) { }
 

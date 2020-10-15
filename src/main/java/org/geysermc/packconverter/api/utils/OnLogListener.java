@@ -24,24 +24,8 @@
  *
  */
 
-package org.geysermc.packconverter.bootstrap;
+package org.geysermc.packconverter.api.utils;
 
-import org.geysermc.packconverter.api.PackConverter;
-
-import java.io.IOException;
-import java.nio.file.Paths;
-
-public class Main {
-    private static final String packname = "Faithful-1.16.3";
-
-    public static void main(String[] args) {
-        try {
-            PackConverter packConverter = new PackConverter(Paths.get(packname + ".zip"), Paths.get(packname + ".mcpack"));
-            packConverter.convert();
-            packConverter.pack();
-            packConverter.cleanup();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+public interface OnLogListener {
+    void onLog();
 }

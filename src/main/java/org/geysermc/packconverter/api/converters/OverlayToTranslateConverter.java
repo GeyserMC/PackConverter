@@ -33,6 +33,7 @@ import org.geysermc.packconverter.api.utils.ImageUtils;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -99,10 +100,19 @@ public class OverlayToTranslateConverter extends AbstractConverter {
             String overlay = (String) this.data[1];
             String to = (String) this.data[2];
             boolean reverse = (boolean) this.data[3];
-            boolean dontDelete = this.data.length > 4 ? (boolean) this.data[4] : false;
+            boolean dontDelete = this.data.length > 4 && (boolean) this.data[4];
 
-            BufferedImage image = ImageIO.read(storage.resolve(from).toFile());
-            BufferedImage imageOverlay = ImageIO.read(storage.resolve(overlay).toFile());
+            File fromFile = storage.resolve(from).toFile();
+            File overlayFile = storage.resolve(overlay).toFile();
+
+            if (!fromFile.exists() || !overlayFile.exists()) {
+                return delete;
+            }
+
+            packConverter.log(String.format("Create translated overlay %s", to));
+
+            BufferedImage image = ImageIO.read(fromFile);
+            BufferedImage imageOverlay = ImageIO.read(overlayFile);
 
             for (int x = 0; x < image.getWidth(); x++) {
                 for (int y = 0; y < image.getHeight(); y++) {
@@ -121,8 +131,6 @@ public class OverlayToTranslateConverter extends AbstractConverter {
             if (!dontDelete) {
                 delete.add(new DeleteConverter(packConverter, storage, new Object[] {overlay}));
             }
-
-            System.out.println(String.format("Create translated overlay %s", to));
         } catch (IOException e) { }
 
         return delete;

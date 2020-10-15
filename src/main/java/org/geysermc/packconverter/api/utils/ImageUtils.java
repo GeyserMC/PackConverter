@@ -46,12 +46,12 @@ public class ImageUtils {
     /**
      * Crop an image
      *
-     * @param img
-     * @param x
-     * @param y
-     * @param width
-     * @param height
-     * @return
+     * @param img Image to use
+     * @param x Starting X
+     * @param y Starting Y
+     * @param width Final width
+     * @param height Final height
+     * @return Cropped image
      */
     public static BufferedImage crop(BufferedImage img, int x, int y, int width, int height) {
         BufferedImage dest = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -65,9 +65,9 @@ public class ImageUtils {
      * Scale a buffered image
      * Based on https://stackoverflow.com/a/4216635/5299903
      *
-     * @param img
-     * @param scale
-     * @return
+     * @param img Image to use
+     * @param scale Amount to scale the image by
+     * @return Scaled image
      */
     public static BufferedImage scale(BufferedImage img, float scale) {
         int w = img.getWidth();
@@ -82,9 +82,9 @@ public class ImageUtils {
     /**
      * Scale the image so it has a width that is at least the min
      *
-     * @param img
-     * @param minWidth
-     * @return
+     * @param img Image to use
+     * @param minWidth Width to check
+     * @return Scaled image if needed
      */
     public static BufferedImage ensureMinWidth(BufferedImage img, int minWidth) {
         if (img.getWidth() < minWidth) {
@@ -97,9 +97,9 @@ public class ImageUtils {
     /**
      * Scale the image so it has a height that is at least the min
      *
-     * @param img
-     * @param minHeight
-     * @return
+     * @param img Image to use
+     * @param minHeight Height to check
+     * @return Scaled image if needed
      */
     public static BufferedImage ensureMinHeight(BufferedImage img, int minHeight) {
         if (img.getHeight() < minHeight) {
@@ -112,9 +112,9 @@ public class ImageUtils {
     /**
      * Scale the image so it has a width that is at less than the max
      *
-     * @param img
-     * @param maxWidth
-     * @return
+     * @param img Image to use
+     * @param maxWidth Width to check
+     * @return Scaled image if needed
      */
     public static BufferedImage ensureMaxWidth(BufferedImage img, int maxWidth) {
         if (img.getWidth() > maxWidth) {
@@ -127,9 +127,9 @@ public class ImageUtils {
     /**
      * Scale the image so it has a height that is at less than the max
      *
-     * @param img
-     * @param maxHeight
-     * @return
+     * @param img Image to use
+     * @param maxHeight Height to check
+     * @return Scaled image if needed
      */
     public static BufferedImage ensureMaxHeight(BufferedImage img, int maxHeight) {
         if (img.getHeight() > maxHeight) {
@@ -142,10 +142,10 @@ public class ImageUtils {
     /**
      * Scale the image to fill the required size, may result in clipping
      *
-     * @param img
-     * @param width
-     * @param height
-     * @return
+     * @param img Image to use
+     * @param width Wanted width
+     * @param height Wanted height
+     * @return Manipulated image if needed
      */
     public static BufferedImage cover(BufferedImage img, int width, int height) {
         int f = width / height > img.getWidth() / img.getHeight() ? width / img.getWidth() : height / img.getHeight();
@@ -155,8 +155,8 @@ public class ImageUtils {
     /**
      * Convert a color to an ARGB int
      *
-     * @param color
-     * @return
+     * @param color Color to use
+     * @return ARGB int
      */
     public static int colorToARGB(Color color) {
         int newPixel = 0;
@@ -187,8 +187,8 @@ public class ImageUtils {
     /**
      * Convert a {@link BufferedImage} to grayscale
      *
-     * @param img
-     * @return
+     * @param img Image to use
+     * @return A grayscale version of the image
      */
     public static BufferedImage grayscale(BufferedImage img) {
         BufferedImage newImage = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -211,9 +211,9 @@ public class ImageUtils {
     /**
      * Tint a {@link BufferedImage} by a given {@link Color}
      *
-     * @param img
-     * @param color
-     * @return
+     * @param img Image to use
+     * @param color Color to tint
+     * @return Tinted image
      */
     public static BufferedImage colorize(BufferedImage img, Color color) {
         BufferedImage newImage = grayscale(img);
@@ -232,8 +232,8 @@ public class ImageUtils {
     /**
      * Convert an {@link Image} to {@link BufferedImage}
      *
-     * @param img
-     * @return
+     * @param img Image to use
+     * @return The converted image
      */
     private static BufferedImage toBufferedImage(Image img) {
         if (img instanceof BufferedImage) {
@@ -251,9 +251,9 @@ public class ImageUtils {
     /**
      * Rotate a given {@link BufferedImage} by an angle
      *
-     * @param img
-     * @param angle
-     * @return
+     * @param img Image to use
+     * @param angle Amount to rotate by in degrees
+     * @return Rotated image
      */
     public static BufferedImage rotate(BufferedImage img, int angle) {
         final double rads = Math.toRadians(-angle);
@@ -273,12 +273,12 @@ public class ImageUtils {
     /**
      * Check if a given area is empty
      *
-     * @param img
-     * @param subX
-     * @param subY
-     * @param width
-     * @param height
-     * @return
+     * @param img Image to use
+     * @param subX Start X
+     * @param subY Start Y
+     * @param width Check width
+     * @param height Check height
+     * @return True if the area is empty
      */
     public static boolean isEmptyArea(BufferedImage img, int subX, int subY, int width, int height) {
         BufferedImage subImage = img.getSubimage(subX, subY, width, height);
@@ -296,14 +296,14 @@ public class ImageUtils {
     /**
      * Create new image from border image
      *
-     * @param img
-     * @param borderLeft
-     * @param borderTop
-     * @param borderRight
-     * @param borderBottom
-     * @param newWidth
-     * @param newHeight
-     * @return
+     * @param img Image to use
+     * @param borderLeft Left border width
+     * @param borderTop Top border width
+     * @param borderRight Right border width
+     * @param borderBottom Bottom border width
+     * @param newWidth Target width
+     * @param newHeight Target height
+     * @return The converted image
      */
     public static BufferedImage borderImage(BufferedImage img, int borderLeft, int borderTop, int borderRight, int borderBottom, int newWidth, int newHeight) {
         BufferedImage newImage = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
@@ -326,18 +326,25 @@ public class ImageUtils {
 
     /**
      * Resize a {@link BufferedImage} to the requested size
-     * Doesnt replicate the jimp way of doing it but should give a simmilar output
+     * Doesnt replicate the jimp way of doing it but should give a similar output
      *
-     * @param img
-     * @param newWidth
-     * @param netHeight
-     * @return
+     * @param img Image to use
+     * @param newWidth Target width
+     * @param netHeight Target height
+     * @return Scaled image to size
      */
     public static BufferedImage resize(BufferedImage img, int newWidth, int netHeight) {
         Image scaled = img.getScaledInstance(newWidth, netHeight, BufferedImage.SCALE_SMOOTH);
         return toBufferedImage(scaled);
     }
 
+    /**
+     * Alter the saturation of a {@link BufferedImage} by a given amount
+     *
+     * @param img Image to use
+     * @param amount Amount to alter the saturation by
+     * @return Saturated image
+     */
     public static BufferedImage saturate(BufferedImage img, int amount) {
         BufferedImage newImage = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
@@ -376,7 +383,7 @@ public class ImageUtils {
      *
      * @param horizontal If true the image will be flipped horizontally
      * @param vertical If true the image will be flipped vertically
-     * @return
+     * @return The flipped image
      */
     public static BufferedImage flip(BufferedImage image, boolean horizontal, boolean vertical) {
         AffineTransform at = AffineTransform.getScaleInstance(horizontal ? -1 : 1, vertical ? -1 : 1);
@@ -397,6 +404,14 @@ public class ImageUtils {
         return newImage;
     }
 
+    /**
+     * Limit a number between two values
+     *
+     * @param val Value to limit
+     * @param min Lower bound
+     * @param max Upper bound
+     * @return Limited value
+     */
     private static int clamp(int val, int min, int max) {
         return val > max ? max : Math.max(val, min);
     }

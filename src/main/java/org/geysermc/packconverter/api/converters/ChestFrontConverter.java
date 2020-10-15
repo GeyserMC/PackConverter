@@ -66,6 +66,8 @@ public class ChestFrontConverter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
+            packConverter.log(String.format("Create chest front %s", to));
+
             BufferedImage fromImage = ImageIO.read(fromFile);
 
             fromImage = ImageUtils.ensureMinWidth(fromImage, 64);
@@ -81,8 +83,6 @@ public class ChestFrontConverter extends AbstractConverter {
             g.drawImage(ImageUtils.crop(fromImage , factor, factor, (2 * factor), (4 * factor)), (6 * factor), (3 * factor), null);
 
             ImageUtils.write(newImage, "png", storage.resolve(to).toFile());
-
-            System.out.println(String.format("Create chest front %s", to));
         } catch (IOException e) { }
 
         return new ArrayList<>();

@@ -68,6 +68,8 @@ public class DrownedConverter extends AbstractConverter {
                 return delete;
             }
 
+            packConverter.log("Convert drowned");
+
             BufferedImage fromImage = ImageIO.read(fromFile);
             BufferedImage overlayImage = ImageIO.read(overlayFile);
 
@@ -91,8 +93,6 @@ public class DrownedConverter extends AbstractConverter {
             ImageUtils.write(newImage, "png", storage.resolve(to).toFile());
 
             delete.add(new DeleteConverter(packConverter, storage, new Object[] {overlay}));
-
-            System.out.println("Convert drowned");
         } catch (IOException e) { }
 
         return delete;

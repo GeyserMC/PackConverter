@@ -63,13 +63,19 @@ public class DeleteConverter extends AbstractConverter {
         try {
             String from = (String) this.data[0];
 
-            if (storage.resolve(from).toFile().isDirectory()) {
-                deleteDirectory(storage.resolve(from).toFile());
-            } else {
-                Files.delete(storage.resolve(from));
+            File fromFile = storage.resolve(from).toFile();
+
+            if (!fromFile.exists()) {
+                return new ArrayList<>();
             }
 
-            System.out.println(String.format("Delete %s", from));
+            packConverter.log(String.format("Delete %s", from));
+
+            if (fromFile.isDirectory()) {
+                deleteDirectory(fromFile);
+            } else {
+                Files.delete(fromFile.toPath());
+            }
         } catch (IOException e) { }
 
         return new ArrayList<>();

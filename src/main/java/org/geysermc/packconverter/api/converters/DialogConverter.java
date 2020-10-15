@@ -127,11 +127,11 @@ public class DialogConverter extends AbstractConverter {
 
                     JsonNode metadata = mapper.readTree("{nineslice_size: " + mapper.writeValueAsString(toSizes) + ", base_size: [" + (toImage.getWidth() / factor) + ", " + (toImage.getHeight() / factor) + "]}");
 
+                    packConverter.log(String.format("Convert dialog %s (Experimental)", toPath));
+
                     ImageUtils.write(toImage, "png", storage.resolve(toPath + ".png").toFile());
 
                     mapper.writeValue(storage.resolve(toPath + ".json").toFile(), metadata);
-
-                    System.out.println(String.format("Convert dialog %s (Experimental)", toPath));
                 }
             }
             

@@ -71,6 +71,8 @@ public class RedstoneDustConverter extends AbstractConverter {
                 return delete;
             }
 
+            packConverter.log("Convert redstone dust");
+
             BufferedImage newImage = ImageIO.read(line0File);
             newImage = ImageUtils.rotate(newImage, 90);
             ImageUtils.write(newImage, "png", storage.resolve(to_line).toFile());
@@ -90,8 +92,6 @@ public class RedstoneDustConverter extends AbstractConverter {
             delete.add(new DeleteConverter(packConverter, storage, new Object[] {dot}));
             delete.add(new DeleteConverter(packConverter, storage, new Object[] {line0}));
             delete.add(new DeleteConverter(packConverter, storage, new Object[] {line1}));
-
-            System.out.println("Convert redstone dust");
         } catch (IOException e) { }
 
         return delete;

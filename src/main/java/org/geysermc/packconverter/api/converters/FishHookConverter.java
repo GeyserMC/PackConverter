@@ -66,6 +66,8 @@ public class FishHookConverter extends AbstractConverter {
                 return delete;
             }
 
+            packConverter.log("Convert fishhook");
+
             BufferedImage fromImage = ImageIO.read(fromFile);
 
             int factor = fromImage.getWidth() / 8;
@@ -102,8 +104,6 @@ public class FishHookConverter extends AbstractConverter {
             g.drawImage(ImageUtils.crop(fromImage, (4 * factor), (4 * factor), factor, factor), (22 * factor), (2 * factor), null);
 
             ImageUtils.write(newImage, "png", storage.resolve(to).toFile());
-
-            System.out.println("Convert fishhook");
         } catch (IOException e) { }
 
         return delete;

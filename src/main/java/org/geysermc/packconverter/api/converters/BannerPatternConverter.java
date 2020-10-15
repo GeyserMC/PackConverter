@@ -48,7 +48,7 @@ public class BannerPatternConverter extends AbstractConverter {
         defaultData.add(new Object[] {"textures/entity/banner_base.png", new Object[]{
                 // https://www.planetminecraft.com/banner/pillager-banner-199281/
                 // Colors from original bedrock texture
-                new Object[] {"textures/entity/banner/base.png",new Color(255, 255, 255)},
+                new Object[] {"textures/entity/banner/base.png", new Color(255, 255, 255)},
                 new Object[] {"textures/entity/banner/rhombus.png", new Color(76, 127, 153)},
                 new Object[] {"textures/entity/banner/stripe_bottom.png", new Color(146, 146, 146)},
                 new Object[] {"textures/entity/banner/stripe_center.png", new Color(79, 79, 79)},
@@ -85,6 +85,8 @@ public class BannerPatternConverter extends AbstractConverter {
                 BufferedImage patternImage = ImageIO.read(patternFile);
                 
                 if (bannerImage == null) {
+                    packConverter.log(String.format("Convert pattern banner %s", to));
+
                     bannerImage = ImageIO.read(storage.resolve(base).toFile());
 
                     int factor = bannerImage.getWidth() / 64;
@@ -106,7 +108,6 @@ public class BannerPatternConverter extends AbstractConverter {
 
             if (bannerImage != null) {
                 ImageUtils.write(bannerImage, "png", storage.resolve(to).toFile());
-                System.out.println(String.format("Create pattern banner %s", to));
             }
         } catch (IOException e) { }
 

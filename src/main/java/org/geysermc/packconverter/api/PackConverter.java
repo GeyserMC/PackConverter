@@ -28,6 +28,8 @@ package org.geysermc.packconverter.api;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.Getter;
+import lombok.Setter;
+import org.geysermc.packconverter.api.utils.OnLogListener;
 import org.geysermc.packconverter.api.utils.ZipUtils;
 import org.geysermc.packconverter.api.converters.AbstractConverter;
 
@@ -52,6 +54,9 @@ public class PackConverter {
     private Path output;
 
     private Path tmpDir;
+
+    @Setter
+    private OnLogListener onLogListener;
 
     public PackConverter(Path input, Path output) throws IOException {
         this.input = input;
@@ -89,6 +94,9 @@ public class PackConverter {
         }
     }
 
+    /**
+     * Convert all resources in the pack using the converters
+     */
     public void convert() {
         List<AbstractConverter> additionalConverters = new ArrayList<>();
 
@@ -108,11 +116,13 @@ public class PackConverter {
         for (AbstractConverter converter : additionalConverters) {
             converter.convert();
         }
-        System.out.println(customModelData);
     }
 
+    /**
+     * Convert the temporary folder into the output zip
+     */
     public void pack() {
-        ZipUtils zipUtils = new ZipUtils(tmpDir.toFile());
+        ZipUtils zipUtils = new ZipUtils(this, tmpDir.toFile());
         zipUtils.generateFileList();
         zipUtils.zipIt(output.toString());
     }
@@ -125,5 +135,13 @@ public class PackConverter {
         try {
             Files.delete(tmpDir);
         } catch (IOException ignored) { }
+    }
+
+    public void log(String message) {
+        if (onLogListener != null) {
+            onLogListener.onLog();
+        } else {
+            System.out.println(message);
+        }
     }
 }

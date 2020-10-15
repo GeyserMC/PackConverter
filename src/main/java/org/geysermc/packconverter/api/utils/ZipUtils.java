@@ -26,6 +26,8 @@
 
 package org.geysermc.packconverter.api.utils;
 
+import org.geysermc.packconverter.api.PackConverter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -42,9 +44,11 @@ import java.util.zip.ZipOutputStream;
 public class ZipUtils {
 
     private final List <String> fileList = new ArrayList<>();
+    private final PackConverter packConverter;
     private final File sourceFolder;
 
-    public ZipUtils(File sourceFolder) {
+    public ZipUtils(PackConverter packConverter, File sourceFolder) {
+        this.packConverter = packConverter;
         this.sourceFolder = sourceFolder;
     }
 
@@ -57,11 +61,11 @@ public class ZipUtils {
             fos = new FileOutputStream(zipFile);
             zos = new ZipOutputStream(fos);
 
-            System.out.println("Output to Zip : " + zipFile);
+            packConverter.log("Output to Zip : " + zipFile);
             FileInputStream in = null;
 
             for (String file: this.fileList) {
-                System.out.println("File Added : " + file);
+                packConverter.log("File Added : " + file);
                 ZipEntry ze = new ZipEntry(file);
                 zos.putNextEntry(ze);
                 try {
@@ -77,7 +81,7 @@ public class ZipUtils {
             }
 
             zos.closeEntry();
-            System.out.println("Folder successfully compressed");
+            packConverter.log("Folder successfully compressed");
 
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -96,14 +100,14 @@ public class ZipUtils {
 
 
     public void generateFileList(File node) {
-        // add file only
+        // Add file only
         if (node.isFile()) {
             fileList.add(generateZipEntry(node.getAbsolutePath()));
         }
 
         if (node.isDirectory()) {
             String[] subNote = node.list();
-            for (String filename: subNote) {
+            for (String filename : subNote) {
                 generateFileList(new File(node, filename));
             }
         }

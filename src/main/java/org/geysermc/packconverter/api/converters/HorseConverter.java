@@ -84,6 +84,8 @@ public class HorseConverter extends AbstractConverter {
                 return delete;
             }
 
+            packConverter.log(String.format("Convert horse %s", to));
+
             BufferedImage fromImage = ImageIO.read(fromFile);
 
             int factor = fromImage.getWidth() / 64;
@@ -252,8 +254,6 @@ public class HorseConverter extends AbstractConverter {
             g.drawImage(ImageUtils.crop(fromImage, (19 * factor), (16 * factor), (6 * factor), (4 * factor)), 0, 0, null);
 
             ImageUtils.write(newImage, "png", storage.resolve(to).toFile());
-
-            System.out.println(String.format("Convert horse %s", to));
         } catch (IOException e) { }
 
         return delete;

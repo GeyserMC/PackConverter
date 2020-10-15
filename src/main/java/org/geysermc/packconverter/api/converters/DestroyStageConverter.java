@@ -72,7 +72,7 @@ public class DestroyStageConverter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
-            System.out.println(String.format("Convert destroy stage %s", from));
+            packConverter.log(String.format("Convert destroy stage %s", from));
 
             BufferedImage fromImage = ImageIO.read(fromFile);
 

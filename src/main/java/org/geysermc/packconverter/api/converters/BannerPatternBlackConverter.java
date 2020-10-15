@@ -45,45 +45,45 @@ public class BannerPatternBlackConverter extends AbstractConverter {
     private static final List<Object[]> defaultData = new ArrayList<>();
 
     static {
-        defaultData.add(new Object[] {"textures/entity/banner/border.png",
-                "textures/entity/banner/bricks.png",
-                "textures/entity/banner/circle.png",
-                "textures/entity/banner/creeper.png",
-                "textures/entity/banner/cross.png",
-                "textures/entity/banner/curly_border.png",
-                "textures/entity/banner/diagonal_left.png",
-                "textures/entity/banner/diagonal_right.png",
-                "textures/entity/banner/diagonal_up_left.png",
-                "textures/entity/banner/diagonal_up_right.png",
-                "textures/entity/banner/flower.png",
-                "textures/entity/banner/gradient.png",
-                "textures/entity/banner/gradient_up.png",
-                "textures/entity/banner/half_horizontal.png",
-                "textures/entity/banner/half_horizontal_bottom.png",
-                "textures/entity/banner/half_vertical.png",
-                "textures/entity/banner/half_vertical_right.png",
-                "textures/entity/banner/mojang.png",
-                "textures/entity/banner/piglin.png",
-                "textures/entity/banner/rhombus.png",
-                "textures/entity/banner/skull.png",
-                "textures/entity/banner/small_stripes.png",
-                "textures/entity/banner/square_bottom_left.png",
-                "textures/entity/banner/square_bottom_right.png",
-                "textures/entity/banner/square_top_left.png",
-                "textures/entity/banner/square_top_right.png",
-                "textures/entity/banner/straight_cross.png",
-                "textures/entity/banner/stripe_bottom.png",
-                "textures/entity/banner/stripe_center.png",
-                "textures/entity/banner/stripe_downleft.png",
-                "textures/entity/banner/stripe_downright.png",
-                "textures/entity/banner/stripe_left.png",
-                "textures/entity/banner/stripe_middle.png",
-                "textures/entity/banner/stripe_right.png",
-                "textures/entity/banner/stripe_top.png",
-                "textures/entity/banner/triangle_bottom.png",
-                "textures/entity/banner/triangle_top.png",
-                "textures/entity/banner/triangles_bottom.png",
-                "textures/entity/banner/triangles_top.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/border.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/bricks.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/circle.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/creeper.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/cross.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/curly_border.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/diagonal_left.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/diagonal_right.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/diagonal_up_left.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/diagonal_up_right.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/flower.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/gradient.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/gradient_up.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/half_horizontal.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/half_horizontal_bottom.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/half_vertical.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/half_vertical_right.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/mojang.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/piglin.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/rhombus.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/skull.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/small_stripes.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/square_bottom_left.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/square_bottom_right.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/square_top_left.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/square_top_right.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/straight_cross.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/stripe_bottom.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/stripe_center.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/stripe_downleft.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/stripe_downright.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/stripe_left.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/stripe_middle.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/stripe_right.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/stripe_top.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/triangle_bottom.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/triangle_top.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/triangles_bottom.png"});
+        defaultData.add(new Object[] {"textures/entity/banner/triangles_top.png"});
     }
 
     public BannerPatternBlackConverter(PackConverter packConverter, Path storage, Object[] data) {
@@ -100,6 +100,8 @@ public class BannerPatternBlackConverter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
+            packConverter.log(String.format("Fix banner pattern black %s", from));
+
             BufferedImage patternImage = ImageIO.read(patternFile);
 
             for (int x = 0; x < patternImage.getWidth(); x++) {
@@ -112,8 +114,6 @@ public class BannerPatternBlackConverter extends AbstractConverter {
             }
 
             ImageUtils.write(patternImage, "png", patternFile);
-
-            System.out.print(String.format("Fix banner pattern black %s", from));
         } catch (IOException e) { }
 
         return new ArrayList<>();

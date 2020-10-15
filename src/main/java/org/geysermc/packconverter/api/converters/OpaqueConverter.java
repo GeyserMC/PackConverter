@@ -70,6 +70,8 @@ public class OpaqueConverter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
+            packConverter.log(String.format("Create opaque %s", to));
+
             BufferedImage fromImage = ImageIO.read(fromFile);
 
             BufferedImage toImage = new BufferedImage(fromImage.getWidth(), fromImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -82,8 +84,6 @@ public class OpaqueConverter extends AbstractConverter {
             g.drawImage(fromImage, 0, 0, null);
 
             ImageUtils.write(toImage, "png", storage.resolve(to).toFile());
-
-            System.out.println(String.format("Create opaque %s", to));
         } catch (IOException e) { }
 
         return new ArrayList<>();

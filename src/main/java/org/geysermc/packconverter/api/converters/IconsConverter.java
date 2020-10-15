@@ -63,6 +63,8 @@ public class IconsConverter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
+            packConverter.log(String.format("Convert icons %s", from));
+
             BufferedImage iconsImage = ImageIO.read(iconsFile);
 
             for (int x = 0; x < iconsImage.getWidth(); x++) {
@@ -75,7 +77,6 @@ public class IconsConverter extends AbstractConverter {
             }
 
             ImageUtils.write(iconsImage, "png", iconsFile);
-            System.out.println(String.format("Convert icons %s", from));
         } catch (IOException e) { }
 
         return new ArrayList<>();

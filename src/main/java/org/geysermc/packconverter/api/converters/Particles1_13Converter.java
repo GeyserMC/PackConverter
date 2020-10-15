@@ -63,13 +63,13 @@ public class Particles1_13Converter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
+            packConverter.log(String.format("Convert particles %s", from));
+
             BufferedImage fromImage = ImageIO.read(fromFile);
 
             fromImage = ImageUtils.crop(fromImage, (fromImage.getWidth() / 2), (fromImage.getHeight() / 2)); // Bedrock only uses the first 25% of the image (Rest is transparent on Java)
 
             ImageUtils.write(fromImage, "png", storage.resolve(to).toFile());
-
-            System.out.println(String.format("Convert particles %s", from));
         } catch (IOException e) { }
 
         return new ArrayList<>();

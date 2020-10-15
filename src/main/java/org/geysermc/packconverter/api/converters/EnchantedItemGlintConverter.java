@@ -62,14 +62,14 @@ public class EnchantedItemGlintConverter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
+            packConverter.log(String.format("Convert enchanted item glint %s", from));
+
             BufferedImage fromImage = ImageIO.read(fromFile);
 
             fromImage = ImageUtils.saturate(fromImage, -100);
             fromImage = ImageUtils.rotate(fromImage, -90);
 
             ImageUtils.write(fromImage, "png", fromFile);
-
-            System.out.println(String.format("Convert enchanted item glint %s", from));
         } catch (IOException e) { }
 
         return new ArrayList<>();

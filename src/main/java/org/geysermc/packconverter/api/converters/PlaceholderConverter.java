@@ -153,6 +153,8 @@ public class PlaceholderConverter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
+            packConverter.log(String.format("Create placeholder %s", to));
+
             BufferedImage placeholderImage = ImageUtils.ensureMinWidth(ImageIO.read(placeholderFile), factorDetect);
 
             int factor = placeholderImage.getWidth() / factorDetect;
@@ -188,7 +190,6 @@ public class PlaceholderConverter extends AbstractConverter {
             }
 
             ImageUtils.write(placeholderImage, "png", storage.resolve(to).toFile());
-            System.out.println(String.format("Create placeholder %s", to));
         } catch (IOException e) { }
 
         return new ArrayList<>();

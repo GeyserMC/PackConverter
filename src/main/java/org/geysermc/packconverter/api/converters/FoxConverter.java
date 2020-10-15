@@ -69,6 +69,8 @@ public class FoxConverter extends AbstractConverter {
                 return delete;
             }
 
+            packConverter.log(String.format("Convert fox %s", to));
+
             BufferedImage fromImage = ImageIO.read(fromFile);
             BufferedImage fromSleepImage = ImageIO.read(fromSleepFile);
 
@@ -102,8 +104,6 @@ public class FoxConverter extends AbstractConverter {
             g.drawImage(ImageUtils.crop(fromImage, (4 * factor), (24 * factor), (8 * factor), (8 * factor)), (22 * factor), (24 * factor), null);
 
             ImageUtils.write(newImage, "png", storage.resolve(to).toFile());
-
-            System.out.println(String.format("Convert fox %s", to));
         } catch (IOException e) { }
 
         return delete;

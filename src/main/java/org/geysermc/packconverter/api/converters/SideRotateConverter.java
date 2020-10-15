@@ -66,13 +66,13 @@ public class SideRotateConverter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
+            packConverter.log(String.format("Create side rotate %s", from));
+
             BufferedImage fromImage = ImageIO.read(fromFile);
 
             fromImage = ImageUtils.flip(fromImage, true, false);
 
             ImageUtils.write(fromImage, "png", storage.resolve(to).toFile());
-
-            System.out.println(String.format("Create side rotate %s", from));
         } catch (IOException e) { }
 
         return new ArrayList<>();

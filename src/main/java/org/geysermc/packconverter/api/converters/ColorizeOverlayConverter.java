@@ -274,6 +274,8 @@ public class ColorizeOverlayConverter extends AbstractConverter {
                 BufferedImage overlayImage = ImageIO.read(overlayFile);
                 
                 if (finalImage == null) {
+                    packConverter.log(String.format("Colorize and overlay %s", to));
+
                     finalImage = new BufferedImage(overlayImage.getWidth(), overlayImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
                 }
 
@@ -288,8 +290,6 @@ public class ColorizeOverlayConverter extends AbstractConverter {
 
             if (finalImage != null) {
                 ImageUtils.write(finalImage, "png", storage.resolve(to).toFile());
-
-                System.out.println(String.format("Colorize and overlay %s", to));
             }
         } catch (IOException e) { }
 

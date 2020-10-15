@@ -67,6 +67,8 @@ public class SheepConverter extends AbstractConverter {
                 return delete;
             }
 
+            packConverter.log("Convert sheep");
+
             BufferedImage sheepImage = ImageIO.read(sheepFile);
             BufferedImage sheepFurImage = ImageIO.read(sheepFurFile);
 
@@ -94,8 +96,6 @@ public class SheepConverter extends AbstractConverter {
             ImageUtils.write(newImage, "png", sheepFile);
 
             delete.add(new DeleteConverter(packConverter, storage, new Object[] {sheepFur}));
-
-            System.out.println("Convert sheep");
         } catch (IOException e) { }
 
         return delete;

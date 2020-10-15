@@ -29,6 +29,7 @@ package org.geysermc.packconverter.api.converters;
 import lombok.Getter;
 import org.geysermc.packconverter.api.PackConverter;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -1068,8 +1069,16 @@ public class RenameConverter extends AbstractConverter {
         try {
             String from = (String) this.data[0];
             String to = (String) this.data[1];
-            Files.move(storage.resolve(from), storage.resolve(to));
-            System.out.println(String.format("Rename %s to %s", from, to));
+
+            Path fromPath = storage.resolve(from);
+
+            if (!fromPath.toFile().exists()) {
+                return new ArrayList<>();
+            }
+
+            packConverter.log(String.format("Rename %s to %s", from, to));
+
+            Files.move(fromPath, storage.resolve(to));
         } catch (IOException e) { }
 
         return new ArrayList<>();

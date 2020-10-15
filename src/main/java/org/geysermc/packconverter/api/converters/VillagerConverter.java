@@ -91,6 +91,8 @@ public class VillagerConverter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
+            packConverter.log(String.format("Convert villager %s", from));
+
             BufferedImage fromImage = ImageIO.read(fromFile);
 
             BufferedImage newImage = new BufferedImage(fromImage.getWidth(), fromImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
@@ -109,8 +111,6 @@ public class VillagerConverter extends AbstractConverter {
             }
 
             ImageUtils.write(newImage, "png", fromFile);
-
-            System.out.println(String.format("Convert villager %s", from));
         } catch (IOException e) { }
 
         return new ArrayList<>();

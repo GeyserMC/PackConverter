@@ -70,7 +70,7 @@ public class ConverterHandler {
         if (enableExperimental) { converterList.add(DespriteExperimentalConverter.class); } // Experimental
         converterList.add(BarConverter.class);
         if (enableExperimental) { converterList.add(NineSliceConverter.class); } // Experimental
-        if (enableExperimental) { converterList.add(DialogConverter.class); } // Experimental
+        //if (enableExperimental) { converterList.add(DialogConverter.class); } // Experimental TODO: Finish
         converterList.add(OverlayToTranslateConverter.class);
         converterList.add(ColorizeOverlayConverter.class);
         converterList.add(PlaceholderConverter.class);

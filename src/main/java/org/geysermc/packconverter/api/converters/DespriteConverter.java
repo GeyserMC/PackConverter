@@ -119,6 +119,8 @@ public class DespriteConverter extends AbstractConverter {
                 String to = (String) spriteArr[4];
                 int[] emptyOverlay = spriteArr.length > 5 ? (int[]) spriteArr[5] : null;
 
+                packConverter.log(String.format("Desprite %s", to));
+
                 BufferedImage spriteImage = ImageUtils.crop(fromImage, (x * factor), (y * factor), (width * factor), (height * factor));
 
                 if (emptyOverlay != null) {
@@ -128,8 +130,6 @@ public class DespriteConverter extends AbstractConverter {
                 }
 
                 ImageUtils.write(spriteImage, "png", storage.resolve(to).toFile());
-
-                System.out.println(String.format("Desprite %s", to));
             }
         } catch (IOException e) { }
 

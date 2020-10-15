@@ -64,6 +64,8 @@ public class TitleConverter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
+            packConverter.log(String.format("Convert title %s", from));
+
             BufferedImage fromImage = ImageIO.read(fromFile);
 
             int factor = fromImage.getWidth() / 255;
@@ -77,7 +79,6 @@ public class TitleConverter extends AbstractConverter {
             newImage = ImageUtils.ensureMinHeight(newImage, 360);
 
             ImageUtils.write(newImage, "png", storage.resolve(to).toFile());
-            System.out.println(String.format("Convert title %s", from));
         } catch (IOException e) { }
 
         return new ArrayList<>();

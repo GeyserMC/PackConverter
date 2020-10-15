@@ -64,6 +64,8 @@ public class MetadataConverter extends AbstractConverter {
             String from = (String) this.data[0];
             String to = (String) this.data[1];
 
+            packConverter.log(String.format("Create metadata %s", to));
+
             if (!storage.resolve(from).toFile().exists()) {
                 throw new FileNotFoundException(String.format("Missing %s! Is this really a Java texture pack?", from));
             }
@@ -101,8 +103,6 @@ public class MetadataConverter extends AbstractConverter {
             writer.writeValue(storage.resolve(to).toFile(), manifest);
 
             delete.add(new DeleteConverter(packConverter, storage, new Object[] {from}));
-
-            System.out.println(String.format("Create metadata %s", to));
         } catch (IOException e) {
             e.printStackTrace();
         }

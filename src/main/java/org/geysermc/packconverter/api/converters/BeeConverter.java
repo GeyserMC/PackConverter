@@ -66,6 +66,8 @@ public class BeeConverter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
+            packConverter.log(String.format("Convert bee %s", from));
+
             BufferedImage fromImage = ImageIO.read(fromFile);
 
             int factor = fromImage.getWidth() / 64;
@@ -77,8 +79,6 @@ public class BeeConverter extends AbstractConverter {
 
                 ImageUtils.write(fromImage, "png", fromFile);
             }
-
-            System.out.println(String.format("Convert bee %s", from));
         } catch (IOException e) { }
 
         return new ArrayList<>();

@@ -71,6 +71,8 @@ public class WaterConverter extends AbstractConverter {
                 return delete;
             }
 
+            packConverter.log(String.format("Convert water %s", from));
+
             BufferedImage waterImage = ImageIO.read(waterFile);
 
             if (grayscale) {
@@ -80,8 +82,6 @@ public class WaterConverter extends AbstractConverter {
             waterImage = ImageUtils.ensureMinWidth(waterImage, minWidth);
 
             ImageUtils.write(waterImage, "png", storage.resolve(to).toFile());
-
-            System.out.println(String.format("Convert water %s", from));
         } catch (IOException e) { }
 
         return new ArrayList<>();

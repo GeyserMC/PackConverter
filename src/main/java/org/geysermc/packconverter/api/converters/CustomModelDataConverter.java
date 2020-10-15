@@ -59,7 +59,7 @@ public class CustomModelDataConverter extends AbstractConverter {
 
     @Override
     public List<AbstractConverter> convert() {
-        System.out.println("Checking for custom model data");
+        packConverter.log("Checking for custom model data");
         try {
             String from = (String) this.data[0];
             String to = (String) this.data[1];
@@ -116,8 +116,7 @@ public class CustomModelDataConverter extends AbstractConverter {
                 OutputStream outputStream = Files.newOutputStream(storage.resolve(to), StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.CREATE);
                 mapper.writer(new DefaultPrettyPrinter()).writeValue(outputStream, textureData);
             }
-
-            System.out.println(String.format("Converted models %s", from));
+            packConverter.log(String.format("Converted models %s", from));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -63,6 +63,8 @@ public class TurtleConverter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
+            packConverter.log(String.format("Convert turtle %s", from));
+
             BufferedImage fromImage = ImageIO.read(fromFile);
 
             int factor = fromImage.getWidth() / 128;
@@ -73,8 +75,6 @@ public class TurtleConverter extends AbstractConverter {
             g.drawImage(ImageUtils.crop(fromImage, factor, 0, (fromImage.getWidth() - factor), fromImage.getHeight()), 0, 0, null);
 
             ImageUtils.write(newImage, "png", fromFile);
-
-            System.out.println(String.format("Convert turtle %s", from));
         } catch (IOException e) { }
 
         return new ArrayList<>();

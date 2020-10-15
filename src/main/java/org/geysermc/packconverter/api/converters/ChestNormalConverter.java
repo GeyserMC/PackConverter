@@ -66,6 +66,8 @@ public class ChestNormalConverter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
+            packConverter.log(String.format("Convert normal chest %s", chest));
+
             BufferedImage chestImage = ImageIO.read(chestFile);
 
             chestImage = ImageUtils.ensureMinWidth(chestImage, 64);
@@ -102,7 +104,6 @@ public class ChestNormalConverter extends AbstractConverter {
             g.drawImage(ImageUtils.crop(chestImage, 0, 0, (6 * factor), (6 * factor)), 0, 0, null);
 
             ImageUtils.write(newChestImage, "png", chestFile);
-            System.out.println(String.format("Convert normal chest %s", chest));
         } catch (IOException e) { }
 
         return new ArrayList<>();

@@ -117,18 +117,19 @@ public class BarConverter extends AbstractConverter {
                     String toPath = (String) toArr[0];
                     Color color = toArr.length > 1 && toArr[1] != null ? (Color) toArr[1] : Color.white;
 
+                    packConverter.log(String.format("Convert bar %s", toPath));
+
                     ImageUtils.write(ImageUtils.colorize(toImage, color), "png", storage.resolve(toPath + ".png").toFile());
 
                     mapper.writeValue(storage.resolve(toPath + ".json").toFile(), metadata);
-
-                    System.out.println(String.format("Convert bar %s", toPath));
                 }
             }
             
             BufferedImage transparentImage = new BufferedImage(factor, (5 * factor), BufferedImage.TYPE_INT_ARGB);
             for (String nub : nubs) {
+                packConverter.log(String.format("Convert bar %s", nub));
+
                 ImageUtils.write(transparentImage, "png", storage.resolve(nub).toFile());
-                System.out.println(String.format("Convert bar %s", nub));
             }
             
         } catch (IOException e) { e.printStackTrace(); }

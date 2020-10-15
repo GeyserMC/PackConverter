@@ -65,6 +65,8 @@ public class ChestSideConverter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
+            packConverter.log(String.format("Create chest side %s", to));
+
             BufferedImage fromImage = ImageIO.read(fromFile);
 
             fromImage = ImageUtils.ensureMinWidth(fromImage, 64);
@@ -79,8 +81,6 @@ public class ChestSideConverter extends AbstractConverter {
             g.drawImage(ImageUtils.crop(fromImage, (28 * factor), (34 * factor), (14 * factor), (9 * factor)), 0, (5 * factor), null);
 
             ImageUtils.write(newImage, "png", storage.resolve(to).toFile());
-
-            System.out.println(String.format("Create chest side %s", to));
         } catch (IOException e) { }
 
         return new ArrayList<>();

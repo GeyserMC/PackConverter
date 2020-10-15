@@ -78,6 +78,8 @@ public class BedConverter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
+            packConverter.log(String.format("Convert bed %s", bed));
+
             BufferedImage bedImage = ImageIO.read(bedFile);
 
             bedImage = ImageUtils.ensureMinWidth(bedImage, 64);
@@ -119,7 +121,6 @@ public class BedConverter extends AbstractConverter {
             }
 
             ImageUtils.write(newBedImage, "png", bedFile);
-            System.out.println(String.format("Convert bed %s", bed));
         } catch (IOException e) { }
 
         return new ArrayList<>();

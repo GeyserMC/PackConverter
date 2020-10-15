@@ -66,6 +66,8 @@ public class FireworksConverter extends AbstractConverter {
                 return delete;
             }
 
+            packConverter.log("Convert fireworks");
+
             BufferedImage fromImage = ImageIO.read(fromFile);
 
             int factor = fromImage.getWidth() / 16;
@@ -76,8 +78,6 @@ public class FireworksConverter extends AbstractConverter {
             g.drawImage(ImageUtils.rotate(fromImage, -90), 0, 0, null);
 
             ImageUtils.write(newImage, "png", storage.resolve(to).toFile());
-
-            System.out.println("Convert fireworks");
         } catch (IOException e) { }
 
         return delete;

@@ -32,6 +32,7 @@ import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -208,14 +209,20 @@ public class PngToTgaConverter extends AbstractConverter {
             String to = (String) this.data[1];
             boolean dont_delete = this.data.length > 2 ? (boolean) this.data[2] : false;
 
-            BufferedImage fromImage = ImageIO.read(storage.resolve(from).toFile());
+            File fromFile = storage.resolve(from).toFile();
+
+            if (!fromFile.exists()) {
+                return delete;
+            }
+
+            packConverter.log(String.format("Create tga %s", from));
+
+            BufferedImage fromImage = ImageIO.read(fromFile);
             ImageUtils.write(fromImage, "tga", storage.resolve(to).toFile());
 
             if (!dont_delete) {
                 delete.add(new DeleteConverter(packConverter, storage, new Object[] {from}));
             }
-
-            System.out.println(String.format("Create tga %s", from));
         } catch (IOException e) { }
 
         return delete;

@@ -102,13 +102,13 @@ public class BannerPatternPreviewMaxSizeConverter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
+            packConverter.log(String.format("Fix banner pattern preview max size %s", from));
+
             BufferedImage patternImage = ImageIO.read(patternFile);
 
             patternImage = ImageUtils.ensureMaxWidth(patternImage, max_width);
 
             ImageUtils.write(patternImage, "png", patternFile);
-
-            System.out.println(String.format("Fix banner pattern preview max size %s", from));
         } catch (IOException e) { }
 
         return new ArrayList<>();

@@ -276,22 +276,22 @@ public class NineSliceConverter extends AbstractConverter {
                 JsonNode metadata = mapper.readTree("{nineslice_size: " + size + ", base_size: [" + width + ", " + height + "]}");
 
                 for (String toPath : tos) {
+                    packConverter.log(String.format("Convert button %s (Experimental)", toPath));
+
                     ImageUtils.write(toImage, "png", storage.resolve(toPath + ".png").toFile());
 
                     mapper.writeValue(storage.resolve(toPath + ".json").toFile(), metadata);
-
-                    System.out.println(String.format("Convert button %s (Experimental)", toPath));
                 }
             }
             
             BufferedImage transparentImage = new BufferedImage(factor, factor, BufferedImage.TYPE_INT_ARGB);
             JsonNode metadata = mapper.readTree("{nineslice_size: 0, base_size: [1, 1]}");
             for (String border : borders) {
+                packConverter.log(String.format("Convert button %s (Experimental)", border));
+
                 ImageUtils.write(transparentImage, "png", storage.resolve(border + ".png").toFile());
 
                 mapper.writeValue(storage.resolve(border + ".json").toFile(), metadata);
-
-                System.out.println(String.format("Convert button %s (Experimental)", border));
             }
             
         } catch (IOException e) { e.printStackTrace(); }

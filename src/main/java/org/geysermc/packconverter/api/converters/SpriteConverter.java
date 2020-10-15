@@ -291,7 +291,7 @@ public class SpriteConverter extends AbstractConverter {
             List<String> missingSprites = new ArrayList<>();
 
             if (toFile.exists()) {
-                System.out.println(String.format("Convert sprite %s", to));
+                packConverter.log(String.format("Convert sprite %s", to));
 
                 newImage = ImageIO.read(toFile); // Load already exists sprites image - Some texture packs have may a mix with sprites (1.13) and separate images (1.14)
 
@@ -319,7 +319,7 @@ public class SpriteConverter extends AbstractConverter {
                 }
 
                 if (newImage == null) {
-                    System.out.println(String.format("Create sprite %s", to));
+                    packConverter.log(String.format("Create sprite %s", to));
 
                     newImage = new BufferedImage((width * factor), (height * factor), BufferedImage.TYPE_INT_ARGB);
                 }
@@ -338,7 +338,7 @@ public class SpriteConverter extends AbstractConverter {
 
             if (newImage != null) {
                 for (String sprite : missingSprites) {
-                    System.out.println(String.format("Missing texture %s - May used a transparent image", sprite));
+                    packConverter.log(String.format("Missing texture %s - May used a transparent image", sprite));
                 }
 
                 ImageUtils.write(newImage, "png", storage.resolve(to).toFile());

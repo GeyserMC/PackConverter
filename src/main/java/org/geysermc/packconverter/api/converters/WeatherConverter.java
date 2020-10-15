@@ -69,6 +69,8 @@ public class WeatherConverter extends AbstractConverter {
                 return delete;
             }
 
+            packConverter.log("Convert weather");
+
             BufferedImage snowImage = ImageIO.read(snowFile);
             BufferedImage rainImage = ImageIO.read(rainFile);
 
@@ -89,8 +91,6 @@ public class WeatherConverter extends AbstractConverter {
             delete.add(new DeleteConverter(packConverter, storage, new Object[] {rain}));
 
             ImageUtils.write(weatherImage, "png", storage.resolve(to).toFile());
-
-            System.out.println("Convert weather");
         } catch (IOException e) { }
 
         return new ArrayList<>();

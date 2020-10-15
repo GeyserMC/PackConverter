@@ -70,6 +70,8 @@ public class ChestLeftRightDoubleConverter extends AbstractConverter {
                 return delete;
             }
 
+            packConverter.log(String.format("Convert double chest %s", to));
+
             BufferedImage leftImage = ImageIO.read(leftFile);
             BufferedImage rightImage = ImageIO.read(rightFile);
 
@@ -119,8 +121,6 @@ public class ChestLeftRightDoubleConverter extends AbstractConverter {
 
             delete.add(new DeleteConverter(packConverter, storage, new Object[] {fromLeft}));
             delete.add(new DeleteConverter(packConverter, storage, new Object[] {fromRight}));
-
-            System.out.println(String.format("Convert double chest %s", to));
         } catch (IOException e) { }
 
         return delete;

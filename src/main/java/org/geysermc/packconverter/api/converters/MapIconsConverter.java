@@ -64,6 +64,8 @@ public class MapIconsConverter extends AbstractConverter {
                 return new ArrayList<>();
             }
 
+            packConverter.log(String.format("Convert map icons %s", to));
+
             BufferedImage iconsImage = ImageIO.read(iconsFile);
 
             int factor = iconsImage.getWidth() / 128;
@@ -92,7 +94,6 @@ public class MapIconsConverter extends AbstractConverter {
             g.drawImage(ImageUtils.scale(ImageUtils.crop(iconsImage, (72 * factor), 0, (8 * factor), (8 * factor)), 2f), (48 * factor), (48 * factor), null);
 
             ImageUtils.write(newIconsImage, "png", storage.resolve(to).toFile());
-            System.out.println(String.format("Convert map icons %s", to));
         } catch (IOException e) { }
 
         return new ArrayList<>();
