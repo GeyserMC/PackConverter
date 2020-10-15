@@ -61,11 +61,11 @@ public class ZipUtils {
             fos = new FileOutputStream(zipFile);
             zos = new ZipOutputStream(fos);
 
-            packConverter.log("Output to Zip : " + zipFile);
+            packConverter.log("Output to zip " + zipFile);
             FileInputStream in = null;
 
             for (String file: this.fileList) {
-                packConverter.log("File Added : " + file);
+                packConverter.log("File added " + file);
                 ZipEntry ze = new ZipEntry(file);
                 zos.putNextEntry(ze);
                 try {
