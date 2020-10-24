@@ -31,7 +31,11 @@ import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.google.gson.JsonSyntaxException;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ResourcePackManifest;
 
@@ -75,6 +79,12 @@ public class MetadataConverter extends AbstractConverter {
             JsonNode packmeta = mapper.readTree(storage.resolve(from).toFile()).get("pack");
             int packFormat = packmeta.get("pack_format").asInt();
             String packDesc = packmeta.get("description").asText();
+
+            // Convert the description if needed to make sure its valid on bedrock
+            try {
+                Component description = GsonComponentSerializer.colorDownsamplingGson().deserialize(packmeta.get("description").toString());
+                packDesc = LegacyComponentSerializer.legacySection().serialize(description);
+            } catch (JsonSyntaxException ignored) { }
 
             if (packFormat != 4 && packFormat != 5 && packFormat != 6) {
                 throw new AssertionError("Only supports pack_format 4 (v1.13 or v1.14) or 5 (v1.15 or v1.16) or 6 (>= v1.16.2)!");
