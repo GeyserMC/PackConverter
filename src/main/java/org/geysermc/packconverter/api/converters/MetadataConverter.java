@@ -87,23 +87,24 @@ public class MetadataConverter extends AbstractConverter {
             } catch (JsonSyntaxException ignored) { }
 
             if (packFormat != 4 && packFormat != 5 && packFormat != 6) {
-                throw new AssertionError("Only supports pack_format 4 (v1.13 or v1.14) or 5 (v1.15 or v1.16) or 6 (>= v1.16.2)!");
+                throw new AssertionError("Only supports pack_format 4 (v1.13 or v1.14) or 5 (v1.15 or v1.16) or 6 (v1.16.2 - v1.16.x)!");
             }
 
             ResourcePackManifest.Header header = new ResourcePackManifest.Header();
             header.setName(storage.getFileName().toString().replace(".zip_mcpack", ""));
             header.setDescription(packDesc);
             header.setUuid(UUID.randomUUID());
-            header.setVersion(new int[] { 1, 0, 0});
+            header.setVersion(new int[] {1, 0, 0});
+            header.setMinimumSupportedMinecraftVersion(new int[] {1, 16, 20});
 
             ResourcePackManifest.Module module = new ResourcePackManifest.Module();
             module.setDescription(packDesc);
             module.setType("resources");
             module.setUuid(UUID.randomUUID());
-            module.setVersion(new int[] { 1, 0, 0});
+            module.setVersion(new int[] {1, 0, 0});
 
             ResourcePackManifest manifest = new ResourcePackManifest();
-            manifest.setFormatVersion(1);
+            manifest.setFormatVersion(2);
             manifest.setHeader(header);
             Collection<ResourcePackManifest.Module> modules = new ArrayList();
             modules.add(module);
