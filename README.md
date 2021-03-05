@@ -8,6 +8,6 @@
 
 PackConverter is a library for converting Java Edition resource packs to Bedrock Edition.
 
-This is based on the Node.js module [ConvertJavaTextureToBedrockApi](https://github.com/ozelot379/ConvertJavaTextureToBedrockApi) by [ozelot379](https://github.com/ozelot379). 
+This is based on the Node.js module ConvertJavaTextureToBedrockApi by [ozelot379](https://github.com/ozelot379). 
 
 **Please note, this project is still a work in progress and should not be used on production. Expect bugs!**
