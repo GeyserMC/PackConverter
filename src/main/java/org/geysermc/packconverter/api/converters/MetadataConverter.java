@@ -80,14 +80,14 @@ public class MetadataConverter extends AbstractConverter {
             int packFormat = packmeta.get("pack_format").asInt();
             String packDesc = packmeta.get("description").asText();
 
-            // Convert the description if needed to make sure its valid on bedrock
+            // Convert the description if needed to make sure it's valid on bedrock
             try {
                 Component description = GsonComponentSerializer.colorDownsamplingGson().deserialize(packmeta.get("description").toString());
                 packDesc = LegacyComponentSerializer.legacySection().serialize(description);
             } catch (JsonSyntaxException ignored) { }
 
-            if (packFormat != 4 && packFormat != 5 && packFormat != 6) {
-                throw new AssertionError("Only supports pack_format 4 (v1.13 or v1.14) or 5 (v1.15 or v1.16) or 6 (v1.16.2 - v1.16.x)!");
+            if (packFormat != 4 && packFormat != 5 && packFormat != 6 && packFormat != 7) {
+                throw new AssertionError("Only supports pack_format 4 (v1.13 or v1.14) or 5 (v1.15 or v1.16) or 6 (v1.16.2 - v1.16.x) or 7 (1.17.x)!");
             }
 
             ResourcePackManifest.Header header = new ResourcePackManifest.Header();
@@ -106,7 +106,7 @@ public class MetadataConverter extends AbstractConverter {
             ResourcePackManifest manifest = new ResourcePackManifest();
             manifest.setFormatVersion(2);
             manifest.setHeader(header);
-            Collection<ResourcePackManifest.Module> modules = new ArrayList();
+            Collection<ResourcePackManifest.Module> modules = new ArrayList<>();
             modules.add(module);
             manifest.setModules(modules);
 
