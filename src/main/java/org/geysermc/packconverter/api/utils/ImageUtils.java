@@ -283,7 +283,7 @@ public class ImageUtils {
         BufferedImage subImage = img.getSubimage(subX, subY, width, height);
         for (int x = 0; x < subImage.getWidth(); x++) {
             for (int y = 0; y < subImage.getHeight(); y++) {
-                if (!(new Color(subImage.getRGB(x, y), true).equals(Color.TRANSLUCENT))) {
+                if (new Color(subImage.getRGB(x, y), true).getTransparency() != Color.TRANSLUCENT) {
                     return false;
                 }
             }
