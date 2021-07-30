@@ -262,9 +262,9 @@ public class ImageUtils {
         final int h = (int) Math.floor(img.getHeight() * cos + img.getWidth() * sin);
         final BufferedImage rotatedImage = new BufferedImage(w, h, img.getType());
         final AffineTransform at = new AffineTransform();
-        at.translate(w / 2, h / 2);
+        at.translate(w / 2D, h / 2D);
         at.rotate(rads,0, 0);
-        at.translate(-img.getWidth() / 2, -img.getHeight() / 2);
+        at.translate(-img.getWidth() / 2D, -img.getHeight() / 2D);
         final AffineTransformOp rotateOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
         return rotateOp.filter(img, rotatedImage);
     }

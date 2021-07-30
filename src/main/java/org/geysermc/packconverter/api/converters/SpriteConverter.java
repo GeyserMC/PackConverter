@@ -324,7 +324,7 @@ public class SpriteConverter extends AbstractConverter {
                     newImage = new BufferedImage((width * factor), (height * factor), BufferedImage.TYPE_INT_ARGB);
                 }
 
-                BufferedImage imageSpritedScaled = ImageUtils.scale(imageSprite, ((factorDetect * factor) / imageSprite.getWidth()));
+                BufferedImage imageSpritedScaled = ImageUtils.scale(imageSprite, ((float) (factorDetect * factor) / imageSprite.getWidth()));
 
                 Graphics g = newImage.getGraphics();
 
