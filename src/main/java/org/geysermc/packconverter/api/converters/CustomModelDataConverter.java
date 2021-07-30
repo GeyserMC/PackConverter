@@ -29,7 +29,6 @@ package org.geysermc.packconverter.api.converters;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -71,38 +70,41 @@ public class CustomModelDataConverter extends AbstractConverter {
             textureData.put("resource_pack_name", "geysercmd");
             textureData.put("texture_name", "atlas.items");
             ObjectNode allTextures = mapper.createObjectNode();
-            for (File file : storage.resolve(from).toFile().listFiles()) {
-                InputStream stream = new FileInputStream(file);
+            File[] files = storage.resolve(from).toFile().listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    InputStream stream = new FileInputStream(file);
 
-                JsonNode node = mapper.readTree(stream);
-                if (node.has("overrides")) {
-                    for (JsonNode override : node.get("overrides")) {
-                        JsonNode predicate = override.get("predicate");
-                        // This is where the custom model data happens - each one is registered here under "predicate"
-                        if (predicate.has("custom_model_data")) {
-                            // The "ID" of the CustomModelData. If the ID is 1, then to get the custom model data
-                            // You need to run in Java `/give @s stick{CustomModelData:1}`
-                            int id = predicate.get("custom_model_data").asInt();
-                            // Get the identifier that we'll register the item with on Bedrock, and create the JSON file
-                            String identifier = CustomModelDataHandler.handleItemData(mapper, storage, override.get("model").asText());
-                            // See if we have registered the vanilla item already
-                            Int2ObjectMap<String> data = packConverter.getCustomModelData().getOrDefault(file.getName().replace(".json", ""), null);
-                            if (data == null) {
-                                // Create a fresh map of Java CustomModelData IDs to Bedrock string identifiers
-                                Int2ObjectMap<String> map = new Int2ObjectOpenHashMap<>();
-                                map.put(id, identifier);
-                                // Put the vanilla item (stick) and the initialized map in the custom model data table
-                                packConverter.getCustomModelData().put(file.getName().replace(".json", ""), map);
-                            } else {
-                                // Map exists, add the new CustomModelData ID and Bedrock string identifier
-                                data.put(id, identifier);
-                            }
+                    JsonNode node = mapper.readTree(stream);
+                    if (node.has("overrides")) {
+                        for (JsonNode override : node.get("overrides")) {
+                            JsonNode predicate = override.get("predicate");
+                            // This is where the custom model data happens - each one is registered here under "predicate"
+                            if (predicate.has("custom_model_data")) {
+                                // The "ID" of the CustomModelData. If the ID is 1, then to get the custom model data
+                                // You need to run in Java `/give @s stick{CustomModelData:1}`
+                                int id = predicate.get("custom_model_data").asInt();
+                                // Get the identifier that we'll register the item with on Bedrock, and create the JSON file
+                                String identifier = CustomModelDataHandler.handleItemData(mapper, storage, override.get("model").asText());
+                                // See if we have registered the vanilla item already
+                                Int2ObjectMap<String> data = packConverter.getCustomModelData().getOrDefault(file.getName().replace(".json", ""), null);
+                                if (data == null) {
+                                    // Create a fresh map of Java CustomModelData IDs to Bedrock string identifiers
+                                    Int2ObjectMap<String> map = new Int2ObjectOpenHashMap<>();
+                                    map.put(id, identifier);
+                                    // Put the vanilla item (stick) and the initialized map in the custom model data table
+                                    packConverter.getCustomModelData().put(file.getName().replace(".json", ""), map);
+                                } else {
+                                    // Map exists, add the new CustomModelData ID and Bedrock string identifier
+                                    data.put(id, identifier);
+                                }
 
-                            // Create the texture information
-                            ObjectNode textureInfo = CustomModelDataHandler.handleItemTexture(mapper, storage, override.get("model").asText());
-                            if (textureInfo != null) {
-                                // If texture was created, add it to the file where Bedrock will read all textures
-                                allTextures.setAll(textureInfo);
+                                // Create the texture information
+                                ObjectNode textureInfo = CustomModelDataHandler.handleItemTexture(mapper, storage, override.get("model").asText());
+                                if (textureInfo != null) {
+                                    // If texture was created, add it to the file where Bedrock will read all textures
+                                    allTextures.setAll(textureInfo);
+                                }
                             }
                         }
                     }

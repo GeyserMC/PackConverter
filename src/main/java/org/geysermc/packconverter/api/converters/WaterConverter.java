@@ -31,7 +31,6 @@ import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -63,7 +62,7 @@ public class WaterConverter extends AbstractConverter {
             String from = (String) this.data[0];
             String to = (String) this.data[1];
             int minWidth = (int) this.data[2];
-            boolean grayscale = this.data.length > 3 ? (boolean) this.data[3] : false;
+            boolean grayscale = this.data.length > 3 && (boolean) this.data[3];
 
             File waterFile = storage.resolve(from).toFile();
 

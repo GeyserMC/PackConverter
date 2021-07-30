@@ -26,6 +26,7 @@
 
 package org.geysermc.packconverter.api.utils;
 
+import java.util.Objects;
 import org.geysermc.packconverter.api.PackConverter;
 
 import java.io.File;
@@ -54,29 +55,19 @@ public class ZipUtils {
 
     public void zipIt(String zipFile) {
         byte[] buffer = new byte[1024];
-        String source = sourceFolder.getName();
-        FileOutputStream fos = null;
-        ZipOutputStream zos = null;
-        try {
-            fos = new FileOutputStream(zipFile);
-            zos = new ZipOutputStream(fos);
-
+        try (FileOutputStream fos = new FileOutputStream(zipFile);
+             ZipOutputStream zos = new ZipOutputStream(fos)) {
             packConverter.log("Output to zip " + zipFile);
-            FileInputStream in = null;
 
             for (String file: this.fileList) {
                 packConverter.log("File added " + file);
                 ZipEntry ze = new ZipEntry(file);
                 zos.putNextEntry(ze);
-                try {
-                    in = new FileInputStream(sourceFolder + File.separator + file);
+                try (FileInputStream in = new FileInputStream(sourceFolder + File.separator + file)) {
                     int len;
                     while ((len = in .read(buffer)) > 0) {
                         zos.write(buffer, 0, len);
                     }
-                } finally {
-                    if (in != null)
-                        in.close();
                 }
             }
 
@@ -85,12 +76,6 @@ public class ZipUtils {
 
         } catch (IOException ex) {
             ex.printStackTrace();
-        } finally {
-            try {
-                zos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -107,7 +92,7 @@ public class ZipUtils {
 
         if (node.isDirectory()) {
             String[] subNote = node.list();
-            for (String filename : subNote) {
+            for (String filename : Objects.requireNonNull(subNote)) {
                 generateFileList(new File(node, filename));
             }
         }

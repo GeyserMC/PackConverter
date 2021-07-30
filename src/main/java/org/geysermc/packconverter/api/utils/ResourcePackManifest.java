@@ -88,9 +88,9 @@ public class ResourcePackManifest {
 
     @Value
     public static class Version {
-        private final int major;
-        private final int minor;
-        private final int patch;
+        int major;
+        int minor;
+        int patch;
 
         public static Version fromString(String ver) {
             String[] split = ver.replace(']', ' ')

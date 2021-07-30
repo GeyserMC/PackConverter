@@ -50,10 +50,10 @@ public class PackConverter {
     @Getter
     private final Map<String, Int2ObjectMap<String>> customModelData = new HashMap<>();
 
-    private Path input;
-    private Path output;
+    private final Path input;
+    private final Path output;
 
-    private Path tmpDir;
+    private final Path tmpDir;
 
     @Setter
     private OnLogListener onLogListener;

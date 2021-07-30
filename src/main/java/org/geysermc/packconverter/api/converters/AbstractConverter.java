@@ -41,7 +41,7 @@ public abstract class AbstractConverter {
 
     public static List<Object[]> getDefaultData() {
         return new ArrayList<>();
-    };
+    }
 
     public abstract List<AbstractConverter> convert();
 }

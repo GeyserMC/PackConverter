@@ -34,7 +34,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -207,7 +206,7 @@ public class PngToTgaConverter extends AbstractConverter {
         try {
             String from = (String) this.data[0];
             String to = (String) this.data[1];
-            boolean dont_delete = this.data.length > 2 ? (boolean) this.data[2] : false;
+            boolean dont_delete = this.data.length > 2 && (boolean) this.data[2];
 
             File fromFile = storage.resolve(from).toFile();
 

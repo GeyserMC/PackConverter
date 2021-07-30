@@ -26,20 +26,12 @@
 
 package org.geysermc.packconverter.api.converters;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.Getter;
 import org.geysermc.packconverter.api.PackConverter;
-import org.geysermc.packconverter.api.utils.ResourcePackManifest;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -80,7 +72,7 @@ public class FixWrongRootFolderConverter extends AbstractConverter {
                 throw new AssertionError(String.format("%s not found! Is this really a Java texture pack?", packMcmeta));
             }
 
-            packConverter.log(String.format("Root folder found in sub folder %s", rootPath.relativize(storage).toString()));
+            packConverter.log(String.format("Root folder found in sub folder %s", rootPath.relativize(storage)));
 
             List<String> moveFilesList = new ArrayList<>();
             moveFilesList.add(packMcmeta);

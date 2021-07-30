@@ -264,7 +264,7 @@ public class ColorizeOverlayConverter extends AbstractConverter {
                 Object[] overlayArr = (Object[]) overlay;
                 String overlayPath = (String) overlayArr[0];
                 Color color = overlayArr.length > 1 && overlayArr[1] != null ? (Color) overlayArr[1] : Color.white;
-                boolean deleteOverlay = overlayArr.length > 2 ? (boolean) overlayArr[2] : false;
+                boolean deleteOverlay = overlayArr.length > 2 && (boolean) overlayArr[2];
 
                 File overlayFile = storage.resolve(overlayPath).toFile();
                 if (!overlayFile.exists()) {

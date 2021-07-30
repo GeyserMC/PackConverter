@@ -34,7 +34,6 @@ import org.geysermc.packconverter.api.PackConverter;
 import org.geysermc.packconverter.api.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
