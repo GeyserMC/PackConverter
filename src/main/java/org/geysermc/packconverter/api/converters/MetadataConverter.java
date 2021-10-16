@@ -86,8 +86,8 @@ public class MetadataConverter extends AbstractConverter {
                 packDesc = LegacyComponentSerializer.legacySection().serialize(description);
             } catch (JsonSyntaxException ignored) { }
 
-            if (packFormat != 4 && packFormat != 5 && packFormat != 6) {
-                throw new AssertionError("Only supports pack_format 4 (v1.13 or v1.14) or 5 (v1.15 or v1.16) or 6 (v1.16.2 - v1.16.x)!");
+            if (packFormat != 4 && packFormat != 5 && packFormat != 6 && packFormat != 7) {
+                throw new AssertionError("Only supports pack_format 4 (v1.13 or v1.14) or 5 (v1.15 or v1.16) or 6 (v1.16.2 - v1.16.x) or 7 (v1.17 - v1.17.x)!");
             }
 
             ResourcePackManifest.Header header = new ResourcePackManifest.Header();
