@@ -255,12 +255,13 @@ public class ImageUtils {
      * @return Rotated image
      */
     public static BufferedImage rotate(BufferedImage img, int angle) {
+		final int type = img.getType();
         final double rads = Math.toRadians(-angle);
         final double sin = Math.abs(Math.sin(rads));
         final double cos = Math.abs(Math.cos(rads));
         final int w = (int) Math.floor(img.getWidth() * cos + img.getHeight() * sin);
         final int h = (int) Math.floor(img.getHeight() * cos + img.getWidth() * sin);
-        final BufferedImage rotatedImage = new BufferedImage(w, h, img.getType());
+        final BufferedImage rotatedImage = new BufferedImage(w, h, type == 0 ? 5 : type);
         final AffineTransform at = new AffineTransform();
         at.translate(w / 2D, h / 2D);
         at.rotate(rads,0, 0);
