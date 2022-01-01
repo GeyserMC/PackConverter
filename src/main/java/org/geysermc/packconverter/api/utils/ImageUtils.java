@@ -255,7 +255,7 @@ public class ImageUtils {
      * @return Rotated image
      */
     public static BufferedImage rotate(BufferedImage img, int angle) {
-		final int type = img.getType();
+	final int type = img.getType();
         final double rads = Math.toRadians(-angle);
         final double sin = Math.abs(Math.sin(rads));
         final double cos = Math.abs(Math.cos(rads));
