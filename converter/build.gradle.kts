@@ -6,3 +6,11 @@ dependencies {
     implementation("net.kyori:adventure-text-serializer-gson:4.13.1")
     implementation("net.kyori:adventure-text-serializer-legacy:4.13.1")
 }
+
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    from("src/main/java/resources") {
+        include("*")
+    }
+
+    archiveClassifier.set("")
+}
