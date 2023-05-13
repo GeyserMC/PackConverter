@@ -26,7 +26,8 @@
 
 package org.geysermc.packconverter.bootstrap;
 
-import org.geysermc.packconverter.PackConverter;
+import org.geysermc.pack.converter.PackConverter;
+import org.geysermc.pack.converter.converters.Converters;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -52,10 +53,11 @@ public class Main {
             }
 
             try {
-                PackConverter packConverter = new PackConverter(packFile, Paths.get(packFile.toString().replaceFirst("[.][^.]+$", ".mcpack")));
-                packConverter.convert();
-                packConverter.pack();
-                packConverter.cleanup();
+                new PackConverter()
+                        .input(packFile)
+                        .output(Paths.get(packFile.toString().replaceFirst("[.][^.]+$", ".mcpack")))
+                        .converters(Converters.defaultConverters())
+                        .convert();
             } catch (IOException e) {
                 e.printStackTrace();
             }

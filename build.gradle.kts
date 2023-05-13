@@ -22,6 +22,9 @@ allprojects {
         // Geyser, Floodgate, Cumulus etc.
         maven("https://repo.opencollab.dev/main")
         maven("https://repo.opencollab.dev/maven-snapshots")
+
+        // Java pack library
+        maven("https://repo.unnamed.team/repository/unnamed-public/")
     }
 
     group = "org.geysermc"

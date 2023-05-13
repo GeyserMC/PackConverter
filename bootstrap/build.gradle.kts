@@ -7,7 +7,7 @@ dependencies {
 }
 
 application {
-    mainClass.set("org.geysermc.packconverter.boostrap.Main")
+    mainClass.set("org.geysermc.pack.converter.boostrap.Main")
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {

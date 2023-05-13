@@ -1,0 +1,20 @@
+package org.geysermc.pack.bedrock.resource.particles.particleeffect.components;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import java.lang.String;
+
+/**
+ * Emitter Rate Instant Component For 1.10.0
+ */
+public class EmitterRateInstant {
+  @JsonProperty("num_particles")
+  public String numParticles;
+
+  public String numParticles() {
+    return this.numParticles;
+  }
+
+  public void numParticles(String numParticles) {
+    this.numParticles = numParticles;
+  }
+}
