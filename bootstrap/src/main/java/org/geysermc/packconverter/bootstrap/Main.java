@@ -44,12 +44,12 @@ public class Main {
 
             // Check the file exists
             if (!packFile.toFile().exists()) {
-                throw new FileNotFoundException(String.format("Specified pack zip file not found (%s)", packFile.toString()));
+                throw new FileNotFoundException(String.format("Specified pack zip file not found (%s)", packFile));
             }
 
             // Check its a zip
-            if (!packFile.toString().endsWith(".zip")) {
-                throw new AssertionError(String.format("Specified pack is not a zip (%s)", packFile.toString()));
+            if (!packFile.toString().endsWith(".zip") && !packFile.toString().endsWith(".jar")) {
+                throw new AssertionError(String.format("Specified pack is not a zip (%s)", packFile));
             }
 
             try {
