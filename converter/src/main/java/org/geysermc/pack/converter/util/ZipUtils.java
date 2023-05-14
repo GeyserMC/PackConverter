@@ -24,7 +24,7 @@
  *
  */
 
-package org.geysermc.pack.converter.utils;
+package org.geysermc.pack.converter.util;
 
 import org.geysermc.pack.converter.PackConverter;
 

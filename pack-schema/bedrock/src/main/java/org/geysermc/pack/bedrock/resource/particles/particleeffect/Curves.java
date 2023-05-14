@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +18,7 @@ public class Curves {
 
   public String type;
 
-  @JsonProperty("horizontal_range")
+  @SerializedName("horizontal_range")
   public String horizontalRange;
 
   public String input() {

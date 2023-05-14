@@ -1,12 +1,12 @@
 package org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * ***EXPERIMENTAL*** A triangle or quad mesh object. Can be used in conjunction with cubes and texture geometry.
  */
 public class PolyMesh {
-  @JsonProperty("normalized_uvs")
+  @SerializedName("normalized_uvs")
   public boolean normalizedUvs;
 
   public float[][] normals;

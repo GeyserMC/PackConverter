@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
@@ -9,10 +9,10 @@ import java.lang.String;
  * A client side entity definition.
  */
 public class Entity {
-  @JsonProperty("format_version")
+  @SerializedName("format_version")
   public String formatVersion;
 
-  @JsonProperty("minecraft:client_entity")
+  @SerializedName("minecraft:client_entity")
   public ClientEntity clientEntity;
 
   /**

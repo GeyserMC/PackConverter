@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.render_controllers.rendercontrollers;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,32 +15,32 @@ public class RenderControllers {
 
   public Color color;
 
-  @JsonProperty("filter_lighting")
+  @SerializedName("filter_lighting")
   public boolean filterLighting;
 
   public String geometry;
 
-  @JsonProperty("ignore_lighting")
+  @SerializedName("ignore_lighting")
   public boolean ignoreLighting;
 
-  @JsonProperty("is_hurt_color")
+  @SerializedName("is_hurt_color")
   public IsHurtColor isHurtColor;
 
-  @JsonProperty("light_color_multiplier")
+  @SerializedName("light_color_multiplier")
   public String lightColorMultiplier;
 
   private Map<String, String> materials = new HashMap<>();
 
-  @JsonProperty("on_fire_color")
+  @SerializedName("on_fire_color")
   public OnFireColor onFireColor;
 
-  @JsonProperty("overlay_color")
+  @SerializedName("overlay_color")
   public OverlayColor overlayColor;
 
-  @JsonProperty("part_visibility")
+  @SerializedName("part_visibility")
   private Map<String, String> partVisibility = new HashMap<>();
 
-  @JsonProperty("uv_anim")
+  @SerializedName("uv_anim")
   public UvAnim uvAnim;
 
   /**

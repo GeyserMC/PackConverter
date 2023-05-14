@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,16 +15,16 @@ import org.geysermc.pack.bedrock.resource.sounds.InteractiveSounds;
  * Sound definitions.
  */
 public class Sounds {
-  @JsonProperty("block_sounds")
+  @SerializedName("block_sounds")
   private Map<String, BlockSounds> blockSounds = new HashMap<>();
 
-  @JsonProperty("entity_sounds")
+  @SerializedName("entity_sounds")
   public EntitySounds entitySounds;
 
-  @JsonProperty("individual_event_sounds")
+  @SerializedName("individual_event_sounds")
   public IndividualEventSounds individualEventSounds;
 
-  @JsonProperty("interactive_sounds")
+  @SerializedName("interactive_sounds")
   public InteractiveSounds interactiveSounds;
 
   /**

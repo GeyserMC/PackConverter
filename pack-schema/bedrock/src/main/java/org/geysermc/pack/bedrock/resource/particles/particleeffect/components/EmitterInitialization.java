@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.components;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
@@ -9,10 +9,10 @@ import java.lang.String;
  * This component allows the emitter to run some Molang at creation, primarily to populate any Molang variables that get used later.
  */
 public class EmitterInitialization {
-  @JsonProperty("creation_expression")
+  @SerializedName("creation_expression")
   public String creationExpression;
 
-  @JsonProperty("per_update_expression")
+  @SerializedName("per_update_expression")
   public String perUpdateExpression;
 
   /**

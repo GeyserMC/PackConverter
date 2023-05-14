@@ -1,15 +1,15 @@
 package org.geysermc.pack.bedrock.resource.fog.fogsettings.volumetric.density;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
 public class Lava {
-  @JsonProperty("max_density")
+  @SerializedName("max_density")
   public float maxDensity;
 
-  @JsonProperty("max_density_height")
+  @SerializedName("max_density_height")
   public float maxDensityHeight;
 
-  @JsonProperty("zero_density_height")
+  @SerializedName("zero_density_height")
   public float zeroDensityHeight;
 
   public boolean uniform;

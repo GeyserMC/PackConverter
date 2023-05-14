@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.components;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,15 +12,15 @@ import org.geysermc.pack.bedrock.resource.particles.particleeffect.components.em
  * Emitter Lifetime Events Component For 1.10.0
  */
 public class EmitterLifetimeEvents {
-  @JsonProperty("creation_event")
+  @SerializedName("creation_event")
   public String[] creationEvent;
 
-  @JsonProperty("expiration_event")
+  @SerializedName("expiration_event")
   public String[] expirationEvent;
 
   private Map<String, String[]> timeline = new HashMap<>();
 
-  @JsonProperty("looping_travel_distance_events")
+  @SerializedName("looping_travel_distance_events")
   public List<LoopingTravelDistanceEvents> loopingTravelDistanceEvents = new ArrayList<>();
 
   public String[] creationEvent() {

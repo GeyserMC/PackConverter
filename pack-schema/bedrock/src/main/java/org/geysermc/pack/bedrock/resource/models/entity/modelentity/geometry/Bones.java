@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,15 +33,15 @@ public class Bones {
 
   public float[] pivot;
 
-  @JsonProperty("poly_mesh")
+  @SerializedName("poly_mesh")
   public PolyMesh polyMesh;
 
-  @JsonProperty("render_group_id")
+  @SerializedName("render_group_id")
   public int renderGroupId;
 
   public float[] rotation;
 
-  @JsonProperty("texture_meshes")
+  @SerializedName("texture_meshes")
   public List<TextureMeshes> textureMeshes = new ArrayList<>();
 
   /**

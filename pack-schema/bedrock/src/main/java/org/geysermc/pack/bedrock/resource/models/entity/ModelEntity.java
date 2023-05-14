@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.models.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +14,10 @@ import org.geysermc.pack.bedrock.resource.models.entity.modelentity.Geometry;
 public class ModelEntity {
   public boolean debug;
 
-  @JsonProperty("format_version")
+  @SerializedName("format_version")
   public String formatVersion;
 
-  @JsonProperty("minecraft:geometry")
+  @SerializedName("minecraft:geometry")
   public List<Geometry> geometry = new ArrayList<>();
 
   /**

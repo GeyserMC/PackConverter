@@ -24,7 +24,7 @@
  *
  */
 
-package org.geysermc.pack.converter.utils;
+package org.geysermc.pack.converter.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

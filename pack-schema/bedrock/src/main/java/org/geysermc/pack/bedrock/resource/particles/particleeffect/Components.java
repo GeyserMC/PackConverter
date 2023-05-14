@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import org.geysermc.pack.bedrock.resource.particles.particleeffect.components.EmitterInitialization;
 import org.geysermc.pack.bedrock.resource.particles.particleeffect.components.EmitterLifetimeEvents;
@@ -34,85 +34,85 @@ import org.geysermc.pack.bedrock.resource.particles.particleeffect.components.Pa
  * The particle components.
  */
 public class Components {
-  @JsonProperty("minecraft:emitter_initialization")
+  @SerializedName("minecraft:emitter_initialization")
   public EmitterInitialization emitterInitialization;
 
-  @JsonProperty("minecraft:emitter_lifetime_events")
+  @SerializedName("minecraft:emitter_lifetime_events")
   public EmitterLifetimeEvents emitterLifetimeEvents;
 
-  @JsonProperty("minecraft:emitter_lifetime_expression")
+  @SerializedName("minecraft:emitter_lifetime_expression")
   public EmitterLifetimeExpression emitterLifetimeExpression;
 
-  @JsonProperty("minecraft:emitter_lifetime_once")
+  @SerializedName("minecraft:emitter_lifetime_once")
   public EmitterLifetimeOnce emitterLifetimeOnce;
 
-  @JsonProperty("minecraft:emitter_lifetime_looping")
+  @SerializedName("minecraft:emitter_lifetime_looping")
   public EmitterLifetimeLooping emitterLifetimeLooping;
 
-  @JsonProperty("minecraft:emitter_local_space")
+  @SerializedName("minecraft:emitter_local_space")
   public EmitterLocalSpace emitterLocalSpace;
 
-  @JsonProperty("minecraft:emitter_rate_instant")
+  @SerializedName("minecraft:emitter_rate_instant")
   public EmitterRateInstant emitterRateInstant;
 
-  @JsonProperty("minecraft:emitter_rate_manual")
+  @SerializedName("minecraft:emitter_rate_manual")
   public EmitterRateManual emitterRateManual;
 
-  @JsonProperty("minecraft:emitter_rate_steady")
+  @SerializedName("minecraft:emitter_rate_steady")
   public EmitterRateSteady emitterRateSteady;
 
-  @JsonProperty("minecraft:emitter_shape_box")
+  @SerializedName("minecraft:emitter_shape_box")
   public EmitterShapeBox emitterShapeBox;
 
-  @JsonProperty("minecraft:emitter_shape_custom")
+  @SerializedName("minecraft:emitter_shape_custom")
   public EmitterShapeCustom emitterShapeCustom;
 
-  @JsonProperty("minecraft:emitter_shape_disc")
+  @SerializedName("minecraft:emitter_shape_disc")
   public EmitterShapeDisc emitterShapeDisc;
 
-  @JsonProperty("minecraft:emitter_shape_entity_aabb")
+  @SerializedName("minecraft:emitter_shape_entity_aabb")
   public EmitterShapeEntityAabb emitterShapeEntityAabb;
 
-  @JsonProperty("minecraft:emitter_shape_point")
+  @SerializedName("minecraft:emitter_shape_point")
   public EmitterShapePoint emitterShapePoint;
 
-  @JsonProperty("minecraft:emitter_shape_sphere")
+  @SerializedName("minecraft:emitter_shape_sphere")
   public EmitterShapeSphere emitterShapeSphere;
 
-  @JsonProperty("minecraft:particle_appearance_billboard")
+  @SerializedName("minecraft:particle_appearance_billboard")
   public ParticleAppearanceBillboard particleAppearanceBillboard;
 
-  @JsonProperty("minecraft:particle_appearance_tinting")
+  @SerializedName("minecraft:particle_appearance_tinting")
   public ParticleAppearanceTinting particleAppearanceTinting;
 
-  @JsonProperty("minecraft:particle_appearance_lighting")
+  @SerializedName("minecraft:particle_appearance_lighting")
   public ParticleAppearanceLighting particleAppearanceLighting;
 
-  @JsonProperty("minecraft:particle_initialization")
+  @SerializedName("minecraft:particle_initialization")
   public ParticleInitialization particleInitialization;
 
-  @JsonProperty("minecraft:particle_initial_speed")
+  @SerializedName("minecraft:particle_initial_speed")
   public String particleInitialSpeed;
 
-  @JsonProperty("minecraft:particle_initial_spin")
+  @SerializedName("minecraft:particle_initial_spin")
   public ParticleInitialSpin particleInitialSpin;
 
-  @JsonProperty("minecraft:particle_lifetime_expression")
+  @SerializedName("minecraft:particle_lifetime_expression")
   public ParticleLifetimeExpression particleLifetimeExpression;
 
-  @JsonProperty("minecraft:particle_lifetime_events")
+  @SerializedName("minecraft:particle_lifetime_events")
   public ParticleLifetimeEvents particleLifetimeEvents;
 
-  @JsonProperty("minecraft:particle_kill_plane")
+  @SerializedName("minecraft:particle_kill_plane")
   public String[] particleKillPlane;
 
-  @JsonProperty("minecraft:particle_motion_collision")
+  @SerializedName("minecraft:particle_motion_collision")
   public ParticleMotionCollision particleMotionCollision;
 
-  @JsonProperty("minecraft:particle_motion_dynamic")
+  @SerializedName("minecraft:particle_motion_dynamic")
   public ParticleMotionDynamic particleMotionDynamic;
 
-  @JsonProperty("minecraft:particle_motion_parametric")
+  @SerializedName("minecraft:particle_motion_parametric")
   public ParticleMotionParametric particleMotionParametric;
 
   /**

@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.items;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
@@ -9,10 +9,10 @@ import java.lang.String;
  * Minecraft items 1.10.0
  */
 public class Items {
-  @JsonProperty("format_version")
+  @SerializedName("format_version")
   public String formatVersion;
 
-  @JsonProperty("minecraft:item")
+  @SerializedName("minecraft:item")
   public Item item;
 
   /**

@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.components;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
@@ -11,7 +11,7 @@ import java.lang.String;
 public class ParticleInitialSpin {
   public String rotation;
 
-  @JsonProperty("rotation_rate")
+  @SerializedName("rotation_rate")
   public String rotationRate;
 
   public String rotation() {

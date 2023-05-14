@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.fog.fogsettings.distance.powdersnow;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import org.geysermc.pack.bedrock.resource.fog.fogsettings.distance.powdersnow.transitionfog.InitFog;
 
 /**
@@ -9,19 +9,19 @@ import org.geysermc.pack.bedrock.resource.fog.fogsettings.distance.powdersnow.tr
  * Additional fog data which will slowly transition to the distance fog of current biome.
  */
 public class TransitionFog {
-  @JsonProperty("init_fog")
+  @SerializedName("init_fog")
   public InitFog initFog;
 
-  @JsonProperty("min_percent")
+  @SerializedName("min_percent")
   public float minPercent;
 
-  @JsonProperty("mid_seconds")
+  @SerializedName("mid_seconds")
   public float midSeconds;
 
-  @JsonProperty("mid_percent")
+  @SerializedName("mid_percent")
   public float midPercent;
 
-  @JsonProperty("max_seconds")
+  @SerializedName("max_seconds")
   public float maxSeconds;
 
   /**

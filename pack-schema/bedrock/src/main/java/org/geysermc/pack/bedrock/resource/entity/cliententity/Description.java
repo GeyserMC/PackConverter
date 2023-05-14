@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.entity.cliententity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,42 +15,42 @@ import org.geysermc.pack.bedrock.resource.entity.cliententity.description.SpawnE
 public class Description {
   private Map<String, String> animations = new HashMap<>();
 
-  @JsonProperty("enable_attachables")
+  @SerializedName("enable_attachables")
   public boolean enableAttachables;
 
   private Map<String, String> geometry = new HashMap<>();
 
-  @JsonProperty("queryable_geometry")
+  @SerializedName("queryable_geometry")
   public String queryableGeometry;
 
-  @JsonProperty("hide_armor")
+  @SerializedName("hide_armor")
   public boolean hideArmor;
 
-  @JsonProperty("held_item_ignores_lighting")
+  @SerializedName("held_item_ignores_lighting")
   public boolean heldItemIgnoresLighting;
 
   public String identifier;
 
   private Map<String, String> materials = new HashMap<>();
 
-  @JsonProperty("min_engine_version")
+  @SerializedName("min_engine_version")
   public String minEngineVersion;
 
-  @JsonProperty("particle_effects")
+  @SerializedName("particle_effects")
   private Map<String, String> particleEffects = new HashMap<>();
 
-  @JsonProperty("particle_emitters")
+  @SerializedName("particle_emitters")
   private Map<String, String> particleEmitters = new HashMap<>();
 
-  @JsonProperty("render_controllers")
+  @SerializedName("render_controllers")
   public String[] renderControllers;
 
   public Scripts scripts;
 
-  @JsonProperty("sound_effects")
+  @SerializedName("sound_effects")
   private Map<String, String> soundEffects = new HashMap<>();
 
-  @JsonProperty("spawn_egg")
+  @SerializedName("spawn_egg")
   public SpawnEgg spawnEgg;
 
   private Map<String, String> textures = new HashMap<>();

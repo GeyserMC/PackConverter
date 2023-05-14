@@ -27,8 +27,8 @@
 package org.geysermc.pack.converter;
 
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
-import org.geysermc.pack.converter.utils.LogListener;
 import org.geysermc.pack.converter.data.ConversionData;
+import org.geysermc.pack.converter.util.LogListener;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.ResourcePack;
 
@@ -42,26 +42,26 @@ public record PackConversionContext<T extends ConversionData>(
         @NotNull LogListener logListener) {
 
     public Path inputDirectory() {
-        return data.inputDirectory();
+        return this.data.inputDirectory();
     }
 
     public Path outputDirectory() {
-        return data.outputDirectory();
+        return this.data.outputDirectory();
     }
 
     public void info(@NotNull String message) {
-        logListener.info(message);
+        this.logListener.info(message);
     }
 
     public void warn(@NotNull String message) {
-        logListener.warn(message);
+        this.logListener.warn(message);
     }
 
     public void error(@NotNull String message) {
-        logListener.error(message);
+        this.logListener.error(message);
     }
 
     public void error(@NotNull String message, @NotNull Throwable exception) {
-        logListener.error(message, exception);
+        this.logListener.error(message, exception);
     }
 }

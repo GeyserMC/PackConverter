@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 import java.util.List;
 import org.geysermc.pack.bedrock.resource.manifest.Capabilities;
@@ -16,7 +16,7 @@ import org.geysermc.pack.bedrock.resource.manifest.Subpacks;
  * The manifest file contains all the basic information about the pack that Minecraft needs to identify it. The tables below contain all the components of the manifest, their individual properties, and what they mean.
  */
 public class Manifest {
-  @JsonProperty("format_version")
+  @SerializedName("format_version")
   public float formatVersion;
 
   public Capabilities capabilities;

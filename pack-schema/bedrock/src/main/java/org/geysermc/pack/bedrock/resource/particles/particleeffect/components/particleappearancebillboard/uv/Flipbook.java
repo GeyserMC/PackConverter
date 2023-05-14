@@ -1,19 +1,19 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.components.particleappearancebillboard.uv;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
  * Flipbook
  */
 public class Flipbook {
-  @JsonProperty("frames_per_second")
+  @SerializedName("frames_per_second")
   public String framesPerSecond;
 
-  @JsonProperty("max_frame")
+  @SerializedName("max_frame")
   public String maxFrame;
 
-  @JsonProperty("stretch_to_lifetime")
+  @SerializedName("stretch_to_lifetime")
   public boolean stretchToLifetime;
 
   public boolean loop;

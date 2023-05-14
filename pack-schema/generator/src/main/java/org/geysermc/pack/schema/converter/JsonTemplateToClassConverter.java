@@ -259,7 +259,7 @@ public final class JsonTemplateToClassConverter {
 
             if (spec != null) {
                 if (!fieldName.equals(propertyName)) {
-                    AnnotationSpec annotation = AnnotationSpec.builder(ClassName.get("com.fasterxml.jackson.annotation", "JsonProperty"))
+                    AnnotationSpec annotation = AnnotationSpec.builder(ClassName.get("com.google.gson.annotations", "SerializedName"))
                             .addMember("value", CodeBlock.of("\"" + propertyName + "\""))
                             .build();
 
@@ -749,7 +749,7 @@ public final class JsonTemplateToClassConverter {
             if (ifConst != null) {
                 Object constValue = ifConst.getValue().getValue("const");
                 Object configuredOption = options.schemaConfig().getConditionals().get(ifConst.getKey());
-                if (constValue.equals(configuredOption)) {
+                if (constValue.toString().equals(configuredOption)) {
                     return parseRef(input, parentSchema, jsonObject.getJsonObject("then"));
                 } else if (configuredOption == null) {
                     System.err.println("Could not find " + ifConst.getKey() + " in " + options.schemaConfig().getConditionals());

@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.manifest;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Capabilities
@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * These are the different features that the pack makes use of that aren't necessarily enabled by default.
  */
 public class Capabilities {
-  @JsonProperty("experimental_custom_ui")
+  @SerializedName("experimental_custom_ui")
   public boolean experimentalCustomUi;
 
   public boolean chemistry;

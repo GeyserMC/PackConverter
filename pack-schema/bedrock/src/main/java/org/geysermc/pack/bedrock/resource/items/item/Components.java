@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.items.item;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
@@ -9,10 +9,10 @@ import java.lang.String;
  * The components that describe this item.
  */
 public class Components {
-  @JsonProperty("minecraft:icon")
+  @SerializedName("minecraft:icon")
   public String icon;
 
-  @JsonProperty("minecraft:render_offsets")
+  @SerializedName("minecraft:render_offsets")
   public String renderOffsets;
 
   /**

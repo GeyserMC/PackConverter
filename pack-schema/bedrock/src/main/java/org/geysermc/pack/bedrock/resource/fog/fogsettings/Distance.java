@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.fog.fogsettings;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import org.geysermc.pack.bedrock.resource.fog.fogsettings.distance.Air;
 import org.geysermc.pack.bedrock.resource.fog.fogsettings.distance.Lava;
 import org.geysermc.pack.bedrock.resource.fog.fogsettings.distance.LavaResistance;
@@ -22,10 +22,10 @@ public class Distance {
 
   public Lava lava;
 
-  @JsonProperty("lava_resistance")
+  @SerializedName("lava_resistance")
   public LavaResistance lavaResistance;
 
-  @JsonProperty("powder_snow")
+  @SerializedName("powder_snow")
   public PowderSnow powderSnow;
 
   public Air air() {

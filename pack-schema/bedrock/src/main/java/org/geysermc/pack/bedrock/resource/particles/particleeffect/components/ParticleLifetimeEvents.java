@@ -1,16 +1,16 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.components;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
  * Particle Lifetime Events Component For 1.10.0
  */
 public class ParticleLifetimeEvents {
-  @JsonProperty("creation_event")
+  @SerializedName("creation_event")
   public String[] creationEvent;
 
-  @JsonProperty("expiration_event")
+  @SerializedName("expiration_event")
   public String[] expirationEvent;
 
   public String[] creationEvent() {

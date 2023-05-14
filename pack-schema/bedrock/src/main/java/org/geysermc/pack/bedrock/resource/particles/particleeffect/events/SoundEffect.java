@@ -1,13 +1,13 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.events;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
  * Sound Effect
  */
 public class SoundEffect {
-  @JsonProperty("event_name")
+  @SerializedName("event_name")
   public String eventName;
 
   /**

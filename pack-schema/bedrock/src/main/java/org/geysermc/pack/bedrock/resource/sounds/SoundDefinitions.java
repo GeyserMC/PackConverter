@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.sounds;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,13 +11,13 @@ import java.util.Map;
  * The collection of sound definitions this resourcepack has defined.
  */
 public class SoundDefinitions {
-  @JsonProperty("format_version")
+  @SerializedName("format_version")
   public String formatVersion;
 
-  @JsonProperty("sound_definitions")
+  @SerializedName("sound_definitions")
   private Map<String, org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitions> soundDefinitions = new HashMap<>();
 
-  @JsonProperty("__use_legacy_max_distance")
+  @SerializedName("__use_legacy_max_distance")
   public String useLegacyMaxDistance;
 
   /**

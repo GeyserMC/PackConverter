@@ -24,7 +24,7 @@
  *
  */
 
-package org.geysermc.pack.converter.utils;
+package org.geysermc.pack.converter.util;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -33,10 +33,10 @@ import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
 
-public class ImageUtils {
+public class ImageUtil {
 
     /**
-     * @see ImageUtils#crop(BufferedImage, int, int, int, int)
+     * @see ImageUtil#crop(BufferedImage, int, int, int, int)
      */
     public static BufferedImage crop(BufferedImage img, int width, int height) {
         return crop(img, 0, 0, width, height);

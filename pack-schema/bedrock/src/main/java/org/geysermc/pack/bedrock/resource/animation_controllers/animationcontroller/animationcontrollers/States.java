@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.animation_controllers.animationcontroller.animationcontrollers;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,21 +15,21 @@ import org.geysermc.pack.bedrock.resource.animation_controllers.animationcontrol
  * The states of this animation controller.
  */
 public class States {
-  @JsonProperty("blend_transition")
+  @SerializedName("blend_transition")
   public float blendTransition;
 
-  @JsonProperty("blend_via_shortest_path")
+  @SerializedName("blend_via_shortest_path")
   public boolean blendViaShortestPath;
 
-  @JsonProperty("sound_effects")
+  @SerializedName("sound_effects")
   public List<SoundEffects> soundEffects = new ArrayList<>();
 
   private Map<String, Variables> variables = new HashMap<>();
 
-  @JsonProperty("on_entry")
+  @SerializedName("on_entry")
   public String[] onEntry;
 
-  @JsonProperty("on_exit")
+  @SerializedName("on_exit")
   public String[] onExit;
 
   /**

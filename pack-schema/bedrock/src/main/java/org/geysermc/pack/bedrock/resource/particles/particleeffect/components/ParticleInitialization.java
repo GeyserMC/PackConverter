@@ -1,16 +1,16 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.components;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
  * Particle Initialization Component For 1.10.0
  */
 public class ParticleInitialization {
-  @JsonProperty("per_update_expression")
+  @SerializedName("per_update_expression")
   public String perUpdateExpression;
 
-  @JsonProperty("per_render_expression")
+  @SerializedName("per_render_expression")
   public String perRenderExpression;
 
   public String perUpdateExpression() {

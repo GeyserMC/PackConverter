@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.animation_controllers.animationcontroller;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +14,7 @@ import org.geysermc.pack.bedrock.resource.animation_controllers.animationcontrol
 public class AnimationControllers {
   private Map<String, States> states = new HashMap<>();
 
-  @JsonProperty("initial_state")
+  @SerializedName("initial_state")
   public String initialState;
 
   /**

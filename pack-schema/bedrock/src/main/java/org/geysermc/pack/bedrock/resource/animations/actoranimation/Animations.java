@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.animations.actoranimation;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,32 +14,32 @@ import org.geysermc.pack.bedrock.resource.animations.actoranimation.animations.S
  * The animation specification.
  */
 public class Animations {
-  @JsonProperty("anim_time_update")
+  @SerializedName("anim_time_update")
   public String animTimeUpdate;
 
-  @JsonProperty("animation_length")
+  @SerializedName("animation_length")
   public float animationLength;
 
-  @JsonProperty("blend_weight")
+  @SerializedName("blend_weight")
   public String blendWeight;
 
   private Map<String, Bones> bones = new HashMap<>();
 
   public String loop;
 
-  @JsonProperty("loop_delay")
+  @SerializedName("loop_delay")
   public String loopDelay;
 
-  @JsonProperty("override_previous_animation")
+  @SerializedName("override_previous_animation")
   public boolean overridePreviousAnimation;
 
-  @JsonProperty("particle_effects")
+  @SerializedName("particle_effects")
   private Map<String, ParticleEffects> particleEffects = new HashMap<>();
 
-  @JsonProperty("start_delay")
+  @SerializedName("start_delay")
   public String startDelay;
 
-  @JsonProperty("sound_effects")
+  @SerializedName("sound_effects")
   private Map<String, SoundEffects> soundEffects = new HashMap<>();
 
   private Map<String, String> timeline = new HashMap<>();

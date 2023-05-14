@@ -1,8 +1,8 @@
 {
   "conditionals": {
-    "Manifest.properties.format_version": 2,
-    "Attachables.properties.format_version": "1.10.0",
-    "Items.properties.format_version": "1.10.0",
+    "Manifest.properties.format_version": "2",
+    "Attachables.properties.format_version": "1.10",
+    "Items.properties.format_version": "1.10",
     "Entity.properties.format_version": "1.10.0",
     "ModelEntity.properties.format_version": "1.16.0"
   },

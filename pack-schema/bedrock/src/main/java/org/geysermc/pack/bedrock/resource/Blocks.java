@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import org.geysermc.pack.bedrock.resource.blocks.CarriedTextures;
 import org.geysermc.pack.bedrock.resource.blocks.Isotropic;
@@ -12,13 +12,13 @@ import org.geysermc.pack.bedrock.resource.blocks.Textures;
  * The minecraft block definition file.
  */
 public class Blocks {
-  @JsonProperty("format_version")
+  @SerializedName("format_version")
   public String formatVersion;
 
-  @JsonProperty("brightness_gamma")
+  @SerializedName("brightness_gamma")
   public float brightnessGamma;
 
-  @JsonProperty("carried_textures")
+  @SerializedName("carried_textures")
   public CarriedTextures carriedTextures;
 
   public Isotropic isotropic;

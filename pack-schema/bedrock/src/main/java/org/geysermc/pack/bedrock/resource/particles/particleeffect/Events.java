@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import org.geysermc.pack.bedrock.resource.particles.particleeffect.events.ParticleEffect;
 import org.geysermc.pack.bedrock.resource.particles.particleeffect.events.SoundEffect;
 
@@ -8,10 +8,10 @@ import org.geysermc.pack.bedrock.resource.particles.particleeffect.events.SoundE
  * Events
  */
 public class Events {
-  @JsonProperty("particle_effect")
+  @SerializedName("particle_effect")
   public ParticleEffect particleEffect;
 
-  @JsonProperty("sound_effect")
+  @SerializedName("sound_effect")
   public SoundEffect soundEffect;
 
   /**

@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.components;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
@@ -9,13 +9,13 @@ import java.lang.String;
  * This component specifies the dynamic properties of the particle, from a simulation standpoint what forces act upon the particle? These dynamics alter the velocity of the particle, which is a combination of the direction of the particle and the speed. Particle direction will always be in the direction of the velocity of the particle.
  */
 public class ParticleMotionDynamic {
-  @JsonProperty("linear_drag_coefficient")
+  @SerializedName("linear_drag_coefficient")
   public String linearDragCoefficient;
 
-  @JsonProperty("rotation_acceleration")
+  @SerializedName("rotation_acceleration")
   public String rotationAcceleration;
 
-  @JsonProperty("rotation_drag_coefficient")
+  @SerializedName("rotation_drag_coefficient")
   public String rotationDragCoefficient;
 
   public String linearDragCoefficient() {

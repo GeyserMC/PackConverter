@@ -24,40 +24,17 @@
  *
  */
 
-package org.geysermc.pack.bedrock.resource.util;
+package org.geysermc.pack.converter.util;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+public interface LogListener {
+    void info(@NotNull String message);
 
-/**
- * Utility class for files.
- */
-public class FileUtil {
+    void warn(@NotNull String message);
 
-    /**
-     * Exports the specified object to the given location as JSON.
-     *
-     * @param mapper the object mapper to use
-     * @param location the location to export the object to
-     * @param object the object to export
-     * @throws IOException if an I/O error occurs
-     */
-    public static void exportJson(@NotNull ObjectMapper mapper, @NotNull Path location, @NotNull Object object) throws IOException {
-        if (Files.notExists(location.getParent())) {
-            Files.createDirectories(location.getParent());
-        }
+    void error(@NotNull String message);
 
-        if (Files.notExists(location)) {
-            Files.createFile(location);
-        }
-
-        try (BufferedWriter writer = Files.newBufferedWriter(location)) {
-            mapper.writeValue(writer, object);
-        }
-    }
+    void error(@NotNull String message, @Nullable Throwable exception);
 }

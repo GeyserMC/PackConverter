@@ -1,12 +1,12 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.components.particleappearancebillboard;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 public class Direction {
   public String mode;
 
-  @JsonProperty("min_speed_threshold")
+  @SerializedName("min_speed_threshold")
   public float minSpeedThreshold;
 
   /**

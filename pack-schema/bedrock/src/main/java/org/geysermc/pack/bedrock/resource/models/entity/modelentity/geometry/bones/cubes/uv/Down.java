@@ -1,15 +1,15 @@
 package org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 public class Down {
   public float[] uv;
 
-  @JsonProperty("uv_size")
+  @SerializedName("uv_size")
   public float[] uvSize;
 
-  @JsonProperty("material_instance")
+  @SerializedName("material_instance")
   public String materialInstance;
 
   public float[] uv() {

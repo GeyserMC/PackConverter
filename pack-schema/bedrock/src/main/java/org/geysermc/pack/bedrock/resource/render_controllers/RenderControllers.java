@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.render_controllers;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,10 +11,10 @@ import java.util.Map;
  * A collection of render controllers to apply.
  */
 public class RenderControllers {
-  @JsonProperty("format_version")
+  @SerializedName("format_version")
   public String formatVersion;
 
-  @JsonProperty("render_controllers")
+  @SerializedName("render_controllers")
   private Map<String, org.geysermc.pack.bedrock.resource.render_controllers.rendercontrollers.RenderControllers> renderControllers = new HashMap<>();
 
   /**

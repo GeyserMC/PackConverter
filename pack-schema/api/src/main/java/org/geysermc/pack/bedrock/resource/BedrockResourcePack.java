@@ -26,39 +26,45 @@
 
 package org.geysermc.pack.bedrock.resource;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.geysermc.pack.bedrock.resource.attachables.Attachables;
+import org.geysermc.pack.bedrock.resource.sounds.SoundDefinitions;
+import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.Sounds;
 import org.geysermc.pack.bedrock.resource.textures.ItemTexture;
 import org.geysermc.pack.bedrock.resource.textures.TerrainTexture;
 import org.geysermc.pack.bedrock.resource.textures.itemtexture.TextureData;
 import org.geysermc.pack.bedrock.resource.textures.terraintexture.texturedata.Textures;
+import org.geysermc.pack.util.gson.EmptyArrayAdapterFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.geysermc.pack.bedrock.resource.util.FileUtil.exportJson;
+import static org.geysermc.pack.util.FileUtil.exportJson;
 
 /**
  * Represents a Bedrock resource pack.
  */
 public class BedrockResourcePack {
-    private static final ObjectMapper MAPPER = new ObjectMapper()
-            .enable(SerializationFeature.INDENT_OUTPUT)
-            .setSerializationInclusion(JsonInclude.Include.NON_NULL)
-            .setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
+    private static final Gson GSON = new GsonBuilder()
+            .disableHtmlEscaping()
+            .setPrettyPrinting()
+            .registerTypeAdapterFactory(new EmptyArrayAdapterFactory())
+            .create();
 
     private final Path directory;
     private Manifest manifest;
+    private byte[] icon;
 
     private ItemTexture itemTexture;
     private TerrainTexture terrainTexture;
     private Map<String, Attachables> attachables;
+    private SoundDefinitions soundDefinitions;
 
     public BedrockResourcePack(@NotNull Path directory) {
         this(directory, null, null, null);
@@ -76,9 +82,27 @@ public class BedrockResourcePack {
      *
      * @return the manifest of the resource pack
      */
-    @NotNull
+    @Nullable
     public Manifest manifest() {
         return this.manifest;
+    }
+
+    /**
+     * Get the icon of the resource pack.
+     *
+     * @return the icon of the resource pack
+     */
+    public byte @Nullable[] icon() {
+        return this.icon;
+    }
+
+    /**
+     * Set the icon of the resource pack.
+     *
+     * @param icon the icon of the resource pack
+     */
+    public void icon(byte @Nullable[] icon) {
+        this.icon = icon;
     }
 
     /**
@@ -148,6 +172,25 @@ public class BedrockResourcePack {
     }
 
     /**
+     * Get the sound definitions of the resource pack.
+     *
+     * @return the sound definitions of the resource pack
+     */
+    @Nullable
+    public SoundDefinitions soundDefinitions() {
+        return this.soundDefinitions;
+    }
+
+    /**
+     * Set the sound definitions of the resource pack.
+     *
+     * @param soundDefinitions the sound definitions of the resource pack
+     */
+    public void soundDefinitions(@Nullable SoundDefinitions soundDefinitions) {
+        this.soundDefinitions = soundDefinitions;
+    }
+
+    /**
      * Add an item to the resource pack.
      *
      * @param id the id of the item
@@ -203,6 +246,47 @@ public class BedrockResourcePack {
         this.attachables.put(location, armorAttachable);
     }
 
+    /**
+     * Add a sound to the resource pack with the default options set.
+     *
+     * @param id the id of the sound
+     * @param soundLocation the location of the sound
+     */
+    public void addDefaultSound(@NotNull String id, @NotNull String soundLocation) {
+        if (this.soundDefinitions == null) {
+            this.soundDefinitions = new SoundDefinitions();
+            this.soundDefinitions.formatVersion("1.14.0");
+        }
+
+        Sounds sounds = new Sounds();
+        sounds.name(soundLocation);
+        sounds.loadOnLowMemory(true);
+        sounds.stream(true);
+        sounds.volume(1);
+        sounds.is3D(true);
+        sounds.pitch(1);
+
+        org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitions data = new org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitions();
+        data.sounds().add(sounds);
+        data.maxDistance(64);
+
+        this.soundDefinitions.soundDefinitions().put(id, data);
+    }
+
+    /**
+     * Add a sound to the resource pack.
+     *
+     * @param id the id of the sound
+     * @param soundDefinition the sound definition
+     */
+    public void addSoundDefinition(@NotNull String id, @NotNull org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitions soundDefinition) {
+        if (this.soundDefinitions == null) {
+            this.soundDefinitions = new SoundDefinitions();
+            this.soundDefinitions.formatVersion("1.14.0");
+        }
+
+        this.soundDefinitions.soundDefinitions().put(id, soundDefinition);
+    }
 
     /**
      * Exports the resource pack to the specified directory.
@@ -214,14 +298,27 @@ public class BedrockResourcePack {
             throw new NullPointerException("Pack manifest cannot be null");
         }
 
-        exportJson(MAPPER, this.directory.resolve("manifest.json"), this.manifest);
+        exportJson(GSON, this.directory.resolve("manifest.json"), this.manifest);
+        if (this.icon != null) {
+            Files.write(this.directory.resolve("pack_icon.png"), this.icon);
+        }
 
         if (this.itemTexture != null) {
-            exportJson(MAPPER, this.directory.resolve("textures/item_texture.json"), this.itemTexture);
+            exportJson(GSON, this.directory.resolve("textures/item_texture.json"), this.itemTexture);
         }
 
         if (this.terrainTexture != null) {
-            exportJson(MAPPER, this.directory.resolve("textures/terrain_texture.json"), this.terrainTexture);
+            exportJson(GSON, this.directory.resolve("textures/terrain_texture.json"), this.terrainTexture);
+        }
+
+        if (this.attachables != null) {
+            for (Map.Entry<String, Attachables> attachable : this.attachables.entrySet()) {
+                exportJson(GSON, this.directory.resolve(attachable.getKey()), attachable.getValue());
+            }
+        }
+
+        if (this.soundDefinitions != null) {
+            exportJson(GSON, this.directory.resolve("sounds/sound_definitions.json"), this.soundDefinitions);
         }
     }
 }

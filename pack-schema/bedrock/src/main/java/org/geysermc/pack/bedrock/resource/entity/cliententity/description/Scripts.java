@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.entity.cliententity.description;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,7 @@ import java.util.Map;
 public class Scripts {
   public String[] animate;
 
-  @JsonProperty("parent_setup")
+  @SerializedName("parent_setup")
   public String parentSetup;
 
   public String scale;
@@ -24,10 +24,10 @@ public class Scripts {
 
   public String scalez;
 
-  @JsonProperty("should_update_bones_and_effects_offscreen")
+  @SerializedName("should_update_bones_and_effects_offscreen")
   public String shouldUpdateBonesAndEffectsOffscreen;
 
-  @JsonProperty("should_update_effects_offscreen")
+  @SerializedName("should_update_effects_offscreen")
   public String shouldUpdateEffectsOffscreen;
 
   private Map<String, String> variables = new HashMap<>();

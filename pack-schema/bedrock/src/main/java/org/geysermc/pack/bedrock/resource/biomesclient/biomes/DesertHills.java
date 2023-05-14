@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.biomesclient.biomes;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
@@ -9,22 +9,22 @@ import java.lang.String;
  * The specification of colors in a given biome.
  */
 public class DesertHills {
-  @JsonProperty("fog_identifier")
+  @SerializedName("fog_identifier")
   public String fogIdentifier;
 
-  @JsonProperty("fog_ids_to_merge")
+  @SerializedName("fog_ids_to_merge")
   public String[] fogIdsToMerge;
 
-  @JsonProperty("inherit_from_prior_fog")
+  @SerializedName("inherit_from_prior_fog")
   public boolean inheritFromPriorFog;
 
-  @JsonProperty("remove_all_prior_fog")
+  @SerializedName("remove_all_prior_fog")
   public boolean removeAllPriorFog;
 
-  @JsonProperty("water_fog_distance")
+  @SerializedName("water_fog_distance")
   public int waterFogDistance;
 
-  @JsonProperty("water_surface_transparency")
+  @SerializedName("water_surface_transparency")
   public float waterSurfaceTransparency;
 
   /**

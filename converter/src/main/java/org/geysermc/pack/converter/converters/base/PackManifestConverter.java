@@ -53,7 +53,7 @@ public class PackManifestConverter extends BaseConverter {
 
         Header header = new Header();
         header.description(javaPack.description());
-        header.name(context.inputDirectory().getFileName().toString().split("\\.")[0]);
+        header.name(context.outputDirectory().getFileName().toString());
         header.version(new float[] { 1, 0, 0 });
         header.minEngineVersion(new float[] { 1, 16, 0 });
         header.uuid(UUID.randomUUID().toString());

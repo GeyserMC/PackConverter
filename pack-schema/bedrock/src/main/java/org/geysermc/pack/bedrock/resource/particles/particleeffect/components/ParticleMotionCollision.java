@@ -1,24 +1,24 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.components;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
  * Particle Motion Collision Component For 1.10.0
  */
 public class ParticleMotionCollision {
-  @JsonProperty("collision_drag")
+  @SerializedName("collision_drag")
   public float collisionDrag;
 
-  @JsonProperty("coefficient_of_restitution")
+  @SerializedName("coefficient_of_restitution")
   public float coefficientOfRestitution;
 
-  @JsonProperty("collision_radius")
+  @SerializedName("collision_radius")
   public float collisionRadius;
 
   public String enabled;
 
-  @JsonProperty("expire_on_contact")
+  @SerializedName("expire_on_contact")
   public boolean expireOnContact;
 
   /**

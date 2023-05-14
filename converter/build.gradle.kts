@@ -1,6 +1,7 @@
 dependencies {
     api(project(":pack-schema-api"))
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.14.2")
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("commons-io:commons-io:2.11.0")
     implementation("com.twelvemonkeys.imageio:imageio-tga:3.5")
     implementation("com.nukkitx.fastutil:fastutil-int-object-maps:8.5.3")
     implementation("net.kyori:adventure-api:4.13.1")

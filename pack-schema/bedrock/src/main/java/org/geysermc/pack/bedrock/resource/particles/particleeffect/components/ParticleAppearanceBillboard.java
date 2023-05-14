@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.components;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import org.geysermc.pack.bedrock.resource.particles.particleeffect.components.particleappearancebillboard.Direction;
 import org.geysermc.pack.bedrock.resource.particles.particleeffect.components.particleappearancebillboard.Uv;
@@ -9,7 +9,7 @@ import org.geysermc.pack.bedrock.resource.particles.particleeffect.components.pa
  * Particle Appearance Billboard Component For 1.10.0
  */
 public class ParticleAppearanceBillboard {
-  @JsonProperty("facing_camera_mode")
+  @SerializedName("facing_camera_mode")
   public String facingCameraMode;
 
   public Direction direction;

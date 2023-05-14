@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.materials;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,17 +10,17 @@ import org.geysermc.pack.bedrock.resource.materials.variants.VertexFields;
  * Variant Item
  */
 public class Variants {
-  @JsonProperty("+defines")
+  @SerializedName("+defines")
   public String[] plusDefines;
 
   public List<VertexFields> vertexFields = new ArrayList<>();
 
   public String[] states;
 
-  @JsonProperty("+states")
+  @SerializedName("+states")
   public String[] plusStates;
 
-  @JsonProperty("-states")
+  @SerializedName("-states")
   public String[] minusStates;
 
   /**

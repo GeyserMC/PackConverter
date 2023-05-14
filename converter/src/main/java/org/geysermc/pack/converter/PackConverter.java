@@ -32,18 +32,21 @@ import lombok.Setter;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.converters.Converter;
 import org.geysermc.pack.converter.data.ConversionData;
-import org.geysermc.pack.converter.utils.DefaultLogListener;
-import org.geysermc.pack.converter.utils.LogListener;
-import org.geysermc.pack.converter.utils.ZipUtils;
+import org.geysermc.pack.converter.util.DefaultLogListener;
+import org.geysermc.pack.converter.util.LogListener;
+import org.geysermc.pack.converter.util.ZipUtils;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackReader;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,38 +105,42 @@ public class PackConverter {
         // Load any image plugins
         ImageIO.scanForPlugins();
 
-        this.tmpDir = this.input.toAbsolutePath().getParent().resolve(this.output.getFileName() + "_mcpack/");
+        try (FileSystem compressedFileSystem = FileSystems.newFileSystem(this.input, Collections.emptyMap())) {
+            Path input = compressedFileSystem.getPath("/");
 
-        if (this.converters.isEmpty()) {
-            throw new IllegalStateException("No converters have been added");
-        }
+            this.tmpDir = this.input.toAbsolutePath().getParent().resolve(this.output.getFileName() + "_mcpack/");
 
-        ResourcePack javaResourcePack = MinecraftResourcePackReader.minecraft().readFromZipFile(this.input);
-        BedrockResourcePack bedrockResourcePack = new BedrockResourcePack(this.tmpDir);
-
-        int errors = 0;
-        for (Converter converter : this.converters) {
-            ConversionData data = converter.createConversionData(this, this.input, this.output);
-            PackConversionContext<?> context = new PackConversionContext<>(data, this, javaResourcePack, bedrockResourcePack, this.logListener);
-
-            try {
-                converter.convert(context);
-            } catch (Throwable t) {
-                this.logListener.error("Error converting pack!", t);
-                errors++;
+            if (this.converters.isEmpty()) {
+                throw new IllegalStateException("No converters have been added");
             }
+
+            ResourcePack javaResourcePack = MinecraftResourcePackReader.minecraft().readFromZipFile(this.input);
+            BedrockResourcePack bedrockResourcePack = new BedrockResourcePack(this.tmpDir);
+
+            int errors = 0;
+            for (Converter converter : this.converters) {
+                ConversionData data = converter.createConversionData(this, input, this.tmpDir);
+                PackConversionContext<?> context = new PackConversionContext<>(data, this, javaResourcePack, bedrockResourcePack, this.logListener);
+
+                try {
+                    converter.convert(context);
+                } catch (Throwable t) {
+                    this.logListener.error("Error converting pack!", t);
+                    errors++;
+                }
+            }
+
+            bedrockResourcePack.export();
+
+            if (errors > 0) {
+                this.logListener.warn("Pack conversion completed with " + errors + " errors!");
+            } else {
+                this.logListener.info("Pack conversion completed successfully!");
+            }
+
+            this.pack();
+            this.cleanup();
         }
-
-        bedrockResourcePack.export();
-
-        if (errors > 0) {
-            this.logListener.warn("Pack conversion completed with " + errors + " errors!");
-        } else {
-            this.logListener.info("Pack conversion completed successfully!");
-        }
-
-        this.pack();
-        this.cleanup();
     }
 
     /**

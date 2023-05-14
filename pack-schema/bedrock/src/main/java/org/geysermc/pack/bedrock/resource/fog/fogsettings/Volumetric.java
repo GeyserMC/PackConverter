@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.fog.fogsettings;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import org.geysermc.pack.bedrock.resource.fog.fogsettings.volumetric.Density;
 import org.geysermc.pack.bedrock.resource.fog.fogsettings.volumetric.MediaCoefficients;
 
@@ -12,7 +12,7 @@ import org.geysermc.pack.bedrock.resource.fog.fogsettings.volumetric.MediaCoeffi
 public class Volumetric {
   public Density density;
 
-  @JsonProperty("media_coefficients")
+  @SerializedName("media_coefficients")
   public MediaCoefficients mediaCoefficients;
 
   /**

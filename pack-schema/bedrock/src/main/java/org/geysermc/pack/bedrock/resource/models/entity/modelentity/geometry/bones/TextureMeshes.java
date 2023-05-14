@@ -1,10 +1,10 @@
 package org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 public class TextureMeshes {
-  @JsonProperty("local_pivot")
+  @SerializedName("local_pivot")
   public float[] localPivot;
 
   public float[] position;

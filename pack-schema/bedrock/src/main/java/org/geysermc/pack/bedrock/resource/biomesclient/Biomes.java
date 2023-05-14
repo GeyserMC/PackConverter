@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.biomesclient;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import org.geysermc.pack.bedrock.resource.biomesclient.biomes.BambooJungle;
 import org.geysermc.pack.bedrock.resource.biomesclient.biomes.BambooJungleHills;
 import org.geysermc.pack.bedrock.resource.biomesclient.biomes.BasaltDeltas;
@@ -78,154 +78,154 @@ import org.geysermc.pack.bedrock.resource.biomesclient.biomes.WarpedForest;
  * A collection of predefined biomes.
  */
 public class Biomes {
-  @JsonProperty("bamboo_jungle_hills")
+  @SerializedName("bamboo_jungle_hills")
   public BambooJungleHills bambooJungleHills;
 
-  @JsonProperty("bamboo_jungle")
+  @SerializedName("bamboo_jungle")
   public BambooJungle bambooJungle;
 
-  @JsonProperty("basalt_deltas")
+  @SerializedName("basalt_deltas")
   public BasaltDeltas basaltDeltas;
 
   public Beach beach;
 
-  @JsonProperty("birch_forest_hills")
+  @SerializedName("birch_forest_hills")
   public BirchForestHills birchForestHills;
 
-  @JsonProperty("birch_forest")
+  @SerializedName("birch_forest")
   public BirchForest birchForest;
 
-  @JsonProperty("cold_beach")
+  @SerializedName("cold_beach")
   public ColdBeach coldBeach;
 
-  @JsonProperty("cold_ocean")
+  @SerializedName("cold_ocean")
   public ColdOcean coldOcean;
 
-  @JsonProperty("cold_taiga_hills")
+  @SerializedName("cold_taiga_hills")
   public ColdTaigaHills coldTaigaHills;
 
-  @JsonProperty("cold_taiga_mutated")
+  @SerializedName("cold_taiga_mutated")
   public ColdTaigaMutated coldTaigaMutated;
 
-  @JsonProperty("cold_taiga")
+  @SerializedName("cold_taiga")
   public ColdTaiga coldTaiga;
 
-  @JsonProperty("crimson_forest")
+  @SerializedName("crimson_forest")
   public CrimsonForest crimsonForest;
 
-  @JsonProperty("deep_cold_ocean")
+  @SerializedName("deep_cold_ocean")
   public DeepColdOcean deepColdOcean;
 
-  @JsonProperty("deep_frozen_ocean")
+  @SerializedName("deep_frozen_ocean")
   public DeepFrozenOcean deepFrozenOcean;
 
-  @JsonProperty("deep_lukewarm_ocean")
+  @SerializedName("deep_lukewarm_ocean")
   public DeepLukewarmOcean deepLukewarmOcean;
 
-  @JsonProperty("deep_ocean")
+  @SerializedName("deep_ocean")
   public DeepOcean deepOcean;
 
-  @JsonProperty("deep_warm_ocean")
+  @SerializedName("deep_warm_ocean")
   public DeepWarmOcean deepWarmOcean;
 
-  @JsonProperty("default")
+  @SerializedName("default")
   public DefaultValue defaultValue;
 
-  @JsonProperty("desert_hills")
+  @SerializedName("desert_hills")
   public DesertHills desertHills;
 
   public Desert desert;
 
-  @JsonProperty("extreme_hills_edge")
+  @SerializedName("extreme_hills_edge")
   public ExtremeHillsEdge extremeHillsEdge;
 
-  @JsonProperty("extreme_hills_mutated")
+  @SerializedName("extreme_hills_mutated")
   public ExtremeHillsMutated extremeHillsMutated;
 
-  @JsonProperty("extreme_hills_plus_trees_mutated")
+  @SerializedName("extreme_hills_plus_trees_mutated")
   public ExtremeHillsPlusTreesMutated extremeHillsPlusTreesMutated;
 
-  @JsonProperty("extreme_hills_plus_trees")
+  @SerializedName("extreme_hills_plus_trees")
   public ExtremeHillsPlusTrees extremeHillsPlusTrees;
 
-  @JsonProperty("extreme_hills")
+  @SerializedName("extreme_hills")
   public ExtremeHills extremeHills;
 
-  @JsonProperty("flower_forest")
+  @SerializedName("flower_forest")
   public FlowerForest flowerForest;
 
-  @JsonProperty("forest_hills")
+  @SerializedName("forest_hills")
   public ForestHills forestHills;
 
   public Forest forest;
 
-  @JsonProperty("frozen_ocean")
+  @SerializedName("frozen_ocean")
   public FrozenOcean frozenOcean;
 
-  @JsonProperty("frozen_river")
+  @SerializedName("frozen_river")
   public FrozenRiver frozenRiver;
 
   public Hell hell;
 
-  @JsonProperty("ice_mountains")
+  @SerializedName("ice_mountains")
   public IceMountains iceMountains;
 
-  @JsonProperty("ice_plains_spikes")
+  @SerializedName("ice_plains_spikes")
   public IcePlainsSpikes icePlainsSpikes;
 
-  @JsonProperty("ice_plains")
+  @SerializedName("ice_plains")
   public IcePlains icePlains;
 
-  @JsonProperty("jungle_edge")
+  @SerializedName("jungle_edge")
   public JungleEdge jungleEdge;
 
-  @JsonProperty("jungle_hills")
+  @SerializedName("jungle_hills")
   public JungleHills jungleHills;
 
-  @JsonProperty("jungle_mutated")
+  @SerializedName("jungle_mutated")
   public JungleMutated jungleMutated;
 
   public Jungle jungle;
 
-  @JsonProperty("lukewarm_ocean")
+  @SerializedName("lukewarm_ocean")
   public LukewarmOcean lukewarmOcean;
 
-  @JsonProperty("mangrove_swamp")
+  @SerializedName("mangrove_swamp")
   public MangroveSwamp mangroveSwamp;
 
-  @JsonProperty("mega_spruce_taiga_mutated")
+  @SerializedName("mega_spruce_taiga_mutated")
   public MegaSpruceTaigaMutated megaSpruceTaigaMutated;
 
-  @JsonProperty("mega_spruce_taiga")
+  @SerializedName("mega_spruce_taiga")
   public MegaSpruceTaiga megaSpruceTaiga;
 
-  @JsonProperty("mega_taiga_hills")
+  @SerializedName("mega_taiga_hills")
   public MegaTaigaHills megaTaigaHills;
 
-  @JsonProperty("mega_taiga_mutated")
+  @SerializedName("mega_taiga_mutated")
   public MegaTaigaMutated megaTaigaMutated;
 
-  @JsonProperty("mega_taiga")
+  @SerializedName("mega_taiga")
   public MegaTaiga megaTaiga;
 
-  @JsonProperty("mesa_bryce")
+  @SerializedName("mesa_bryce")
   public MesaBryce mesaBryce;
 
-  @JsonProperty("mesa_mutated")
+  @SerializedName("mesa_mutated")
   public MesaMutated mesaMutated;
 
-  @JsonProperty("mesa_plateau_stone")
+  @SerializedName("mesa_plateau_stone")
   public MesaPlateauStone mesaPlateauStone;
 
-  @JsonProperty("mesa_plateau")
+  @SerializedName("mesa_plateau")
   public MesaPlateau mesaPlateau;
 
   public Mesa mesa;
 
-  @JsonProperty("mushroom_island_shore")
+  @SerializedName("mushroom_island_shore")
   public MushroomIslandShore mushroomIslandShore;
 
-  @JsonProperty("mushroom_island")
+  @SerializedName("mushroom_island")
   public MushroomIsland mushroomIsland;
 
   public Ocean ocean;
@@ -234,46 +234,46 @@ public class Biomes {
 
   public River river;
 
-  @JsonProperty("roofed_forest")
+  @SerializedName("roofed_forest")
   public RoofedForest roofedForest;
 
-  @JsonProperty("savanna_mutated")
+  @SerializedName("savanna_mutated")
   public SavannaMutated savannaMutated;
 
-  @JsonProperty("savanna_plateau")
+  @SerializedName("savanna_plateau")
   public SavannaPlateau savannaPlateau;
 
   public Savanna savanna;
 
-  @JsonProperty("soulsand_valley")
+  @SerializedName("soulsand_valley")
   public SoulsandValley soulsandValley;
 
-  @JsonProperty("stone_beach")
+  @SerializedName("stone_beach")
   public StoneBeach stoneBeach;
 
-  @JsonProperty("sunflower_plains")
+  @SerializedName("sunflower_plains")
   public SunflowerPlains sunflowerPlains;
 
-  @JsonProperty("swampland_mutated")
+  @SerializedName("swampland_mutated")
   public SwamplandMutated swamplandMutated;
 
   public Swampland swampland;
 
-  @JsonProperty("taiga_hills")
+  @SerializedName("taiga_hills")
   public TaigaHills taigaHills;
 
-  @JsonProperty("taiga_mutated")
+  @SerializedName("taiga_mutated")
   public TaigaMutated taigaMutated;
 
   public Taiga taiga;
 
-  @JsonProperty("the_end")
+  @SerializedName("the_end")
   public TheEnd theEnd;
 
-  @JsonProperty("warm_ocean")
+  @SerializedName("warm_ocean")
   public WarmOcean warmOcean;
 
-  @JsonProperty("warped_forest")
+  @SerializedName("warped_forest")
   public WarpedForest warpedForest;
 
   /**

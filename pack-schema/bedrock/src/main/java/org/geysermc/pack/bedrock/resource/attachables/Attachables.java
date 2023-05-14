@@ -1,16 +1,16 @@
 package org.geysermc.pack.bedrock.resource.attachables;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
  * Actor Animation 1.10.0
  */
 public class Attachables {
-  @JsonProperty("format_version")
+  @SerializedName("format_version")
   public String formatVersion;
 
-  @JsonProperty("minecraft:attachable")
+  @SerializedName("minecraft:attachable")
   public Attachable attachable;
 
   /**

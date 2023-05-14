@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.sounds.sounddefinitions;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,14 +9,14 @@ import java.util.List;
  * Sound
  */
 public class SoundDefinitions {
-  @JsonProperty("__use_legacy_max_distance")
+  @SerializedName("__use_legacy_max_distance")
   public boolean useLegacyMaxDistance;
 
   public String category;
 
   private List<Sounds> sounds = new ArrayList<>();
 
-  @JsonProperty("max_distance")
+  @SerializedName("max_distance")
   public float maxDistance;
 
   /**

@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.manifest;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +17,7 @@ public class Metadata {
 
   public String url;
 
-  @JsonProperty("generated_with")
+  @SerializedName("generated_with")
   private Map<String, String[]> generatedWith = new HashMap<>();
 
   /**

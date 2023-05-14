@@ -1,10 +1,10 @@
 package org.geysermc.pack.bedrock.resource.animations.actoranimation.animations.bones;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 public class Scale {
-  @JsonProperty("lerp_mode")
+  @SerializedName("lerp_mode")
   public String lerpMode;
 
   public String[] pre;

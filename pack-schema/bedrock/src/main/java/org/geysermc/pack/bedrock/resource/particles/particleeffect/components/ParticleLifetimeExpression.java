@@ -1,16 +1,16 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.components;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
  * Particle Lifetime Expression Component For 1.10.0
  */
 public class ParticleLifetimeExpression {
-  @JsonProperty("expiration_expression")
+  @SerializedName("expiration_expression")
   public String expirationExpression;
 
-  @JsonProperty("max_lifetime")
+  @SerializedName("max_lifetime")
   public String maxLifetime;
 
   public String expirationExpression() {

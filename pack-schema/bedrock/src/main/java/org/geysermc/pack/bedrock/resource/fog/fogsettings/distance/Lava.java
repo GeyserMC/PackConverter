@@ -1,23 +1,23 @@
 package org.geysermc.pack.bedrock.resource.fog.fogsettings.distance;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import org.geysermc.pack.bedrock.resource.fog.fogsettings.distance.lava.TransitionFog;
 
 public class Lava {
-  @JsonProperty("fog_start")
+  @SerializedName("fog_start")
   public float fogStart;
 
-  @JsonProperty("fog_end")
+  @SerializedName("fog_end")
   public float fogEnd;
 
-  @JsonProperty("fog_color")
+  @SerializedName("fog_color")
   public String fogColor;
 
-  @JsonProperty("render_distance_type")
+  @SerializedName("render_distance_type")
   public String renderDistanceType;
 
-  @JsonProperty("transition_fog")
+  @SerializedName("transition_fog")
   public TransitionFog transitionFog;
 
   /**

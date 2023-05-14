@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.particles;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
@@ -9,10 +9,10 @@ import java.lang.String;
  * A particle definition file.
  */
 public class Particles {
-  @JsonProperty("format_version")
+  @SerializedName("format_version")
   public String formatVersion;
 
-  @JsonProperty("particle_effect")
+  @SerializedName("particle_effect")
   public ParticleEffect particleEffect;
 
   /**

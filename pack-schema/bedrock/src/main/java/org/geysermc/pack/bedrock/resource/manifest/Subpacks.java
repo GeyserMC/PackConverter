@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.manifest;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
@@ -9,12 +9,12 @@ import java.lang.String;
  * A single definition of a subpack.
  */
 public class Subpacks {
-  @JsonProperty("folder_name")
+  @SerializedName("folder_name")
   public String folderName;
 
   public String name;
 
-  @JsonProperty("memory_tier")
+  @SerializedName("memory_tier")
   public float memoryTier;
 
   /**

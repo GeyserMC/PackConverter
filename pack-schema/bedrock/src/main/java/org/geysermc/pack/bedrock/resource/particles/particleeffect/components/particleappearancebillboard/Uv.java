@@ -1,16 +1,16 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.components.particleappearancebillboard;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import org.geysermc.pack.bedrock.resource.particles.particleeffect.components.particleappearancebillboard.uv.Flipbook;
 
 /**
  * Uv
  */
 public class Uv {
-  @JsonProperty("texture_width")
+  @SerializedName("texture_width")
   public int textureWidth;
 
-  @JsonProperty("texture_height")
+  @SerializedName("texture_height")
   public int textureHeight;
 
   public Flipbook flipbook;

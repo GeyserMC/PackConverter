@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.entity.cliententity.description;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
@@ -9,15 +9,15 @@ import java.lang.String;
  * The definition of how the spawn_egg icon looks like.
  */
 public class SpawnEgg {
-  @JsonProperty("base_color")
+  @SerializedName("base_color")
   public String baseColor;
 
-  @JsonProperty("overlay_color")
+  @SerializedName("overlay_color")
   public String overlayColor;
 
   public String texture;
 
-  @JsonProperty("texture_index")
+  @SerializedName("texture_index")
   public int textureIndex;
 
   /**

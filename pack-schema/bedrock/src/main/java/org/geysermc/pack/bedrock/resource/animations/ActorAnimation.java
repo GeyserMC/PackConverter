@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.animations;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +12,7 @@ import org.geysermc.pack.bedrock.resource.animations.actoranimation.Animations;
  * The RP animation that changes an actors models, or molang data.
  */
 public class ActorAnimation {
-  @JsonProperty("format_version")
+  @SerializedName("format_version")
   public String formatVersion;
 
   private Map<String, Animations> animations = new HashMap<>();

@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
@@ -11,19 +11,19 @@ import java.lang.String;
 public class Description {
   public String identifier;
 
-  @JsonProperty("texture_width")
+  @SerializedName("texture_width")
   public float textureWidth;
 
-  @JsonProperty("texture_height")
+  @SerializedName("texture_height")
   public float textureHeight;
 
-  @JsonProperty("visible_bounds_offset")
+  @SerializedName("visible_bounds_offset")
   public float[] visibleBoundsOffset;
 
-  @JsonProperty("visible_bounds_width")
+  @SerializedName("visible_bounds_width")
   public float visibleBoundsWidth;
 
-  @JsonProperty("visible_bounds_height")
+  @SerializedName("visible_bounds_height")
   public float visibleBoundsHeight;
 
   /**

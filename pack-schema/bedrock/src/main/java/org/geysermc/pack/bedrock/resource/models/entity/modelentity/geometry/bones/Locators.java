@@ -1,13 +1,13 @@
 package org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 
 public class Locators {
   public float[] offset;
 
   public float[] rotation;
 
-  @JsonProperty("ignore_inherited_scale")
+  @SerializedName("ignore_inherited_scale")
   public boolean ignoreInheritedScale;
 
   /**

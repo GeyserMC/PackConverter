@@ -26,10 +26,11 @@
 
 package org.geysermc.pack.schema.converter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 
 public class ConverterOptions {
     private final String collisionPrefix;
@@ -41,11 +42,7 @@ public class ConverterOptions {
         this.rootPackage = rootPackage;
 
         InputStream schemaResource = ConverterOptions.class.getResourceAsStream("/" + schemaConfig);
-        try {
-            this.schemaConfig = new ObjectMapper().readValue(schemaResource, SchemaConfig.class);
-        } catch (IOException ex) {
-            throw new RuntimeException("An error occurred reading schema config " + schemaConfig, ex);
-        }
+        this.schemaConfig = new Gson().fromJson(new InputStreamReader(schemaResource), SchemaConfig.class);
     }
 
     public String collisionPrefix() {

@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.textures.terraintexture.texturedata;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,7 @@ import org.geysermc.pack.bedrock.resource.textures.terraintexture.texturedata.te
 public class Textures {
   public String path;
 
-  @JsonProperty("tint_color")
+  @SerializedName("tint_color")
   public String tintColor;
 
   public List<Variations> variations = new ArrayList<>();

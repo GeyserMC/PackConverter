@@ -1,21 +1,21 @@
 package org.geysermc.pack.bedrock.resource.attachables.attachable.description;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
  * Spawn Egg
  */
 public class SpawnEgg {
-  @JsonProperty("base_colour")
+  @SerializedName("base_colour")
   public String baseColour;
 
-  @JsonProperty("overlay_color")
+  @SerializedName("overlay_color")
   public String overlayColor;
 
   public String texture;
 
-  @JsonProperty("texture_index")
+  @SerializedName("texture_index")
   public int textureIndex;
 
   /**

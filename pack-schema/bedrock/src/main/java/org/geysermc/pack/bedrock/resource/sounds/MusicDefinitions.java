@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.sounds;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
@@ -9,13 +9,13 @@ import java.lang.String;
  * The definition file of music of the resourcepack.
  */
 public class MusicDefinitions {
-  @JsonProperty("event_name")
+  @SerializedName("event_name")
   public String eventName;
 
-  @JsonProperty("min_delay")
+  @SerializedName("min_delay")
   public int minDelay;
 
-  @JsonProperty("max_delay")
+  @SerializedName("max_delay")
   public int maxDelay;
 
   /**

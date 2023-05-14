@@ -1,16 +1,16 @@
 package org.geysermc.pack.bedrock.resource.fog;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
  * Fog
  */
 public class Fog {
-  @JsonProperty("format_version")
+  @SerializedName("format_version")
   public String formatVersion;
 
-  @JsonProperty("minecraft:fog_settings")
+  @SerializedName("minecraft:fog_settings")
   public FogSettings fogSettings;
 
   /**

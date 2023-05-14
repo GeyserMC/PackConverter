@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.components;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
@@ -13,10 +13,10 @@ public class EmitterShapeDisc {
 
   public String[] offset;
 
-  @JsonProperty("plane_normal")
+  @SerializedName("plane_normal")
   public String[] planeNormal;
 
-  @JsonProperty("surface_only")
+  @SerializedName("surface_only")
   public boolean surfaceOnly;
 
   public String direction() {

@@ -24,33 +24,41 @@
  *
  */
 
-package org.geysermc.pack.converter.utils;
+package org.geysermc.pack.util.gson;
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.google.gson.Gson;
+import com.google.gson.TypeAdapter;
+import com.google.gson.TypeAdapterFactory;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 
-public class DefaultLogListener implements LogListener {
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
-    @Override
-    public void info(@NotNull String message) {
-        System.out.println("[INFO] " + message);
-    }
-
-    @Override
-    public void warn(@NotNull String message) {
-        System.out.println("[WARN] " + message);
-    }
+public class EmptyArrayAdapterFactory implements TypeAdapterFactory {
 
     @Override
-    public void error(@NotNull String message) {
-        System.out.println("[ERROR] " + message);
-    }
-
-    @Override
-    public void error(@NotNull String message, @Nullable Throwable exception) {
-        this.error(message);
-        if (exception != null) {
-            exception.printStackTrace();
+    public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
+        Class<?> rawType = type.getRawType();
+        if (!List.class.isAssignableFrom(rawType)) {
+            return null;
         }
+
+        TypeAdapter<T> delegate = gson.getDelegateAdapter(this, type);
+
+        return new TypeAdapter<T>() {
+
+            @Override
+            public T read(JsonReader in) throws IOException {
+                return delegate.read(in);
+            }
+
+            @Override
+            public void write(JsonWriter out, T value) throws IOException {
+                delegate.write(out, (value == null || value instanceof Collection<?> collection && collection.isEmpty()) ? null : value);
+            }
+        };
     }
 }

@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.attachables.attachable.description;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.Map;
 public class Scripts {
   private Map<String, String> animate = new HashMap<>();
 
-  @JsonProperty("parent_setup")
+  @SerializedName("parent_setup")
   public String parentSetup;
 
   public String scale;

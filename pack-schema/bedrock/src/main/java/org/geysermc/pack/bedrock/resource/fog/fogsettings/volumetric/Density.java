@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.fog.fogsettings.volumetric;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import org.geysermc.pack.bedrock.resource.fog.fogsettings.volumetric.density.Air;
 import org.geysermc.pack.bedrock.resource.fog.fogsettings.volumetric.density.Lava;
 import org.geysermc.pack.bedrock.resource.fog.fogsettings.volumetric.density.LavaResistance;
@@ -18,7 +18,7 @@ public class Density {
 
   public Lava lava;
 
-  @JsonProperty("lava_resistance")
+  @SerializedName("lava_resistance")
   public LavaResistance lavaResistance;
 
   public Air air() {

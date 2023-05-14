@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.fog.fogsettings.distance.lava.transitionfog;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
@@ -9,13 +9,13 @@ import java.lang.String;
  * Initial fog that will slowly transition into water distance fog of the biome when player goes into water.
  */
 public class InitFog {
-  @JsonProperty("fog_color")
+  @SerializedName("fog_color")
   public String fogColor;
 
-  @JsonProperty("fog_start")
+  @SerializedName("fog_start")
   public float fogStart;
 
-  @JsonProperty("fog_end")
+  @SerializedName("fog_end")
   public float fogEnd;
 
   /**

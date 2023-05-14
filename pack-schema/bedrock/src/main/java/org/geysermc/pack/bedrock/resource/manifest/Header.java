@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.manifest;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
@@ -9,15 +9,15 @@ import java.lang.String;
  * Section containing information regarding the name of the pack, description, and other features that are public facing.
  */
 public class Header {
-  @JsonProperty("base_game_version")
+  @SerializedName("base_game_version")
   public float[] baseGameVersion;
 
   public String description;
 
-  @JsonProperty("lock_template_options")
+  @SerializedName("lock_template_options")
   public boolean lockTemplateOptions;
 
-  @JsonProperty("min_engine_version")
+  @SerializedName("min_engine_version")
   public float[] minEngineVersion;
 
   public String name;

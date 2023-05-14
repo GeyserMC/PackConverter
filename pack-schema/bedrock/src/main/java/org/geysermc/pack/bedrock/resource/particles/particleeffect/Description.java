@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import org.geysermc.pack.bedrock.resource.particles.particleeffect.description.BasicRenderParameters;
 
@@ -10,7 +10,7 @@ import org.geysermc.pack.bedrock.resource.particles.particleeffect.description.B
 public class Description {
   public String identifier;
 
-  @JsonProperty("basic_render_parameters")
+  @SerializedName("basic_render_parameters")
   public BasicRenderParameters basicRenderParameters;
 
   /**

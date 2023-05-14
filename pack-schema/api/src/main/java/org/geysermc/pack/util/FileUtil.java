@@ -24,17 +24,40 @@
  *
  */
 
-package org.geysermc.pack.converter.utils;
+package org.geysermc.pack.util;
 
+import com.google.gson.Gson;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public interface LogListener {
-    void info(@NotNull String message);
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-    void warn(@NotNull String message);
+/**
+ * Utility class for files.
+ */
+public class FileUtil {
 
-    void error(@NotNull String message);
+    /**
+     * Exports the specified object to the given location as JSON.
+     *
+     * @param gson the GSON instance to use
+     * @param location the location to export the object to
+     * @param object the object to export
+     * @throws IOException if an I/O error occurs
+     */
+    public static void exportJson(@NotNull Gson gson, @NotNull Path location, @NotNull Object object) throws IOException {
+        if (Files.notExists(location.getParent())) {
+            Files.createDirectories(location.getParent());
+        }
 
-    void error(@NotNull String message, @Nullable Throwable exception);
+        if (Files.notExists(location)) {
+            Files.createFile(location);
+        }
+
+        try (BufferedWriter writer = Files.newBufferedWriter(location)) {
+            gson.toJson(object, writer);
+        }
+    }
 }

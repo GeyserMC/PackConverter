@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.sounds.sounddefinitions;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 
 /**
@@ -15,7 +15,7 @@ public class Sounds {
 
   public float volume;
 
-  @JsonProperty("load_on_low_memory")
+  @SerializedName("load_on_low_memory")
   public boolean loadOnLowMemory;
 
   public boolean stream;

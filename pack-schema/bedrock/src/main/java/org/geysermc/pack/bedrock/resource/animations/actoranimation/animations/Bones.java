@@ -1,6 +1,6 @@
 package org.geysermc.pack.bedrock.resource.animations.actoranimation.animations;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +19,7 @@ public class Bones {
 
   private Map<String, Rotation> rotation = new HashMap<>();
 
-  @JsonProperty("relative_to")
+  @SerializedName("relative_to")
   public RelativeTo relativeTo;
 
   private Map<String, Scale> scale = new HashMap<>();
