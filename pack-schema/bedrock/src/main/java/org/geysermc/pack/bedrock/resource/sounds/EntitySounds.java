@@ -1,10 +1,10 @@
 package org.geysermc.pack.bedrock.resource.sounds;
 
-import java.lang.Object;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
 import org.geysermc.pack.bedrock.resource.sounds.entitysounds.Defaults;
+import org.geysermc.pack.bedrock.resource.sounds.entitysounds.Entities;
 
 /**
  * Entity Sounds
@@ -14,7 +14,7 @@ import org.geysermc.pack.bedrock.resource.sounds.entitysounds.Defaults;
 public class EntitySounds {
   public Defaults defaults;
 
-  private Map<String, Object> entities = new HashMap<>();
+  private Map<String, Entities> entities = new HashMap<>();
 
   /**
    * Entity sound definitions.
@@ -39,7 +39,7 @@ public class EntitySounds {
    *
    * @return Entities
    */
-  public Map<String, Object> entities() {
+  public Map<String, Entities> entities() {
     return this.entities;
   }
 
@@ -48,7 +48,7 @@ public class EntitySounds {
    *
    * @param entities Entities
    */
-  public void entities(Map<String, Object> entities) {
+  public void entities(Map<String, Entities> entities) {
     this.entities = entities;
   }
 }

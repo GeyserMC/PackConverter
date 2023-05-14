@@ -1,6 +1,7 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.lang.String;
 import org.geysermc.pack.bedrock.resource.particles.particleeffect.components.EmitterInitialization;
 import org.geysermc.pack.bedrock.resource.particles.particleeffect.components.EmitterLifetimeEvents;
 import org.geysermc.pack.bedrock.resource.particles.particleeffect.components.EmitterLifetimeExpression;
@@ -90,6 +91,9 @@ public class Components {
   @JsonProperty("minecraft:particle_initialization")
   public ParticleInitialization particleInitialization;
 
+  @JsonProperty("minecraft:particle_initial_speed")
+  public String particleInitialSpeed;
+
   @JsonProperty("minecraft:particle_initial_spin")
   public ParticleInitialSpin particleInitialSpin;
 
@@ -98,6 +102,9 @@ public class Components {
 
   @JsonProperty("minecraft:particle_lifetime_events")
   public ParticleLifetimeEvents particleLifetimeEvents;
+
+  @JsonProperty("minecraft:particle_kill_plane")
+  public String[] particleKillPlane;
 
   @JsonProperty("minecraft:particle_motion_collision")
   public ParticleMotionCollision particleMotionCollision;
@@ -382,6 +389,14 @@ public class Components {
     this.particleInitialization = particleInitialization;
   }
 
+  public String particleInitialSpeed() {
+    return this.particleInitialSpeed;
+  }
+
+  public void particleInitialSpeed(String particleInitialSpeed) {
+    this.particleInitialSpeed = particleInitialSpeed;
+  }
+
   /**
    * Starts the particle with a specified orientation and rotation rate.
    *
@@ -426,6 +441,26 @@ public class Components {
    */
   public void particleLifetimeEvents(ParticleLifetimeEvents particleLifetimeEvents) {
     this.particleLifetimeEvents = particleLifetimeEvents;
+  }
+
+  /**
+   * A*x + B*y + C*z + D = 0
+   * with the parameters being [ A, B, C, D ].
+   *
+   * @return Particle Kill Plane Component For 1.10.0
+   */
+  public String[] particleKillPlane() {
+    return this.particleKillPlane;
+  }
+
+  /**
+   * A*x + B*y + C*z + D = 0
+   * with the parameters being [ A, B, C, D ].
+   *
+   * @param particleKillPlane Particle Kill Plane Component For 1.10.0
+   */
+  public void particleKillPlane(String[] particleKillPlane) {
+    this.particleKillPlane = particleKillPlane;
   }
 
   /**

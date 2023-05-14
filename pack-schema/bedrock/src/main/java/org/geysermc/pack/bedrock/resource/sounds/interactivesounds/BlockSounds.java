@@ -1,6 +1,5 @@
 package org.geysermc.pack.bedrock.resource.sounds.interactivesounds;
 
-import java.lang.Object;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +14,7 @@ public class BlockSounds {
 
   public float[] pitch;
 
-  private Map<String, Object> events = new HashMap<>();
+  private Map<String, String> events = new HashMap<>();
 
   /**
    * A random selection between a minimum and maximum.
@@ -48,14 +47,14 @@ public class BlockSounds {
   /**
    * @return Events
    */
-  public Map<String, Object> events() {
+  public Map<String, String> events() {
     return this.events;
   }
 
   /**
    * @param events Events
    */
-  public void events(Map<String, Object> events) {
+  public void events(Map<String, String> events) {
     this.events = events;
   }
 }

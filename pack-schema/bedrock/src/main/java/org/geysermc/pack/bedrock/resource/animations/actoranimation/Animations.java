@@ -1,11 +1,12 @@
 package org.geysermc.pack.bedrock.resource.animations.actoranimation;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.lang.Object;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
 import org.geysermc.pack.bedrock.resource.animations.actoranimation.animations.Bones;
+import org.geysermc.pack.bedrock.resource.animations.actoranimation.animations.ParticleEffects;
+import org.geysermc.pack.bedrock.resource.animations.actoranimation.animations.SoundEffects;
 
 /**
  * Animations Schema
@@ -24,6 +25,8 @@ public class Animations {
 
   private Map<String, Bones> bones = new HashMap<>();
 
+  public String loop;
+
   @JsonProperty("loop_delay")
   public String loopDelay;
 
@@ -31,15 +34,15 @@ public class Animations {
   public boolean overridePreviousAnimation;
 
   @JsonProperty("particle_effects")
-  private Map<String, Object> particleEffects = new HashMap<>();
+  private Map<String, ParticleEffects> particleEffects = new HashMap<>();
 
   @JsonProperty("start_delay")
   public String startDelay;
 
   @JsonProperty("sound_effects")
-  private Map<String, Object> soundEffects = new HashMap<>();
+  private Map<String, SoundEffects> soundEffects = new HashMap<>();
 
-  private Map<String, Object> timeline = new HashMap<>();
+  private Map<String, String> timeline = new HashMap<>();
 
   public String animTimeUpdate() {
     return this.animTimeUpdate;
@@ -93,6 +96,14 @@ public class Animations {
     this.bones = bones;
   }
 
+  public String loop() {
+    return this.loop;
+  }
+
+  public void loop(String loop) {
+    this.loop = loop;
+  }
+
   public String loopDelay() {
     return this.loopDelay;
   }
@@ -122,14 +133,14 @@ public class Animations {
   /**
    * @return Particle Effects
    */
-  public Map<String, Object> particleEffects() {
+  public Map<String, ParticleEffects> particleEffects() {
     return this.particleEffects;
   }
 
   /**
    * @param particleEffects Particle Effects
    */
-  public void particleEffects(Map<String, Object> particleEffects) {
+  public void particleEffects(Map<String, ParticleEffects> particleEffects) {
     this.particleEffects = particleEffects;
   }
 
@@ -144,14 +155,14 @@ public class Animations {
   /**
    * @return Sound Effect
    */
-  public Map<String, Object> soundEffects() {
+  public Map<String, SoundEffects> soundEffects() {
     return this.soundEffects;
   }
 
   /**
    * @param soundEffects Sound Effect
    */
-  public void soundEffects(Map<String, Object> soundEffects) {
+  public void soundEffects(Map<String, SoundEffects> soundEffects) {
     this.soundEffects = soundEffects;
   }
 
@@ -160,7 +171,7 @@ public class Animations {
    *
    * @return Timeline
    */
-  public Map<String, Object> timeline() {
+  public Map<String, String> timeline() {
     return this.timeline;
   }
 
@@ -169,7 +180,7 @@ public class Animations {
    *
    * @param timeline Timeline
    */
-  public void timeline(Map<String, Object> timeline) {
+  public void timeline(Map<String, String> timeline) {
     this.timeline = timeline;
   }
 }

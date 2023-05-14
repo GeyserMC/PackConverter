@@ -1,13 +1,13 @@
 package org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.lang.Object;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.Cubes;
+import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.Locators;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.PolyMesh;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.TextureMeshes;
 
@@ -23,7 +23,7 @@ public class Bones {
 
   public float inflate;
 
-  private Map<String, Object> locators = new HashMap<>();
+  private Map<String, Locators> locators = new HashMap<>();
 
   public boolean mirror;
 
@@ -105,14 +105,14 @@ public class Bones {
   /**
    * This is a list of locators associated with this bone. A locator is a point in model space that tracks a particular bone as the bone animates (by maintaining it's relationship to the bone through the animation).
    */
-  public Map<String, Object> locators() {
+  public Map<String, Locators> locators() {
     return this.locators;
   }
 
   /**
    * This is a list of locators associated with this bone. A locator is a point in model space that tracks a particular bone as the bone animates (by maintaining it's relationship to the bone through the animation).
    */
-  public void locators(Map<String, Object> locators) {
+  public void locators(Map<String, Locators> locators) {
     this.locators = locators;
   }
 

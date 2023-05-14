@@ -1,11 +1,13 @@
 package org.geysermc.pack.bedrock.resource.animations.actoranimation.animations;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.lang.Object;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
+import org.geysermc.pack.bedrock.resource.animations.actoranimation.animations.bones.Position;
 import org.geysermc.pack.bedrock.resource.animations.actoranimation.animations.bones.RelativeTo;
+import org.geysermc.pack.bedrock.resource.animations.actoranimation.animations.bones.Rotation;
+import org.geysermc.pack.bedrock.resource.animations.actoranimation.animations.bones.Scale;
 
 /**
  * Bones
@@ -13,28 +15,28 @@ import org.geysermc.pack.bedrock.resource.animations.actoranimation.animations.b
  * Defines how the bones in an animation move or transform.
  */
 public class Bones {
-  public String[] position;
+  private Map<String, Position> position = new HashMap<>();
 
-  public String[] rotation;
+  private Map<String, Rotation> rotation = new HashMap<>();
 
   @JsonProperty("relative_to")
   public RelativeTo relativeTo;
 
-  private Map<String, Object> scale = new HashMap<>();
+  private Map<String, Scale> scale = new HashMap<>();
 
-  public String[] position() {
+  public Map<String, Position> position() {
     return this.position;
   }
 
-  public void position(String[] position) {
+  public void position(Map<String, Position> position) {
     this.position = position;
   }
 
-  public String[] rotation() {
+  public Map<String, Rotation> rotation() {
     return this.rotation;
   }
 
-  public void rotation(String[] rotation) {
+  public void rotation(Map<String, Rotation> rotation) {
     this.rotation = rotation;
   }
 
@@ -56,11 +58,11 @@ public class Bones {
     this.relativeTo = relativeTo;
   }
 
-  public Map<String, Object> scale() {
+  public Map<String, Scale> scale() {
     return this.scale;
   }
 
-  public void scale(Map<String, Object> scale) {
+  public void scale(Map<String, Scale> scale) {
     this.scale = scale;
   }
 }

@@ -1,7 +1,6 @@
 package org.geysermc.pack.bedrock.resource.entity.cliententity.description;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.lang.Object;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +11,7 @@ import java.util.Map;
  * The place where variables, and animations / controller to be run is specified.
  */
 public class Scripts {
-  private Map<String, Object> animate = new HashMap<>();
+  public String[] animate;
 
   @JsonProperty("parent_setup")
   public String parentSetup;
@@ -38,7 +37,7 @@ public class Scripts {
    *
    * @return Animate
    */
-  public Map<String, Object> animate() {
+  public String[] animate() {
     return this.animate;
   }
 
@@ -47,7 +46,7 @@ public class Scripts {
    *
    * @param animate Animate
    */
-  public void animate(Map<String, Object> animate) {
+  public void animate(String[] animate) {
     this.animate = animate;
   }
 

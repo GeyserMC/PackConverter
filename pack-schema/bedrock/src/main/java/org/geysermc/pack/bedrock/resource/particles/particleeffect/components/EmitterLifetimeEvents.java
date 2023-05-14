@@ -1,7 +1,6 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.components;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.lang.Object;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,29 +13,29 @@ import org.geysermc.pack.bedrock.resource.particles.particleeffect.components.em
  */
 public class EmitterLifetimeEvents {
   @JsonProperty("creation_event")
-  public String creationEvent;
+  public String[] creationEvent;
 
   @JsonProperty("expiration_event")
-  public String expirationEvent;
+  public String[] expirationEvent;
 
-  private Map<String, Object> timeline = new HashMap<>();
+  private Map<String, String[]> timeline = new HashMap<>();
 
   @JsonProperty("looping_travel_distance_events")
   public List<LoopingTravelDistanceEvents> loopingTravelDistanceEvents = new ArrayList<>();
 
-  public String creationEvent() {
+  public String[] creationEvent() {
     return this.creationEvent;
   }
 
-  public void creationEvent(String creationEvent) {
+  public void creationEvent(String[] creationEvent) {
     this.creationEvent = creationEvent;
   }
 
-  public String expirationEvent() {
+  public String[] expirationEvent() {
     return this.expirationEvent;
   }
 
-  public void expirationEvent(String expirationEvent) {
+  public void expirationEvent(String[] expirationEvent) {
     this.expirationEvent = expirationEvent;
   }
 
@@ -45,7 +44,7 @@ public class EmitterLifetimeEvents {
    *
    * @return Timeline
    */
-  public Map<String, Object> timeline() {
+  public Map<String, String[]> timeline() {
     return this.timeline;
   }
 
@@ -54,7 +53,7 @@ public class EmitterLifetimeEvents {
    *
    * @param timeline Timeline
    */
-  public void timeline(Map<String, Object> timeline) {
+  public void timeline(Map<String, String[]> timeline) {
     this.timeline = timeline;
   }
 

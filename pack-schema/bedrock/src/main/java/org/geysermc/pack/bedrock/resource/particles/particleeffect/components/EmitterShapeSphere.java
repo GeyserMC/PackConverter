@@ -9,6 +9,8 @@ import java.lang.String;
 public class EmitterShapeSphere {
   public String direction;
 
+  public String[] offset;
+
   public String radius;
 
   @JsonProperty("surface_only")
@@ -20,6 +22,20 @@ public class EmitterShapeSphere {
 
   public void direction(String direction) {
     this.direction = direction;
+  }
+
+  /**
+   * @return Offset
+   */
+  public String[] offset() {
+    return this.offset;
+  }
+
+  /**
+   * @param offset Offset
+   */
+  public void offset(String[] offset) {
+    this.offset = offset;
   }
 
   public String radius() {

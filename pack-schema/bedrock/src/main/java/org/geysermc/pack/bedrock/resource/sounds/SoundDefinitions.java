@@ -1,7 +1,6 @@
 package org.geysermc.pack.bedrock.resource.sounds;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.lang.Object;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +15,7 @@ public class SoundDefinitions {
   public String formatVersion;
 
   @JsonProperty("sound_definitions")
-  private Map<String, Object> soundDefinitions = new HashMap<>();
+  private Map<String, org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitions> soundDefinitions = new HashMap<>();
 
   @JsonProperty("__use_legacy_max_distance")
   public String useLegacyMaxDistance;
@@ -42,14 +41,16 @@ public class SoundDefinitions {
   /**
    * @return Sound Definitions
    */
-  public Map<String, Object> soundDefinitions() {
+  public Map<String, org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitions> soundDefinitions(
+      ) {
     return this.soundDefinitions;
   }
 
   /**
    * @param soundDefinitions Sound Definitions
    */
-  public void soundDefinitions(Map<String, Object> soundDefinitions) {
+  public void soundDefinitions(
+      Map<String, org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitions> soundDefinitions) {
     this.soundDefinitions = soundDefinitions;
   }
 

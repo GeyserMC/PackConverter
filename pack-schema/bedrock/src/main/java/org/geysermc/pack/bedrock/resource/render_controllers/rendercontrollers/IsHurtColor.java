@@ -1,90 +1,88 @@
 package org.geysermc.pack.bedrock.resource.render_controllers.rendercontrollers;
 
-import java.lang.String;
-
 /**
  * Is Hurt Color
  * <p>
  * The color to overlay on the entity when hurt.
  */
 public class IsHurtColor {
-  public String r;
+  public float r;
 
-  public String g;
+  public float g;
 
-  public String b;
+  public float b;
 
-  public String a;
+  public float a;
 
   /**
-   * A color definition in molang, between 0 and 1.
+   * A color definition as number, between 0 and 1.
    *
-   * @return Molang Color
+   * @return Color Number
    */
-  public String r() {
+  public float r() {
     return this.r;
   }
 
   /**
-   * A color definition in molang, between 0 and 1.
+   * A color definition as number, between 0 and 1.
    *
-   * @param r Molang Color
+   * @param r Color Number
    */
-  public void r(String r) {
+  public void r(float r) {
     this.r = r;
   }
 
   /**
-   * A color definition in molang, between 0 and 1.
+   * A color definition as number, between 0 and 1.
    *
-   * @return Molang Color
+   * @return Color Number
    */
-  public String g() {
+  public float g() {
     return this.g;
   }
 
   /**
-   * A color definition in molang, between 0 and 1.
+   * A color definition as number, between 0 and 1.
    *
-   * @param g Molang Color
+   * @param g Color Number
    */
-  public void g(String g) {
+  public void g(float g) {
     this.g = g;
   }
 
   /**
-   * A color definition in molang, between 0 and 1.
+   * A color definition as number, between 0 and 1.
    *
-   * @return Molang Color
+   * @return Color Number
    */
-  public String b() {
+  public float b() {
     return this.b;
   }
 
   /**
-   * A color definition in molang, between 0 and 1.
+   * A color definition as number, between 0 and 1.
    *
-   * @param b Molang Color
+   * @param b Color Number
    */
-  public void b(String b) {
+  public void b(float b) {
     this.b = b;
   }
 
   /**
-   * A color definition in molang, between 0 and 1.
+   * A color definition as number, between 0 and 1.
    *
-   * @return Molang Color
+   * @return Color Number
    */
-  public String a() {
+  public float a() {
     return this.a;
   }
 
   /**
-   * A color definition in molang, between 0 and 1.
+   * A color definition as number, between 0 and 1.
    *
-   * @param a Molang Color
+   * @param a Color Number
    */
-  public void a(String a) {
+  public void a(float a) {
     this.a = a;
   }
 }

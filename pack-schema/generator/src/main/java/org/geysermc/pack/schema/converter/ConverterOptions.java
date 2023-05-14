@@ -33,10 +33,12 @@ import java.io.InputStream;
 
 public class ConverterOptions {
     private final String collisionPrefix;
+    private final String rootPackage;
     private final SchemaConfig schemaConfig;
 
-    private ConverterOptions(String collisionPrefix, String schemaConfig) {
+    private ConverterOptions(String collisionPrefix, String rootPackage, String schemaConfig) {
         this.collisionPrefix = collisionPrefix;
+        this.rootPackage = rootPackage;
 
         InputStream schemaResource = ConverterOptions.class.getResourceAsStream("/" + schemaConfig);
         try {
@@ -50,6 +52,10 @@ public class ConverterOptions {
         return this.collisionPrefix;
     }
 
+    public String rootPackage() {
+        return this.rootPackage;
+    }
+
     public SchemaConfig schemaConfig() {
         return this.schemaConfig;
     }
@@ -60,10 +66,16 @@ public class ConverterOptions {
 
     public static class Builder {
         private String collisionPrefix = "Json";
+        private String rootPackage = "";
         private String schemaConfig = "schema-config.json";
 
         public Builder collisionPrefix(String collisionPrefix) {
             this.collisionPrefix = collisionPrefix;
+            return this;
+        }
+
+        public Builder rootPackage(String rootPackage) {
+            this.rootPackage = rootPackage;
             return this;
         }
 
@@ -73,7 +85,7 @@ public class ConverterOptions {
         }
 
         public ConverterOptions build() {
-            return new ConverterOptions(this.collisionPrefix, this.schemaConfig);
+            return new ConverterOptions(this.collisionPrefix, this.rootPackage, this.schemaConfig);
         }
     }
 }

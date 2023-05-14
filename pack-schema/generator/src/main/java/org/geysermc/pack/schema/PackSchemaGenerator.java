@@ -88,11 +88,11 @@ public class PackSchemaGenerator {
                     JsonTemplateToClassConverter.convert(
                             schemaPath + "/" +
                                     relativePath,
-                            packageName,
                             output,
                             ConverterOptions.builder()
                                     .collisionPrefix("Minecraft")
                                     .schemaConfig("schema-config.json")
+                                    .rootPackage(packageName)
                                     .build()
                     );
                 } catch (Exception ex) {

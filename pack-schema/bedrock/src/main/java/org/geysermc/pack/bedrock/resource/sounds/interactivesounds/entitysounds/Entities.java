@@ -1,9 +1,9 @@
 package org.geysermc.pack.bedrock.resource.sounds.interactivesounds.entitysounds;
 
-import java.lang.Object;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
+import org.geysermc.pack.bedrock.resource.sounds.interactivesounds.entitysounds.entities.Events;
 
 /**
  * Entites Sounds
@@ -15,7 +15,7 @@ public class Entities {
 
   public float[] pitch;
 
-  private Map<String, Object> events = new HashMap<>();
+  private Map<String, Events> events = new HashMap<>();
 
   /**
    * A random selection between a minimum and maximum.
@@ -48,14 +48,14 @@ public class Entities {
   /**
    * @return Entity Events
    */
-  public Map<String, Object> events() {
+  public Map<String, Events> events() {
     return this.events;
   }
 
   /**
    * @param events Entity Events
    */
-  public void events(Map<String, Object> events) {
+  public void events(Map<String, Events> events) {
     this.events = events;
   }
 }
