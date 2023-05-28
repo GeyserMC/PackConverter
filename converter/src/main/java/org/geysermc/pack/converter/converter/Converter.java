@@ -24,33 +24,22 @@
  *
  */
 
-package org.geysermc.pack.converter.converters.texture;
+package org.geysermc.pack.converter.converter;
 
+import org.geysermc.pack.converter.PackConversionContext;
+import org.geysermc.pack.converter.PackConverter;
+import org.geysermc.pack.converter.data.ConversionData;
 import org.jetbrains.annotations.NotNull;
-import team.unnamed.creative.texture.Texture;
 
 import java.nio.file.Path;
 
-public class TransformedTexture {
-    private final Texture texture;
-    private Path output;
+public interface Converter<T extends ConversionData> {
 
-    public TransformedTexture(@NotNull Texture texture, @NotNull Path output) {
-        this.texture = texture;
-        this.output = output;
-    }
+    void convert(@NotNull PackConversionContext<T> context) throws Exception;
 
-    @NotNull
-    public Texture texture() {
-        return texture;
-    }
+    T createConversionData(@NotNull PackConverter converter, @NotNull Path inputDirectory, @NotNull Path outputDirectory);
 
-    @NotNull
-    public Path output() {
-        return output;
-    }
-
-    public void output(@NotNull Path output) {
-        this.output = output;
+    default boolean isExperimental() {
+        return false;
     }
 }

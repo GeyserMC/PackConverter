@@ -26,28 +26,26 @@
 
 package org.geysermc.pack.converter.data;
 
+import org.geysermc.pack.converter.converter.texture.TransformedTexture;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
-public class BaseConversionData implements ConversionData {
-    private final Path inputDirectory;
-    private final Path outputDirectory;
+public class TextureConversionData extends BaseConversionData {
+    private final List<TransformedTexture> transformedTextures = new ArrayList<>();
 
-    public BaseConversionData(@NotNull Path inputDirectory, @NotNull Path outputDirectory) {
-        this.inputDirectory = inputDirectory;
-        this.outputDirectory = outputDirectory;
+    public TextureConversionData(@NotNull Path inputDirectory, @NotNull Path outputDirectory) {
+        super(inputDirectory, outputDirectory);
+    }
+
+    public void addTransformedTexture(@NotNull TransformedTexture transformedTexture) {
+        this.transformedTextures.add(transformedTexture);
     }
 
     @NotNull
-    @Override
-    public Path inputDirectory() {
-        return this.inputDirectory;
-    }
-
-    @NotNull
-    @Override
-    public Path outputDirectory() {
-        return this.outputDirectory;
+    public List<TransformedTexture> transformedTextures() {
+        return this.transformedTextures;
     }
 }

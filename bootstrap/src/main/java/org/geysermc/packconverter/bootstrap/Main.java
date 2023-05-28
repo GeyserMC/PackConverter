@@ -27,7 +27,7 @@
 package org.geysermc.packconverter.bootstrap;
 
 import org.geysermc.pack.converter.PackConverter;
-import org.geysermc.pack.converter.converters.Converters;
+import org.geysermc.pack.converter.converter.Converters;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

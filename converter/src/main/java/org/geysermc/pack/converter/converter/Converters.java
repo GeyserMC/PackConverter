@@ -24,18 +24,22 @@
  *
  */
 
-package org.geysermc.pack.converter.converters.texture;
+package org.geysermc.pack.converter.converter;
 
-import org.geysermc.pack.converter.PackConversionContext;
-import org.geysermc.pack.converter.data.BaseConversionData;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import team.unnamed.creative.texture.Texture;
+import java.util.List;
+import java.util.ServiceLoader;
 
-public interface TextureTransformer {
+public class Converters {
 
-    boolean filter(@NotNull Texture texture);
+    public static List<Converter<?>> defaultConverters() {
+        return defaultConverters(false);
+    }
 
-    @Nullable
-    TransformedTexture transform(@NotNull PackConversionContext<BaseConversionData> context, @NotNull TransformedTexture texture);
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public static List<Converter<?>> defaultConverters(boolean experimental) {
+        return (List) ServiceLoader.load(Converter.class).stream()
+                .map(ServiceLoader.Provider::get)
+                .filter(converter -> experimental || !converter.isExperimental())
+                .toList();
+    }
 }

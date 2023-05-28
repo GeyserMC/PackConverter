@@ -24,30 +24,41 @@
  *
  */
 
-package org.geysermc.pack.converter.data;
+package org.geysermc.pack.converter.converter.texture.transformer.path;
 
+import org.geysermc.pack.converter.PackConversionContext;
+import org.geysermc.pack.converter.converter.texture.TextureConverter;
+import org.geysermc.pack.converter.converter.texture.TextureTransformer;
+import org.geysermc.pack.converter.converter.texture.TransformedTexture;
+import org.geysermc.pack.converter.data.TextureConversionData;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import team.unnamed.creative.texture.Texture;
 
 import java.nio.file.Path;
 
-public class BaseConversionData implements ConversionData {
-    private final Path inputDirectory;
-    private final Path outputDirectory;
+public class PathTransformer implements TextureTransformer {
+    private final String input;
+    private final String output;
 
-    public BaseConversionData(@NotNull Path inputDirectory, @NotNull Path outputDirectory) {
-        this.inputDirectory = inputDirectory;
-        this.outputDirectory = outputDirectory;
+    public PathTransformer(@NotNull String input, @NotNull String output) {
+        this.input = input;
+        this.output = output;
     }
 
-    @NotNull
     @Override
-    public Path inputDirectory() {
-        return this.inputDirectory;
+    public boolean filter(@NotNull Texture texture) {
+        return texture.key().value().startsWith(this.input);
     }
 
-    @NotNull
     @Override
-    public Path outputDirectory() {
-        return this.outputDirectory;
+    public @Nullable TransformedTexture transform(@NotNull PackConversionContext<TextureConversionData> context, @NotNull TransformedTexture texture) {
+        String output = texture.texture().key().value();
+        Path outputDir = context.outputDirectory()
+                .resolve(TextureConverter.BEDROCK_TEXTURES_LOCATION)
+                .resolve(this.output + output.substring(this.input.length()));
+
+        texture.output(outputDir);
+        return texture;
     }
 }

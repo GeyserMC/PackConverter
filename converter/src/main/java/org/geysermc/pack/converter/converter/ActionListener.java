@@ -24,14 +24,19 @@
  *
  */
 
-package org.geysermc.pack.converter.converters.texture.transformer.path;
+package org.geysermc.pack.converter.converter;
 
-import com.google.auto.service.AutoService;
-import org.geysermc.pack.converter.converters.texture.TextureTransformer;
+import org.geysermc.pack.converter.PackConversionContext;
+import org.geysermc.pack.converter.data.ConversionData;
 
-@AutoService(TextureTransformer.class)
-public class BlockTextureTransformer extends PathTransformer {
-    public BlockTextureTransformer() {
-        super("block", "blocks");
+/**
+ * A listener for actions that occur during pack conversion.
+ */
+public interface ActionListener {
+
+    default <T extends ConversionData> void preConvert(PackConversionContext<T> context) {
+    }
+
+    default <T extends ConversionData> void postConvert(PackConversionContext<T> context) {
     }
 }

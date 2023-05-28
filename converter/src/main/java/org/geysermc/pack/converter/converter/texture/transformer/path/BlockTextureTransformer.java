@@ -24,22 +24,14 @@
  *
  */
 
-package org.geysermc.pack.converter.converters;
+package org.geysermc.pack.converter.converter.texture.transformer.path;
 
-import org.geysermc.pack.converter.PackConversionContext;
-import org.geysermc.pack.converter.PackConverter;
-import org.geysermc.pack.converter.data.ConversionData;
-import org.jetbrains.annotations.NotNull;
+import com.google.auto.service.AutoService;
+import org.geysermc.pack.converter.converter.texture.TextureTransformer;
 
-import java.nio.file.Path;
-
-public interface Converter<T extends ConversionData> {
-
-    void convert(@NotNull PackConversionContext<T> context) throws Exception;
-
-    T createConversionData(@NotNull PackConverter converter, @NotNull Path inputDirectory, @NotNull Path outputDirectory);
-
-    default boolean isExperimental() {
-        return false;
+@AutoService(TextureTransformer.class)
+public class BlockTextureTransformer extends PathTransformer {
+    public BlockTextureTransformer() {
+        super("block", "blocks");
     }
 }

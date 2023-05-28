@@ -24,41 +24,18 @@
  *
  */
 
-package org.geysermc.pack.converter.converters.texture.transformer.path;
+package org.geysermc.pack.converter.converter.texture;
 
 import org.geysermc.pack.converter.PackConversionContext;
-import org.geysermc.pack.converter.converters.texture.TextureConverter;
-import org.geysermc.pack.converter.converters.texture.TextureTransformer;
-import org.geysermc.pack.converter.converters.texture.TransformedTexture;
-import org.geysermc.pack.converter.data.BaseConversionData;
+import org.geysermc.pack.converter.data.TextureConversionData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.texture.Texture;
 
-import java.nio.file.Path;
+public interface TextureTransformer {
 
-public class PathTransformer implements TextureTransformer {
-    private final String input;
-    private final String output;
+    boolean filter(@NotNull Texture texture);
 
-    public PathTransformer(@NotNull String input, @NotNull String output) {
-        this.input = input;
-        this.output = output;
-    }
-
-    @Override
-    public boolean filter(@NotNull Texture texture) {
-        return texture.key().value().startsWith(this.input);
-    }
-
-    @Override
-    public @Nullable TransformedTexture transform(@NotNull PackConversionContext<BaseConversionData> context, @NotNull TransformedTexture texture) {
-        String output = texture.texture().key().value();
-        Path outputDir = context.outputDirectory()
-                .resolve(TextureConverter.BEDROCK_TEXTURES_LOCATION)
-                .resolve(this.output + output.substring(this.input.length()));
-
-        texture.output(outputDir);
-        return texture;
-    }
+    @Nullable
+    TransformedTexture transform(@NotNull PackConversionContext<TextureConversionData> context, @NotNull TransformedTexture texture);
 }

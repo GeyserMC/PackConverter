@@ -24,49 +24,24 @@
  *
  */
 
-package org.geysermc.pack.converter.converters.base;
+package org.geysermc.pack.converter.converter.base;
 
 import com.google.auto.service.AutoService;
-import org.geysermc.pack.bedrock.resource.Manifest;
-import org.geysermc.pack.bedrock.resource.manifest.Header;
-import org.geysermc.pack.bedrock.resource.manifest.Modules;
 import org.geysermc.pack.converter.PackConversionContext;
-import org.geysermc.pack.converter.converters.BaseConverter;
-import org.geysermc.pack.converter.converters.Converter;
+import org.geysermc.pack.converter.converter.BaseConverter;
+import org.geysermc.pack.converter.converter.Converter;
 import org.geysermc.pack.converter.data.BaseConversionData;
 import org.jetbrains.annotations.NotNull;
-import team.unnamed.creative.ResourcePack;
-
-import java.util.List;
-import java.util.UUID;
+import team.unnamed.creative.base.Writable;
 
 @AutoService(Converter.class)
-public class PackManifestConverter extends BaseConverter {
-    private static final int FORMAT_VERSION = 2;
+public class PackIconConverter extends BaseConverter {
 
     @Override
     public void convert(@NotNull PackConversionContext<BaseConversionData> context) throws Exception {
-        ResourcePack javaPack = context.javaResourcePack();
-
-        Manifest manifest = new Manifest();
-        manifest.formatVersion(FORMAT_VERSION);
-
-        Header header = new Header();
-        header.description(javaPack.description());
-        header.name(context.outputDirectory().getFileName().toString());
-        header.version(new float[] { 1, 0, 0 });
-        header.minEngineVersion(new float[] { 1, 16, 0 });
-        header.uuid(UUID.randomUUID().toString());
-
-        manifest.header(header);
-
-        Modules module = new Modules();
-        module.description(javaPack.description());
-        module.type("resources");
-        module.uuid(UUID.randomUUID().toString());
-        module.version(new float[] { 1, 0, 0 });
-
-        manifest.modules(List.of(module));
-        context.bedrockResourcePack().manifest(manifest);
+        Writable packIcon = context.javaResourcePack().icon();
+        if (packIcon != null) {
+            context.bedrockResourcePack().icon(packIcon.toByteArray());
+        }
     }
 }

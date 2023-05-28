@@ -24,13 +24,13 @@
  *
  */
 
-package org.geysermc.pack.converter.converters.texture;
+package org.geysermc.pack.converter.converter.texture;
 
 import com.google.auto.service.AutoService;
 import org.geysermc.pack.converter.PackConversionContext;
-import org.geysermc.pack.converter.converters.BaseConverter;
-import org.geysermc.pack.converter.converters.Converter;
-import org.geysermc.pack.converter.data.BaseConversionData;
+import org.geysermc.pack.converter.PackConverter;
+import org.geysermc.pack.converter.converter.Converter;
+import org.geysermc.pack.converter.data.TextureConversionData;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
 
@@ -43,13 +43,13 @@ import java.util.ServiceLoader;
 import java.util.stream.StreamSupport;
 
 @AutoService(Converter.class)
-public class TextureConverter extends BaseConverter {
+public class TextureConverter implements Converter<TextureConversionData> {
     public static final String BEDROCK_TEXTURES_LOCATION = "textures";
 
     private final List<TextureTransformer> transformers = StreamSupport.stream(ServiceLoader.load(TextureTransformer.class).spliterator(), false).toList();
 
     @Override
-    public void convert(@NotNull PackConversionContext<BaseConversionData> context) throws Exception {
+    public void convert(@NotNull PackConversionContext<TextureConversionData> context) throws Exception {
         Collection<Texture> textures = context.javaResourcePack().textures();
 
         for (Texture texture : textures) {
@@ -78,7 +78,14 @@ public class TextureConverter extends BaseConverter {
                 try (OutputStream stream = Files.newOutputStream(textureOutput)) {
                     texture.data().write(stream);
                 }
+
+                context.data().addTransformedTexture(transformedTexture);
             }
         }
+    }
+
+    @Override
+    public TextureConversionData createConversionData(@NotNull PackConverter converter, @NotNull Path inputDirectory, @NotNull Path outputDirectory) {
+        return new TextureConversionData(inputDirectory, outputDirectory);
     }
 }

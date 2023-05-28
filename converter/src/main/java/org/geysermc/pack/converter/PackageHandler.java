@@ -24,22 +24,21 @@
  *
  */
 
-package org.geysermc.pack.converter.converters;
+package org.geysermc.pack.converter;
 
-import java.util.List;
-import java.util.ServiceLoader;
+import org.geysermc.pack.converter.util.LogListener;
+import org.geysermc.pack.converter.util.ZipUtils;
+import org.jetbrains.annotations.NotNull;
 
-public class Converters {
+import java.io.IOException;
+import java.nio.file.Path;
 
-    public static List<Converter<?>> defaultConverters() {
-        return defaultConverters(false);
-    }
+public interface PackageHandler {
+    PackageHandler ZIP = (converter, path, outputPath, logger) -> {
+        ZipUtils zipUtils = new ZipUtils(converter, path.toFile());
+        zipUtils.generateFileList();
+        zipUtils.zipIt(logger, outputPath.toString());
+    };
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static List<Converter<?>> defaultConverters(boolean experimental) {
-        return (List) ServiceLoader.load(Converter.class).stream()
-                .map(ServiceLoader.Provider::get)
-                .filter(converter -> experimental || !converter.isExperimental())
-                .toList();
-    }
+    void pack(@NotNull PackConverter converter, @NotNull Path path, @NotNull Path outputPath, @NotNull LogListener logger) throws IOException;
 }

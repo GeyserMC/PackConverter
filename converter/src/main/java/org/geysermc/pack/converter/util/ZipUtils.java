@@ -97,7 +97,6 @@ public class ZipUtils {
         generateFileList(sourceFolder);
     }
 
-
     public void generateFileList(File node) {
         // Add file only
         if (node.isFile()) {

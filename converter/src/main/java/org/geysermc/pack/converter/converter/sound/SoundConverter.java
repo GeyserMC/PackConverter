@@ -24,7 +24,7 @@
  *
  */
 
-package org.geysermc.pack.converter.converters.sound;
+package org.geysermc.pack.converter.converter.sound;
 
 import com.google.auto.service.AutoService;
 import org.apache.commons.io.file.PathUtils;
@@ -32,8 +32,8 @@ import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitio
 import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.Sounds;
 import org.geysermc.pack.converter.Constants;
 import org.geysermc.pack.converter.PackConversionContext;
-import org.geysermc.pack.converter.converters.BaseConverter;
-import org.geysermc.pack.converter.converters.Converter;
+import org.geysermc.pack.converter.converter.BaseConverter;
+import org.geysermc.pack.converter.converter.Converter;
 import org.geysermc.pack.converter.data.BaseConversionData;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.sound.Sound;

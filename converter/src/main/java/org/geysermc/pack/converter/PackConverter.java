@@ -28,13 +28,12 @@ package org.geysermc.pack.converter;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import lombok.Getter;
-import lombok.Setter;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
-import org.geysermc.pack.converter.converters.Converter;
+import org.geysermc.pack.converter.converter.ActionListener;
+import org.geysermc.pack.converter.converter.Converter;
 import org.geysermc.pack.converter.data.ConversionData;
 import org.geysermc.pack.converter.util.DefaultLogListener;
 import org.geysermc.pack.converter.util.LogListener;
-import org.geysermc.pack.converter.util.ZipUtils;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackReader;
@@ -55,6 +54,9 @@ public class PackConverter {
     private Path input;
     private Path output;
 
+    private ActionListener actionListener = new ActionListener() {
+    };
+
     @Getter
     private final Map<String, Int2ObjectMap<String>> customModelData = new HashMap<>();
 
@@ -62,7 +64,7 @@ public class PackConverter {
 
     private Path tmpDir;
 
-    @Setter
+    private PackageHandler packageHandler = PackageHandler.ZIP;
     private LogListener logListener = new DefaultLogListener();
 
     public PackConverter input(@NotNull Path input) {
@@ -87,6 +89,16 @@ public class PackConverter {
 
     public PackConverter logListener(@NotNull LogListener logListener) {
         this.logListener = logListener;
+        return this;
+    }
+
+    public PackConverter packageHandler(@NotNull PackageHandler packageHandler) {
+        this.packageHandler = packageHandler;
+        return this;
+    }
+
+    public PackConverter actionListener(@NotNull ActionListener actionListener) {
+        this.actionListener = actionListener;
         return this;
     }
 
@@ -123,7 +135,9 @@ public class PackConverter {
                 PackConversionContext<?> context = new PackConversionContext<>(data, this, javaResourcePack, bedrockResourcePack, this.logListener);
 
                 try {
+                    this.actionListener.preConvert(context);
                     converter.convert(context);
+                    this.actionListener.postConvert(context);
                 } catch (Throwable t) {
                     this.logListener.error("Error converting pack!", t);
                     errors++;
@@ -146,10 +160,8 @@ public class PackConverter {
     /**
      * Convert the temporary folder into the output zip
      */
-    public void pack() {
-        ZipUtils zipUtils = new ZipUtils(this, this.tmpDir.toFile());
-        zipUtils.generateFileList();
-        zipUtils.zipIt(this.logListener, this.output.toString());
+    public void pack() throws IOException {
+        this.packageHandler.pack(this, this.tmpDir, this.output, this.logListener);
     }
 
     /**

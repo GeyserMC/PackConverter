@@ -24,7 +24,7 @@
  *
  */
 
-package org.geysermc.pack.converter.converters;
+package org.geysermc.pack.converter.converter;
 
 import org.geysermc.pack.converter.PackConverter;
 import org.geysermc.pack.converter.data.BaseConversionData;
