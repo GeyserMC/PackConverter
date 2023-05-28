@@ -250,7 +250,8 @@ public final class JsonTemplateToClassConverter {
                         propertyValue,
                         parentSchema,
                         output,
-                        options
+                        options,
+                        false
                 );
                 if (altSpec != null) {
                     spec = altSpec;
@@ -346,15 +347,20 @@ public final class JsonTemplateToClassConverter {
     private static FieldSpec.Builder createArrayField(@NotNull String input, @NotNull String packageName, @NotNull String fieldName, @NotNull String rootClassName, @NotNull String prevClassName, @NotNull JsonObject parentSchema, @NotNull JsonObject propertyValue, @NotNull Path output, @NotNull ConverterOptions options) {
         FieldSpec.Builder spec = null;
         if (propertyValue.getValue("items") instanceof JsonObject items) {
-            ResolvedReference resolvedReference = flattenReference(
-                    input,
-                    packageName,
-                    rootClassName,
-                    prevClassName,
-                    parentSchema,
-                    items,
-                    options
-            );
+            ResolvedReference resolvedReference;
+            if (items.containsKey("$ref")) {
+                resolvedReference = parseRef(input, parentSchema, items);
+            } else {
+                resolvedReference = flattenReference(
+                        input,
+                        packageName,
+                        rootClassName,
+                        prevClassName,
+                        parentSchema,
+                        items,
+                        options
+                );
+            }
 
             if (resolvedReference != null) {
                 items = resolvedReference.object();
@@ -401,7 +407,8 @@ public final class JsonTemplateToClassConverter {
                                 items,
                                 parentSchema,
                                 output,
-                                options
+                                options,
+                                true
                         );
 
                         if (altSpec != null) {
@@ -454,7 +461,7 @@ public final class JsonTemplateToClassConverter {
         return spec;
     }
 
-    private static FieldSpec.Builder createObjectField(@NotNull String packageName, @NotNull String input, @NotNull String fieldName, @NotNull String rootClassName, @NotNull String prevClassName, @NotNull JsonObject propertyValue, @NotNull JsonObject parentSchema, @NotNull Path output, @NotNull ConverterOptions options) {
+    private static FieldSpec.Builder createObjectField(@NotNull String packageName, @NotNull String input, @NotNull String fieldName, @NotNull String rootClassName, @NotNull String prevClassName, @NotNull JsonObject propertyValue, @NotNull JsonObject parentSchema, @NotNull Path output, @NotNull ConverterOptions options, boolean arrayModifier) {
         String className = ConvertUtil.toClassName(fieldName);
         packageName = ConvertUtil.sanitizePackageName(packageName);
 
@@ -558,10 +565,18 @@ public final class JsonTemplateToClassConverter {
                     ClassName.get(String.class),
                     classType);
 
-            return FieldSpec.builder(mainType,
-                            fieldName,
-                            Modifier.PRIVATE)
-                    .initializer(CodeBlock.of("new $T<>()", HashMap.class));
+            if (!arrayModifier) {
+                return FieldSpec.builder(mainType,
+                                fieldName,
+                                Modifier.PRIVATE)
+                        .initializer(CodeBlock.of("new $T<>()", HashMap.class));
+            } else {
+                ParameterizedTypeName arrayType = ParameterizedTypeName.get(ClassName.get(List.class),
+                        mainType);
+
+                return FieldSpec.builder(arrayType, fieldName, Modifier.PUBLIC)
+                        .initializer(CodeBlock.of("new $T<>()", ArrayList.class));
+            }
         } else if (propertyValue.getValue("items") instanceof JsonObject object && !object.containsKey("properties")) {
             ResolvedReference resolvedReference = flattenReference(
                     input,

@@ -2,14 +2,15 @@ package org.geysermc.pack.bedrock.resource.attachables.attachable.description;
 
 import com.google.gson.annotations.SerializedName;
 import java.lang.String;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Scripts
  */
 public class Scripts {
-  private Map<String, String> animate = new HashMap<>();
+  public List<Map<String, String>> animate = new ArrayList<>();
 
   @SerializedName("parent_setup")
   public String parentSetup;
@@ -19,14 +20,14 @@ public class Scripts {
   /**
    * @return Animate
    */
-  public Map<String, String> animate() {
+  public List<Map<String, String>> animate() {
     return this.animate;
   }
 
   /**
    * @param animate Animate
    */
-  public void animate(Map<String, String> animate) {
+  public void animate(List<Map<String, String>> animate) {
     this.animate = animate;
   }
 

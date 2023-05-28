@@ -13,6 +13,11 @@ import java.util.Map;
 public class Scripts {
   public String[] animate;
 
+  public String[] initialize;
+
+  @SerializedName("pre_animation")
+  public String[] preAnimation;
+
   @SerializedName("parent_setup")
   public String parentSetup;
 
@@ -48,6 +53,42 @@ public class Scripts {
    */
   public void animate(String[] animate) {
     this.animate = animate;
+  }
+
+  /**
+   * Clientside molang variables that are to be evaluated during the creation of the entity.
+   *
+   * @return Initialize
+   */
+  public String[] initialize() {
+    return this.initialize;
+  }
+
+  /**
+   * Clientside molang variables that are to be evaluated during the creation of the entity.
+   *
+   * @param initialize Initialize
+   */
+  public void initialize(String[] initialize) {
+    this.initialize = initialize;
+  }
+
+  /**
+   * Clientside molang variables that are to be evaluated during the animation.
+   *
+   * @return Pre Animation
+   */
+  public String[] preAnimation() {
+    return this.preAnimation;
+  }
+
+  /**
+   * Clientside molang variables that are to be evaluated during the animation.
+   *
+   * @param preAnimation Pre Animation
+   */
+  public void preAnimation(String[] preAnimation) {
+    this.preAnimation = preAnimation;
   }
 
   /**

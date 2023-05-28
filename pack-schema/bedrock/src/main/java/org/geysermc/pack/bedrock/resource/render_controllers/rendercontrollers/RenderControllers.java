@@ -2,7 +2,8 @@ package org.geysermc.pack.bedrock.resource.render_controllers.rendercontrollers;
 
 import com.google.gson.annotations.SerializedName;
 import java.lang.String;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,7 +30,7 @@ public class RenderControllers {
   @SerializedName("light_color_multiplier")
   public String lightColorMultiplier;
 
-  private Map<String, String> materials = new HashMap<>();
+  public List<Map<String, String>> materials = new ArrayList<>();
 
   @SerializedName("on_fire_color")
   public OnFireColor onFireColor;
@@ -38,7 +39,9 @@ public class RenderControllers {
   public OverlayColor overlayColor;
 
   @SerializedName("part_visibility")
-  private Map<String, String> partVisibility = new HashMap<>();
+  public List<Map<String, String>> partVisibility = new ArrayList<>();
+
+  public String[] textures;
 
   @SerializedName("uv_anim")
   public UvAnim uvAnim;
@@ -164,7 +167,7 @@ public class RenderControllers {
    *
    * @return Materials
    */
-  public Map<String, String> materials() {
+  public List<Map<String, String>> materials() {
     return this.materials;
   }
 
@@ -173,7 +176,7 @@ public class RenderControllers {
    *
    * @param materials Materials
    */
-  public void materials(Map<String, String> materials) {
+  public void materials(List<Map<String, String>> materials) {
     this.materials = materials;
   }
 
@@ -218,7 +221,7 @@ public class RenderControllers {
    *
    * @return Part Visibility
    */
-  public Map<String, String> partVisibility() {
+  public List<Map<String, String>> partVisibility() {
     return this.partVisibility;
   }
 
@@ -227,8 +230,26 @@ public class RenderControllers {
    *
    * @param partVisibility Part Visibility
    */
-  public void partVisibility(Map<String, String> partVisibility) {
+  public void partVisibility(List<Map<String, String>> partVisibility) {
     this.partVisibility = partVisibility;
+  }
+
+  /**
+   * The texture to apply, multiple texture can be used as to create an overlay effect, a specific material is required though.
+   *
+   * @return Textures
+   */
+  public String[] textures() {
+    return this.textures;
+  }
+
+  /**
+   * The texture to apply, multiple texture can be used as to create an overlay effect, a specific material is required though.
+   *
+   * @param textures Textures
+   */
+  public void textures(String[] textures) {
+    this.textures = textures;
   }
 
   /**
