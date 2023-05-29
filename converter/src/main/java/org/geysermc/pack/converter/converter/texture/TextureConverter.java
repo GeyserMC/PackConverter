@@ -100,21 +100,39 @@ public class TextureConverter implements Converter<TextureConversionData> {
                     Files.createDirectories(textureOutput.getParent());
                 }
 
-                try (OutputStream stream = Files.newOutputStream(textureOutput)) {
-                    byte[] bytes = texture.data().toByteArray();
+                byte[] bytes = texture.data().toByteArray();
 
-                    BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
-                    if (!image.getColorModel().hasAlpha()) {
-                        BufferedImage newImage = new BufferedImage(
-                                image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
 
-                        Graphics2D g = newImage.createGraphics();
-                        g.drawImage(image, 0, 0, null);
-                        g.dispose();
-
-                        image = newImage;
+                String pngKey = "textures/" + texture.key().value();
+                PngToTgaMappings.TgaMapping mapping = PngToTgaMappings.mapping(pngKey);
+                if (mapping != null) {
+                    Path tgaPath = context.outputDirectory().resolve(mapping.value());
+                    if (Files.notExists(tgaPath.getParent())) {
+                        Files.createDirectories(tgaPath.getParent());
                     }
 
+                    try (OutputStream tgaStream = Files.newOutputStream(tgaPath)) {
+                        ImageIO.write(image, "tga", tgaStream);
+                        if (!mapping.keep()) {
+                            Files.deleteIfExists(textureOutput);
+                            continue;
+                        }
+                    }
+                }
+
+                if (!image.getColorModel().hasAlpha()) {
+                    BufferedImage newImage = new BufferedImage(
+                            image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+                    Graphics2D g = newImage.createGraphics();
+                    g.drawImage(image, 0, 0, null);
+                    g.dispose();
+
+                    image = newImage;
+                }
+
+                try (OutputStream stream = Files.newOutputStream(textureOutput)) {
                     ImageIO.write(image, "png", stream);
                 }
 

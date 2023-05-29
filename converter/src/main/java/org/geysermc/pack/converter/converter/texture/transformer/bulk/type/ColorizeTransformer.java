@@ -260,7 +260,7 @@ public class ColorizeTransformer implements BulkTextureTransformer {
                 Key key = Key.key(Key.MINECRAFT_NAMESPACE, overlayPath);
                 Texture texture = deleteOverlay ? context.poll(key) : context.peek(key);
                 if (texture == null) {
-                    context.warn("Missing overlay texture: " + overlayPath);
+                    context.info("Missing overlay texture: " + overlayPath);
                     continue;
                 }
 
