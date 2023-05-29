@@ -39,6 +39,10 @@ import org.geysermc.pack.converter.data.TextureConversionData;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
 
+import javax.imageio.ImageIO;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -67,11 +71,13 @@ public class TextureConverter implements Converter<TextureConversionData> {
 
         List<Texture> textures = new ArrayList<>(context.javaResourcePack().textures());
 
+        context.info("Bulk transforming textures...");
         BulkTransformContext bulkContext = new BulkTransformContext(context, mappings, textures);
         for (BulkTextureTransformer bulkTransformer : this.bulkTransformers) {
             bulkTransformer.transform(bulkContext);
         }
 
+        context.info("Transforming and writing textures...");
         for (Texture texture : textures) {
             String output = texture.key().value();
             Path outputPath = context.outputDirectory().resolve(BEDROCK_TEXTURES_LOCATION).resolve(output);
@@ -95,12 +101,28 @@ public class TextureConverter implements Converter<TextureConversionData> {
                 }
 
                 try (OutputStream stream = Files.newOutputStream(textureOutput)) {
-                    texture.data().write(stream);
+                    byte[] bytes = texture.data().toByteArray();
+
+                    BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
+                    if (!image.getColorModel().hasAlpha()) {
+                        BufferedImage newImage = new BufferedImage(
+                                image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+                        Graphics2D g = newImage.createGraphics();
+                        g.drawImage(image, 0, 0, null);
+                        g.dispose();
+
+                        image = newImage;
+                    }
+
+                    ImageIO.write(image, "png", stream);
                 }
 
                 context.data().addTransformedTexture(transformedTexture);
             }
         }
+
+        context.info("Texture conversion complete!");
     }
 
     @Override
