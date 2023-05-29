@@ -43,7 +43,8 @@ import java.util.List;
 public class AtlasTransformer implements BulkTextureTransformer {
     private static final List<AtlasData> ATLASES = List.of(
             new AtlasData("item/clock_%s.png", "items/watch_atlas.png", 63),
-            new AtlasData("item/compass_%s.png", "items/compass_atlas.png", 31)
+            new AtlasData("item/compass_%s.png", "items/compass_atlas.png", 31),
+            new AtlasData("item/recovery_compass_%s.png", "items/recovery_compass_atlas.png", 31)
     );
 
     @Override
