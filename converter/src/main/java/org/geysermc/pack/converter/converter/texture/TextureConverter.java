@@ -27,6 +27,7 @@
 package org.geysermc.pack.converter.converter.texture;
 
 import com.google.auto.service.AutoService;
+import com.google.gson.Gson;
 import org.geysermc.pack.converter.PackConversionContext;
 import org.geysermc.pack.converter.PackConverter;
 import org.geysermc.pack.converter.converter.Converter;
@@ -38,6 +39,8 @@ import org.geysermc.pack.converter.data.TextureConversionData;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -55,9 +58,16 @@ public class TextureConverter implements Converter<TextureConversionData> {
 
     @Override
     public void convert(@NotNull PackConversionContext<TextureConversionData> context) throws Exception {
+        InputStream mappingsStream = this.getClass().getResourceAsStream("/mappings/textures.json");
+        if (mappingsStream == null) {
+            throw new RuntimeException("Could not find textures.json mappings file!");
+        }
+
+        TextureMappings mappings = new Gson().fromJson(new InputStreamReader(mappingsStream), TextureMappings.class);
+
         List<Texture> textures = new ArrayList<>(context.javaResourcePack().textures());
 
-        BulkTransformContext bulkContext = new BulkTransformContext(context, textures);
+        BulkTransformContext bulkContext = new BulkTransformContext(context, mappings, textures);
         for (BulkTextureTransformer bulkTransformer : this.bulkTransformers) {
             bulkTransformer.transform(bulkContext);
         }
@@ -72,7 +82,7 @@ public class TextureConverter implements Converter<TextureConversionData> {
                     continue;
                 }
 
-                transformedTexture = transformer.transform(context, transformedTexture);
+                transformedTexture = transformer.transform(context, mappings, transformedTexture);
                 if (transformedTexture == null) {
                     break;
                 }

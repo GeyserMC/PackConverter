@@ -28,6 +28,7 @@ package org.geysermc.pack.converter.converter.texture.transformer.type.path;
 
 import org.geysermc.pack.converter.PackConversionContext;
 import org.geysermc.pack.converter.converter.texture.TextureConverter;
+import org.geysermc.pack.converter.converter.texture.TextureMappings;
 import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
 import org.geysermc.pack.converter.converter.texture.transformer.TransformedTexture;
 import org.geysermc.pack.converter.data.TextureConversionData;
@@ -36,6 +37,7 @@ import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.texture.Texture;
 
 import java.nio.file.Path;
+import java.util.Map;
 
 public class PathTransformer implements TextureTransformer {
     private final String input;
@@ -52,11 +54,23 @@ public class PathTransformer implements TextureTransformer {
     }
 
     @Override
-    public @Nullable TransformedTexture transform(@NotNull PackConversionContext<TextureConversionData> context, @NotNull TransformedTexture texture) {
+    public @Nullable TransformedTexture transform(@NotNull PackConversionContext<TextureConversionData> context, @NotNull TextureMappings mappings, @NotNull TransformedTexture texture) {
         String output = texture.texture().key().value();
+
+        Map<String, String> keyMappings = mappings.textures(this.input);
+        if (keyMappings != null) {
+            String sanitizedName = output.substring(output.lastIndexOf('/') + 1).replace(".png", "");
+
+            String bedrockPath = keyMappings.get(sanitizedName);
+            if (bedrockPath != null) {
+                output = output.replace(sanitizedName, bedrockPath);
+            }
+        }
+
         Path outputDir = context.outputDirectory()
                 .resolve(TextureConverter.BEDROCK_TEXTURES_LOCATION)
                 .resolve(this.output + output.substring(this.input.length()));
+
 
         texture.output(outputDir);
         return texture;

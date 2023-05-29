@@ -28,6 +28,7 @@ package org.geysermc.pack.converter.converter.texture.transformer.bulk;
 
 import net.kyori.adventure.key.Key;
 import org.geysermc.pack.converter.PackConversionContext;
+import org.geysermc.pack.converter.converter.texture.TextureMappings;
 import org.geysermc.pack.converter.data.TextureConversionData;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
@@ -43,11 +44,13 @@ import java.util.Map;
 
 public class BulkTransformContext {
     private final PackConversionContext<TextureConversionData> conversionContext;
+    private final TextureMappings mappings;
     private final Collection<Texture> textures;
     private final Map<Key, Texture> byKey = new HashMap<>();
 
-    public BulkTransformContext(PackConversionContext<TextureConversionData> conversionContext, Collection<Texture> textures) {
+    public BulkTransformContext(PackConversionContext<TextureConversionData> conversionContext, TextureMappings mappings, Collection<Texture> textures) {
         this.conversionContext = conversionContext;
+        this.mappings = mappings;
         this.textures = textures;
 
         for (Texture texture : textures) {
@@ -55,8 +58,8 @@ public class BulkTransformContext {
         }
     }
 
-    public void info(@NotNull String message) {
-        this.conversionContext.info(message);
+    public TextureMappings mappings() {
+        return this.mappings;
     }
 
     @Nullable
@@ -86,5 +89,21 @@ public class BulkTransformContext {
 
     public boolean containsKey(@NotNull Key key) {
         return this.byKey.containsKey(key);
+    }
+
+    public void info(@NotNull String message) {
+        this.conversionContext.info(message);
+    }
+
+    public void warn(@NotNull String message) {
+        this.conversionContext.warn(message);
+    }
+
+    public void error(@NotNull String message) {
+        this.conversionContext.error(message);
+    }
+
+    public void error(@NotNull String message, @NotNull Throwable throwable) {
+        this.conversionContext.error(message, throwable);
     }
 }

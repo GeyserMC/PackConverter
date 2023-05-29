@@ -24,19 +24,14 @@
  *
  */
 
-package org.geysermc.pack.converter.converter.texture.transformer;
+package org.geysermc.pack.converter.converter.texture.transformer.type.path;
 
-import org.geysermc.pack.converter.PackConversionContext;
-import org.geysermc.pack.converter.converter.texture.TextureMappings;
-import org.geysermc.pack.converter.data.TextureConversionData;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import team.unnamed.creative.texture.Texture;
+import com.google.auto.service.AutoService;
+import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
 
-public interface TextureTransformer {
-
-    boolean filter(@NotNull Texture texture);
-
-    @Nullable
-    TransformedTexture transform(@NotNull PackConversionContext<TextureConversionData> context, @NotNull TextureMappings mappings, @NotNull TransformedTexture texture);
+@AutoService(TextureTransformer.class)
+public class BlockPathTextureTransformer extends PathTransformer {
+    public BlockPathTextureTransformer() {
+        super("block", "blocks");
+    }
 }
