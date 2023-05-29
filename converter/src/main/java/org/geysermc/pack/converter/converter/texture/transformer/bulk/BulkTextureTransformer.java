@@ -24,28 +24,13 @@
  *
  */
 
-package org.geysermc.pack.converter.data;
+package org.geysermc.pack.converter.converter.texture.transformer.bulk;
 
-import org.geysermc.pack.converter.converter.texture.transformer.TransformedTexture;
 import org.jetbrains.annotations.NotNull;
 
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 
-public class TextureConversionData extends BaseConversionData {
-    private final List<TransformedTexture> transformedTextures = new ArrayList<>();
+public interface BulkTextureTransformer {
 
-    public TextureConversionData(@NotNull Path inputDirectory, @NotNull Path outputDirectory) {
-        super(inputDirectory, outputDirectory);
-    }
-
-    public void addTransformedTexture(@NotNull TransformedTexture transformedTexture) {
-        this.transformedTextures.add(transformedTexture);
-    }
-
-    @NotNull
-    public List<TransformedTexture> transformedTextures() {
-        return this.transformedTextures;
-    }
+    void transform(@NotNull BulkTransformContext context) throws IOException;
 }

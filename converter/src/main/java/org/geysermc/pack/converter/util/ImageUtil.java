@@ -30,8 +30,11 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class ImageUtil {
 
@@ -181,6 +184,32 @@ public class ImageUtil {
     public static void write(BufferedImage img, String format, File output) throws IOException {
         output.getParentFile().mkdirs();
         ImageIO.write(img, format, output);
+    }
+
+    /**
+     * Convert a {@link BufferedImage} to an {@link InputStream}
+     *
+     * @param img Image to use
+     * @param format Format to use
+     * @return InputStream of the image
+     * @throws IOException
+     */
+    public static InputStream toInputStream(BufferedImage img, String format) throws IOException {
+        return new ByteArrayInputStream(toByteArray(img, format));
+    }
+
+    /**
+     * Convert a {@link BufferedImage} to a byte array
+     *
+     * @param img Image to use
+     * @param format Format to use
+     * @return Byte array of the image
+     * @throws IOException
+     */
+    public static byte[] toByteArray(BufferedImage img, String format) throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        ImageIO.write(img, format, os);
+        return os.toByteArray();
     }
 
     /**

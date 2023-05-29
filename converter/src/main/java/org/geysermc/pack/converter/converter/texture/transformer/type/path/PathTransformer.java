@@ -24,12 +24,12 @@
  *
  */
 
-package org.geysermc.pack.converter.converter.texture.transformer.path;
+package org.geysermc.pack.converter.converter.texture.transformer.type.path;
 
 import org.geysermc.pack.converter.PackConversionContext;
 import org.geysermc.pack.converter.converter.texture.TextureConverter;
-import org.geysermc.pack.converter.converter.texture.TextureTransformer;
-import org.geysermc.pack.converter.converter.texture.TransformedTexture;
+import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
+import org.geysermc.pack.converter.converter.texture.transformer.TransformedTexture;
 import org.geysermc.pack.converter.data.TextureConversionData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -48,7 +48,7 @@ public class PathTransformer implements TextureTransformer {
 
     @Override
     public boolean filter(@NotNull Texture texture) {
-        return texture.key().value().startsWith(this.input);
+        return texture.key().value().startsWith(this.input + "/");
     }
 
     @Override

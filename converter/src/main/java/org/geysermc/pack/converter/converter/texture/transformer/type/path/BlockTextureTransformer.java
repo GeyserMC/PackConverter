@@ -24,33 +24,14 @@
  *
  */
 
-package org.geysermc.pack.converter.converter.texture;
+package org.geysermc.pack.converter.converter.texture.transformer.type.path;
 
-import org.jetbrains.annotations.NotNull;
-import team.unnamed.creative.texture.Texture;
+import com.google.auto.service.AutoService;
+import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
 
-import java.nio.file.Path;
-
-public class TransformedTexture {
-    private final Texture texture;
-    private Path output;
-
-    public TransformedTexture(@NotNull Texture texture, @NotNull Path output) {
-        this.texture = texture;
-        this.output = output;
-    }
-
-    @NotNull
-    public Texture texture() {
-        return texture;
-    }
-
-    @NotNull
-    public Path output() {
-        return output;
-    }
-
-    public void output(@NotNull Path output) {
-        this.output = output;
+@AutoService(TextureTransformer.class)
+public class BlockTextureTransformer extends PathTransformer {
+    public BlockTextureTransformer() {
+        super("block", "blocks");
     }
 }

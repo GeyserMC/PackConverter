@@ -30,6 +30,10 @@ import com.google.auto.service.AutoService;
 import org.geysermc.pack.converter.PackConversionContext;
 import org.geysermc.pack.converter.PackConverter;
 import org.geysermc.pack.converter.converter.Converter;
+import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
+import org.geysermc.pack.converter.converter.texture.transformer.TransformedTexture;
+import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTextureTransformer;
+import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTransformContext;
 import org.geysermc.pack.converter.data.TextureConversionData;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
@@ -37,7 +41,7 @@ import team.unnamed.creative.texture.Texture;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.stream.StreamSupport;
@@ -46,11 +50,17 @@ import java.util.stream.StreamSupport;
 public class TextureConverter implements Converter<TextureConversionData> {
     public static final String BEDROCK_TEXTURES_LOCATION = "textures";
 
+    private final List<BulkTextureTransformer> bulkTransformers = StreamSupport.stream(ServiceLoader.load(BulkTextureTransformer.class).spliterator(), false).toList();
     private final List<TextureTransformer> transformers = StreamSupport.stream(ServiceLoader.load(TextureTransformer.class).spliterator(), false).toList();
 
     @Override
     public void convert(@NotNull PackConversionContext<TextureConversionData> context) throws Exception {
-        Collection<Texture> textures = context.javaResourcePack().textures();
+        List<Texture> textures = new ArrayList<>(context.javaResourcePack().textures());
+
+        BulkTransformContext bulkContext = new BulkTransformContext(context, textures);
+        for (BulkTextureTransformer bulkTransformer : this.bulkTransformers) {
+            bulkTransformer.transform(bulkContext);
+        }
 
         for (Texture texture : textures) {
             String output = texture.key().value();
@@ -63,7 +73,6 @@ public class TextureConverter implements Converter<TextureConversionData> {
                 }
 
                 transformedTexture = transformer.transform(context, transformedTexture);
-
                 if (transformedTexture == null) {
                     break;
                 }
