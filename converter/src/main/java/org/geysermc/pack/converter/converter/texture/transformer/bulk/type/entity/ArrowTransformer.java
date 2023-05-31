@@ -34,11 +34,9 @@ import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
 
-import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 @AutoService(BulkTextureTransformer.class)
@@ -55,7 +53,7 @@ public class ArrowTransformer implements BulkTextureTransformer {
 
         context.info(String.format("Converting arrow texture %s", OUTPUT));
 
-        BufferedImage fromImage = ImageIO.read(new ByteArrayInputStream(texture.data().toByteArray()));
+        BufferedImage fromImage = this.readImage(texture);
 
         int factor = fromImage.getWidth() / 32;
         BufferedImage newArrowImage = new BufferedImage((32 * factor), (32 * factor), BufferedImage.TYPE_INT_ARGB);

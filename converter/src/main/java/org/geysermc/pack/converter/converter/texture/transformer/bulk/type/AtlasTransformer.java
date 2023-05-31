@@ -33,9 +33,7 @@ import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTransf
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -61,7 +59,7 @@ public class AtlasTransformer implements BulkTextureTransformer {
                     continue;
                 }
 
-                BufferedImage stepImage = ImageIO.read(new ByteArrayInputStream(texture.data().toByteArray()));
+                BufferedImage stepImage = this.readImage(texture);
                 if (atlasImage == null) {
                     context.info(String.format("Creating atlas %s", bedrockName));
                     atlasImage = new BufferedImage(stepImage.getWidth(), stepImage.getHeight() * (atlasCount + 1), BufferedImage.TYPE_INT_ARGB);

@@ -109,8 +109,8 @@ public class OverlayTransformer implements BulkTextureTransformer {
 
             context.info(String.format("Overlaying %s and %s onto %s", overlayName, javaName, bedrockName));
 
-            BufferedImage image = ImageIO.read(new ByteArrayInputStream(texture.data().toByteArray()));
-            BufferedImage imageOverlay = ImageIO.read(new ByteArrayInputStream(overlayTexture.data().toByteArray()));
+            BufferedImage image = this.readImage(texture);
+            BufferedImage imageOverlay = this.readImage(overlayTexture);
 
             for (int x = 0; x < image.getWidth(); x++) {
                 for (int y = 0; y < image.getHeight(); y++) {

@@ -26,11 +26,20 @@
 
 package org.geysermc.pack.converter.converter.texture.transformer.bulk;
 
+import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
+import team.unnamed.creative.texture.Texture;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 public interface BulkTextureTransformer {
 
     void transform(@NotNull BulkTransformContext context) throws IOException;
+
+    default BufferedImage readImage(@NotNull Texture texture) throws IOException {
+        return ImageUtil.ensure32BitImage(ImageIO.read(new ByteArrayInputStream(texture.data().toByteArray())));
+    }
 }

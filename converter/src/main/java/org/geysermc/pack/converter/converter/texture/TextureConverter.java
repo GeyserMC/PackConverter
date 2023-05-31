@@ -36,10 +36,12 @@ import org.geysermc.pack.converter.converter.texture.transformer.TransformedText
 import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTextureTransformer;
 import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTransformContext;
 import org.geysermc.pack.converter.data.TextureConversionData;
+import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
 
 import javax.imageio.ImageIO;
+import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -103,8 +105,16 @@ public class TextureConverter implements Converter<TextureConversionData> {
                 byte[] bytes = texture.data().toByteArray();
 
                 BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
+                BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
-                String pngKey = "textures/" + texture.key().value();
+                Graphics2D g = newImage.createGraphics();
+                g.setComposite(AlphaComposite.Src);
+                g.drawImage(image, 0, 0, null);
+                g.dispose();
+
+                image = newImage;
+
+                String pngKey = context.outputDirectory().relativize(textureOutput).toString();
                 PngToTgaMappings.TgaMapping mapping = PngToTgaMappings.mapping(pngKey);
                 if (mapping != null) {
                     Path tgaPath = context.outputDirectory().resolve(mapping.value());
@@ -112,24 +122,11 @@ public class TextureConverter implements Converter<TextureConversionData> {
                         Files.createDirectories(tgaPath.getParent());
                     }
 
-                    try (OutputStream tgaStream = Files.newOutputStream(tgaPath)) {
-                        ImageIO.write(image, "tga", tgaStream);
-                        if (!mapping.keep()) {
-                            Files.deleteIfExists(textureOutput);
-                            continue;
-                        }
+                    ImageUtil.writeTGA(tgaPath, image);
+                    if (!mapping.keep()) {
+                        Files.deleteIfExists(textureOutput);
+                        continue;
                     }
-                }
-
-                if (!image.getColorModel().hasAlpha()) {
-                    BufferedImage newImage = new BufferedImage(
-                            image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-
-                    Graphics2D g = newImage.createGraphics();
-                    g.drawImage(image, 0, 0, null);
-                    g.dispose();
-
-                    image = newImage;
                 }
 
                 try (OutputStream stream = Files.newOutputStream(textureOutput)) {

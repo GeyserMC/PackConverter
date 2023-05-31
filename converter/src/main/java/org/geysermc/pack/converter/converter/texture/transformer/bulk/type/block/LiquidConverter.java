@@ -26,7 +26,6 @@
 
 package org.geysermc.pack.converter.converter.texture.transformer.bulk.type.block;
 
-import com.google.auto.service.AutoService;
 import net.kyori.adventure.key.Key;
 import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTextureTransformer;
 import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTransformContext;
@@ -34,13 +33,11 @@ import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 
-@AutoService(BulkTextureTransformer.class)
+// @AutoService(BulkTextureTransformer.class)
 public class LiquidConverter implements BulkTextureTransformer {
     private static final List<LiquidData> LIQUID = List.of(
             new LiquidData("block/lava_flow.png", "blocks/lava_flow.png", 32),
@@ -64,7 +61,7 @@ public class LiquidConverter implements BulkTextureTransformer {
 
             context.info(String.format("Converting liquid %s", bedrockName));
 
-            BufferedImage liquidImage = ImageIO.read(new ByteArrayInputStream(texture.data().toByteArray()));
+            BufferedImage liquidImage = this.readImage(texture);
 
             if (grayscale) {
                 liquidImage = ImageUtil.grayscale(liquidImage);

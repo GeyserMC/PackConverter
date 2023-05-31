@@ -35,10 +35,8 @@ import org.geysermc.pack.converter.util.UnsafeKey;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
 
-import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -264,7 +262,7 @@ public class ColorizeTransformer implements BulkTextureTransformer {
                     continue;
                 }
 
-                BufferedImage overlayImage = ImageIO.read(new ByteArrayInputStream(texture.data().toByteArray()));
+                BufferedImage overlayImage = this.readImage(texture);
                 if (finalImage == null) {
                     context.info(String.format("Colorizing and overlaying %s", overlay.overlayPath()));
 

@@ -34,10 +34,8 @@ import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
 
-import javax.imageio.ImageIO;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 @AutoService(BulkTextureTransformer.class)
@@ -56,8 +54,8 @@ public class WeatherTransformer implements BulkTextureTransformer {
 
         context.info(String.format("Converting weather texture %s", WEATHER_OUTPUT));
 
-        BufferedImage snowImage = ImageIO.read(new ByteArrayInputStream(snowTexture.data().toByteArray()));
-        BufferedImage rainImage = ImageIO.read(new ByteArrayInputStream(rainTexture.data().toByteArray()));
+        BufferedImage snowImage = this.readImage(snowTexture);
+        BufferedImage rainImage = this.readImage(rainTexture);
 
         int factor = snowImage.getWidth() / 64;
 
