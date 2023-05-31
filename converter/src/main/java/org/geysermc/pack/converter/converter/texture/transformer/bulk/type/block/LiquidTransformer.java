@@ -26,6 +26,7 @@
 
 package org.geysermc.pack.converter.converter.texture.transformer.bulk.type.block;
 
+import com.google.auto.service.AutoService;
 import net.kyori.adventure.key.Key;
 import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTextureTransformer;
 import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTransformContext;
@@ -37,8 +38,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 
-// @AutoService(BulkTextureTransformer.class)
-public class LiquidConverter implements BulkTextureTransformer {
+@AutoService(BulkTextureTransformer.class)
+public class LiquidTransformer implements BulkTextureTransformer {
     private static final List<LiquidData> LIQUID = List.of(
             new LiquidData("block/lava_flow.png", "blocks/lava_flow.png", 32),
             new LiquidData("block/lava_still.png", "blocks/lava_still.png", 16),
