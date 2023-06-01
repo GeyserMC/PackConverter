@@ -62,6 +62,12 @@ public class TransformContext {
         return this.mappings;
     }
 
+    /**
+     * Removes the texture from the list of textures and returns it.
+     *
+     * @param key the key of the texture to remove
+     * @return the texture that was removed, or null if it didn't exist
+     */
     @Nullable
     public Texture poll(@NotNull Key key) {
         Texture remove = this.byKey.remove(key);
@@ -73,20 +79,45 @@ public class TransformContext {
         return remove;
     }
 
+    /**
+     * Returns the texture with the given key, but does not remove it from the list of textures.
+     *
+     * @param key the key of the texture to get
+     * @return the texture with the given key, or null if it doesn't exist
+     */
     @Nullable
     public Texture peek(@NotNull Key key) {
         return this.byKey.get(key);
     }
 
+    /**
+     * Adds the given texture to the list of textures.
+     *
+     * @param key the key of the texture to add
+     * @param image the image of the texture to add
+     * @param format the format of the image
+     * @throws IOException if an error occurs while converting the image to bytes
+     */
     public void offer(@NotNull Key key, @NotNull BufferedImage image, @NotNull String format) throws IOException {
         this.offer(Texture.of(key, Writable.bytes(ImageUtil.toByteArray(image, format))));
     }
 
+    /**
+     * Adds the given texture to the list of textures.
+     *
+     * @param texture the texture to add
+     */
     public void offer(@NotNull Texture texture) {
         this.textures.add(texture);
         this.byKey.put(texture.key(), texture);
     }
 
+    /**
+     * Returns whether or not the list of textures contains a texture with the given key.
+     *
+     * @param key the key of the texture to check for
+     * @return whether or not the list of textures contains a texture with the given key
+     */
     public boolean containsKey(@NotNull Key key) {
         return this.byKey.containsKey(key);
     }
