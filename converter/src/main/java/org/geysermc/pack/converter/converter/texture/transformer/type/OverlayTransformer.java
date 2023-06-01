@@ -24,25 +24,23 @@
  *
  */
 
-package org.geysermc.pack.converter.converter.texture.transformer.bulk.type;
+package org.geysermc.pack.converter.converter.texture.transformer.type;
 
 import com.google.auto.service.AutoService;
 import net.kyori.adventure.key.Key;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTextureTransformer;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTransformContext;
+import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
+import org.geysermc.pack.converter.converter.texture.transformer.TransformContext;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
 
-import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 
-@AutoService(BulkTextureTransformer.class)
-public class OverlayTransformer implements BulkTextureTransformer {
+@AutoService(TextureTransformer.class)
+public class OverlayTransformer implements TextureTransformer {
     private static final List<OverlayData> OVERLAYS = List.of(
             // Cat
             new OverlayData("entity/cat/cat_collar.png", "entity/cat/all_black.png", "entity/cat/allblackcat_tame.png", false, true),
@@ -87,7 +85,7 @@ public class OverlayTransformer implements BulkTextureTransformer {
     );
     
     @Override
-    public void transform(@NotNull BulkTransformContext context) throws IOException {
+    public void transform(@NotNull TransformContext context) throws IOException {
         for (OverlayData overlay : OVERLAYS) {
             String javaName = overlay.javaName();
             String overlayName = overlay.overlay();

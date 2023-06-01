@@ -24,12 +24,12 @@
  *
  */
 
-package org.geysermc.pack.converter.converter.texture.transformer.bulk.type.entity;
+package org.geysermc.pack.converter.converter.texture.transformer.type.entity;
 
 import com.google.auto.service.AutoService;
 import net.kyori.adventure.key.Key;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTextureTransformer;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTransformContext;
+import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
+import org.geysermc.pack.converter.converter.texture.transformer.TransformContext;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
@@ -39,13 +39,13 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-@AutoService(BulkTextureTransformer.class)
-public class SheepTransformer implements BulkTextureTransformer {
+@AutoService(TextureTransformer.class)
+public class SheepTransformer implements TextureTransformer {
     private static final String SHEEP = "entity/sheep/sheep.png";
     private static final String SHEEP_FUR = "entity/sheep/sheep_fur.png";
 
     @Override
-    public void transform(@NotNull BulkTransformContext context) throws IOException {
+    public void transform(@NotNull TransformContext context) throws IOException {
         Texture sheepTexture = context.poll(Key.key(Key.MINECRAFT_NAMESPACE, SHEEP));
         Texture sheepFurTexture = context.poll(Key.key(Key.MINECRAFT_NAMESPACE, SHEEP_FUR));
 

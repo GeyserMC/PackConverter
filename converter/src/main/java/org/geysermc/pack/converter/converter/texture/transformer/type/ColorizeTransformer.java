@@ -24,12 +24,12 @@
  *
  */
 
-package org.geysermc.pack.converter.converter.texture.transformer.bulk.type;
+package org.geysermc.pack.converter.converter.texture.transformer.type;
 
 import com.google.auto.service.AutoService;
 import net.kyori.adventure.key.Key;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTextureTransformer;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTransformContext;
+import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
+import org.geysermc.pack.converter.converter.texture.transformer.TransformContext;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.geysermc.pack.converter.util.UnsafeKey;
 import org.jetbrains.annotations.NotNull;
@@ -40,8 +40,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 
-@AutoService(BulkTextureTransformer.class)
-public class ColorizeTransformer implements BulkTextureTransformer {
+@AutoService(TextureTransformer.class)
+public class ColorizeTransformer implements TextureTransformer {
     private static final List<ColorizeData> COLORIZE_DATA = List.of(
         // Armor (Colors from px 9/1 from original cloth_1.png bedrock texture)
         new ColorizeData(new Overlay("models/armor/leather_layer_1.png", new Color(167, 105, 67)), "models/armor/cloth_1.png"),
@@ -246,7 +246,7 @@ public class ColorizeTransformer implements BulkTextureTransformer {
     );
     
     @Override
-    public void transform(@NotNull BulkTransformContext context) throws IOException {
+    public void transform(@NotNull TransformContext context) throws IOException {
         for (ColorizeData data : COLORIZE_DATA) {
             BufferedImage finalImage = null;
 

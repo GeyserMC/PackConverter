@@ -26,17 +26,20 @@
 
 package org.geysermc.pack.converter.converter.texture.transformer;
 
-import org.geysermc.pack.converter.PackConversionContext;
-import org.geysermc.pack.converter.converter.texture.TextureMappings;
-import org.geysermc.pack.converter.data.TextureConversionData;
+import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.texture.Texture;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 public interface TextureTransformer {
 
-    boolean filter(@NotNull Texture texture);
+    void transform(@NotNull TransformContext context) throws IOException;
 
-    @Nullable
-    TransformedTexture transform(@NotNull PackConversionContext<TextureConversionData> context, @NotNull TextureMappings mappings, @NotNull TransformedTexture texture);
+    default BufferedImage readImage(@NotNull Texture texture) throws IOException {
+        return ImageUtil.ensure32BitImage(ImageIO.read(new ByteArrayInputStream(texture.data().toByteArray())));
+    }
 }

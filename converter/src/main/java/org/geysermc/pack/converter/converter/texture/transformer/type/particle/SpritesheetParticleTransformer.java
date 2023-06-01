@@ -24,11 +24,11 @@
  *
  */
 
-package org.geysermc.pack.converter.converter.texture.transformer.bulk.type.particle;
+package org.geysermc.pack.converter.converter.texture.transformer.type.particle;
 
 import net.kyori.adventure.key.Key;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTextureTransformer;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTransformContext;
+import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
+import org.geysermc.pack.converter.converter.texture.transformer.TransformContext;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.geysermc.pack.converter.util.Spritesheet;
 import org.jetbrains.annotations.NotNull;
@@ -40,7 +40,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.BitSet;
 
-public class SpritesheetParticleTransformer implements BulkTextureTransformer {
+public class SpritesheetParticleTransformer implements TextureTransformer {
     private final String javaPath;
     private final String bedrockPath;
     private final String vanillaSpritesheet;
@@ -54,7 +54,7 @@ public class SpritesheetParticleTransformer implements BulkTextureTransformer {
     }
 
     @Override
-    public void transform(@NotNull BulkTransformContext context) throws IOException {
+    public void transform(@NotNull TransformContext context) throws IOException {
         int size = -1;
         BitSet occupiedSectors = new BitSet(this.atlasCount);
         Spritesheet spritesheet = new Spritesheet();

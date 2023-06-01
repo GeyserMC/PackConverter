@@ -24,19 +24,19 @@
  *
  */
 
-package org.geysermc.pack.converter.converter.texture.transformer.bulk.type.particle;
+package org.geysermc.pack.converter.converter.texture.transformer.type.particle;
 
 import com.google.auto.service.AutoService;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTextureTransformer;
+import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
 
-@AutoService(BulkTextureTransformer.class)
-public class SculkChargePopParticleTransformer extends SpritesheetParticleTransformer {
-    private static final String PARTICLE_INPUT = "particle/sculk_charge_pop_%s.png";
-    private static final String PARTICLE_OUTPUT = "particle/sculk_charge_pop.png";
-    private static final String VANILLA_SPRITESHEET = "sculk_charge_pop_spritesheet";
-    private static final int ATLAS_COUNT = 4;
+@AutoService(TextureTransformer.class)
+public class CampfireParticleTransformer extends SpritesheetParticleTransformer {
+    private static final String PARTICLE_INPUT = "particle/big_smoke_%s.png";
+    private static final String PARTICLE_OUTPUT = "particle/campfire_smoke.png";
+    private static final String VANILLA_SPRITESHEET = "campfire_spritesheet";
+    private static final int ATLAS_COUNT = 12;
 
-    public SculkChargePopParticleTransformer() {
+    public CampfireParticleTransformer() {
         super(PARTICLE_INPUT, PARTICLE_OUTPUT, VANILLA_SPRITESHEET, ATLAS_COUNT);
     }
 }

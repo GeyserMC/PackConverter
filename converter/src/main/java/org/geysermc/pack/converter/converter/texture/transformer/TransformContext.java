@@ -24,7 +24,7 @@
  *
  */
 
-package org.geysermc.pack.converter.converter.texture.transformer.bulk;
+package org.geysermc.pack.converter.converter.texture.transformer;
 
 import net.kyori.adventure.key.Key;
 import org.geysermc.pack.converter.PackConversionContext;
@@ -42,13 +42,13 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class BulkTransformContext {
+public class TransformContext {
     private final PackConversionContext<TextureConversionData> conversionContext;
     private final TextureMappings mappings;
     private final Collection<Texture> textures;
     private final Map<Key, Texture> byKey = new HashMap<>();
 
-    public BulkTransformContext(PackConversionContext<TextureConversionData> conversionContext, TextureMappings mappings, Collection<Texture> textures) {
+    public TransformContext(PackConversionContext<TextureConversionData> conversionContext, TextureMappings mappings, Collection<Texture> textures) {
         this.conversionContext = conversionContext;
         this.mappings = mappings;
         this.textures = textures;

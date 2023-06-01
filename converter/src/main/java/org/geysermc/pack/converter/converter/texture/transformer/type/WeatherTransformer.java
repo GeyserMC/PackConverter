@@ -24,12 +24,12 @@
  *
  */
 
-package org.geysermc.pack.converter.converter.texture.transformer.bulk.type;
+package org.geysermc.pack.converter.converter.texture.transformer.type;
 
 import com.google.auto.service.AutoService;
 import net.kyori.adventure.key.Key;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTextureTransformer;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTransformContext;
+import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
+import org.geysermc.pack.converter.converter.texture.transformer.TransformContext;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
@@ -38,14 +38,14 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-@AutoService(BulkTextureTransformer.class)
-public class WeatherTransformer implements BulkTextureTransformer {
+@AutoService(TextureTransformer.class)
+public class WeatherTransformer implements TextureTransformer {
     private static final String SNOW_INPUT = "environment/snow.png";
     private static final String RAIN_INPUT = "environment/rain.png";
     private static final String WEATHER_OUTPUT = "environment/weather.png";
 
     @Override
-    public void transform(@NotNull BulkTransformContext context) throws IOException {
+    public void transform(@NotNull TransformContext context) throws IOException {
         Texture snowTexture = context.poll(Key.key(Key.MINECRAFT_NAMESPACE, SNOW_INPUT));
         Texture rainTexture = context.poll(Key.key(Key.MINECRAFT_NAMESPACE, RAIN_INPUT));
         if (snowTexture == null || rainTexture == null) {

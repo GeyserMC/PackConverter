@@ -24,22 +24,19 @@
  *
  */
 
-package org.geysermc.pack.converter.converter.texture.transformer.bulk;
+package org.geysermc.pack.converter.converter.texture.transformer.type.particle;
 
-import org.geysermc.pack.converter.util.ImageUtil;
-import org.jetbrains.annotations.NotNull;
-import team.unnamed.creative.texture.Texture;
+import com.google.auto.service.AutoService;
+import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+@AutoService(TextureTransformer.class)
+public class SonicExplosionParticleTransformer extends SpritesheetParticleTransformer {
+    private static final String PARTICLE_INPUT = "particle/sonic_boom_%s.png";
+    private static final String PARTICLE_OUTPUT = "particle/sonic_explosion.png";
+    private static final String VANILLA_SPRITESHEET = "sculk_soul_spritesheet";
+    private static final int ATLAS_COUNT = 16;
 
-public interface BulkTextureTransformer {
-
-    void transform(@NotNull BulkTransformContext context) throws IOException;
-
-    default BufferedImage readImage(@NotNull Texture texture) throws IOException {
-        return ImageUtil.ensure32BitImage(ImageIO.read(new ByteArrayInputStream(texture.data().toByteArray())));
+    public SonicExplosionParticleTransformer() {
+        super(PARTICLE_INPUT, PARTICLE_OUTPUT, VANILLA_SPRITESHEET, ATLAS_COUNT);
     }
 }

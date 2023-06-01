@@ -31,10 +31,9 @@ import com.google.gson.Gson;
 import org.geysermc.pack.converter.PackConversionContext;
 import org.geysermc.pack.converter.PackConverter;
 import org.geysermc.pack.converter.converter.Converter;
-import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
 import org.geysermc.pack.converter.converter.texture.transformer.TransformedTexture;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTextureTransformer;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTransformContext;
+import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
+import org.geysermc.pack.converter.converter.texture.transformer.TransformContext;
 import org.geysermc.pack.converter.data.TextureConversionData;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
@@ -52,6 +51,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.stream.StreamSupport;
 
@@ -59,8 +59,12 @@ import java.util.stream.StreamSupport;
 public class TextureConverter implements Converter<TextureConversionData> {
     public static final String BEDROCK_TEXTURES_LOCATION = "textures";
 
-    private final List<BulkTextureTransformer> bulkTransformers = StreamSupport.stream(ServiceLoader.load(BulkTextureTransformer.class).spliterator(), false).toList();
     private final List<TextureTransformer> transformers = StreamSupport.stream(ServiceLoader.load(TextureTransformer.class).spliterator(), false).toList();
+
+    private static final Map<String, String> DIRECTORY_LOCATIONS = Map.of(
+            "block", "blocks",
+            "item", "items"
+    );
 
     @Override
     public void convert(@NotNull PackConversionContext<TextureConversionData> context) throws Exception {
@@ -73,68 +77,71 @@ public class TextureConverter implements Converter<TextureConversionData> {
 
         List<Texture> textures = new ArrayList<>(context.javaResourcePack().textures());
 
-        context.info("Bulk transforming textures...");
-        BulkTransformContext bulkContext = new BulkTransformContext(context, mappings, textures);
-        for (BulkTextureTransformer bulkTransformer : this.bulkTransformers) {
-            bulkTransformer.transform(bulkContext);
+        context.info("Transforming textures...");
+        TransformContext transformContext = new TransformContext(context, mappings, textures);
+        for (TextureTransformer transformer : this.transformers) {
+            transformer.transform(transformContext);
         }
 
-        context.info("Transforming and writing textures...");
+        context.info("Writing textures...");
         for (Texture texture : textures) {
             String output = texture.key().value();
-            Path outputPath = context.outputDirectory().resolve(BEDROCK_TEXTURES_LOCATION).resolve(output);
+            Path texturePath = context.outputDirectory().resolve(BEDROCK_TEXTURES_LOCATION);
+            Path outputPath = texturePath.resolve(output);
+            String relativePath = texturePath.relativize(outputPath).toString();
+
+            String input = relativePath.substring(0, relativePath.indexOf('/'));
+
+            Map<String, String> keyMappings = mappings.textures(input);
+            if (keyMappings != null) {
+                String sanitizedName = output.substring(output.indexOf('/') + 1).replace(".png", "");
+                String bedrockPath = keyMappings.get(sanitizedName);
+                if (bedrockPath != null) {
+                    output = output.replace(sanitizedName, bedrockPath);
+                }
+            }
+
+            String bedrockDirectory = DIRECTORY_LOCATIONS.getOrDefault(input, input);
+            outputPath = texturePath.resolve(bedrockDirectory + "/" + output.substring(input.length()));
 
             TransformedTexture transformedTexture = new TransformedTexture(texture, outputPath);
-            for (TextureTransformer transformer : this.transformers) {
-                if (!transformer.filter(texture)) {
+
+            if (outputPath.getParent() != null && Files.notExists(outputPath.getParent())) {
+                Files.createDirectories(outputPath.getParent());
+            }
+
+            byte[] bytes = texture.data().toByteArray();
+
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
+            BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+            Graphics2D g = newImage.createGraphics();
+            g.setComposite(AlphaComposite.Src);
+            g.drawImage(image, 0, 0, null);
+            g.dispose();
+
+            image = newImage;
+
+            String pngKey = context.outputDirectory().relativize(outputPath).toString();
+            PngToTgaMappings.TgaMapping mapping = PngToTgaMappings.mapping(pngKey);
+            if (mapping != null) {
+                Path tgaPath = context.outputDirectory().resolve(mapping.value());
+                if (Files.notExists(tgaPath.getParent())) {
+                    Files.createDirectories(tgaPath.getParent());
+                }
+
+                ImageUtil.writeTGA(tgaPath, image);
+                if (!mapping.keep()) {
+                    Files.deleteIfExists(outputPath);
                     continue;
                 }
-
-                transformedTexture = transformer.transform(context, mappings, transformedTexture);
-                if (transformedTexture == null) {
-                    break;
-                }
             }
 
-            if (transformedTexture != null) {
-                Path textureOutput = transformedTexture.output();
-                if (textureOutput.getParent() != null && Files.notExists(textureOutput.getParent())) {
-                    Files.createDirectories(textureOutput.getParent());
-                }
-
-                byte[] bytes = texture.data().toByteArray();
-
-                BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
-                BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-
-                Graphics2D g = newImage.createGraphics();
-                g.setComposite(AlphaComposite.Src);
-                g.drawImage(image, 0, 0, null);
-                g.dispose();
-
-                image = newImage;
-
-                String pngKey = context.outputDirectory().relativize(textureOutput).toString();
-                PngToTgaMappings.TgaMapping mapping = PngToTgaMappings.mapping(pngKey);
-                if (mapping != null) {
-                    Path tgaPath = context.outputDirectory().resolve(mapping.value());
-                    if (Files.notExists(tgaPath.getParent())) {
-                        Files.createDirectories(tgaPath.getParent());
-                    }
-
-                    ImageUtil.writeTGA(tgaPath, image);
-                    if (!mapping.keep()) {
-                        Files.deleteIfExists(textureOutput);
-                        continue;
-                    }
-                }
-
-                try (OutputStream stream = Files.newOutputStream(textureOutput)) {
-                    ImageIO.write(image, "png", stream);
-                }
-
-                context.data().addTransformedTexture(transformedTexture);
+            try (OutputStream stream = Files.newOutputStream(outputPath)) {
+                ImageIO.write(image, "png", stream);
             }
+
+            context.data().addTransformedTexture(transformedTexture);
         }
 
         context.info("Texture conversion complete!");

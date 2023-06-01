@@ -24,12 +24,12 @@
  *
  */
 
-package org.geysermc.pack.converter.converter.texture.transformer.bulk.type.block;
+package org.geysermc.pack.converter.converter.texture.transformer.type.block;
 
 import com.google.auto.service.AutoService;
 import net.kyori.adventure.key.Key;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTextureTransformer;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTransformContext;
+import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
+import org.geysermc.pack.converter.converter.texture.transformer.TransformContext;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
@@ -38,8 +38,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 
-@AutoService(BulkTextureTransformer.class)
-public class LiquidTransformer implements BulkTextureTransformer {
+@AutoService(TextureTransformer.class)
+public class LiquidTransformer implements TextureTransformer {
     private static final List<LiquidData> LIQUID = List.of(
             new LiquidData("block/lava_flow.png", "blocks/lava_flow.png", 32),
             new LiquidData("block/lava_still.png", "blocks/lava_still.png", 16),
@@ -48,7 +48,7 @@ public class LiquidTransformer implements BulkTextureTransformer {
     );
     
     @Override
-    public void transform(@NotNull BulkTransformContext context) throws IOException {
+    public void transform(@NotNull TransformContext context) throws IOException {
         for (LiquidData liquid : LIQUID) {
             String javaName = liquid.javaName();
             String bedrockName = liquid.bedrockName();

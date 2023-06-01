@@ -24,12 +24,12 @@
  *
  */
 
-package org.geysermc.pack.converter.converter.texture.transformer.bulk.type;
+package org.geysermc.pack.converter.converter.texture.transformer.type;
 
 import com.google.auto.service.AutoService;
 import net.kyori.adventure.key.Key;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTextureTransformer;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTransformContext;
+import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
+import org.geysermc.pack.converter.converter.texture.transformer.TransformContext;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
 
@@ -37,8 +37,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 
-@AutoService(BulkTextureTransformer.class)
-public class AtlasTransformer implements BulkTextureTransformer {
+@AutoService(TextureTransformer.class)
+public class AtlasTransformer implements TextureTransformer {
     private static final List<AtlasData> ATLASES = List.of(
             new AtlasData("item/clock_%s.png", "items/watch_atlas.png", 63),
             new AtlasData("item/compass_%s.png", "items/compass_atlas.png", 31),
@@ -46,7 +46,7 @@ public class AtlasTransformer implements BulkTextureTransformer {
     );
 
     @Override
-    public void transform(@NotNull BulkTransformContext context) throws IOException {
+    public void transform(@NotNull TransformContext context) throws IOException {
         for (AtlasData atlas : ATLASES) {
             String javaName = atlas.javaName();
             String bedrockName = atlas.bedrockName();

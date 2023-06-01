@@ -24,12 +24,12 @@
  *
  */
 
-package org.geysermc.pack.converter.converter.texture.transformer.bulk.type.particle;
+package org.geysermc.pack.converter.converter.texture.transformer.type.particle;
 
 import com.google.auto.service.AutoService;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTextureTransformer;
+import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
 
-@AutoService(BulkTextureTransformer.class)
+@AutoService(TextureTransformer.class)
 public class SculkChargeParticleTransformer extends SpritesheetParticleTransformer {
     private static final String PARTICLE_INPUT = "particle/sculk_charge_%s.png";
     private static final String PARTICLE_OUTPUT = "particle/sculk_charge.png";

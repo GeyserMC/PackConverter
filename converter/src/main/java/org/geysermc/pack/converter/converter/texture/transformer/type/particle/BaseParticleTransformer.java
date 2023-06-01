@@ -24,12 +24,12 @@
  *
  */
 
-package org.geysermc.pack.converter.converter.texture.transformer.bulk.type.particle;
+package org.geysermc.pack.converter.converter.texture.transformer.type.particle;
 
 import com.google.auto.service.AutoService;
 import net.kyori.adventure.key.Key;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTextureTransformer;
-import org.geysermc.pack.converter.converter.texture.transformer.bulk.BulkTransformContext;
+import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
+import org.geysermc.pack.converter.converter.texture.transformer.TransformContext;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.geysermc.pack.converter.util.Spritesheet;
 import org.jetbrains.annotations.NotNull;
@@ -44,8 +44,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-@AutoService(BulkTextureTransformer.class)
-public class BaseParticleTransformer implements BulkTextureTransformer {
+@AutoService(TextureTransformer.class)
+public class BaseParticleTransformer implements TextureTransformer {
     private static final String PATH = "particle";
     private static final String OUTPUT = "particles.png";
 
@@ -73,7 +73,7 @@ public class BaseParticleTransformer implements BulkTextureTransformer {
     );
 
     @Override
-    public void transform(@NotNull BulkTransformContext context) throws IOException {
+    public void transform(@NotNull TransformContext context) throws IOException {
         // Create a grayscale bubble image
         Texture bubbleTexture = context.peek(Key.key(Key.MINECRAFT_NAMESPACE, PATH + "/bubble.png"));
         if (bubbleTexture != null) {
@@ -84,7 +84,7 @@ public class BaseParticleTransformer implements BulkTextureTransformer {
         this.createSpritesheet(context);
     }
 
-    private void createSpritesheet(@NotNull BulkTransformContext context) throws IOException {
+    private void createSpritesheet(@NotNull TransformContext context) throws IOException {
         Spritesheet spritesheet = new Spritesheet();
         int spriteSize = -1;
 
@@ -174,7 +174,7 @@ public class BaseParticleTransformer implements BulkTextureTransformer {
 
     interface TextureData {
 
-        Texture[] textures(@NotNull BulkTransformContext context);
+        Texture[] textures(@NotNull TransformContext context);
     }
 
     record AtlasTextureData(@NotNull String javaName, int atlasCount) implements TextureData {
@@ -185,7 +185,7 @@ public class BaseParticleTransformer implements BulkTextureTransformer {
         }
 
         @Override
-        public Texture[] textures(@NotNull BulkTransformContext context) {
+        public Texture[] textures(@NotNull TransformContext context) {
             Texture[] textures = new Texture[this.atlasCount];
             for (int atlas = 0; atlas < this.atlasCount; atlas++) {
                 Texture texture = context.poll(this.textureKey(atlas));
@@ -199,7 +199,7 @@ public class BaseParticleTransformer implements BulkTextureTransformer {
     record MultiTextureData(String @NotNull... textureNames) implements TextureData {
 
         @Override
-        public Texture[] textures(@NotNull BulkTransformContext context) {
+        public Texture[] textures(@NotNull TransformContext context) {
             Texture[] textures = new Texture[this.textureNames.length];
             for (int i = 0; i < this.textureNames.length; i++) {
                 String textureName = this.textureNames[i];
