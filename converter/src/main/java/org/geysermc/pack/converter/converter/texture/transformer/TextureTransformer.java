@@ -36,10 +36,19 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 public interface TextureTransformer {
+    int ORDER_FIRST = 0;
+    int ORDER_EARLY = 25;
+    int ORDER_NORMAL = 50;
+    int ORDER_LATE = 75;
+    int ORDER_LAST = 100;
 
     void transform(@NotNull TransformContext context) throws IOException;
 
     default BufferedImage readImage(@NotNull Texture texture) throws IOException {
         return ImageUtil.ensure32BitImage(ImageIO.read(new ByteArrayInputStream(texture.data().toByteArray())));
+    }
+
+    default int order() {
+        return ORDER_NORMAL;
     }
 }

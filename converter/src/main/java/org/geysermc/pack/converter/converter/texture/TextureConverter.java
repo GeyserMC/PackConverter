@@ -50,6 +50,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -59,7 +60,9 @@ import java.util.stream.StreamSupport;
 public class TextureConverter implements Converter<TextureConversionData> {
     public static final String BEDROCK_TEXTURES_LOCATION = "textures";
 
-    private final List<TextureTransformer> transformers = StreamSupport.stream(ServiceLoader.load(TextureTransformer.class).spliterator(), false).toList();
+    private final List<TextureTransformer> transformers = StreamSupport.stream(ServiceLoader.load(TextureTransformer.class).spliterator(), false)
+            .sorted(Comparator.comparingInt(TextureTransformer::order))
+            .toList();
 
     private static final Map<String, String> DIRECTORY_LOCATIONS = Map.of(
             "block", "blocks",
