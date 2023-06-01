@@ -26,6 +26,8 @@
 
 package org.geysermc.pack.converter.util;
 
+import org.jetbrains.annotations.NotNull;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -460,6 +462,22 @@ public class ImageUtil {
     }
 
     /**
+     * Expand the canvas of a {@link BufferedImage} to the requested size.
+     *
+     * @param image Image to use
+     * @param width Target width
+     * @param height Target height
+     * @return The expanded image
+     */
+    public static BufferedImage expandCanvas(BufferedImage image, int width, int height) {
+        BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = newImage.createGraphics();
+        g.drawImage(image, 0, 0, null);
+        g.dispose();
+        return newImage;
+    }
+
+    /**
      * Limit a number between two values
      *
      * @param val Value to limit
@@ -596,6 +614,26 @@ public class ImageUtil {
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * Load an image resource from the classpath.
+     *
+     * @param path Path to resource
+     * @return The loaded image
+     */
+    @NotNull
+    public static BufferedImage loadImage(@NotNull String path) {
+        InputStream stream = ImageUtil.class.getResourceAsStream(path);
+        if (stream == null) {
+            throw new IllegalArgumentException("Resource not found: " + path);
+        }
+
+        try {
+            return ImageIO.read(stream);
+        } catch (IOException ex) {
+            throw new RuntimeException("Failed to load resource", ex);
         }
     }
 }
