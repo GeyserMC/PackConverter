@@ -29,6 +29,7 @@ package org.geysermc.pack.bedrock.resource;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.geysermc.pack.bedrock.resource.attachables.Attachables;
+import org.geysermc.pack.bedrock.resource.render_controllers.RenderControllers;
 import org.geysermc.pack.bedrock.resource.sounds.SoundDefinitions;
 import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.Sounds;
 import org.geysermc.pack.bedrock.resource.textures.ItemTexture;
@@ -65,6 +66,7 @@ public class BedrockResourcePack {
     private TerrainTexture terrainTexture;
     private Map<String, Attachables> attachables;
     private SoundDefinitions soundDefinitions;
+    private Map<String, RenderControllers> renderControllers;
 
     public BedrockResourcePack(@NotNull Path directory) {
         this(directory, null, null, null);
@@ -172,6 +174,25 @@ public class BedrockResourcePack {
     }
 
     /**
+     * Get the render controllers of the resource pack.
+     *
+     * @return the render controllers of the resource pack
+     */
+    @Nullable
+    public Map<String, RenderControllers> renderControllers() {
+        return this.renderControllers;
+    }
+
+    /**
+     * Set the render controllers of the resource pack.
+     *
+     * @param renderControllers the render controllers of the resource pack
+     */
+    public void renderControllers(@Nullable Map<String, RenderControllers> renderControllers) {
+        this.renderControllers = renderControllers;
+    }
+
+    /**
      * Get the sound definitions of the resource pack.
      *
      * @return the sound definitions of the resource pack
@@ -247,6 +268,20 @@ public class BedrockResourcePack {
     }
 
     /**
+     * Add a render controller to the resource pack.
+     *
+     * @param renderController the data of the render controller
+     * @param location the location of the final json
+     */
+    public void addRenderController(RenderControllers renderController, String location) {
+        if (this.renderControllers == null) {
+            this.renderControllers = new HashMap<>();
+        }
+
+        this.renderControllers.put(location, renderController);
+    }
+
+    /**
      * Add a sound to the resource pack with the default options set.
      *
      * @param id the id of the sound
@@ -314,6 +349,12 @@ public class BedrockResourcePack {
         if (this.attachables != null) {
             for (Map.Entry<String, Attachables> attachable : this.attachables.entrySet()) {
                 exportJson(GSON, this.directory.resolve(attachable.getKey()), attachable.getValue());
+            }
+        }
+
+        if (this.renderControllers != null) {
+            for (Map.Entry<String, RenderControllers> renderController : this.renderControllers.entrySet()) {
+                exportJson(GSON, this.directory.resolve(renderController.getKey()), renderController.getValue());
             }
         }
 
