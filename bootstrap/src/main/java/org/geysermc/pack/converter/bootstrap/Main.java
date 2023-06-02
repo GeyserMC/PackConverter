@@ -57,7 +57,8 @@ public class Main {
                         .input(packFile)
                         .output(Paths.get(packFile.toString().replaceFirst("[.][^.]+$", ".mcpack")))
                         .converters(Converters.defaultConverters())
-                        .convert();
+                        .convert()
+                        .pack();
             } catch (IOException e) {
                 e.printStackTrace();
             }
