@@ -101,6 +101,11 @@ public class PackConverter {
         return this;
     }
 
+    public PackConverter actionListeners(@NotNull List<ActionListener> actionListeners) {
+        this.actionListeners.addAll(actionListeners);
+        return this;
+    }
+
     /**
      * Convert all resources in the pack using the converters
      */
