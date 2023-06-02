@@ -24,7 +24,7 @@
  *
  */
 
-package org.geysermc.packconverter.bootstrap;
+package org.geysermc.pack.converter.bootstrap;
 
 import org.geysermc.pack.converter.PackConverter;
 import org.geysermc.pack.converter.converter.Converters;
