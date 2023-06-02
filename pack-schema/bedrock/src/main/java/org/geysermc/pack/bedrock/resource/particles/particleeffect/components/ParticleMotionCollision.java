@@ -1,6 +1,8 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.components;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Boolean;
+import java.lang.Float;
 import java.lang.String;
 
 /**
@@ -8,23 +10,23 @@ import java.lang.String;
  */
 public class ParticleMotionCollision {
   @SerializedName("collision_drag")
-  public float collisionDrag;
+  public Float collisionDrag;
 
   @SerializedName("coefficient_of_restitution")
-  public float coefficientOfRestitution;
+  public Float coefficientOfRestitution;
 
   @SerializedName("collision_radius")
-  public float collisionRadius;
+  public Float collisionRadius;
 
   public String enabled;
 
   @SerializedName("expire_on_contact")
-  public boolean expireOnContact;
+  public Boolean expireOnContact;
 
   /**
    * @return Collision Drag
    */
-  public float collisionDrag() {
+  public Float collisionDrag() {
     return this.collisionDrag;
   }
 
@@ -38,7 +40,7 @@ public class ParticleMotionCollision {
   /**
    * @return Coefficient Of Restitution
    */
-  public float coefficientOfRestitution() {
+  public Float coefficientOfRestitution() {
     return this.coefficientOfRestitution;
   }
 
@@ -52,7 +54,7 @@ public class ParticleMotionCollision {
   /**
    * @return Collision Radius
    */
-  public float collisionRadius() {
+  public Float collisionRadius() {
     return this.collisionRadius;
   }
 
@@ -74,7 +76,7 @@ public class ParticleMotionCollision {
   /**
    * @return Expire On Contact
    */
-  public boolean expireOnContact() {
+  public Boolean expireOnContact() {
     return this.expireOnContact;
   }
 

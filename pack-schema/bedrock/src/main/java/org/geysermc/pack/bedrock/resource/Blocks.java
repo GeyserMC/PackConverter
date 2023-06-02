@@ -1,6 +1,7 @@
 package org.geysermc.pack.bedrock.resource;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Float;
 import java.lang.String;
 import org.geysermc.pack.bedrock.resource.blocks.CarriedTextures;
 import org.geysermc.pack.bedrock.resource.blocks.Isotropic;
@@ -16,7 +17,7 @@ public class Blocks {
   public String formatVersion;
 
   @SerializedName("brightness_gamma")
-  public float brightnessGamma;
+  public Float brightnessGamma;
 
   @SerializedName("carried_textures")
   public CarriedTextures carriedTextures;
@@ -50,7 +51,7 @@ public class Blocks {
    *
    * @return Brightness Gamma
    */
-  public float brightnessGamma() {
+  public Float brightnessGamma() {
     return this.brightnessGamma;
   }
 

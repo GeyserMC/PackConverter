@@ -1,6 +1,7 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.components;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Boolean;
 import java.lang.String;
 
 /**
@@ -17,7 +18,7 @@ public class EmitterShapeBox {
   public String[] halfDimensions;
 
   @SerializedName("surface_only")
-  public boolean surfaceOnly;
+  public Boolean surfaceOnly;
 
   public String direction() {
     return this.direction;
@@ -66,7 +67,7 @@ public class EmitterShapeBox {
   /**
    * @return Surface Only
    */
-  public boolean surfaceOnly() {
+  public Boolean surfaceOnly() {
     return this.surfaceOnly;
   }
 

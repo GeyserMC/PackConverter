@@ -1,5 +1,6 @@
 package org.geysermc.pack.bedrock.resource.textures.terraintexture.texturedata.textures;
 
+import java.lang.Integer;
 import java.lang.String;
 
 /**
@@ -10,7 +11,7 @@ import java.lang.String;
 public class Variations {
   public String path;
 
-  public int weight;
+  public Integer weight;
 
   /**
    * A texture file.
@@ -35,7 +36,7 @@ public class Variations {
    *
    * @return Weight
    */
-  public int weight() {
+  public Integer weight() {
     return this.weight;
   }
 

@@ -1,25 +1,27 @@
 package org.geysermc.pack.bedrock.resource.fog.fogsettings.volumetric.density;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Boolean;
+import java.lang.Float;
 
 public class Lava {
   @SerializedName("max_density")
-  public float maxDensity;
+  public Float maxDensity;
 
   @SerializedName("max_density_height")
-  public float maxDensityHeight;
+  public Float maxDensityHeight;
 
   @SerializedName("zero_density_height")
-  public float zeroDensityHeight;
+  public Float zeroDensityHeight;
 
-  public boolean uniform;
+  public Boolean uniform;
 
   /**
    * The maximum amount of opaqueness that the ground fog will take on. A value from [0.0, 1.0].
    *
    * @return Maximum Density
    */
-  public float maxDensity() {
+  public Float maxDensity() {
     return this.maxDensity;
   }
 
@@ -37,7 +39,7 @@ public class Lava {
    *
    * @return Maximum Density Height
    */
-  public float maxDensityHeight() {
+  public Float maxDensityHeight() {
     return this.maxDensityHeight;
   }
 
@@ -55,7 +57,7 @@ public class Lava {
    *
    * @return Zero Density Height
    */
-  public float zeroDensityHeight() {
+  public Float zeroDensityHeight() {
     return this.zeroDensityHeight;
   }
 
@@ -73,7 +75,7 @@ public class Lava {
    *
    * @return Uniform
    */
-  public boolean uniform() {
+  public Boolean uniform() {
     return this.uniform;
   }
 

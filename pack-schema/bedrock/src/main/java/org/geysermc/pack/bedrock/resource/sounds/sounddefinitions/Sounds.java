@@ -1,6 +1,9 @@
 package org.geysermc.pack.bedrock.resource.sounds.sounddefinitions;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Boolean;
+import java.lang.Float;
+import java.lang.Integer;
 import java.lang.String;
 
 /**
@@ -9,25 +12,25 @@ import java.lang.String;
  * A collection of sounds to choice from.
  */
 public class Sounds {
-  public boolean is3D;
+  public Boolean is3D;
 
-  public float pitch;
+  public Float pitch;
 
-  public float volume;
+  public Float volume;
 
   @SerializedName("load_on_low_memory")
-  public boolean loadOnLowMemory;
+  public Boolean loadOnLowMemory;
 
-  public boolean stream;
+  public Boolean stream;
 
   public String name;
 
-  public int weight;
+  public Integer weight;
 
   /**
    * @return Is 3D
    */
-  public boolean is3D() {
+  public Boolean is3D() {
     return this.is3D;
   }
 
@@ -43,7 +46,7 @@ public class Sounds {
    *
    * @return Pitch
    */
-  public float pitch() {
+  public Float pitch() {
     return this.pitch;
   }
 
@@ -61,7 +64,7 @@ public class Sounds {
    *
    * @return Volume
    */
-  public float volume() {
+  public Float volume() {
     return this.volume;
   }
 
@@ -79,7 +82,7 @@ public class Sounds {
    *
    * @return Load On Low Memory
    */
-  public boolean loadOnLowMemory() {
+  public Boolean loadOnLowMemory() {
     return this.loadOnLowMemory;
   }
 
@@ -97,7 +100,7 @@ public class Sounds {
    *
    * @return Stream
    */
-  public boolean stream() {
+  public Boolean stream() {
     return this.stream;
   }
 
@@ -127,7 +130,7 @@ public class Sounds {
   /**
    * @return Weight
    */
-  public int weight() {
+  public Integer weight() {
     return this.weight;
   }
 

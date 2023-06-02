@@ -1,6 +1,9 @@
 package org.geysermc.pack.bedrock.resource.biomesclient.biomes;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Boolean;
+import java.lang.Float;
+import java.lang.Integer;
 import java.lang.String;
 
 /**
@@ -16,16 +19,16 @@ public class Desert {
   public String[] fogIdsToMerge;
 
   @SerializedName("inherit_from_prior_fog")
-  public boolean inheritFromPriorFog;
+  public Boolean inheritFromPriorFog;
 
   @SerializedName("remove_all_prior_fog")
-  public boolean removeAllPriorFog;
+  public Boolean removeAllPriorFog;
 
   @SerializedName("water_fog_distance")
-  public int waterFogDistance;
+  public Integer waterFogDistance;
 
   @SerializedName("water_surface_transparency")
-  public float waterSurfaceTransparency;
+  public Float waterSurfaceTransparency;
 
   /**
    * A minecraft fog identifier.
@@ -62,7 +65,7 @@ public class Desert {
   /**
    * @return Inherit From Prior Fog
    */
-  public boolean inheritFromPriorFog() {
+  public Boolean inheritFromPriorFog() {
     return this.inheritFromPriorFog;
   }
 
@@ -76,7 +79,7 @@ public class Desert {
   /**
    * @return Remove All Prior Fog
    */
-  public boolean removeAllPriorFog() {
+  public Boolean removeAllPriorFog() {
     return this.removeAllPriorFog;
   }
 
@@ -92,7 +95,7 @@ public class Desert {
    *
    * @return Water Fog Distance
    */
-  public int waterFogDistance() {
+  public Integer waterFogDistance() {
     return this.waterFogDistance;
   }
 
@@ -110,7 +113,7 @@ public class Desert {
    *
    * @return Water Surface Transparency
    */
-  public float waterSurfaceTransparency() {
+  public Float waterSurfaceTransparency() {
     return this.waterSurfaceTransparency;
   }
 

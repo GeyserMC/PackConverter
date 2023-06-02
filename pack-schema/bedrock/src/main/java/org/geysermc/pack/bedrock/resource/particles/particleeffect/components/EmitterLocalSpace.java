@@ -1,19 +1,21 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.components;
 
+import java.lang.Boolean;
+
 /**
  * Emitter Local Space Component For 1.10.0
  */
 public class EmitterLocalSpace {
-  public boolean position;
+  public Boolean position;
 
-  public boolean rotation;
+  public Boolean rotation;
 
-  public boolean velocity;
+  public Boolean velocity;
 
   /**
    * @return Position
    */
-  public boolean position() {
+  public Boolean position() {
     return this.position;
   }
 
@@ -27,7 +29,7 @@ public class EmitterLocalSpace {
   /**
    * @return Rotation
    */
-  public boolean rotation() {
+  public Boolean rotation() {
     return this.rotation;
   }
 
@@ -41,7 +43,7 @@ public class EmitterLocalSpace {
   /**
    * @return Rotation
    */
-  public boolean velocity() {
+  public Boolean velocity() {
     return this.velocity;
   }
 

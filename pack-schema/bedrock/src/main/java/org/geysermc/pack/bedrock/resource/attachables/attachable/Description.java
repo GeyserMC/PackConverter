@@ -1,6 +1,7 @@
 package org.geysermc.pack.bedrock.resource.attachables.attachable;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Boolean;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +18,7 @@ public class Description {
   public String[] animationControllers;
 
   @SerializedName("enable_attachables")
-  public boolean enableAttachables;
+  public Boolean enableAttachables;
 
   private Map<String, String> geometry = new HashMap<>();
 
@@ -88,7 +89,7 @@ public class Description {
   /**
    * @return Enable Attachables
    */
-  public boolean enableAttachables() {
+  public Boolean enableAttachables() {
     return this.enableAttachables;
   }
 

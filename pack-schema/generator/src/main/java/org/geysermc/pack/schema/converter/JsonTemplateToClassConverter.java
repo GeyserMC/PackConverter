@@ -215,9 +215,9 @@ public final class JsonTemplateToClassConverter {
         if (propertyType != null) {
             FieldSpec.Builder spec = switch (propertyType) {
                 case "string" -> FieldSpec.builder(String.class, fieldName, Modifier.PUBLIC);
-                case "integer" -> FieldSpec.builder(int.class, fieldName, Modifier.PUBLIC);
-                case "number" -> FieldSpec.builder(float.class, fieldName, Modifier.PUBLIC);
-                case "boolean" -> FieldSpec.builder(boolean.class, fieldName, Modifier.PUBLIC);
+                case "integer" -> FieldSpec.builder(Integer.class, fieldName, Modifier.PUBLIC);
+                case "number" -> FieldSpec.builder(Float.class, fieldName, Modifier.PUBLIC);
+                case "boolean" -> FieldSpec.builder(Boolean.class, fieldName, Modifier.PUBLIC);
                 case "object" -> FieldSpec.builder(ClassName.get(packageName, StringUtils.capitalize(fieldName)), fieldName, Modifier.PUBLIC);
                 default -> null;
             };
@@ -300,7 +300,7 @@ public final class JsonTemplateToClassConverter {
                 // Add setter
                 MethodSpec.Builder setterBuilder = MethodSpec.methodBuilder(fieldName)
                         .addModifiers(Modifier.PUBLIC)
-                        .addParameter(spec.build().type, fieldName)
+                        .addParameter(spec.build().type.isBoxedPrimitive() ? spec.build().type.unbox() : spec.build().type, fieldName)
                         .addStatement("this.$L = $L", fieldName, fieldName);
 
                 if (propertyDescription != null && !propertyDescription.contains("UNDOCUMENTED")) {

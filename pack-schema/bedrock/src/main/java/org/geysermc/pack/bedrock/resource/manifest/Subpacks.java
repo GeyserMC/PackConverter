@@ -1,6 +1,7 @@
 package org.geysermc.pack.bedrock.resource.manifest;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Float;
 import java.lang.String;
 
 /**
@@ -15,7 +16,7 @@ public class Subpacks {
   public String name;
 
   @SerializedName("memory_tier")
-  public float memoryTier;
+  public Float memoryTier;
 
   /**
    * This represents the folder name located in "subpacks" folder. When user select this resolution Minecraft loads the content inside the folder.
@@ -58,7 +59,7 @@ public class Subpacks {
    *
    * @return Memory Tier
    */
-  public float memoryTier() {
+  public Float memoryTier() {
     return this.memoryTier;
   }
 

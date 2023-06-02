@@ -1,21 +1,23 @@
 package org.geysermc.pack.bedrock.resource.blocks;
 
+import java.lang.Boolean;
+
 public class Isotropic {
-  public boolean down;
+  public Boolean down;
 
-  public boolean up;
+  public Boolean up;
 
-  public boolean side;
+  public Boolean side;
 
-  public boolean south;
+  public Boolean south;
 
-  public boolean north;
+  public Boolean north;
 
-  public boolean west;
+  public Boolean west;
 
-  public boolean east;
+  public Boolean east;
 
-  public boolean down() {
+  public Boolean down() {
     return this.down;
   }
 
@@ -23,7 +25,7 @@ public class Isotropic {
     this.down = down;
   }
 
-  public boolean up() {
+  public Boolean up() {
     return this.up;
   }
 
@@ -31,7 +33,7 @@ public class Isotropic {
     this.up = up;
   }
 
-  public boolean side() {
+  public Boolean side() {
     return this.side;
   }
 
@@ -39,7 +41,7 @@ public class Isotropic {
     this.side = side;
   }
 
-  public boolean south() {
+  public Boolean south() {
     return this.south;
   }
 
@@ -47,7 +49,7 @@ public class Isotropic {
     this.south = south;
   }
 
-  public boolean north() {
+  public Boolean north() {
     return this.north;
   }
 
@@ -55,7 +57,7 @@ public class Isotropic {
     this.north = north;
   }
 
-  public boolean west() {
+  public Boolean west() {
     return this.west;
   }
 
@@ -63,7 +65,7 @@ public class Isotropic {
     this.west = west;
   }
 
-  public boolean east() {
+  public Boolean east() {
     return this.east;
   }
 

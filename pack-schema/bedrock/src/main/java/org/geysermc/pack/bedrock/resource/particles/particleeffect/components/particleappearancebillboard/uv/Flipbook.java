@@ -1,6 +1,7 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.components.particleappearancebillboard.uv;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Boolean;
 import java.lang.String;
 
 /**
@@ -14,9 +15,9 @@ public class Flipbook {
   public String maxFrame;
 
   @SerializedName("stretch_to_lifetime")
-  public boolean stretchToLifetime;
+  public Boolean stretchToLifetime;
 
-  public boolean loop;
+  public Boolean loop;
 
   public String framesPerSecond() {
     return this.framesPerSecond;
@@ -37,7 +38,7 @@ public class Flipbook {
   /**
    * @return Stretch To Lifetime
    */
-  public boolean stretchToLifetime() {
+  public Boolean stretchToLifetime() {
     return this.stretchToLifetime;
   }
 
@@ -51,7 +52,7 @@ public class Flipbook {
   /**
    * @return Loop
    */
-  public boolean loop() {
+  public Boolean loop() {
     return this.loop;
   }
 

@@ -1,6 +1,7 @@
 package org.geysermc.pack.bedrock.resource.entity.cliententity.description;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Integer;
 import java.lang.String;
 
 /**
@@ -18,7 +19,7 @@ public class SpawnEgg {
   public String texture;
 
   @SerializedName("texture_index")
-  public int textureIndex;
+  public Integer textureIndex;
 
   /**
    * The basic color of the egg.
@@ -79,7 +80,7 @@ public class SpawnEgg {
    *
    * @return Texture Index
    */
-  public int textureIndex() {
+  public Integer textureIndex() {
     return this.textureIndex;
   }
 

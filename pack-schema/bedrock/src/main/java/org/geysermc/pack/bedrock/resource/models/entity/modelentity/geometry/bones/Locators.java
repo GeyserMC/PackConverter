@@ -1,6 +1,7 @@
 package org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Boolean;
 
 public class Locators {
   public float[] offset;
@@ -8,7 +9,7 @@ public class Locators {
   public float[] rotation;
 
   @SerializedName("ignore_inherited_scale")
-  public boolean ignoreInheritedScale;
+  public Boolean ignoreInheritedScale;
 
   /**
    * Position of the locator in model space.
@@ -41,7 +42,7 @@ public class Locators {
   /**
    * Discard scale inherited from parent bone.
    */
-  public boolean ignoreInheritedScale() {
+  public Boolean ignoreInheritedScale() {
     return this.ignoreInheritedScale;
   }
 

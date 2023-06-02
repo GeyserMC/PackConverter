@@ -1,6 +1,8 @@
 package org.geysermc.pack.bedrock.resource.animations.actoranimation;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Boolean;
+import java.lang.Float;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +20,7 @@ public class Animations {
   public String animTimeUpdate;
 
   @SerializedName("animation_length")
-  public float animationLength;
+  public Float animationLength;
 
   @SerializedName("blend_weight")
   public String blendWeight;
@@ -31,7 +33,7 @@ public class Animations {
   public String loopDelay;
 
   @SerializedName("override_previous_animation")
-  public boolean overridePreviousAnimation;
+  public Boolean overridePreviousAnimation;
 
   @SerializedName("particle_effects")
   private Map<String, ParticleEffects> particleEffects = new HashMap<>();
@@ -57,7 +59,7 @@ public class Animations {
    *
    * @return Animation Length
    */
-  public float animationLength() {
+  public Float animationLength() {
     return this.animationLength;
   }
 
@@ -117,7 +119,7 @@ public class Animations {
    *
    * @return Override Previous Animation
    */
-  public boolean overridePreviousAnimation() {
+  public Boolean overridePreviousAnimation() {
     return this.overridePreviousAnimation;
   }
 

@@ -1,25 +1,27 @@
 package org.geysermc.pack.bedrock.resource.render_controllers.rendercontrollers;
 
+import java.lang.Float;
+
 /**
  * Color
  * <p>
  * The color to apply.
  */
 public class Color {
-  public float r;
+  public Float r;
 
-  public float g;
+  public Float g;
 
-  public float b;
+  public Float b;
 
-  public float a;
+  public Float a;
 
   /**
    * A color definition as number, between 0 and 1.
    *
    * @return Color Number
    */
-  public float r() {
+  public Float r() {
     return this.r;
   }
 
@@ -37,7 +39,7 @@ public class Color {
    *
    * @return Color Number
    */
-  public float g() {
+  public Float g() {
     return this.g;
   }
 
@@ -55,7 +57,7 @@ public class Color {
    *
    * @return Color Number
    */
-  public float b() {
+  public Float b() {
     return this.b;
   }
 
@@ -73,7 +75,7 @@ public class Color {
    *
    * @return Color Number
    */
-  public float a() {
+  public Float a() {
     return this.a;
   }
 

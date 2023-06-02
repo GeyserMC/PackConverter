@@ -1,15 +1,16 @@
 package org.geysermc.pack.bedrock.resource.fog.fogsettings.distance;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Float;
 import java.lang.String;
 import org.geysermc.pack.bedrock.resource.fog.fogsettings.distance.air.TransitionFog;
 
 public class Air {
   @SerializedName("fog_start")
-  public float fogStart;
+  public Float fogStart;
 
   @SerializedName("fog_end")
-  public float fogEnd;
+  public Float fogEnd;
 
   @SerializedName("fog_color")
   public String fogColor;
@@ -25,7 +26,7 @@ public class Air {
    *
    * @return Fog Start
    */
-  public float fogStart() {
+  public Float fogStart() {
     return this.fogStart;
   }
 
@@ -43,7 +44,7 @@ public class Air {
    *
    * @return Fog End
    */
-  public float fogEnd() {
+  public Float fogEnd() {
     return this.fogEnd;
   }
 

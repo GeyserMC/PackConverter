@@ -1,6 +1,8 @@
 package org.geysermc.pack.bedrock.resource.animation_controllers.animationcontroller.animationcontrollers;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Boolean;
+import java.lang.Float;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,10 +19,10 @@ import org.geysermc.pack.bedrock.resource.animation_controllers.animationcontrol
  */
 public class States {
   @SerializedName("blend_transition")
-  public float blendTransition;
+  public Float blendTransition;
 
   @SerializedName("blend_via_shortest_path")
-  public boolean blendViaShortestPath;
+  public Boolean blendViaShortestPath;
 
   @SerializedName("particle_effects")
   public List<ParticleEffects> particleEffects = new ArrayList<>();
@@ -39,7 +41,7 @@ public class States {
   /**
    * A short-hand version of blend_out that simply sets the amount of time to fade out if the animation is interrupted.
    */
-  public float blendTransition() {
+  public Float blendTransition() {
     return this.blendTransition;
   }
 
@@ -55,7 +57,7 @@ public class States {
    *
    * @return Blend Via Shortest Path
    */
-  public boolean blendViaShortestPath() {
+  public Boolean blendViaShortestPath() {
     return this.blendViaShortestPath;
   }
 

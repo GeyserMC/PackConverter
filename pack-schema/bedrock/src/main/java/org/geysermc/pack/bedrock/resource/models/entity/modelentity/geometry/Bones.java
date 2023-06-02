@@ -1,6 +1,9 @@
 package org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Boolean;
+import java.lang.Float;
+import java.lang.Integer;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,13 +22,13 @@ public class Bones {
 
   public List<Cubes> cubes = new ArrayList<>();
 
-  public boolean debug;
+  public Boolean debug;
 
-  public float inflate;
+  public Float inflate;
 
   private Map<String, Locators> locators = new HashMap<>();
 
-  public boolean mirror;
+  public Boolean mirror;
 
   public String name;
 
@@ -37,7 +40,7 @@ public class Bones {
   public PolyMesh polyMesh;
 
   @SerializedName("render_group_id")
-  public int renderGroupId;
+  public Integer renderGroupId;
 
   public float[] rotation;
 
@@ -80,7 +83,7 @@ public class Bones {
     this.cubes = cubes;
   }
 
-  public boolean debug() {
+  public Boolean debug() {
     return this.debug;
   }
 
@@ -91,7 +94,7 @@ public class Bones {
   /**
    * Grow this box by this additive amount in all directions (in model space units).
    */
-  public float inflate() {
+  public Float inflate() {
     return this.inflate;
   }
 
@@ -121,7 +124,7 @@ public class Bones {
    *
    * @return Mirror
    */
-  public boolean mirror() {
+  public Boolean mirror() {
     return this.mirror;
   }
 
@@ -202,7 +205,7 @@ public class Bones {
     this.polyMesh = polyMesh;
   }
 
-  public int renderGroupId() {
+  public Integer renderGroupId() {
     return this.renderGroupId;
   }
 

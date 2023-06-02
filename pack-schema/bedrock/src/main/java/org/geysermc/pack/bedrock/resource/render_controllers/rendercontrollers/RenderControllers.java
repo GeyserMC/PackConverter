@@ -1,6 +1,7 @@
 package org.geysermc.pack.bedrock.resource.render_controllers.rendercontrollers;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Boolean;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,12 +18,12 @@ public class RenderControllers {
   public Color color;
 
   @SerializedName("filter_lighting")
-  public boolean filterLighting;
+  public Boolean filterLighting;
 
   public String geometry;
 
   @SerializedName("ignore_lighting")
-  public boolean ignoreLighting;
+  public Boolean ignoreLighting;
 
   @SerializedName("is_hurt_color")
   public IsHurtColor isHurtColor;
@@ -87,7 +88,7 @@ public class RenderControllers {
    *
    * @return Filter Lighting
    */
-  public boolean filterLighting() {
+  public Boolean filterLighting() {
     return this.filterLighting;
   }
 
@@ -123,7 +124,7 @@ public class RenderControllers {
    *
    * @return Ignore Lighting
    */
-  public boolean ignoreLighting() {
+  public Boolean ignoreLighting() {
     return this.ignoreLighting;
   }
 

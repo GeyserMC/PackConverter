@@ -1,6 +1,7 @@
 package org.geysermc.pack.bedrock.resource.manifest;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Boolean;
 import java.lang.String;
 
 /**
@@ -15,7 +16,7 @@ public class Header {
   public String description;
 
   @SerializedName("lock_template_options")
-  public boolean lockTemplateOptions;
+  public Boolean lockTemplateOptions;
 
   @SerializedName("min_engine_version")
   public float[] minEngineVersion;
@@ -67,7 +68,7 @@ public class Header {
    *
    * @return Lock Template Options
    */
-  public boolean lockTemplateOptions() {
+  public Boolean lockTemplateOptions() {
     return this.lockTemplateOptions;
   }
 

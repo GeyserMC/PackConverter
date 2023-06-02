@@ -1,13 +1,14 @@
 package org.geysermc.pack.bedrock.resource.particles.particleeffect.components.particleappearancebillboard;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Float;
 import java.lang.String;
 
 public class Direction {
   public String mode;
 
   @SerializedName("min_speed_threshold")
-  public float minSpeedThreshold;
+  public Float minSpeedThreshold;
 
   /**
    * Specified how to calculate the billboard direction of a particle.
@@ -26,7 +27,7 @@ public class Direction {
   /**
    * The direction is set if the speed of the particle is above the threshold.
    */
-  public float minSpeedThreshold() {
+  public Float minSpeedThreshold() {
     return this.minSpeedThreshold;
   }
 

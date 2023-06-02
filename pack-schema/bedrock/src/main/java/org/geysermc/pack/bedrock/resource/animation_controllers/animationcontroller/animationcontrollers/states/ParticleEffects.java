@@ -1,11 +1,12 @@
 package org.geysermc.pack.bedrock.resource.animation_controllers.animationcontroller.animationcontrollers.states;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Boolean;
 import java.lang.String;
 
 public class ParticleEffects {
   @SerializedName("bind_to_actor")
-  public boolean bindToActor;
+  public Boolean bindToActor;
 
   public String effect;
 
@@ -19,7 +20,7 @@ public class ParticleEffects {
    *
    * @return Bind To Actor
    */
-  public boolean bindToActor() {
+  public Boolean bindToActor() {
     return this.bindToActor;
   }
 

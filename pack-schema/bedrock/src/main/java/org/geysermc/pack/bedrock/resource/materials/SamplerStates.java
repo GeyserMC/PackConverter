@@ -1,12 +1,13 @@
 package org.geysermc.pack.bedrock.resource.materials;
 
+import java.lang.Integer;
 import java.lang.String;
 
 /**
  * Sample State
  */
 public class SamplerStates {
-  public int samplerIndex;
+  public Integer samplerIndex;
 
   public String textureFilter;
 
@@ -15,7 +16,7 @@ public class SamplerStates {
   /**
    * @return Sample State
    */
-  public int samplerIndex() {
+  public Integer samplerIndex() {
     return this.samplerIndex;
   }
 

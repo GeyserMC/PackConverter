@@ -1,6 +1,7 @@
 package org.geysermc.pack.bedrock.resource.textures;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Integer;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,9 +14,9 @@ import org.geysermc.pack.bedrock.resource.textures.terraintexture.TextureData;
  */
 public class TerrainTexture {
   @SerializedName("num_mip_levels")
-  public int numMipLevels;
+  public Integer numMipLevels;
 
-  public int padding;
+  public Integer padding;
 
   @SerializedName("resource_pack_name")
   public String resourcePackName;
@@ -29,7 +30,7 @@ public class TerrainTexture {
   /**
    * @return Num Mip Levels
    */
-  public int numMipLevels() {
+  public Integer numMipLevels() {
     return this.numMipLevels;
   }
 
@@ -43,7 +44,7 @@ public class TerrainTexture {
   /**
    * @return Padding
    */
-  public int padding() {
+  public Integer padding() {
     return this.padding;
   }
 

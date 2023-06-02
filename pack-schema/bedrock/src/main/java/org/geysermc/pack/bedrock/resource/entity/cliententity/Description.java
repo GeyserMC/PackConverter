@@ -1,6 +1,7 @@
 package org.geysermc.pack.bedrock.resource.entity.cliententity;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Boolean;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +17,7 @@ public class Description {
   private Map<String, String> animations = new HashMap<>();
 
   @SerializedName("enable_attachables")
-  public boolean enableAttachables;
+  public Boolean enableAttachables;
 
   private Map<String, String> geometry = new HashMap<>();
 
@@ -24,10 +25,10 @@ public class Description {
   public String queryableGeometry;
 
   @SerializedName("hide_armor")
-  public boolean hideArmor;
+  public Boolean hideArmor;
 
   @SerializedName("held_item_ignores_lighting")
-  public boolean heldItemIgnoresLighting;
+  public Boolean heldItemIgnoresLighting;
 
   public String identifier;
 
@@ -78,7 +79,7 @@ public class Description {
    *
    * @return Enable Attachables
    */
-  public boolean enableAttachables() {
+  public Boolean enableAttachables() {
     return this.enableAttachables;
   }
 
@@ -128,7 +129,7 @@ public class Description {
    *
    * @return Hide Armor
    */
-  public boolean hideArmor() {
+  public Boolean hideArmor() {
     return this.hideArmor;
   }
 
@@ -146,7 +147,7 @@ public class Description {
    *
    * @return Held Item Ignores Lighting
    */
-  public boolean heldItemIgnoresLighting() {
+  public Boolean heldItemIgnoresLighting() {
     return this.heldItemIgnoresLighting;
   }
 

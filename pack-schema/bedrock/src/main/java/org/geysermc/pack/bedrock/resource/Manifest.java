@@ -1,6 +1,7 @@
 package org.geysermc.pack.bedrock.resource;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Float;
 import java.util.ArrayList;
 import java.util.List;
 import org.geysermc.pack.bedrock.resource.manifest.Capabilities;
@@ -17,7 +18,7 @@ import org.geysermc.pack.bedrock.resource.manifest.Subpacks;
  */
 public class Manifest {
   @SerializedName("format_version")
-  public float formatVersion;
+  public Float formatVersion;
 
   public Capabilities capabilities;
 
@@ -36,7 +37,7 @@ public class Manifest {
    *
    * @return Format Version
    */
-  public float formatVersion() {
+  public Float formatVersion() {
     return this.formatVersion;
   }
 

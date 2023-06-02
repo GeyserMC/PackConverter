@@ -1,6 +1,7 @@
 package org.geysermc.pack.bedrock.resource.manifest;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Boolean;
 
 /**
  * Capabilities
@@ -9,18 +10,18 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Capabilities {
   @SerializedName("experimental_custom_ui")
-  public boolean experimentalCustomUi;
+  public Boolean experimentalCustomUi;
 
-  public boolean chemistry;
+  public Boolean chemistry;
 
-  public boolean raytraced;
+  public Boolean raytraced;
 
   /**
    * Allows HTML files in the pack to be used for custom UI, and scripts in the pack to call and manipulate custom UI.
    *
    * @return Experimental Custom Ui
    */
-  public boolean experimentalCustomUi() {
+  public Boolean experimentalCustomUi() {
     return this.experimentalCustomUi;
   }
 
@@ -38,7 +39,7 @@ public class Capabilities {
    *
    * @return Chemistry
    */
-  public boolean chemistry() {
+  public Boolean chemistry() {
     return this.chemistry;
   }
 
@@ -56,7 +57,7 @@ public class Capabilities {
    *
    * @return Raytraced
    */
-  public boolean raytraced() {
+  public Boolean raytraced() {
     return this.raytraced;
   }
 

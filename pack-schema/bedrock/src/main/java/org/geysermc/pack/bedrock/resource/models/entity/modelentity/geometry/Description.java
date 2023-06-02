@@ -1,6 +1,7 @@
 package org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Float;
 import java.lang.String;
 
 /**
@@ -12,19 +13,19 @@ public class Description {
   public String identifier;
 
   @SerializedName("texture_width")
-  public float textureWidth;
+  public Float textureWidth;
 
   @SerializedName("texture_height")
-  public float textureHeight;
+  public Float textureHeight;
 
   @SerializedName("visible_bounds_offset")
   public float[] visibleBoundsOffset;
 
   @SerializedName("visible_bounds_width")
-  public float visibleBoundsWidth;
+  public Float visibleBoundsWidth;
 
   @SerializedName("visible_bounds_height")
-  public float visibleBoundsHeight;
+  public Float visibleBoundsHeight;
 
   /**
    * Entity definition and Client Block definition files refer to this geometry via this identifier.
@@ -49,7 +50,7 @@ public class Description {
    *
    * @return Texture Width
    */
-  public float textureWidth() {
+  public Float textureWidth() {
     return this.textureWidth;
   }
 
@@ -67,7 +68,7 @@ public class Description {
    *
    * @return Texture Height
    */
-  public float textureHeight() {
+  public Float textureHeight() {
     return this.textureHeight;
   }
 
@@ -103,7 +104,7 @@ public class Description {
    *
    * @return Visible Bounds Width
    */
-  public float visibleBoundsWidth() {
+  public Float visibleBoundsWidth() {
     return this.visibleBoundsWidth;
   }
 
@@ -121,7 +122,7 @@ public class Description {
    *
    * @return Visible Bounds Height
    */
-  public float visibleBoundsHeight() {
+  public Float visibleBoundsHeight() {
     return this.visibleBoundsHeight;
   }
 

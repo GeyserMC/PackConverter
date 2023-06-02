@@ -1,6 +1,7 @@
 package org.geysermc.pack.bedrock.resource.models.entity;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Boolean;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ import org.geysermc.pack.bedrock.resource.models.entity.modelentity.Geometry;
  * The minecraft resourcepack model schema for 1.16.0
  */
 public class ModelEntity {
-  public boolean debug;
+  public Boolean debug;
 
   @SerializedName("format_version")
   public String formatVersion;
@@ -23,7 +24,7 @@ public class ModelEntity {
   /**
    * @return Debug
    */
-  public boolean debug() {
+  public Boolean debug() {
     return this.debug;
   }
 

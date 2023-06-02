@@ -1,6 +1,7 @@
 package org.geysermc.pack.bedrock.resource.sounds;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Integer;
 import java.lang.String;
 
 /**
@@ -13,10 +14,10 @@ public class MusicDefinitions {
   public String eventName;
 
   @SerializedName("min_delay")
-  public int minDelay;
+  public Integer minDelay;
 
   @SerializedName("max_delay")
-  public int maxDelay;
+  public Integer maxDelay;
 
   /**
    * The name of the minecraft music event.
@@ -39,7 +40,7 @@ public class MusicDefinitions {
   /**
    * @return Minimum Delay
    */
-  public int minDelay() {
+  public Integer minDelay() {
     return this.minDelay;
   }
 
@@ -53,7 +54,7 @@ public class MusicDefinitions {
   /**
    * @return Maximum Delay
    */
-  public int maxDelay() {
+  public Integer maxDelay() {
     return this.maxDelay;
   }
 

@@ -1,20 +1,22 @@
 package org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones;
 
+import java.lang.Boolean;
+import java.lang.Float;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.Uv;
 
 /**
  * A single cube.
  */
 public class Cubes {
-  public float inflate;
+  public Float inflate;
 
-  public boolean mirror;
+  public Boolean mirror;
 
   public float[] origin;
 
   public float[] pivot;
 
-  public boolean reset;
+  public Boolean reset;
 
   public float[] rotation;
 
@@ -25,7 +27,7 @@ public class Cubes {
   /**
    * Grow this box by this additive amount in all directions (in model space units), this field overrides the bone's inflate field for this cube only.
    */
-  public float inflate() {
+  public Float inflate() {
     return this.inflate;
   }
 
@@ -39,7 +41,7 @@ public class Cubes {
   /**
    * Mirrors this cube about the unrotated x axis (effectively flipping the east / west faces), overriding the bone's `mirror` setting for this cube.
    */
-  public boolean mirror() {
+  public Boolean mirror() {
     return this.mirror;
   }
 
@@ -79,7 +81,7 @@ public class Cubes {
   /**
    * @return Reset
    */
-  public boolean reset() {
+  public Boolean reset() {
     return this.reset;
   }
 

@@ -1,6 +1,7 @@
 package org.geysermc.pack.bedrock.resource.fog.fogsettings.distance.lavaresistance;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Float;
 import org.geysermc.pack.bedrock.resource.fog.fogsettings.distance.lavaresistance.transitionfog.InitFog;
 
 /**
@@ -13,16 +14,16 @@ public class TransitionFog {
   public InitFog initFog;
 
   @SerializedName("min_percent")
-  public float minPercent;
+  public Float minPercent;
 
   @SerializedName("mid_seconds")
-  public float midSeconds;
+  public Float midSeconds;
 
   @SerializedName("mid_percent")
-  public float midPercent;
+  public Float midPercent;
 
   @SerializedName("max_seconds")
-  public float maxSeconds;
+  public Float maxSeconds;
 
   /**
    * Initial fog that will slowly transition into water distance fog of the biome when player goes into water.
@@ -47,7 +48,7 @@ public class TransitionFog {
    *
    * @return Minimum Percent
    */
-  public float minPercent() {
+  public Float minPercent() {
     return this.minPercent;
   }
 
@@ -65,7 +66,7 @@ public class TransitionFog {
    *
    * @return Midpoint Seconds
    */
-  public float midSeconds() {
+  public Float midSeconds() {
     return this.midSeconds;
   }
 
@@ -83,7 +84,7 @@ public class TransitionFog {
    *
    * @return Midpoint Percent
    */
-  public float midPercent() {
+  public Float midPercent() {
     return this.midPercent;
   }
 
@@ -101,7 +102,7 @@ public class TransitionFog {
    *
    * @return Maximum Seconds
    */
-  public float maxSeconds() {
+  public Float maxSeconds() {
     return this.maxSeconds;
   }
 
