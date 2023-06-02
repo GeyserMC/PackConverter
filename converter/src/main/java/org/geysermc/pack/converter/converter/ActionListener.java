@@ -32,11 +32,11 @@ import org.geysermc.pack.converter.data.ConversionData;
 /**
  * A listener for actions that occur during pack conversion.
  */
-public interface ActionListener {
+public interface ActionListener<T extends ConversionData> {
 
-    default <T extends ConversionData> void preConvert(PackConversionContext<T> context) {
+    default void preConvert(PackConversionContext<T> context) {
     }
 
-    default <T extends ConversionData> void postConvert(PackConversionContext<T> context) {
+    default void postConvert(PackConversionContext<T> context) {
     }
 }

@@ -54,7 +54,7 @@ public class PackConverter {
     private Path input;
     private Path output;
 
-    private final List<ActionListener> actionListeners = new ArrayList<>();
+    private final List<ActionListener<?>> actionListeners = new ArrayList<>();
 
     @Getter
     private final Map<String, Int2ObjectMap<String>> customModelData = new HashMap<>();
@@ -96,12 +96,12 @@ public class PackConverter {
         return this;
     }
 
-    public PackConverter actionListeners(@NotNull ActionListener... actionListeners) {
+    public PackConverter actionListeners(@NotNull ActionListener<?>... actionListeners) {
         this.actionListeners.addAll(List.of(actionListeners));
         return this;
     }
 
-    public PackConverter actionListeners(@NotNull List<ActionListener> actionListeners) {
+    public PackConverter actionListeners(@NotNull List<ActionListener<?>> actionListeners) {
         this.actionListeners.addAll(actionListeners);
         return this;
     }
@@ -139,9 +139,9 @@ public class PackConverter {
                 PackConversionContext<?> context = new PackConversionContext<>(data, this, javaResourcePack, bedrockResourcePack, this.logListener);
 
                 try {
-                    this.actionListeners.forEach(actionListener -> actionListener.preConvert(context));
+                    this.actionListeners.forEach(actionListener -> actionListener.preConvert((PackConversionContext) context));
                     converter.convert(context);
-                    this.actionListeners.forEach(actionListener -> actionListener.postConvert(context));
+                    this.actionListeners.forEach(actionListener -> actionListener.postConvert((PackConversionContext) context));
                 } catch (Throwable t) {
                     this.logListener.error("Error converting pack!", t);
                     errors++;
