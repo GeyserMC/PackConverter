@@ -47,6 +47,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +55,7 @@ public class PackConverter {
     private Path input;
     private Path output;
 
-    private final List<ActionListener<?>> actionListeners = new ArrayList<>();
+    private final Map<Class<?>, List<ActionListener<?>>> actionListeners = new IdentityHashMap<>();
 
     @Getter
     private final Map<String, Int2ObjectMap<String>> customModelData = new HashMap<>();
@@ -96,13 +97,16 @@ public class PackConverter {
         return this;
     }
 
-    public PackConverter actionListeners(@NotNull ActionListener<?>... actionListeners) {
-        this.actionListeners.addAll(List.of(actionListeners));
+    public <T extends ConversionData> PackConverter actionListeners(@NotNull Class<T> clazz, @NotNull ActionListener<T>... actionListeners) {
+        this.actionListeners.put(clazz, List.of(actionListeners));
         return this;
     }
 
-    public PackConverter actionListeners(@NotNull List<ActionListener<?>> actionListeners) {
-        this.actionListeners.addAll(actionListeners);
+    public <T extends ConversionData> PackConverter actionListeners(@NotNull Map<Class<T>, List<ActionListener<T>>> actionListeners) {
+        for (Map.Entry<Class<T>, List<ActionListener<T>>> entry : actionListeners.entrySet()) {
+            this.actionListeners.put(entry.getKey(), (List) entry.getValue());
+        }
+
         return this;
     }
 
@@ -138,10 +142,11 @@ public class PackConverter {
                 ConversionData data = converter.createConversionData(this, input, this.tmpDir);
                 PackConversionContext<?> context = new PackConversionContext<>(data, this, javaResourcePack, bedrockResourcePack, this.logListener);
 
+                List<ActionListener<?>> actionListeners = this.actionListeners.getOrDefault(data.getClass(), List.of());
                 try {
-                    this.actionListeners.forEach(actionListener -> actionListener.preConvert((PackConversionContext) context));
+                    actionListeners.forEach(actionListener -> actionListener.preConvert((PackConversionContext) context));
                     converter.convert(context);
-                    this.actionListeners.forEach(actionListener -> actionListener.postConvert((PackConversionContext) context));
+                    actionListeners.forEach(actionListener -> actionListener.postConvert((PackConversionContext) context));
                 } catch (Throwable t) {
                     this.logListener.error("Error converting pack!", t);
                     errors++;
