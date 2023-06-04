@@ -146,7 +146,7 @@ public class PackConverter {
                 throw new IllegalStateException("No converters have been added");
             }
 
-            ResourcePack javaResourcePack = MinecraftResourcePackReader.minecraft().readFromZipFile(this.input);
+            ResourcePack javaResourcePack = this.compressed ? MinecraftResourcePackReader.minecraft().readFromZipFile(this.input) : MinecraftResourcePackReader.minecraft().readFromDirectory(this.input.toFile());
             BedrockResourcePack bedrockResourcePack = new BedrockResourcePack(this.tmpDir);
 
             int errors = 0;
