@@ -56,6 +56,8 @@ public class PackConverter {
     private Path input;
     private Path output;
 
+    private boolean compressed;
+
     private final Map<Class<?>, List<ActionListener<?>>> actionListeners = new IdentityHashMap<>();
     private Consumer<BedrockResourcePack> postProcessor;
 
@@ -70,7 +72,12 @@ public class PackConverter {
     private LogListener logListener = new DefaultLogListener();
 
     public PackConverter input(@NotNull Path input) {
+        return this.input(input, true);
+    }
+
+    public PackConverter input(@NotNull Path input, boolean compressed) {
         this.input = input;
+        this.compressed = compressed;
         return this;
     }
 
@@ -132,9 +139,7 @@ public class PackConverter {
         // Load any image plugins
         ImageIO.scanForPlugins();
 
-        try (FileSystem compressedFileSystem = FileSystems.newFileSystem(this.input, Collections.emptyMap())) {
-            Path input = compressedFileSystem.getPath("/");
-
+        this.openFileSystem(input -> {
             this.tmpDir = this.input.toAbsolutePath().getParent().resolve(this.output.getFileName() + "_mcpack/");
 
             if (this.converters.isEmpty()) {
@@ -171,7 +176,7 @@ public class PackConverter {
             } else {
                 this.logListener.info("Pack conversion completed successfully!");
             }
-        }
+        });
 
         return this;
     }
@@ -195,5 +200,20 @@ public class PackConverter {
             Files.delete(tmpDir);
         } catch (IOException ignored) {
         }
+    }
+
+    private void openFileSystem(PathConsumer input) throws IOException {
+        if (this.compressed) {
+            try (FileSystem compressedFileSystem = FileSystems.newFileSystem(this.input, Collections.emptyMap())) {
+                input.accept(compressedFileSystem.getPath("/"));
+            }
+        } else {
+            input.accept(this.input);
+        }
+    }
+
+    interface PathConsumer {
+
+        void accept(Path path) throws IOException;
     }
 }
