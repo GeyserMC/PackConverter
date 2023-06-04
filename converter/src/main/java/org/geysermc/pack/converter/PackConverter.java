@@ -140,7 +140,7 @@ public class PackConverter {
         ImageIO.scanForPlugins();
 
         this.openFileSystem(input -> {
-            this.tmpDir = this.input.toAbsolutePath().getParent().resolve(this.output.getFileName() + "_mcpack/");
+            this.tmpDir = this.output.toAbsolutePath().getParent().resolve(this.output.getFileName() + "_mcpack/");
 
             if (this.converters.isEmpty()) {
                 throw new IllegalStateException("No converters have been added");
