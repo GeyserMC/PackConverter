@@ -26,6 +26,7 @@
 
 package org.geysermc.pack.converter.converter;
 
+import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.PackConversionContext;
 import org.geysermc.pack.converter.data.ConversionData;
 
@@ -38,5 +39,8 @@ public interface ActionListener<T extends ConversionData> {
     }
 
     default void postConvert(PackConversionContext<T> context) {
+    }
+
+    default void onExport(BedrockResourcePack pack) {
     }
 }

@@ -50,6 +50,7 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class PackConverter {
     private Path input;
@@ -137,7 +138,7 @@ public class PackConverter {
             ResourcePack javaResourcePack = MinecraftResourcePackReader.minecraft().readFromZipFile(this.input);
             BedrockResourcePack bedrockResourcePack = new BedrockResourcePack(this.tmpDir);
 
-            int errors = 0;
+            AtomicInteger errors = new AtomicInteger();
             for (Converter converter : this.converters) {
                 ConversionData data = converter.createConversionData(this, input, this.tmpDir);
                 PackConversionContext<?> context = new PackConversionContext<>(data, this, javaResourcePack, bedrockResourcePack, this.logListener);
@@ -149,13 +150,22 @@ public class PackConverter {
                     actionListeners.forEach(actionListener -> actionListener.postConvert((PackConversionContext) context));
                 } catch (Throwable t) {
                     this.logListener.error("Error converting pack!", t);
-                    errors++;
+                    errors.getAndIncrement();
                 }
             }
 
+            this.actionListeners.values().stream().flatMap(List::stream).forEach(listener -> {
+                try {
+                    listener.onExport(bedrockResourcePack);
+                } catch (Throwable t) {
+                    this.logListener.error("Error exporting pack!", t);
+                    errors.getAndIncrement();
+                }
+            });
+
             bedrockResourcePack.export();
 
-            if (errors > 0) {
+            if (errors.get() > 0) {
                 this.logListener.warn("Pack conversion completed with " + errors + " errors!");
             } else {
                 this.logListener.info("Pack conversion completed successfully!");
