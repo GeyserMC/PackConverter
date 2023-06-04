@@ -50,13 +50,14 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 public class PackConverter {
     private Path input;
     private Path output;
 
     private final Map<Class<?>, List<ActionListener<?>>> actionListeners = new IdentityHashMap<>();
+    private Consumer<BedrockResourcePack> postProcessor;
 
     @Getter
     private final Map<String, Int2ObjectMap<String>> customModelData = new HashMap<>();
@@ -111,6 +112,11 @@ public class PackConverter {
         return this;
     }
 
+    public PackConverter postProcessor(@NotNull Consumer<BedrockResourcePack> postProcessor) {
+        this.postProcessor = postProcessor;
+        return this;
+    }
+
     /**
      * Convert all resources in the pack using the converters
      */
@@ -138,7 +144,7 @@ public class PackConverter {
             ResourcePack javaResourcePack = MinecraftResourcePackReader.minecraft().readFromZipFile(this.input);
             BedrockResourcePack bedrockResourcePack = new BedrockResourcePack(this.tmpDir);
 
-            AtomicInteger errors = new AtomicInteger();
+            int errors = 0;
             for (Converter converter : this.converters) {
                 ConversionData data = converter.createConversionData(this, input, this.tmpDir);
                 PackConversionContext<?> context = new PackConversionContext<>(data, this, javaResourcePack, bedrockResourcePack, this.logListener);
@@ -150,22 +156,17 @@ public class PackConverter {
                     actionListeners.forEach(actionListener -> actionListener.postConvert((PackConversionContext) context));
                 } catch (Throwable t) {
                     this.logListener.error("Error converting pack!", t);
-                    errors.getAndIncrement();
+                    errors++;
                 }
             }
 
-            this.actionListeners.values().stream().flatMap(List::stream).forEach(listener -> {
-                try {
-                    listener.onExport(bedrockResourcePack);
-                } catch (Throwable t) {
-                    this.logListener.error("Error exporting pack!", t);
-                    errors.getAndIncrement();
-                }
-            });
+            if (this.postProcessor != null) {
+                this.postProcessor.accept(bedrockResourcePack);
+            }
 
             bedrockResourcePack.export();
 
-            if (errors.get() > 0) {
+            if (errors > 0) {
                 this.logListener.warn("Pack conversion completed with " + errors + " errors!");
             } else {
                 this.logListener.info("Pack conversion completed successfully!");
