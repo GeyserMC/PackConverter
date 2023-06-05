@@ -44,6 +44,7 @@ import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -93,11 +94,11 @@ public class TextureConverter implements Converter<TextureConversionData> {
             Path outputPath = texturePath.resolve(output);
             String relativePath = texturePath.relativize(outputPath).toString();
 
-            String input = relativePath.substring(0, relativePath.indexOf('/'));
+            String input = relativePath.substring(0, relativePath.indexOf(File.separator));
 
             Map<String, String> keyMappings = mappings.textures(input);
             if (keyMappings != null) {
-                String sanitizedName = output.substring(output.indexOf('/') + 1).replace(".png", "");
+                String sanitizedName = output.substring(output.indexOf(File.separator) + 1).replace(".png", "");
                 String bedrockPath = keyMappings.get(sanitizedName);
                 if (bedrockPath != null) {
                     output = output.replace(sanitizedName, bedrockPath);
