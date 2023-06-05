@@ -93,7 +93,7 @@ public class SpritesheetParticleTransformer implements TextureTransformer {
         graphics.drawImage(spriteImage, 0, 0, null);
         graphics.dispose();
 
-        context.info(String.format("Creating particle spritesheet %s", this.bedrockPath));
+        context.debug(String.format("Creating particle spritesheet %s", this.bedrockPath));
 
         context.offer(Key.key(Key.MINECRAFT_NAMESPACE, this.bedrockPath), vanillaSprite, "png");
     }

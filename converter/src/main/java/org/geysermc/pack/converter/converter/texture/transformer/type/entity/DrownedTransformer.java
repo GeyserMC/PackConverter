@@ -54,7 +54,7 @@ public class DrownedTransformer implements TextureTransformer {
             return;
         }
         
-        context.info("Converting drowned texture");
+        context.debug("Converting drowned texture");
 
         BufferedImage fromImage = this.readImage(drownedTexture);
         BufferedImage overlayImage = ImageUtil.ensureMinWidth(this.readImage(outerLayerTexture), 64);

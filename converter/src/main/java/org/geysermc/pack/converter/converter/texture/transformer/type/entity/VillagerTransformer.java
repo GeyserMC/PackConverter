@@ -74,7 +74,7 @@ public class VillagerTransformer implements TextureTransformer {
                     continue;
                 }
 
-                context.info(String.format("Converting %s texture for profession %s", entity, profession));
+                context.debug(String.format("Converting %s texture for profession %s", entity, profession));
 
                 BufferedImage fromImage = this.readImage(texture);
                 BufferedImage newImage = new BufferedImage(fromImage.getWidth(), fromImage.getHeight(), BufferedImage.TYPE_INT_ARGB);

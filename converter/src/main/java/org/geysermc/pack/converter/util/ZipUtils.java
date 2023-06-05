@@ -61,11 +61,11 @@ public class ZipUtils {
             fos = new FileOutputStream(zipFile);
             zos = new ZipOutputStream(fos);
 
-            listener.info("Output to zip " + zipFile);
+            listener.debug("Output to zip " + zipFile);
             FileInputStream in = null;
 
             for (String file: this.fileList) {
-                listener.info("File added " + file);
+                listener.debug("File added " + file);
                 ZipEntry ze = new ZipEntry(file);
                 zos.putNextEntry(ze);
                 try {
@@ -81,7 +81,7 @@ public class ZipUtils {
             }
 
             zos.closeEntry();
-            listener.info("Folder successfully compressed");
+            listener.debug("Folder successfully compressed");
         } catch (IOException ex) {
             ex.printStackTrace();
         } finally {

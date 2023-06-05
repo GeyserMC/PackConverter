@@ -52,7 +52,7 @@ public class WeatherTransformer implements TextureTransformer {
             return;
         }
 
-        context.info(String.format("Converting weather texture %s", WEATHER_OUTPUT));
+        context.debug(String.format("Converting weather texture %s", WEATHER_OUTPUT));
 
         BufferedImage snowImage = this.readImage(snowTexture);
         BufferedImage rainImage = this.readImage(rainTexture);

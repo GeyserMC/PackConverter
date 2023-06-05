@@ -61,7 +61,7 @@ public class AtlasTransformer implements TextureTransformer {
 
                 BufferedImage stepImage = this.readImage(texture);
                 if (atlasImage == null) {
-                    context.info(String.format("Creating atlas %s", bedrockName));
+                    context.debug(String.format("Creating atlas %s", bedrockName));
                     atlasImage = new BufferedImage(stepImage.getWidth(), stepImage.getHeight() * (atlasCount + 1), BufferedImage.TYPE_INT_ARGB);
                 }
 
@@ -70,7 +70,7 @@ public class AtlasTransformer implements TextureTransformer {
 
             if (atlasImage != null) {
                 context.offer(Key.key(Key.MINECRAFT_NAMESPACE, bedrockName), atlasImage, "png");
-                context.info(String.format("Created atlas %s", bedrockName));
+                context.debug(String.format("Created atlas %s", bedrockName));
             }
         }
     }

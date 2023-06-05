@@ -54,7 +54,7 @@ public class ChestSideTransformer implements TextureTransformer {
                 continue;
             }
 
-            context.info(String.format("Creating chest side texture %s", chest.bedrockName()));
+            context.debug(String.format("Creating chest side texture %s", chest.bedrockName()));
 
             BufferedImage fromImage = ImageUtil.ensureMinWidth(this.readImage(texture), 64);
 

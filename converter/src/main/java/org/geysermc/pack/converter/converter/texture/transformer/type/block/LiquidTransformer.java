@@ -60,7 +60,7 @@ public class LiquidTransformer implements TextureTransformer {
                 continue;
             }
 
-            context.info(String.format("Converting liquid %s", bedrockName));
+            context.debug(String.format("Converting liquid %s", bedrockName));
 
             BufferedImage liquidImage = this.readImage(texture);
 

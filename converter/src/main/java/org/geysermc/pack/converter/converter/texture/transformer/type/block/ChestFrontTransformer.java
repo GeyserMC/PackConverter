@@ -55,7 +55,7 @@ public class ChestFrontTransformer implements TextureTransformer {
                 continue;
             }
             
-            context.info(String.format("Creating chest front texture %s", chest.bedrockName()));
+            context.debug(String.format("Creating chest front texture %s", chest.bedrockName()));
 
             BufferedImage fromImage = ImageUtil.ensureMinWidth(this.readImage(texture), 64);
 

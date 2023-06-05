@@ -51,7 +51,7 @@ public class ArrowTransformer implements TextureTransformer {
             return;
         }
 
-        context.info(String.format("Converting arrow texture %s", OUTPUT));
+        context.debug(String.format("Converting arrow texture %s", OUTPUT));
 
         BufferedImage fromImage = this.readImage(texture);
 

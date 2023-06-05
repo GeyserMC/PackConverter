@@ -58,7 +58,7 @@ public class ChestNormalTransformer implements TextureTransformer {
                 continue;
             }
             
-            context.info(String.format("Converting normal chest %s", variant));
+            context.debug(String.format("Converting normal chest %s", variant));
 
             BufferedImage chestImage = ImageUtil.ensureMinWidth(this.readImage(texture), 64);
             int factor = chestImage.getWidth() / 64;

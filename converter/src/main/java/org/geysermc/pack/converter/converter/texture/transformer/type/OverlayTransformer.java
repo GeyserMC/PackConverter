@@ -95,17 +95,17 @@ public class OverlayTransformer implements TextureTransformer {
 
             Texture texture = context.peek(Key.key(Key.MINECRAFT_NAMESPACE, javaName));
             if (texture == null) {
-                context.info(String.format("Base overlay texture %s not found", javaName));
+                context.debug(String.format("Base overlay texture %s not found", javaName));
                 continue;
             }
 
             Texture overlayTexture = keep ? context.peek(Key.key(Key.MINECRAFT_NAMESPACE, overlayName)) : context.poll(Key.key(Key.MINECRAFT_NAMESPACE, overlayName));
             if (overlayTexture == null) {
-                context.info(String.format("Overlay texture %s not found", overlayName));
+                context.debug(String.format("Overlay texture %s not found", overlayName));
                 continue;
             }
 
-            context.info(String.format("Overlaying %s and %s onto %s", overlayName, javaName, bedrockName));
+            context.debug(String.format("Overlaying %s and %s onto %s", overlayName, javaName, bedrockName));
 
             BufferedImage image = this.readImage(texture);
             BufferedImage imageOverlay = this.readImage(overlayTexture);

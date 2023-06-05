@@ -258,13 +258,13 @@ public class ColorizeTransformer implements TextureTransformer {
                 Key key = Key.key(Key.MINECRAFT_NAMESPACE, overlayPath);
                 Texture texture = deleteOverlay ? context.poll(key) : context.peek(key);
                 if (texture == null) {
-                    context.info("Missing overlay texture: " + overlayPath);
+                    context.debug("Missing overlay texture: " + overlayPath);
                     continue;
                 }
 
                 BufferedImage overlayImage = this.readImage(texture);
                 if (finalImage == null) {
-                    context.info(String.format("Colorizing and overlaying %s", overlay.overlayPath()));
+                    context.debug(String.format("Colorizing and overlaying %s", overlay.overlayPath()));
 
                     finalImage = new BufferedImage(overlayImage.getWidth(), overlayImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
                 }

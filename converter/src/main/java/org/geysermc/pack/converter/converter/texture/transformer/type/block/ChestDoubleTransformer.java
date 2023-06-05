@@ -56,7 +56,7 @@ public class ChestDoubleTransformer implements TextureTransformer {
                 continue;
             }
 
-            context.info(String.format("Creating double chest texture %s", chest.bedrockName()));
+            context.debug(String.format("Creating double chest texture %s", chest.bedrockName()));
 
             BufferedImage leftImage = ImageUtil.ensureMinWidth(this.readImage(leftTexture), 64);
             BufferedImage rightImage = ImageUtil.ensureMinWidth(this.readImage(rightTexture), 64);

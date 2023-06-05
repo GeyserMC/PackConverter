@@ -53,7 +53,7 @@ public class SheepTransformer implements TextureTransformer {
             return;
         }
 
-        context.info(String.format("Converting sheep texture %s", SHEEP));
+        context.debug(String.format("Converting sheep texture %s", SHEEP));
 
         BufferedImage sheepImage = this.readImage(sheepTexture);
         BufferedImage sheepFurImage = this.readImage(sheepFurTexture);

@@ -34,6 +34,7 @@ import org.geysermc.pack.converter.converter.Converter;
 import org.geysermc.pack.converter.data.ConversionData;
 import org.geysermc.pack.converter.util.DefaultLogListener;
 import org.geysermc.pack.converter.util.LogListener;
+import org.geysermc.pack.converter.util.NioDirectoryFileTreeReader;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackReader;
@@ -59,6 +60,8 @@ public class PackConverter {
     private boolean compressed;
 
     private final Map<Class<?>, List<ActionListener<?>>> actionListeners = new IdentityHashMap<>();
+
+    private Consumer<BedrockResourcePack> preProcessor;
     private Consumer<BedrockResourcePack> postProcessor;
 
     @Getter
@@ -146,7 +149,7 @@ public class PackConverter {
                 throw new IllegalStateException("No converters have been added");
             }
 
-            ResourcePack javaResourcePack = this.compressed ? MinecraftResourcePackReader.minecraft().readFromZipFile(this.input) : MinecraftResourcePackReader.minecraft().readFromDirectory(this.input.toFile());
+            ResourcePack javaResourcePack = this.compressed ? MinecraftResourcePackReader.minecraft().readFromZipFile(this.input) : MinecraftResourcePackReader.minecraft().read(NioDirectoryFileTreeReader.read(this.input));
             BedrockResourcePack bedrockResourcePack = new BedrockResourcePack(this.tmpDir);
 
             int errors = 0;

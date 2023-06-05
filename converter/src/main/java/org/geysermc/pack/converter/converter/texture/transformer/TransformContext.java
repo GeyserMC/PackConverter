@@ -122,6 +122,10 @@ public class TransformContext {
         return this.byKey.containsKey(key);
     }
 
+    public void debug(@NotNull String message) {
+        this.conversionContext.debug(message);
+    }
+
     public void info(@NotNull String message) {
         this.conversionContext.info(message);
     }

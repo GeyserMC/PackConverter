@@ -70,7 +70,7 @@ public class BedTransformer implements TextureTransformer {
                 continue;
             }
 
-            context.info(String.format("Convert bed %s", bedColor));
+            context.debug(String.format("Convert bed %s", bedColor));
 
             BufferedImage bedImage = ImageUtil.ensureMinWidth(this.readImage(texture), 64);
 

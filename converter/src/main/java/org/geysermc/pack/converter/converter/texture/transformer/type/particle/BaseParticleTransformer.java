@@ -113,7 +113,7 @@ public class BaseParticleTransformer implements TextureTransformer {
             // This is a bit of a hack, but ensures that all elements in the sprite
             // are the same size
             if (spriteSize == -1) {
-                context.warn(String.format("No textures found for sprite with textures %s", Arrays.toString(textures)));
+                context.debug(String.format("No textures found for sprite with textures %s", Arrays.toString(textures)));
                 return;
             }
 
@@ -167,7 +167,7 @@ public class BaseParticleTransformer implements TextureTransformer {
         graphics.drawImage(spriteImage, 0, 0, null);
         graphics.dispose();
 
-        context.info(String.format("Creating particle spritesheet %s", OUTPUT));
+        context.debug(String.format("Creating particle spritesheet %s", OUTPUT));
 
         context.offer(Key.key(Key.MINECRAFT_NAMESPACE, PATH + "/" + OUTPUT), vanillaSprite, "png");
     }

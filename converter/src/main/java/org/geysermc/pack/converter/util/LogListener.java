@@ -30,6 +30,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public interface LogListener {
+    void debug(@NotNull String message);
+
     void info(@NotNull String message);
 
     void warn(@NotNull String message);

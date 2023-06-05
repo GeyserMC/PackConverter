@@ -49,6 +49,10 @@ public record PackConversionContext<T extends ConversionData>(
         return this.data.outputDirectory();
     }
 
+    public void debug(@NotNull String message) {
+        this.logListener.debug(message);
+    }
+
     public void info(@NotNull String message) {
         this.logListener.info(message);
     }
