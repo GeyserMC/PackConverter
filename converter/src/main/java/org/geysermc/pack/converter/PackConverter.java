@@ -61,7 +61,6 @@ public class PackConverter {
 
     private final Map<Class<?>, List<ActionListener<?>>> actionListeners = new IdentityHashMap<>();
 
-    private Consumer<BedrockResourcePack> preProcessor;
     private Consumer<BedrockResourcePack> postProcessor;
 
     @Getter
