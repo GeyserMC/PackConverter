@@ -51,7 +51,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-public class PackConverter {
+/**
+ * Handles the conversion of a resource pack.
+ */
+public final class PackConverter {
     private Path input;
     private Path output;
 
@@ -70,56 +73,143 @@ public class PackConverter {
     private PackageHandler packageHandler = PackageHandler.ZIP;
     private LogListener logListener = new DefaultLogListener();
 
+    /**
+     * Gets the subdirectory used for textures in the converted
+     * resource pack.
+     * <p>
+     * This option is only necessary for non-vanilla resource packs.
+     *
+     * @return the texture subdirectory
+     */
     @Nullable
     public String textureSubdirectory() {
         return this.textureSubdirectory;
     }
 
+    /**
+     * Sets the input (Java Edition) pack location.
+     *
+     * @param input the input pack location
+     * @return this instance
+     */
     public PackConverter input(@NotNull Path input) {
         return this.input(input, true);
     }
 
+    /**
+     * Sets the input (Java Edition) pack location.
+     * <p>
+     * Set {@code compressed} to {@code true} if the input pack is
+     * compressed, {@code false} otherwise.
+     *
+     * @param input the input pack location
+     * @param compressed whether the input pack is compressed
+     * @return this instance
+     */
     public PackConverter input(@NotNull Path input, boolean compressed) {
         this.input = input;
         this.compressed = compressed;
         return this;
     }
 
+    /**
+     * Sets the output (Bedrock Edition) pack location.
+     *
+     * @param output the output pack location
+     * @return this instance
+     */
     public PackConverter output(@NotNull Path output) {
         this.output = output;
         return this;
     }
 
+    /**
+     * Sets the texture subdirectory.
+     * <p>
+     * This option is only necessary for non-vanilla resource packs.
+     *
+     * @param textureSubdirectory the texture subdirectory
+     * @return this instance
+     */
     public PackConverter textureSubdirectory(@NotNull String textureSubdirectory) {
         this.textureSubdirectory = textureSubdirectory;
         return this;
     }
 
+    /**
+     * Adds a converter to the converter list.
+     *
+     * @param converter the converter to add
+     * @return this instance
+     */
     public PackConverter converter(@NotNull Converter<?> converter) {
         this.converters.add(converter);
         return this;
     }
 
+    /**
+     * Adds a list of converters to the converter list.
+     *
+     * @param converters the converters to add
+     * @return this instance
+     */
     public PackConverter converters(@NotNull List<Converter<?>> converters) {
         this.converters.addAll(converters);
         return this;
     }
 
+    /**
+     * Sets the log listener for displaying conversion information.
+     *
+     * @param logListener the log listener
+     * @return this instance
+     */
     public PackConverter logListener(@NotNull LogListener logListener) {
         this.logListener = logListener;
         return this;
     }
 
+    /**
+     * Sets the handler used to package the resource pack. By default,
+     * the resource pack is zipped, but this can be changed to a different
+     * handler through this method.
+     *
+     * @param packageHandler the package handler
+     * @return this instance
+     */
     public PackConverter packageHandler(@NotNull PackageHandler packageHandler) {
         this.packageHandler = packageHandler;
         return this;
     }
 
+    /**
+     * Sets a list of action listeners for a specific conversion data class.
+     * <p>
+     * This is particularly useful for external programs that may rely on
+     * various bits of information from the pack converter at different
+     * stages.
+     *
+     * @param clazz the conversion data class
+     * @param actionListeners the action listeners
+     * @return this instance
+     * @param <T> the conversion data type
+     */
     public <T extends ConversionData> PackConverter actionListeners(@NotNull Class<T> clazz, @NotNull ActionListener<T>... actionListeners) {
         this.actionListeners.put(clazz, List.of(actionListeners));
         return this;
     }
 
+    /**
+     * Sets the action listeners.
+     * <p>
+     * This is particularly useful for external programs that may rely on
+     * various bits of information from the pack converter at different
+     * stages.
+     *
+     * @param actionListeners the action listeners
+     * @return this instance
+     * @param <T> the conversion data type
+     */
     public <T extends ConversionData> PackConverter actionListeners(@NotNull Map<Class<T>, List<ActionListener<T>>> actionListeners) {
         for (Map.Entry<Class<T>, List<ActionListener<T>>> entry : actionListeners.entrySet()) {
             this.actionListeners.put(entry.getKey(), (List) entry.getValue());
@@ -128,6 +218,15 @@ public class PackConverter {
         return this;
     }
 
+    /**
+     * Sets the post processor for the converted resource pack.
+     * <p>
+     * This is called after the pack conversion is complete, but
+     * before the pack is packaged.
+     *
+     * @param postProcessor the post processor
+     * @return this instance
+     */
     public PackConverter postProcessor(@NotNull Consumer<BedrockResourcePack> postProcessor) {
         this.postProcessor = postProcessor;
         return this;
@@ -135,6 +234,9 @@ public class PackConverter {
 
     /**
      * Convert all resources in the pack using the converters
+     *
+     * @return this instance
+     * @throws IOException if an I/O error occurs
      */
     public PackConverter convert() throws IOException {
         if (this.input == null) {
@@ -192,6 +294,9 @@ public class PackConverter {
 
     /**
      * Convert the temporary folder into the output zip
+     *
+     * @return this instance
+     * @throws IOException if an I/O error occurs
      */
     public PackConverter pack() throws IOException {
         this.packageHandler.pack(this, this.tmpDir, this.output, this.logListener);
@@ -202,6 +307,7 @@ public class PackConverter {
 
     /**
      * Remove the temporary folder generated by the converter.
+     * <p>
      * Silently fails.
      */
     private void cleanup() {
