@@ -34,17 +34,14 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class EmptyArrayAdapterFactory implements TypeAdapterFactory {
+public class EmptyMapAdapterFactory implements TypeAdapterFactory {
 
     @Override
     public <T> TypeAdapter<T> create(Gson gson, TypeToken<T> type) {
         Class<?> rawType = type.getRawType();
-        if (!Collection.class.isAssignableFrom(rawType)) {
+        if (!Map.class.isAssignableFrom(rawType)) {
             return null;
         }
 
@@ -59,7 +56,7 @@ public class EmptyArrayAdapterFactory implements TypeAdapterFactory {
 
             @Override
             public void write(JsonWriter out, T value) throws IOException {
-                delegate.write(out, (value == null || value instanceof Collection<?> collection && collection.isEmpty()) ? null : value);
+                delegate.write(out, (value == null || value instanceof Map<?, ?> map && map.isEmpty()) ? null : value);
             }
         };
     }

@@ -37,6 +37,7 @@ import org.geysermc.pack.bedrock.resource.textures.TerrainTexture;
 import org.geysermc.pack.bedrock.resource.textures.itemtexture.TextureData;
 import org.geysermc.pack.bedrock.resource.textures.terraintexture.texturedata.Textures;
 import org.geysermc.pack.util.gson.EmptyArrayAdapterFactory;
+import org.geysermc.pack.util.gson.EmptyMapAdapterFactory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -56,6 +57,7 @@ public class BedrockResourcePack {
             .disableHtmlEscaping()
             .setPrettyPrinting()
             .registerTypeAdapterFactory(new EmptyArrayAdapterFactory())
+            .registerTypeAdapterFactory(new EmptyMapAdapterFactory())
             .create();
 
     private final Path directory;
