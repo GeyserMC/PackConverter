@@ -7,6 +7,9 @@ import java.lang.String;
 public class Direction {
   public String mode;
 
+  @SerializedName("custom_direction")
+  public String[] customDirection;
+
   @SerializedName("min_speed_threshold")
   public Float minSpeedThreshold;
 
@@ -22,6 +25,20 @@ public class Direction {
    */
   public void mode(String mode) {
     this.mode = mode;
+  }
+
+  /**
+   * The facing direction of emitted particles.
+   */
+  public String[] customDirection() {
+    return this.customDirection;
+  }
+
+  /**
+   * The facing direction of emitted particles.
+   */
+  public void customDirection(String[] customDirection) {
+    this.customDirection = customDirection;
   }
 
   /**

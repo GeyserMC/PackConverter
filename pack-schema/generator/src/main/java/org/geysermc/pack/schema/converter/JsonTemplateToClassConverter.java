@@ -350,17 +350,21 @@ public final class JsonTemplateToClassConverter {
             ResolvedReference resolvedReference;
             if (items.containsKey("$ref")) {
                 resolvedReference = parseRef(input, parentSchema, items);
-            } else {
-                resolvedReference = flattenReference(
-                        input,
-                        packageName,
-                        rootClassName,
-                        prevClassName,
-                        parentSchema,
-                        items,
-                        options
-                );
+                if (resolvedReference != null) {
+                    items = resolvedReference.object();
+                    parentSchema = resolvedReference.parentObject();
+                }
             }
+
+            resolvedReference = flattenReference(
+                    input,
+                    packageName,
+                    rootClassName,
+                    prevClassName,
+                    parentSchema,
+                    items,
+                    options
+            );
 
             if (resolvedReference != null) {
                 items = resolvedReference.object();

@@ -18,6 +18,8 @@ import org.geysermc.pack.bedrock.resource.animation_controllers.animationcontrol
  * The states of this animation controller.
  */
 public class States {
+  public List<Map<String, String>> animations = new ArrayList<>();
+
   @SerializedName("blend_transition")
   public Float blendTransition;
 
@@ -30,6 +32,8 @@ public class States {
   @SerializedName("sound_effects")
   public List<SoundEffects> soundEffects = new ArrayList<>();
 
+  public List<Map<String, String>> transitions = new ArrayList<>();
+
   private Map<String, Variables> variables = new HashMap<>();
 
   @SerializedName("on_entry")
@@ -37,6 +41,24 @@ public class States {
 
   @SerializedName("on_exit")
   public String[] onExit;
+
+  /**
+   * The animations definition for.
+   *
+   * @return Animations
+   */
+  public List<Map<String, String>> animations() {
+    return this.animations;
+  }
+
+  /**
+   * The animations definition for.
+   *
+   * @param animations Animations
+   */
+  public void animations(List<Map<String, String>> animations) {
+    this.animations = animations;
+  }
 
   /**
    * A short-hand version of blend_out that simply sets the amount of time to fade out if the animation is interrupted.
@@ -100,6 +122,24 @@ public class States {
    */
   public void soundEffects(List<SoundEffects> soundEffects) {
     this.soundEffects = soundEffects;
+  }
+
+  /**
+   * The transition definition for.
+   *
+   * @return Transition
+   */
+  public List<Map<String, String>> transitions() {
+    return this.transitions;
+  }
+
+  /**
+   * The transition definition for.
+   *
+   * @param transitions Transition
+   */
+  public void transitions(List<Map<String, String>> transitions) {
+    this.transitions = transitions;
   }
 
   public Map<String, Variables> variables() {

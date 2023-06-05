@@ -2,6 +2,7 @@ package org.geysermc.pack.bedrock.resource.particles.particleeffect.components.p
 
 import com.google.gson.annotations.SerializedName;
 import java.lang.Integer;
+import java.lang.String;
 import org.geysermc.pack.bedrock.resource.particles.particleeffect.components.particleappearancebillboard.uv.Flipbook;
 
 /**
@@ -15,6 +16,11 @@ public class Uv {
   public Integer textureHeight;
 
   public Flipbook flipbook;
+
+  public String[] uv;
+
+  @SerializedName("uv_size")
+  public String[] uvSize;
 
   /**
    * @return Texture Width
@@ -56,5 +62,33 @@ public class Uv {
    */
   public void flipbook(Flipbook flipbook) {
     this.flipbook = flipbook;
+  }
+
+  /**
+   * @return Uv
+   */
+  public String[] uv() {
+    return this.uv;
+  }
+
+  /**
+   * @param uv Uv
+   */
+  public void uv(String[] uv) {
+    this.uv = uv;
+  }
+
+  /**
+   * @return Uv Size
+   */
+  public String[] uvSize() {
+    return this.uvSize;
+  }
+
+  /**
+   * @param uvSize Uv Size
+   */
+  public void uvSize(String[] uvSize) {
+    this.uvSize = uvSize;
   }
 }

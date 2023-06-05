@@ -12,6 +12,11 @@ import java.util.Map;
 public class Scripts {
   public List<Map<String, String>> animate = new ArrayList<>();
 
+  public String[] initialize;
+
+  @SerializedName("pre_animation")
+  public String[] preAnimation;
+
   @SerializedName("parent_setup")
   public String parentSetup;
 
@@ -29,6 +34,34 @@ public class Scripts {
    */
   public void animate(List<Map<String, String>> animate) {
     this.animate = animate;
+  }
+
+  /**
+   * @return Initialize
+   */
+  public String[] initialize() {
+    return this.initialize;
+  }
+
+  /**
+   * @param initialize Initialize
+   */
+  public void initialize(String[] initialize) {
+    this.initialize = initialize;
+  }
+
+  /**
+   * @return Pre Animation
+   */
+  public String[] preAnimation() {
+    return this.preAnimation;
+  }
+
+  /**
+   * @param preAnimation Pre Animation
+   */
+  public void preAnimation(String[] preAnimation) {
+    this.preAnimation = preAnimation;
   }
 
   /**

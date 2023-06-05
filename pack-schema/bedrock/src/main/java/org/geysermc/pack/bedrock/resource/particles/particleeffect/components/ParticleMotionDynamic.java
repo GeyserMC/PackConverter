@@ -9,6 +9,9 @@ import java.lang.String;
  * This component specifies the dynamic properties of the particle, from a simulation standpoint what forces act upon the particle? These dynamics alter the velocity of the particle, which is a combination of the direction of the particle and the speed. Particle direction will always be in the direction of the velocity of the particle.
  */
 public class ParticleMotionDynamic {
+  @SerializedName("linear_acceleration")
+  public String[] linearAcceleration;
+
   @SerializedName("linear_drag_coefficient")
   public String linearDragCoefficient;
 
@@ -17,6 +20,24 @@ public class ParticleMotionDynamic {
 
   @SerializedName("rotation_drag_coefficient")
   public String rotationDragCoefficient;
+
+  /**
+   * The linear acceleration applied to the particle. Units are blocks/sec/sec
+   *
+   * @return Linear Acceleration
+   */
+  public String[] linearAcceleration() {
+    return this.linearAcceleration;
+  }
+
+  /**
+   * The linear acceleration applied to the particle. Units are blocks/sec/sec
+   *
+   * @param linearAcceleration Linear Acceleration
+   */
+  public void linearAcceleration(String[] linearAcceleration) {
+    this.linearAcceleration = linearAcceleration;
+  }
 
   public String linearDragCoefficient() {
     return this.linearDragCoefficient;

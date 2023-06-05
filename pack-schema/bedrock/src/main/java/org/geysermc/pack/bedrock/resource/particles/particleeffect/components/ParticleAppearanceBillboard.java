@@ -9,12 +9,28 @@ import org.geysermc.pack.bedrock.resource.particles.particleeffect.components.pa
  * Particle Appearance Billboard Component For 1.10.0
  */
 public class ParticleAppearanceBillboard {
+  public String[] size;
+
   @SerializedName("facing_camera_mode")
   public String facingCameraMode;
 
   public Direction direction;
 
   public Uv uv;
+
+  /**
+   * @return Size
+   */
+  public String[] size() {
+    return this.size;
+  }
+
+  /**
+   * @param size Size
+   */
+  public void size(String[] size) {
+    this.size = size;
+  }
 
   /**
    * Used to orient the billboard.
