@@ -30,6 +30,7 @@ import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.data.ConversionData;
 import org.geysermc.pack.converter.util.LogListener;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.ResourcePack;
 
 import java.nio.file.Path;

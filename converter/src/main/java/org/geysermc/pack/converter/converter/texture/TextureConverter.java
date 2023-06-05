@@ -105,6 +105,9 @@ public class TextureConverter implements Converter<TextureConversionData> {
             }
 
             String bedrockDirectory = DIRECTORY_LOCATIONS.getOrDefault(input, input);
+            if (context.data().textureSubdirectory() != null) {
+                bedrockDirectory = bedrockDirectory + "/" + context.data().textureSubdirectory();
+            }
             outputPath = texturePath.resolve(bedrockDirectory + "/" + output.substring(input.length()));
 
             TransformedTexture transformedTexture = new TransformedTexture(texture, outputPath);
@@ -152,6 +155,6 @@ public class TextureConverter implements Converter<TextureConversionData> {
 
     @Override
     public TextureConversionData createConversionData(@NotNull PackConverter converter, @NotNull Path inputDirectory, @NotNull Path outputDirectory) {
-        return new TextureConversionData(inputDirectory, outputDirectory);
+        return new TextureConversionData(inputDirectory, outputDirectory, converter.textureSubdirectory());
     }
 }

@@ -26,8 +26,6 @@
 
 package org.geysermc.pack.converter;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import lombok.Getter;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.converter.ActionListener;
 import org.geysermc.pack.converter.converter.Converter;
@@ -36,6 +34,7 @@ import org.geysermc.pack.converter.util.DefaultLogListener;
 import org.geysermc.pack.converter.util.LogListener;
 import org.geysermc.pack.converter.util.NioDirectoryFileTreeReader;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackReader;
 
@@ -47,7 +46,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,14 +55,13 @@ public class PackConverter {
     private Path input;
     private Path output;
 
+    private String textureSubdirectory;
+
     private boolean compressed;
 
     private final Map<Class<?>, List<ActionListener<?>>> actionListeners = new IdentityHashMap<>();
 
     private Consumer<BedrockResourcePack> postProcessor;
-
-    @Getter
-    private final Map<String, Int2ObjectMap<String>> customModelData = new HashMap<>();
 
     private final List<Converter<?>> converters = new ArrayList<>();
 
@@ -72,6 +69,11 @@ public class PackConverter {
 
     private PackageHandler packageHandler = PackageHandler.ZIP;
     private LogListener logListener = new DefaultLogListener();
+
+    @Nullable
+    public String textureSubdirectory() {
+        return this.textureSubdirectory;
+    }
 
     public PackConverter input(@NotNull Path input) {
         return this.input(input, true);
@@ -85,6 +87,11 @@ public class PackConverter {
 
     public PackConverter output(@NotNull Path output) {
         this.output = output;
+        return this;
+    }
+
+    public PackConverter textureSubdirectory(@NotNull String textureSubdirectory) {
+        this.textureSubdirectory = textureSubdirectory;
         return this;
     }
 
