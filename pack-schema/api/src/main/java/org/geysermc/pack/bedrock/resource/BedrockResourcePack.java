@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.geysermc.pack.util.FileUtil.exportJson;
+import static org.geysermc.pack.util.FileUtil.exportProperties;
 
 /**
  * Represents a Bedrock resource pack.
@@ -68,6 +69,7 @@ public class BedrockResourcePack {
     private TerrainTexture terrainTexture;
     private Map<String, Attachables> attachables;
     private SoundDefinitions soundDefinitions;
+    private Languages languages;
     private Map<String, RenderControllers> renderControllers;
 
     public BedrockResourcePack(@NotNull Path directory) {
@@ -214,6 +216,25 @@ public class BedrockResourcePack {
     }
 
     /**
+     * Get the languages of the resource pack.
+     *
+     * @return the languages of the resource pack
+     */
+    @Nullable
+    public Languages languages() {
+        return this.languages;
+    }
+
+    /**
+     * Set the languages of the resource pack.
+     *
+     * @param languages the languages of the resource pack
+     */
+    public void languages(@Nullable Languages languages) {
+        this.languages = languages;
+    }
+
+    /**
      * Add an item to the resource pack.
      *
      * @param id the id of the item
@@ -326,6 +347,20 @@ public class BedrockResourcePack {
     }
 
     /**
+     * Add a language to the resource pack.
+     *
+     * @param languageCode the language code
+     * @param translationStrings the translation strings
+     */
+    public void addLanguage(@NotNull String languageCode, @NotNull Map<String, String> translationStrings) {
+        if (this.languages == null) {
+            this.languages = new Languages();
+        }
+
+        this.languages.language(languageCode, translationStrings);
+    }
+
+    /**
      * Exports the resource pack to the specified directory.
      *
      * @throws IOException if an error occurs while exporting the resource pack
@@ -362,6 +397,14 @@ public class BedrockResourcePack {
 
         if (this.soundDefinitions != null) {
             exportJson(GSON, this.directory.resolve("sounds/sound_definitions.json"), this.soundDefinitions);
+        }
+
+        if (this.languages != null) {
+            exportJson(GSON, this.directory.resolve("texts/languages.json"), this.languages.languageCodes());
+
+            for (Map.Entry<String, Map<String, String>> language : this.languages.languages().entrySet()) {
+                exportProperties(this.directory.resolve("texts/" + language.getKey() + ".lang"), language.getValue());
+            }
         }
     }
 }

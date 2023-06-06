@@ -33,6 +33,8 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * Utility class for files.
@@ -59,5 +61,19 @@ public class FileUtil {
         try (BufferedWriter writer = Files.newBufferedWriter(location)) {
             gson.toJson(object, writer);
         }
+    }
+
+    public static void exportProperties(@NotNull Path location, @NotNull Map<String, String> properties) throws IOException {
+        if (Files.notExists(location.getParent())) {
+            Files.createDirectories(location.getParent());
+        }
+
+        if (Files.notExists(location)) {
+            Files.createFile(location);
+        }
+
+        Properties propertiesFile = new Properties();
+        propertiesFile.putAll(properties);
+        propertiesFile.store(Files.newOutputStream(location), null);
     }
 }

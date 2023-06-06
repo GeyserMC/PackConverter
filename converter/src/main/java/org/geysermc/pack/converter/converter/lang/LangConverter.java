@@ -73,16 +73,7 @@ public class LangConverter extends BaseConverter {
                 entry.setValue(value);
             }
 
-            // Setup output dir
-            Path output = context.outputDirectory().resolve(BEDROCK_TEXTS_LOCATION);
-
-            if (Files.notExists(output)) {
-                Files.createDirectories(output);
-            }
-
-            Properties properties = new Properties();
-            properties.putAll(strings);
-            properties.store(Files.newOutputStream(output.resolve(language.key().value() + ".lang")), null);
+            context.bedrockResourcePack().addLanguage(language.key().value(), strings);
         }
     }
 }
