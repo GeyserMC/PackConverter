@@ -72,7 +72,7 @@ public class FileUtil {
             Files.createFile(location);
         }
 
-        Properties propertiesFile = new Properties();
+        CleanProperties propertiesFile = new CleanProperties();
         propertiesFile.putAll(properties);
         propertiesFile.store(Files.newOutputStream(location), null);
     }
