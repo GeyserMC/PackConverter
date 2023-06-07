@@ -73,7 +73,14 @@ public class LangConverter extends BaseConverter {
                 entry.setValue(value);
             }
 
-            context.bedrockResourcePack().addLanguage(language.key().value(), strings);
+            String languageKey = language.key().value();
+
+            // Convert the language key to the Bedrock equivalent
+            if (languageKey.equals("no_no")) {
+                languageKey = "nb_no";
+            }
+
+            context.bedrockResourcePack().addLanguage(languageKey, strings);
         }
     }
 }
