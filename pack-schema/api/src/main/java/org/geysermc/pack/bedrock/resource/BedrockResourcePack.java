@@ -29,6 +29,7 @@ package org.geysermc.pack.bedrock.resource;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.geysermc.pack.bedrock.resource.attachables.Attachables;
+import org.geysermc.pack.bedrock.resource.models.entity.ModelEntity;
 import org.geysermc.pack.bedrock.resource.render_controllers.RenderControllers;
 import org.geysermc.pack.bedrock.resource.sounds.SoundDefinitions;
 import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.Sounds;
@@ -71,6 +72,9 @@ public class BedrockResourcePack {
     private SoundDefinitions soundDefinitions;
     private Languages languages;
     private Map<String, RenderControllers> renderControllers;
+
+    private Map<String, ModelEntity> blockModels;
+    private Map<String, ModelEntity> entityModels;
 
     public BedrockResourcePack(@NotNull Path directory) {
         this(directory, null, null, null);
@@ -197,6 +201,44 @@ public class BedrockResourcePack {
     }
 
     /**
+     * Get the block models of the resource pack.
+     *
+     * @return the block models of the resource pack
+     */
+    @Nullable
+    public Map<String, ModelEntity> blockModels() {
+        return this.blockModels;
+    }
+
+    /**
+     * Set the block models of the resource pack.
+     *
+     * @param blockModels the block models of the resource pack
+     */
+    public void blockModels(@Nullable Map<String, ModelEntity> blockModels) {
+        this.blockModels = blockModels;
+    }
+
+    /**
+     * Get the entity models of the resource pack.
+     *
+     * @return the entity models of the resource pack
+     */
+    @Nullable
+    public Map<String, ModelEntity> entityModels() {
+        return this.entityModels;
+    }
+
+    /**
+     * Set the entity models of the resource pack.
+     *
+     * @param entityModels the entity models of the resource pack
+     */
+    public void entityModels(@Nullable Map<String, ModelEntity> entityModels) {
+        this.entityModels = entityModels;
+    }
+
+    /**
      * Get the sound definitions of the resource pack.
      *
      * @return the sound definitions of the resource pack
@@ -296,12 +338,40 @@ public class BedrockResourcePack {
      * @param renderController the data of the render controller
      * @param location the location of the final json
      */
-    public void addRenderController(RenderControllers renderController, String location) {
+    public void addRenderController(@NotNull RenderControllers renderController, String location) {
         if (this.renderControllers == null) {
             this.renderControllers = new HashMap<>();
         }
 
         this.renderControllers.put(location, renderController);
+    }
+
+    /**
+     * Add a block model to the resource pack.
+     *
+     * @param model the data of the block model
+     * @param location the location of the final json
+     */
+    public void addBlockModel(@NotNull ModelEntity model, @NotNull String location) {
+        if (this.blockModels == null) {
+            this.blockModels = new HashMap<>();
+        }
+
+        this.blockModels.put("models/blocks/" + location, model);
+    }
+
+    /**
+     * Add an entity model to the resource pack.
+     *
+     * @param model the data of the entity model
+     * @param location the location of the final json
+     */
+    public void addEntityModel(@NotNull ModelEntity model, @NotNull String location) {
+        if (this.entityModels == null) {
+            this.entityModels = new HashMap<>();
+        }
+
+        this.entityModels.put("models/entity/" + location, model);
     }
 
     /**
@@ -392,6 +462,18 @@ public class BedrockResourcePack {
         if (this.renderControllers != null) {
             for (Map.Entry<String, RenderControllers> renderController : this.renderControllers.entrySet()) {
                 exportJson(GSON, this.directory.resolve(renderController.getKey()), renderController.getValue());
+            }
+        }
+
+        if (this.blockModels != null) {
+            for (Map.Entry<String, ModelEntity> blockModel : this.blockModels.entrySet()) {
+                exportJson(GSON, this.directory.resolve(blockModel.getKey()), blockModel.getValue());
+            }
+        }
+
+        if (this.entityModels != null) {
+            for (Map.Entry<String, ModelEntity> entityModel : this.entityModels.entrySet()) {
+                exportJson(GSON, this.directory.resolve(entityModel.getKey()), entityModel.getValue());
             }
         }
 
