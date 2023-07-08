@@ -70,21 +70,22 @@ public class ModelConverter extends BaseConverter {
                 continue;
             }
 
-            ModelTextures modelTextures = model.textures();
-            if (modelTextures == null) {
-                continue;
-            }
+            // ModelTextures modelTextures = model.textures();
+            // if (modelTextures == null) {
+            //     continue;
+            // }
 
-            Collection<ModelTexture> textures = modelTextures.variables().values();
-            if (textures.isEmpty()) {
-                continue;
-            }
+            // Collection<ModelTexture> textures = modelTextures.variables().values();
+            // if (textures.isEmpty()) {
+            //     continue;
+            // }
+
+            // TODO: Combine textures into one texture
+            // ModelTexture modelTexture = textures.iterator().next();
+
 
             String value = model.key().value();
             context.debug("Converting model " + model.key().key() + ":" + value);
-
-            // TODO: Combine textures into one texture
-            ModelTexture modelTexture = textures.iterator().next();
 
             ModelEntity modelEntity = new ModelEntity();
             modelEntity.formatVersion(FORMAT_VERSION);
