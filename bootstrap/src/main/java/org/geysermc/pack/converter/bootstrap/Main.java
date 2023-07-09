@@ -37,7 +37,6 @@ import java.nio.file.Paths;
 public class Main {
 
     public static void main(String[] args) throws FileNotFoundException {
-        args = new String[] { "mod-java.jar" };
         if (args.length != 1) {
             throw new AssertionError("Please choose a .zip file to convert");
         } else {
