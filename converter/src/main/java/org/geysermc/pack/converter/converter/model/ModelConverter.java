@@ -42,9 +42,9 @@ import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bon
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.Up;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.West;
 import org.geysermc.pack.converter.PackConversionContext;
-import org.geysermc.pack.converter.converter.BaseConverter;
+import org.geysermc.pack.converter.PackConverter;
 import org.geysermc.pack.converter.converter.Converter;
-import org.geysermc.pack.converter.data.BaseConversionData;
+import org.geysermc.pack.converter.data.ModelConversionData;
 import org.geysermc.pack.converter.util.VanillaPackHandler;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.ResourcePack;
@@ -64,14 +64,14 @@ import java.util.List;
 import java.util.Map;
 
 @AutoService(Converter.class)
-public class ModelConverter extends BaseConverter {
+public class ModelConverter implements Converter<ModelConversionData> {
     private static final String FORMAT_VERSION = "1.12.0";
     private static final String GEOMETRY_FORMAT = "geometry.%s";
 
     private static final float[] ELEMENT_OFFSET = new float[] { 8, 0, 8 };
 
     @Override
-    public void convert(@NotNull PackConversionContext<BaseConversionData> context) throws Exception {
+    public void convert(@NotNull PackConversionContext<ModelConversionData> context) throws Exception {
         ResourcePack javaPack = context.javaResourcePack();
         BedrockResourcePack bedrockPack = context.bedrockResourcePack();
         Collection<Model> models = javaPack.models();
@@ -191,7 +191,14 @@ public class ModelConverter extends BaseConverter {
                 // Bedrock only has a concept of entity or block models
                 bedrockPack.addBlockModel(modelEntity, fileName + ".json");
             }
+
+            context.data().addStitchedModel(model);
         }
+    }
+
+    @Override
+    public ModelConversionData createConversionData(@NotNull PackConverter converter, @NotNull Path inputDirectory, @NotNull Path outputDirectory) {
+        return new ModelConversionData(inputDirectory, outputDirectory);
     }
 
     private static void applyUv(Uv uv, CubeFace face, String texture, Vector4Float faceUv) {
