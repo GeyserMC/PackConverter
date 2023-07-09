@@ -33,6 +33,7 @@ import org.geysermc.pack.converter.data.ConversionData;
 import org.geysermc.pack.converter.util.DefaultLogListener;
 import org.geysermc.pack.converter.util.LogListener;
 import org.geysermc.pack.converter.util.NioDirectoryFileTreeReader;
+import org.geysermc.pack.converter.util.ZipUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.ResourcePack;
@@ -250,7 +251,7 @@ public final class PackConverter {
         // Load any image plugins
         ImageIO.scanForPlugins();
 
-        this.openFileSystem(input -> {
+        ZipUtils.openFileSystem(this.input, this.compressed, input -> {
             this.tmpDir = this.output.toAbsolutePath().getParent().resolve(this.output.getFileName() + "_mcpack/");
 
             if (this.converters.isEmpty()) {
@@ -315,20 +316,5 @@ public final class PackConverter {
             Files.delete(tmpDir);
         } catch (IOException ignored) {
         }
-    }
-
-    private void openFileSystem(PathConsumer input) throws IOException {
-        if (this.compressed) {
-            try (FileSystem compressedFileSystem = FileSystems.newFileSystem(this.input, Collections.emptyMap())) {
-                input.accept(compressedFileSystem.getPath("/"));
-            }
-        } else {
-            input.accept(this.input);
-        }
-    }
-
-    interface PathConsumer {
-
-        void accept(Path path) throws IOException;
     }
 }

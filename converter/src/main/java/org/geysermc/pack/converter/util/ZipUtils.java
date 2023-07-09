@@ -32,7 +32,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -113,5 +117,20 @@ public class ZipUtils {
 
     private String generateZipEntry(String file) {
         return file.substring(sourceFolder.getAbsolutePath().length() + 1);
+    }
+
+    public static void openFileSystem(Path input, boolean compressed, PathConsumer inputConsumer) throws IOException {
+        if (compressed) {
+            try (FileSystem compressedFileSystem = FileSystems.newFileSystem(input, Collections.emptyMap())) {
+                inputConsumer.accept(compressedFileSystem.getPath("/"));
+            }
+        } else {
+            inputConsumer.accept(input);
+        }
+    }
+
+    public interface PathConsumer {
+
+        void accept(Path path) throws IOException;
     }
 }

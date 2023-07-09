@@ -35,17 +35,29 @@ import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.Bon
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.Description;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.Cubes;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.Uv;
-import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.*;
+import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.Down;
+import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.East;
+import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.North;
+import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.South;
+import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.Up;
+import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.West;
 import org.geysermc.pack.converter.PackConversionContext;
 import org.geysermc.pack.converter.converter.BaseConverter;
 import org.geysermc.pack.converter.converter.Converter;
 import org.geysermc.pack.converter.data.BaseConversionData;
+import org.geysermc.pack.converter.util.VanillaPackHandler;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.base.CubeFace;
 import team.unnamed.creative.base.Vector4Float;
-import team.unnamed.creative.model.*;
+import team.unnamed.creative.model.Element;
+import team.unnamed.creative.model.ElementFace;
+import team.unnamed.creative.model.ElementRotation;
+import team.unnamed.creative.model.Model;
+import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackReader;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -63,26 +75,34 @@ public class ModelConverter extends BaseConverter {
         ResourcePack javaPack = context.javaResourcePack();
         BedrockResourcePack bedrockPack = context.bedrockResourcePack();
         Collection<Model> models = javaPack.models();
+        if (models.isEmpty()) {
+            return;
+        }
 
-        for (Model model : models) {
-            List<Element> elements = model.elements();
-            if (elements.isEmpty()) {
-                continue;
+        // Need to download the client jar, then use the
+        // client jar to get the vanilla models, so we can
+        // ensure all parents exist to convert them to Bedrock.
+        Path vanillaPackPath = Paths.get("vanilla-pack.zip");
+        VanillaPackHandler.create(vanillaPackPath, context.logListener());
+
+        ResourcePack vanillaResourcePack = MinecraftResourcePackReader.minecraft().readFromZipFile(vanillaPackPath);
+        ModelStitcher.ModelProvider provider = key -> {
+            Model model = javaPack.model(key);
+            if (model == null) {
+                return vanillaResourcePack.model(key);
             }
 
-            // ModelTextures modelTextures = model.textures();
-            // if (modelTextures == null) {
-            //     continue;
-            // }
+            return model;
+        };
 
-            // Collection<ModelTexture> textures = modelTextures.variables().values();
-            // if (textures.isEmpty()) {
-            //     continue;
-            // }
+        for (Model model : models) {
+            model = new ModelStitcher(provider, model).stitch();
 
-            // TODO: Combine textures into one texture
-            // ModelTexture modelTexture = textures.iterator().next();
-
+            List<Element> elements = model.elements();
+            if (elements.isEmpty()) {
+                context.debug("Model " + model.key().key() + " has no elements");
+                continue;
+            }
 
             String value = model.key().value();
             context.debug("Converting model " + model.key().key() + ":" + value);
@@ -150,7 +170,9 @@ public class ModelConverter extends BaseConverter {
 
                     // The Java pack lib we use does this weird thing where it
                     // divides the UV by 16, so we need to multiply it by 16
-                    applyUv(uv, face, elementFace.uv().multiply(ElementFace.MINECRAFT_UV_UNIT));
+
+                    String texture = elementFace.texture().replace("#", "");
+                    applyUv(uv, face, texture, elementFace.uv().multiply(ElementFace.MINECRAFT_UV_UNIT));
                 }
 
                 cube.uv(uv);
@@ -172,7 +194,7 @@ public class ModelConverter extends BaseConverter {
         }
     }
 
-    private static void applyUv(Uv uv, CubeFace face, Vector4Float faceUv) {
+    private static void applyUv(Uv uv, CubeFace face, String texture, Vector4Float faceUv) {
         float[] uvs;
         float[] uvSize;
 
@@ -190,6 +212,7 @@ public class ModelConverter extends BaseConverter {
                 North north = new North();
                 north.uv(uvs);
                 north.uvSize(uvSize);
+                north.materialInstance(texture);
 
                 uv.north(north);
             }
@@ -197,6 +220,7 @@ public class ModelConverter extends BaseConverter {
                 South south = new South();
                 south.uv(uvs);
                 south.uvSize(uvSize);
+                south.materialInstance(texture);
 
                 uv.south(south);
             }
@@ -204,6 +228,7 @@ public class ModelConverter extends BaseConverter {
                 East east = new East();
                 east.uv(uvs);
                 east.uvSize(uvSize);
+                east.materialInstance(texture);
 
                 uv.east(east);
             }
@@ -211,6 +236,7 @@ public class ModelConverter extends BaseConverter {
                 West west = new West();
                 west.uv(uvs);
                 west.uvSize(uvSize);
+                west.materialInstance(texture);
 
                 uv.west(west);
             }
@@ -218,6 +244,7 @@ public class ModelConverter extends BaseConverter {
                 Up up = new Up();
                 up.uv(uvs);
                 up.uvSize(uvSize);
+                up.materialInstance(texture);
 
                 uv.up(up);
             }
@@ -225,6 +252,7 @@ public class ModelConverter extends BaseConverter {
                 Down down = new Down();
                 down.uv(uvs);
                 down.uvSize(uvSize);
+                down.materialInstance(texture);
 
                 uv.down(down);
             }
