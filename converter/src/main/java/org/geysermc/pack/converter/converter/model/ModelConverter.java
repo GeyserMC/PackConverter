@@ -62,7 +62,7 @@ import java.util.Map;
 
 @AutoService(Converter.class)
 public class ModelConverter implements Converter<ModelConversionData> {
-    private static final String FORMAT_VERSION = "1.12.0";
+    private static final String FORMAT_VERSION = "1.20.0";
     private static final String GEOMETRY_FORMAT = "geometry.%s";
 
     private static final float[] ELEMENT_OFFSET = new float[] { 8, 0, 8 };
