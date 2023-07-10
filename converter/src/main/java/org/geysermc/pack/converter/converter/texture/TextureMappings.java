@@ -26,18 +26,34 @@
 
 package org.geysermc.pack.converter.converter.texture;
 
+import com.google.gson.Gson;
 import lombok.ToString;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 @ToString
 public class TextureMappings extends LinkedHashMap<String, LinkedHashMap<String, String>> {
+    private static TextureMappings INSTANCE;
 
     @Nullable
     public Map<String, String> textures(@NotNull String key) {
         return this.get(key);
+    }
+
+    public static TextureMappings textureMappings() {
+        if (INSTANCE != null) {
+            return INSTANCE;
+        }
+        InputStream mappingsStream = TextureMappings.class.getResourceAsStream("/mappings/textures.json");
+        if (mappingsStream == null) {
+            throw new RuntimeException("Could not find textures.json mappings file!");
+        }
+
+        return INSTANCE = new Gson().fromJson(new InputStreamReader(mappingsStream), TextureMappings.class);
     }
 }
