@@ -27,22 +27,28 @@
 package org.geysermc.pack.converter.converter.model;
 
 import net.kyori.adventure.key.Key;
+import org.geysermc.pack.converter.util.LogListener;
+import org.geysermc.pack.converter.util.VanillaPackProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.model.Element;
 import team.unnamed.creative.model.ItemOverride;
 import team.unnamed.creative.model.ItemTransform;
 import team.unnamed.creative.model.Model;
 import team.unnamed.creative.model.ModelTexture;
 import team.unnamed.creative.model.ModelTextures;
+import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackReader;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ModelStitcher {
-    private final ModelProvider provider;
+    private final Provider provider;
     private final Model baseModel;
 
     private boolean ambientOcclusion;
@@ -56,7 +62,7 @@ public class ModelStitcher {
     private final List<Element> elements = new ArrayList<>();
     private final List<ItemOverride> overrides = new ArrayList<>();
 
-    public ModelStitcher(@NotNull ModelProvider provider, @NotNull Model baseModel) {
+    public ModelStitcher(@NotNull ModelStitcher.Provider provider, @NotNull Model baseModel) {
         this.provider = provider;
         this.baseModel = baseModel;
         this.ambientOcclusion = baseModel.ambientOcclusion();
@@ -171,9 +177,31 @@ public class ModelStitcher {
                 .build();
     }
 
-    public interface ModelProvider {
+    public interface Provider {
 
         @Nullable
         Model model(@NotNull Key key);
+    }
+
+    public static Provider baseProvider(@NotNull ResourcePack pack) {
+        return pack::model;
+    }
+
+    public static Provider vanillaProvider(@NotNull ResourcePack pack, @NotNull LogListener log) {
+        // Need to download the client jar, then use the
+        // client jar to get the vanilla models, so we can
+        // ensure all parents exist to convert them to Bedrock.
+        Path vanillaPackPath = Paths.get("vanilla-pack.zip");
+        VanillaPackProvider.create(vanillaPackPath, log);
+
+        ResourcePack vanillaResourcePack = MinecraftResourcePackReader.minecraft().readFromZipFile(vanillaPackPath);
+        return key -> {
+            Model model = pack.model(key);
+            if (model == null) {
+                return vanillaResourcePack.model(key);
+            }
+
+            return model;
+        };
     }
 }

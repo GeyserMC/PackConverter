@@ -38,7 +38,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
-public final class VanillaPackHandler {
+public final class VanillaPackProvider {
     private static final String JAR_DOWNLOAD = "https://piston-data.mojang.com/v1/objects/%s/client.jar";
     private static final String JAR_HASH = "0c3ec587af28e5a785c0b4a7b8a30f9a8f78f838";
 
@@ -76,8 +76,8 @@ public final class VanillaPackHandler {
     private static void clean(@NotNull Path jarPath, @NotNull LogListener log) throws IOException {
         ZipUtils.openFileSystem(jarPath, true, rootPath -> {
             // Copy the builtin assets into the MC jar
-            InputStream builtinEntity = VanillaPackHandler.class.getResourceAsStream("/vanilla/builtin/entity.json");
-            InputStream builtinGenerated = VanillaPackHandler.class.getResourceAsStream("/vanilla/builtin/generated.json");
+            InputStream builtinEntity = VanillaPackProvider.class.getResourceAsStream("/vanilla/builtin/entity.json");
+            InputStream builtinGenerated = VanillaPackProvider.class.getResourceAsStream("/vanilla/builtin/generated.json");
 
             Path builtinModelsDirectory = rootPath.resolve("assets/minecraft/models/builtin");
             if (!Files.exists(builtinModelsDirectory)) {

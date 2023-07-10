@@ -45,7 +45,6 @@ import org.geysermc.pack.converter.PackConversionContext;
 import org.geysermc.pack.converter.PackConverter;
 import org.geysermc.pack.converter.converter.Converter;
 import org.geysermc.pack.converter.data.ModelConversionData;
-import org.geysermc.pack.converter.util.VanillaPackHandler;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.base.CubeFace;
@@ -54,10 +53,8 @@ import team.unnamed.creative.model.Element;
 import team.unnamed.creative.model.ElementFace;
 import team.unnamed.creative.model.ElementRotation;
 import team.unnamed.creative.model.Model;
-import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackReader;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -79,24 +76,8 @@ public class ModelConverter implements Converter<ModelConversionData> {
             return;
         }
 
-        // Need to download the client jar, then use the
-        // client jar to get the vanilla models, so we can
-        // ensure all parents exist to convert them to Bedrock.
-        Path vanillaPackPath = Paths.get("vanilla-pack.zip");
-        VanillaPackHandler.create(vanillaPackPath, context.logListener());
-
-        ResourcePack vanillaResourcePack = MinecraftResourcePackReader.minecraft().readFromZipFile(vanillaPackPath);
-        ModelStitcher.ModelProvider provider = key -> {
-            Model model = javaPack.model(key);
-            if (model == null) {
-                return vanillaResourcePack.model(key);
-            }
-
-            return model;
-        };
-
         for (Model model : models) {
-            model = new ModelStitcher(provider, model).stitch();
+            model = new ModelStitcher(ModelStitcher.vanillaProvider(javaPack, context.logListener()), model).stitch();
 
             List<Element> elements = model.elements();
             if (elements.isEmpty()) {
