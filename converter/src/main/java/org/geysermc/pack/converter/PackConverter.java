@@ -50,6 +50,7 @@ import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -65,7 +66,7 @@ public final class PackConverter {
 
     private final Map<Class<?>, List<ActionListener<?>>> actionListeners = new IdentityHashMap<>();
 
-    private Consumer<BedrockResourcePack> postProcessor;
+    private BiConsumer<ResourcePack, BedrockResourcePack> postProcessor;
 
     private final List<Converter<?>> converters = new ArrayList<>();
 
@@ -228,7 +229,7 @@ public final class PackConverter {
      * @param postProcessor the post processor
      * @return this instance
      */
-    public PackConverter postProcessor(@NotNull Consumer<BedrockResourcePack> postProcessor) {
+    public PackConverter postProcessor(@NotNull BiConsumer<ResourcePack, BedrockResourcePack> postProcessor) {
         this.postProcessor = postProcessor;
         return this;
     }
@@ -278,7 +279,7 @@ public final class PackConverter {
             }
 
             if (this.postProcessor != null) {
-                this.postProcessor.accept(bedrockResourcePack);
+                this.postProcessor.accept(javaResourcePack, bedrockResourcePack);
             }
 
             bedrockResourcePack.export();
