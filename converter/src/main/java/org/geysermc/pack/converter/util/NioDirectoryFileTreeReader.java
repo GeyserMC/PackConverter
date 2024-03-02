@@ -26,6 +26,7 @@
 
 package org.geysermc.pack.converter.util;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.serialize.minecraft.fs.FileTreeReader;
 
@@ -116,7 +117,7 @@ public final class NioDirectoryFileTreeReader implements FileTreeReader {
     }
 
     @Override
-    public InputStream input() {
+    public @NotNull InputStream stream() {
         return currentStream;
     }
 

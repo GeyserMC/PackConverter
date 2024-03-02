@@ -36,7 +36,9 @@ import org.geysermc.pack.converter.converter.BaseConverter;
 import org.geysermc.pack.converter.converter.Converter;
 import org.geysermc.pack.converter.data.BaseConversionData;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 import team.unnamed.creative.sound.Sound;
+import team.unnamed.creative.sound.SoundEntry;
 import team.unnamed.creative.sound.SoundEvent;
 import team.unnamed.creative.sound.SoundRegistry;
 
@@ -55,16 +57,15 @@ public class SoundConverter extends BaseConverter {
     public void convert(@NotNull PackConversionContext<BaseConversionData> context) throws Exception {
         Collection<SoundRegistry> registry = context.javaResourcePack().soundRegistries();
         for (SoundRegistry soundRegistry : registry) {
-            Map<String, SoundEvent> sounds = soundRegistry.sounds();
+            @Unmodifiable @NotNull Collection<SoundEvent> sounds = soundRegistry.sounds();
 
-            for (Map.Entry<String, SoundEvent> entry : sounds.entrySet()) {
-                String key = entry.getKey();
-                SoundEvent value = entry.getValue();
+            for (SoundEvent value : sounds) {
+                String key = value.key().asString();
 
                 SoundDefinitions definition = new SoundDefinitions();
                 definition.useLegacyMaxDistance(true); // TODO: Needed?
                 definition.maxDistance(64); // ???
-                for (Sound sound : value.sounds()) {
+                for (SoundEntry sound : value.sounds()) {
                     Sounds bedrockSound = new Sounds();
                     bedrockSound.name(BEDROCK_SOUNDS_LOCATION + "/" + sound.key().value());
                     bedrockSound.stream(sound.stream());
