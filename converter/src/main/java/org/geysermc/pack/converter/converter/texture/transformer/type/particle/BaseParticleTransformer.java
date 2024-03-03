@@ -88,7 +88,7 @@ public class BaseParticleTransformer implements TextureTransformer {
         Spritesheet spritesheet = new Spritesheet();
         int spriteSize = -1;
 
-        BufferedImage vanillaSprite = ImageUtil.loadImage("/particle_spritesheet.png");
+        BufferedImage vanillaSprite = ImageUtil.loadImage("/spritesheets/particle_spritesheet.png");
         
         int[][] occupiedSectors = null;
         for (int i = 0; i < TEXTURES.size(); i++) {

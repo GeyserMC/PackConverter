@@ -78,7 +78,7 @@ public class SpritesheetParticleTransformer implements TextureTransformer {
         }
 
         BufferedImage spriteImage = spritesheet.compile();
-        BufferedImage vanillaSprite = ImageUtil.resize(ImageUtil.loadImage("/" + this.vanillaSpritesheet + ".png"), spriteImage.getWidth(), spriteImage.getHeight());
+        BufferedImage vanillaSprite = ImageUtil.resize(ImageUtil.loadImage("/spritesheets/" + this.vanillaSpritesheet + ".png"), spriteImage.getWidth(), spriteImage.getHeight());
 
         Graphics2D graphics = vanillaSprite.createGraphics();
         graphics.setBackground(new Color(0, 0, 0, 0));
