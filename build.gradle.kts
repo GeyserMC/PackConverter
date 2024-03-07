@@ -45,5 +45,12 @@ allprojects {
         publications.create<MavenPublication>("library") {
             artifact(tasks.shadowJar)
         }
+        repositories {
+            maven {
+                val releasesRepoUrl = uri("https://repo.opencollab.dev/maven-releases")
+                val snapshotsRepoUrl = uri("https://repo.opencollab.dev/maven-snapshots")
+                url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
+            }
+        }
     }
 }

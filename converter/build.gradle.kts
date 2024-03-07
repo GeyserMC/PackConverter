@@ -19,5 +19,6 @@ tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
         include("*")
     }
 
+    archiveFileName.set("PackConverter-lib.jar")
     archiveClassifier.set("")
 }
