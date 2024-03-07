@@ -83,6 +83,10 @@ public final class Languages {
 
     private String getLanguageCode(String language) {
         String[] parts = language.split("_");
+        // Not all languages are 2 parts
+        if (parts.length == 1) {
+            return parts[0].toLowerCase();
+        }
         return parts[0] + "_" + parts[1].toUpperCase();
     }
 }
