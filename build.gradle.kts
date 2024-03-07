@@ -45,11 +45,12 @@ allprojects {
         publications.create<MavenPublication>("library") {
             artifact(tasks.shadowJar)
         }
+        val repoName = if (version.toString().endsWith("SNAPSHOT")) "maven-snapshots" else "maven-releases"
         repositories {
-            maven {
-                val releasesRepoUrl = uri("https://repo.opencollab.dev/maven-releases")
-                val snapshotsRepoUrl = uri("https://repo.opencollab.dev/maven-snapshots")
-                url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
+            maven("https://repo.opencollab.dev/${repoName}/") {
+                credentials.username = System.getenv("OPENCOLLAB_USERNAME")
+                credentials.password = System.getenv("OPENCOLLAB_PASSWORD")
+                name = "opencollab"
             }
         }
     }

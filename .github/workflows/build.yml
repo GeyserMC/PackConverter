@@ -59,7 +59,7 @@ jobs:
         if: ${{ success() && github.repository == 'GeyserMC/PackConverter' && github.ref_name == 'master' }}
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5
         env:
-          ORG_GRADLE_PROJECT_geysermcUsername: ${{ vars.DEPLOY_USER }}
-          ORG_GRADLE_PROJECT_geysermcPassword: ${{ secrets.DEPLOY_PASS }}
+          OPENCOLLAB_USERNAME: ${{ vars.DEPLOY_USER }}
+          OPENCOLLAB_PASSWORD: ${{ secrets.DEPLOY_PASS }}
         with:
           arguments: :converter:publish
