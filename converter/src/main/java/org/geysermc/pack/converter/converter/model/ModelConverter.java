@@ -89,6 +89,11 @@ public class ModelConverter implements Converter<ModelConversionData> {
             String value = model.key().value();
             context.debug("Converting model " + model.key().key() + ":" + value);
 
+            // TODO: Convert item models but save differently?
+            if (value.startsWith("item/")) {
+                continue;
+            }
+
             ModelEntity modelEntity = new ModelEntity();
             modelEntity.formatVersion(FORMAT_VERSION);
 
@@ -120,7 +125,7 @@ public class ModelConverter implements Converter<ModelConversionData> {
 
                 Bones bone = new Bones();
                 bone.name("bone_" + i++);
-                bone.pivot(new float[] { 0, 0, 0 });
+                bone.pivot(new float[] { ELEMENT_OFFSET[0], ELEMENT_OFFSET[1], -ELEMENT_OFFSET[2] });
 
                 Cubes cube = new Cubes();
                 cube.origin(new float[] { ELEMENT_OFFSET[0] - to[0], from[1], from[2] - ELEMENT_OFFSET[2] });

@@ -27,7 +27,7 @@ allprojects {
         maven("https://repo.unnamed.team/repository/unnamed-public/")
     }
 
-    group = "org.geysermc"
+    group = "org.geysermc.pack"
     version = "3.0-SNAPSHOT"
 
     java.sourceCompatibility = JavaVersion.VERSION_17
