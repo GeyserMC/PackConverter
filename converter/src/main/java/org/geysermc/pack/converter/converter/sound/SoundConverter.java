@@ -37,7 +37,6 @@ import org.geysermc.pack.converter.converter.Converter;
 import org.geysermc.pack.converter.data.BaseConversionData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
-import team.unnamed.creative.sound.Sound;
 import team.unnamed.creative.sound.SoundEntry;
 import team.unnamed.creative.sound.SoundEvent;
 import team.unnamed.creative.sound.SoundRegistry;
@@ -46,7 +45,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Collection;
-import java.util.Map;
 
 @AutoService(Converter.class)
 public class SoundConverter extends BaseConverter {

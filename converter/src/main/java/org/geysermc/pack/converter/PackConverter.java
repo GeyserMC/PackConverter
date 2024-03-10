@@ -41,17 +41,13 @@ import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackReader;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * Handles the conversion of a resource pack.

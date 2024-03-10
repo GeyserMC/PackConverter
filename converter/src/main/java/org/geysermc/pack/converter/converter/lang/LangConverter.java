@@ -27,26 +27,15 @@
 package org.geysermc.pack.converter.converter.lang;
 
 import com.google.auto.service.AutoService;
-import org.apache.commons.io.file.PathUtils;
-import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitions;
-import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.Sounds;
-import org.geysermc.pack.converter.Constants;
 import org.geysermc.pack.converter.PackConversionContext;
 import org.geysermc.pack.converter.converter.BaseConverter;
 import org.geysermc.pack.converter.converter.Converter;
 import org.geysermc.pack.converter.data.BaseConversionData;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.lang.Language;
-import team.unnamed.creative.sound.Sound;
-import team.unnamed.creative.sound.SoundEvent;
-import team.unnamed.creative.sound.SoundRegistry;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Properties;
 import java.util.regex.Pattern;
 
 @AutoService(Converter.class)
