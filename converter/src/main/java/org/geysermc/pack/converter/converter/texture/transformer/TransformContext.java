@@ -99,7 +99,7 @@ public class TransformContext {
      * @throws IOException if an error occurs while converting the image to bytes
      */
     public void offer(@NotNull Key key, @NotNull BufferedImage image, @NotNull String format) throws IOException {
-        this.offer(Texture.of(key, Writable.bytes(ImageUtil.toByteArray(image, format))));
+        this.offer(Texture.texture(key, Writable.bytes(ImageUtil.toByteArray(image, format))));
     }
 
     /**

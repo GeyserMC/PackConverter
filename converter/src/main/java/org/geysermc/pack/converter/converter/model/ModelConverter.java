@@ -48,11 +48,11 @@ import org.geysermc.pack.converter.data.ModelConversionData;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.base.CubeFace;
-import team.unnamed.creative.base.Vector4Float;
 import team.unnamed.creative.model.Element;
 import team.unnamed.creative.model.ElementFace;
 import team.unnamed.creative.model.ElementRotation;
 import team.unnamed.creative.model.Model;
+import team.unnamed.creative.texture.TextureUV;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -151,7 +151,7 @@ public class ModelConverter implements Converter<ModelConversionData> {
                 for (Map.Entry<CubeFace, ElementFace> entry : element.faces().entrySet()) {
                     CubeFace face = entry.getKey();
                     ElementFace elementFace = entry.getValue();
-                    if (elementFace.uv() == null) {
+                    if (elementFace.uv0() == null) {
                         continue;
                     }
 
@@ -159,7 +159,7 @@ public class ModelConverter implements Converter<ModelConversionData> {
                     // divides the UV by 16, so we need to multiply it by 16
 
                     String texture = elementFace.texture().replace("#", "");
-                    applyUv(uv, face, texture, elementFace.uv().multiply(ElementFace.MINECRAFT_UV_UNIT));
+                    applyUv(uv, face, texture, multiplyUv(elementFace.uv0(), 16f));
                 }
 
                 cube.uv(uv);
@@ -188,17 +188,21 @@ public class ModelConverter implements Converter<ModelConversionData> {
         return new ModelConversionData(inputDirectory, outputDirectory);
     }
 
-    private static void applyUv(Uv uv, CubeFace face, String texture, Vector4Float faceUv) {
+    private TextureUV multiplyUv(TextureUV textureUV, float mult) {
+        return TextureUV.uv(textureUV.from().multiply(mult), textureUV.to().multiply(mult));
+    }
+
+    private static void applyUv(Uv uv, CubeFace face, String texture, TextureUV faceUv) {
         float[] uvs;
         float[] uvSize;
 
         // These values are flipped for some reason
         if (face == CubeFace.DOWN || face == CubeFace.UP) {
-            uvs = new float[] { faceUv.x2(), faceUv.y2() };
-            uvSize = new float[] { faceUv.x() - faceUv.x2(), faceUv.y() - faceUv.y2() };
+            uvs = new float[] { faceUv.to().x(), faceUv.to().y() };
+            uvSize = new float[] { faceUv.from().x() - faceUv.to().x(), faceUv.from().y() - faceUv.to().y() };
         } else {
-            uvs = new float[] { faceUv.x(), faceUv.y() };
-            uvSize = new float[] { faceUv.x2() - faceUv.x(), faceUv.y2() - faceUv.y() };
+            uvs = new float[] { faceUv.from().x(), faceUv.from().y() };
+            uvSize = new float[] { faceUv.to().x() - faceUv.from().x(), faceUv.to().y() - faceUv.from().y() };
         }
 
         switch (face) {

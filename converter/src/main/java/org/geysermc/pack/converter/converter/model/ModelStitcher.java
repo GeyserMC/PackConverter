@@ -161,7 +161,7 @@ public class ModelStitcher {
     }
 
     public Model stitch() {
-        return Model.builder()
+        return Model.model()
                 .key(this.baseModel.key())
                 .ambientOcclusion(this.ambientOcclusion)
                 .display(this.display)
@@ -191,6 +191,7 @@ public class ModelStitcher {
         // Need to download the client jar, then use the
         // client jar to get the vanilla models, so we can
         // ensure all parents exist to convert them to Bedrock.
+        // TODO Make the location of this configurable
         Path vanillaPackPath = Paths.get("vanilla-pack.zip");
         VanillaPackProvider.create(vanillaPackPath, log);
 
