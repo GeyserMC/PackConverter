@@ -29,11 +29,9 @@ package org.geysermc.pack.util;
 import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * https://stackoverflow.com/a/39043903/5299903
@@ -59,6 +57,6 @@ public class CleanProperties extends Properties {
 
     @Override
     public void store(final OutputStream out, final String comments) throws IOException {
-        super.store(new StripFirstLineStream(out), null);
+        super.store(new OutputStreamWriter(new StripFirstLineStream(out), StandardCharsets.UTF_8), comments);
     }
 }
