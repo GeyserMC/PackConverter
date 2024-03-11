@@ -30,11 +30,3 @@ dependencies {
 java {
     withSourcesJar()
 }
-
-publishing {
-    publications {
-        register("publish", MavenPublication::class) {
-            from(project.components["java"])
-        }
-    }
-}

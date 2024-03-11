@@ -21,6 +21,6 @@ application {
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    archiveFileName.set("PackConverter-Standalone.jar")
-    archiveClassifier.set("")
+    archiveClassifier.set("all")
+    archiveFileName.set("PackConverter.jar")
 }
