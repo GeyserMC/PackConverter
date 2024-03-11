@@ -1,6 +1,6 @@
 plugins {
     `maven-publish` apply true
-    id("com.github.johnrengelman.shadow")
+    id("com.github.johnrengelman.shadow") apply false
 }
 
 publishing {
