@@ -1,6 +1,5 @@
 plugins {
     id("pack.base-conventions")
-    id("pack.publish-conventions")
 }
 
 subprojects{
@@ -11,12 +10,4 @@ subprojects{
 
     java.sourceCompatibility = JavaVersion.VERSION_17
     java.targetCompatibility = JavaVersion.VERSION_17
-
-    publishing {
-        publications {
-            register("publish", MavenPublication::class) {
-                from(project.components["java"])
-            }
-        }
-    }
 }
