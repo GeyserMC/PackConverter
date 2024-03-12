@@ -26,6 +26,7 @@
 
 package org.geysermc.pack.converter;
 
+import org.apache.commons.io.file.PathUtils;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.converter.ActionListener;
 import org.geysermc.pack.converter.converter.Converter;
@@ -310,7 +311,7 @@ public final class PackConverter {
      */
     private void cleanup() {
         try {
-            Files.delete(tmpDir);
+            PathUtils.delete(tmpDir);
         } catch (IOException ignored) {
         }
     }
