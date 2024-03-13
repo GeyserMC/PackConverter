@@ -54,4 +54,4 @@ jobs:
           OPENCOLLAB_USERNAME: ${{ vars.DEPLOY_USER }}
           OPENCOLLAB_PASSWORD: ${{ secrets.DEPLOY_PASS }}
         with:
-          arguments: :converter:publish
+          arguments: publish
