@@ -1,5 +1,15 @@
 plugins {
-    id("application")
+    `java-library`
+    application
+    id("com.github.johnrengelman.shadow") apply true
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDir("src/main/java/resources")
+        }
+    }
 }
 
 dependencies {
@@ -11,10 +21,5 @@ application {
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    from("src/main/java/resources") {
-        include("*")
-    }
-
     archiveFileName.set("PackConverter.jar")
-    archiveClassifier.set("")
 }
