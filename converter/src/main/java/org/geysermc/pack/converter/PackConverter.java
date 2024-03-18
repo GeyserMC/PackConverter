@@ -153,7 +153,7 @@ public final class PackConverter {
      * @param converters the converters to add
      * @return this instance
      */
-    public PackConverter converters(@NotNull List<Converter<?>> converters) {
+    public PackConverter converters(@NotNull List<? extends Converter<?>> converters) {
         this.converters.addAll(converters);
         return this;
     }

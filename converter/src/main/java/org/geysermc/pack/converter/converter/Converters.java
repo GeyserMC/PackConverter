@@ -31,14 +31,14 @@ import java.util.ServiceLoader;
 
 public class Converters {
 
-    public static List<Converter<?>> defaultConverters() {
+    public static List<? extends Converter<?>> defaultConverters() {
         return defaultConverters(false);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static List<Converter<?>> defaultConverters(boolean experimental) {
-        return (List) ServiceLoader.load(Converter.class).stream()
+    public static List<? extends Converter<?>> defaultConverters(boolean experimental) {
+        return ServiceLoader.load(Converter.class).stream()
                 .map(ServiceLoader.Provider::get)
+                .map(c -> (Converter<?>)c)
                 .filter(converter -> experimental || !converter.isExperimental())
                 .toList();
     }
