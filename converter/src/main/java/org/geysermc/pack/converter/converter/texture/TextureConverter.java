@@ -27,9 +27,7 @@
 package org.geysermc.pack.converter.converter.texture;
 
 import com.google.auto.service.AutoService;
-import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.PackConversionContext;
-import org.geysermc.pack.converter.PackConverter;
 import org.geysermc.pack.converter.converter.Converter;
 import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
 import org.geysermc.pack.converter.converter.texture.transformer.TransformContext;
@@ -37,12 +35,10 @@ import org.geysermc.pack.converter.converter.texture.transformer.TransformedText
 import org.geysermc.pack.converter.data.TextureConversionData;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
-import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.texture.Texture;
 
 import javax.imageio.ImageIO;
-import java.awt.AlphaComposite;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -149,13 +145,7 @@ public class TextureConverter implements Converter<TextureConversionData> {
     }
 
     @Override
-    public TextureConversionData createConversionData(
-        @NotNull PackConverter converter,
-        @NotNull Path inputDirectory,
-        @NotNull Path outputDirectory,
-        @NotNull ResourcePack javaResourcePack,
-        @NotNull BedrockResourcePack bedrockResourcePack
-    ) {
-        return new TextureConversionData(inputDirectory, outputDirectory, converter.textureSubdirectory());
+    public TextureConversionData createConversionData(@NotNull ConversionDataCreationContext context) {
+        return new TextureConversionData(context.inputDirectory(), context.outputDirectory(), context.converter().textureSubdirectory());
     }
 }

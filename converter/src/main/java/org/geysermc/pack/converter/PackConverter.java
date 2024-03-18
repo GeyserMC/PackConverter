@@ -26,7 +26,6 @@
 
 package org.geysermc.pack.converter;
 
-import lombok.Getter;
 import org.apache.commons.io.file.PathUtils;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.converter.ActionListener;
@@ -70,7 +69,6 @@ public final class PackConverter {
     private Path tmpDir;
 
     private PackageHandler packageHandler = PackageHandler.ZIP;
-    @Getter
     private LogListener logListener = new DefaultLogListener();
 
     /**
@@ -260,9 +258,13 @@ public final class PackConverter {
             ResourcePack javaResourcePack = this.compressed ? MinecraftResourcePackReader.minecraft().readFromZipFile(this.input) : MinecraftResourcePackReader.minecraft().read(NioDirectoryFileTreeReader.read(this.input));
             BedrockResourcePack bedrockResourcePack = new BedrockResourcePack(this.tmpDir);
 
+            final Converter.ConversionDataCreationContext conversionDataCreationContext = new Converter.ConversionDataCreationContext(
+                this, logListener, input, this.tmpDir, javaResourcePack
+            );
+
             int errors = 0;
             for (Converter converter : this.converters) {
-                ConversionData data = converter.createConversionData(this, input, this.tmpDir, javaResourcePack, bedrockResourcePack);
+                ConversionData data = converter.createConversionData(conversionDataCreationContext);
                 PackConversionContext<?> context = new PackConversionContext<>(data, this, javaResourcePack, bedrockResourcePack, this.logListener);
 
                 List<ActionListener<?>> actionListeners = this.actionListeners.getOrDefault(data.getClass(), List.of());
