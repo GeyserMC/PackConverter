@@ -26,7 +26,9 @@
 
 package org.geysermc.pack.converter.data;
 
+import lombok.Getter;
 import net.kyori.adventure.key.Key;
+import org.geysermc.pack.converter.converter.model.ModelStitcher;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.model.Model;
 
@@ -36,9 +38,12 @@ import java.util.Map;
 
 public class ModelConversionData extends BaseConversionData {
     private final Map<Key, Model> stitchedModels = new HashMap<>();
+    @Getter
+    private final ModelStitcher.Provider modelProvider;
 
-    public ModelConversionData(@NotNull Path inputDirectory, @NotNull Path outputDirectory) {
+    public ModelConversionData(@NotNull Path inputDirectory, @NotNull Path outputDirectory, ModelStitcher.Provider modelProvider) {
         super(inputDirectory, outputDirectory);
+        this.modelProvider = modelProvider;
     }
 
     public void addStitchedModel(@NotNull Model model) {

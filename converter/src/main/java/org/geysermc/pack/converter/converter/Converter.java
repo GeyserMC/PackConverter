@@ -26,10 +26,12 @@
 
 package org.geysermc.pack.converter.converter;
 
+import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.PackConversionContext;
 import org.geysermc.pack.converter.PackConverter;
 import org.geysermc.pack.converter.data.ConversionData;
 import org.jetbrains.annotations.NotNull;
+import team.unnamed.creative.ResourcePack;
 
 import java.nio.file.Path;
 
@@ -37,7 +39,13 @@ public interface Converter<T extends ConversionData> {
 
     void convert(@NotNull PackConversionContext<T> context) throws Exception;
 
-    T createConversionData(@NotNull PackConverter converter, @NotNull Path inputDirectory, @NotNull Path outputDirectory);
+    T createConversionData(
+        @NotNull PackConverter converter,
+        @NotNull Path inputDirectory,
+        @NotNull Path outputDirectory,
+        @NotNull ResourcePack javaResourcePack,
+        @NotNull BedrockResourcePack bedrockResourcePack
+    );
 
     default boolean isExperimental() {
         return false;

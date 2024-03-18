@@ -26,16 +26,24 @@
 
 package org.geysermc.pack.converter.converter;
 
+import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.PackConverter;
 import org.geysermc.pack.converter.data.BaseConversionData;
 import org.jetbrains.annotations.NotNull;
+import team.unnamed.creative.ResourcePack;
 
 import java.nio.file.Path;
 
 public abstract class BaseConverter implements Converter<BaseConversionData> {
 
     @Override
-    public BaseConversionData createConversionData(@NotNull PackConverter converter, @NotNull Path inputDirectory, @NotNull Path outputDirectory) {
+    public BaseConversionData createConversionData(
+        @NotNull PackConverter converter,
+        @NotNull Path inputDirectory,
+        @NotNull Path outputDirectory,
+        @NotNull ResourcePack javaResourcePack,
+        @NotNull BedrockResourcePack bedrockResourcePack
+    ) {
         return new BaseConversionData(inputDirectory, outputDirectory);
     }
 }

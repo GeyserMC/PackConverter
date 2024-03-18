@@ -184,8 +184,17 @@ public class ModelConverter implements Converter<ModelConversionData> {
     }
 
     @Override
-    public ModelConversionData createConversionData(@NotNull PackConverter converter, @NotNull Path inputDirectory, @NotNull Path outputDirectory) {
-        return new ModelConversionData(inputDirectory, outputDirectory);
+    public ModelConversionData createConversionData(
+        @NotNull PackConverter converter,
+        @NotNull Path inputDirectory,
+        @NotNull Path outputDirectory,
+        @NotNull ResourcePack javaResourcePack,
+        @NotNull BedrockResourcePack bedrockResourcePack
+    ) {
+        return new ModelConversionData(
+            inputDirectory, outputDirectory,
+            ModelStitcher.vanillaProvider(javaResourcePack, converter.getLogListener())
+        );
     }
 
     private TextureUV multiplyUv(TextureUV textureUV, float mult) {

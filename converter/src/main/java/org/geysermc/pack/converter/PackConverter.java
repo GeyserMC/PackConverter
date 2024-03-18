@@ -26,6 +26,7 @@
 
 package org.geysermc.pack.converter;
 
+import lombok.Getter;
 import org.apache.commons.io.file.PathUtils;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.converter.ActionListener;
@@ -42,7 +43,6 @@ import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackReader;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
@@ -70,6 +70,7 @@ public final class PackConverter {
     private Path tmpDir;
 
     private PackageHandler packageHandler = PackageHandler.ZIP;
+    @Getter
     private LogListener logListener = new DefaultLogListener();
 
     /**
@@ -261,7 +262,7 @@ public final class PackConverter {
 
             int errors = 0;
             for (Converter converter : this.converters) {
-                ConversionData data = converter.createConversionData(this, input, this.tmpDir);
+                ConversionData data = converter.createConversionData(this, input, this.tmpDir, javaResourcePack, bedrockResourcePack);
                 PackConversionContext<?> context = new PackConversionContext<>(data, this, javaResourcePack, bedrockResourcePack, this.logListener);
 
                 List<ActionListener<?>> actionListeners = this.actionListeners.getOrDefault(data.getClass(), List.of());
