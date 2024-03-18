@@ -12,6 +12,7 @@ sourceSets {
 
 dependencies {
     api(project(":pack-schema-api"))
+    compileOnly(project(":bedrock-pack-schema")) // Is provided by pack-schema-api for consumers, but not for us during compile time
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("commons-io:commons-io:2.11.0")
     implementation("com.twelvemonkeys.imageio:imageio-tga:3.9.4")
