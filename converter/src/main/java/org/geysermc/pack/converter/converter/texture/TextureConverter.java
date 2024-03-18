@@ -38,7 +38,8 @@ import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
