@@ -26,16 +26,13 @@
 
 package org.geysermc.pack.converter.converter;
 
-import org.geysermc.pack.converter.PackConverter;
 import org.geysermc.pack.converter.data.BaseConversionData;
 import org.jetbrains.annotations.NotNull;
-
-import java.nio.file.Path;
 
 public abstract class BaseConverter implements Converter<BaseConversionData> {
 
     @Override
-    public BaseConversionData createConversionData(@NotNull PackConverter converter, @NotNull Path inputDirectory, @NotNull Path outputDirectory) {
-        return new BaseConversionData(inputDirectory, outputDirectory);
+    public BaseConversionData createConversionData(@NotNull ConversionDataCreationContext context) {
+        return new BaseConversionData(context.inputDirectory(), context.outputDirectory());
     }
 }

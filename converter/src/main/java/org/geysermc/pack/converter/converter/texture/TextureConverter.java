@@ -28,7 +28,6 @@ package org.geysermc.pack.converter.converter.texture;
 
 import com.google.auto.service.AutoService;
 import org.geysermc.pack.converter.PackConversionContext;
-import org.geysermc.pack.converter.PackConverter;
 import org.geysermc.pack.converter.converter.Converter;
 import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
 import org.geysermc.pack.converter.converter.texture.transformer.TransformContext;
@@ -147,7 +146,7 @@ public class TextureConverter implements Converter<TextureConversionData> {
     }
 
     @Override
-    public TextureConversionData createConversionData(@NotNull PackConverter converter, @NotNull Path inputDirectory, @NotNull Path outputDirectory) {
-        return new TextureConversionData(inputDirectory, outputDirectory, converter.textureSubdirectory());
+    public TextureConversionData createConversionData(@NotNull ConversionDataCreationContext context) {
+        return new TextureConversionData(context.inputDirectory(), context.outputDirectory(), context.converter().textureSubdirectory());
     }
 }

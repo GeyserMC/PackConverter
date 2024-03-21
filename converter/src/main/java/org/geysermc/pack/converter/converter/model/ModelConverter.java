@@ -42,7 +42,6 @@ import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bon
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.Up;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.West;
 import org.geysermc.pack.converter.PackConversionContext;
-import org.geysermc.pack.converter.PackConverter;
 import org.geysermc.pack.converter.converter.Converter;
 import org.geysermc.pack.converter.data.ModelConversionData;
 import org.jetbrains.annotations.NotNull;
@@ -54,7 +53,6 @@ import team.unnamed.creative.model.ElementRotation;
 import team.unnamed.creative.model.Model;
 import team.unnamed.creative.texture.TextureUV;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -184,8 +182,11 @@ public class ModelConverter implements Converter<ModelConversionData> {
     }
 
     @Override
-    public ModelConversionData createConversionData(@NotNull PackConverter converter, @NotNull Path inputDirectory, @NotNull Path outputDirectory) {
-        return new ModelConversionData(inputDirectory, outputDirectory);
+    public ModelConversionData createConversionData(@NotNull ConversionDataCreationContext context) {
+        return new ModelConversionData(
+            context.inputDirectory(), context.outputDirectory(),
+            ModelStitcher.vanillaProvider(context.javaResourcePack(), context.logListener())
+        );
     }
 
     private TextureUV multiplyUv(TextureUV textureUV, float mult) {

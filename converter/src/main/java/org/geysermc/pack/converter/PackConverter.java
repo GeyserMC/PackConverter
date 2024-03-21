@@ -42,7 +42,6 @@ import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackReader;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
@@ -152,7 +151,7 @@ public final class PackConverter {
      * @param converters the converters to add
      * @return this instance
      */
-    public PackConverter converters(@NotNull List<Converter<?>> converters) {
+    public PackConverter converters(@NotNull List<? extends Converter<?>> converters) {
         this.converters.addAll(converters);
         return this;
     }
@@ -259,9 +258,13 @@ public final class PackConverter {
             ResourcePack javaResourcePack = this.compressed ? MinecraftResourcePackReader.minecraft().readFromZipFile(this.input) : MinecraftResourcePackReader.minecraft().read(NioDirectoryFileTreeReader.read(this.input));
             BedrockResourcePack bedrockResourcePack = new BedrockResourcePack(this.tmpDir);
 
+            final Converter.ConversionDataCreationContext conversionDataCreationContext = new Converter.ConversionDataCreationContext(
+                this, logListener, input, this.tmpDir, javaResourcePack
+            );
+
             int errors = 0;
             for (Converter converter : this.converters) {
-                ConversionData data = converter.createConversionData(this, input, this.tmpDir);
+                ConversionData data = converter.createConversionData(conversionDataCreationContext);
                 PackConversionContext<?> context = new PackConversionContext<>(data, this, javaResourcePack, bedrockResourcePack, this.logListener);
 
                 List<ActionListener<?>> actionListeners = this.actionListeners.getOrDefault(data.getClass(), List.of());
