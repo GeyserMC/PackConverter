@@ -74,7 +74,7 @@ public class ModelConverter implements Converter<ModelConversionData> {
             return;
         }
 
-        ModelStitcher.Provider provider = ModelStitcher.vanillaProvider(javaPack, context.logListener());
+        ModelStitcher.Provider provider = context.data().getModelProvider();
         for (Model model : models) {
             model = new ModelStitcher(provider, model).stitch();
 
