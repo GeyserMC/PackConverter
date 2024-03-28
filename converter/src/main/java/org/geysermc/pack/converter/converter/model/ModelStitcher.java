@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 GeyserMC. http://geysermc.org
+ * Copyright (c) 2019-2024 GeyserMC. http://geysermc.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -27,6 +27,7 @@
 package org.geysermc.pack.converter.converter.model;
 
 import net.kyori.adventure.key.Key;
+import org.geysermc.pack.converter.util.DefaultLogListener;
 import org.geysermc.pack.converter.util.LogListener;
 import org.geysermc.pack.converter.util.VanillaPackProvider;
 import org.jetbrains.annotations.NotNull;
@@ -50,8 +51,9 @@ import java.util.Map;
 public class ModelStitcher {
     private final Provider provider;
     private final Model baseModel;
+    private final LogListener log;
 
-    private boolean ambientOcclusion;
+    private final boolean ambientOcclusion;
     private final Map<ItemTransform.Type, ItemTransform> display = new HashMap<>();
 
     private List<ModelTexture> textureLayers = new ArrayList<>();
@@ -63,8 +65,14 @@ public class ModelStitcher {
     private final List<ItemOverride> overrides = new ArrayList<>();
 
     public ModelStitcher(@NotNull ModelStitcher.Provider provider, @NotNull Model baseModel) {
+        this(provider, baseModel, new DefaultLogListener());
+    }
+
+    public ModelStitcher(@NotNull ModelStitcher.Provider provider, @NotNull Model baseModel, @NotNull LogListener log) {
         this.provider = provider;
         this.baseModel = baseModel;
+        this.log = log;
+
         this.ambientOcclusion = baseModel.ambientOcclusion();
         this.elements.addAll(baseModel.elements());
         this.overrides.addAll(baseModel.overrides());
@@ -152,7 +160,7 @@ public class ModelStitcher {
         if (parentKey != null) {
             Model parentModel = this.provider.model(parentKey);
             if (parentModel == null) {
-                System.err.println("Could not find parent model " + parentKey + " for model " + model.key());
+                log.error("Could not find parent model " + parentKey + " for model " + model.key());
                 return;
             }
 

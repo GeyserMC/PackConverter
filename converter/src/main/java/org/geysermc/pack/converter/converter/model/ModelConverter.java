@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 GeyserMC. http://geysermc.org
+ * Copyright (c) 2019-2024 GeyserMC. http://geysermc.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -76,7 +76,7 @@ public class ModelConverter implements Converter<ModelConversionData> {
 
         ModelStitcher.Provider provider = context.data().getModelProvider();
         for (Model model : models) {
-            model = new ModelStitcher(provider, model).stitch();
+            model = new ModelStitcher(provider, model, context.logListener()).stitch();
 
             List<Element> elements = model.elements();
             if (elements.isEmpty()) {
