@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 GeyserMC. http://geysermc.org
+ * Copyright (c) 2019-2024 GeyserMC. http://geysermc.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -75,6 +75,7 @@ public class BedrockResourcePack {
 
     private Map<String, ModelEntity> blockModels;
     private Map<String, ModelEntity> entityModels;
+    private Map<String, byte[]> extraFiles;
 
     public BedrockResourcePack(@NotNull Path directory) {
         this(directory, null, null, null);
@@ -277,6 +278,25 @@ public class BedrockResourcePack {
     }
 
     /**
+     * Get the extra files of the resource pack.
+     *
+     * @return the extra files of the resource pack
+     */
+    @Nullable
+    public Map<String, byte[]> extraFiles() {
+        return this.extraFiles;
+    }
+
+    /**
+     * Set the files of the resource pack.
+     *
+     * @param extraFiles the extra files of the resource pack
+     */
+    public void extraFiles(@Nullable Map<String, byte[]> extraFiles) {
+        this.extraFiles = extraFiles;
+    }
+
+    /**
      * Add an item to the resource pack.
      *
      * @param id the id of the item
@@ -431,6 +451,20 @@ public class BedrockResourcePack {
     }
 
     /**
+     * Add an extra file to the resource pack.
+     *
+     * @param bytes the bytes of the file
+     * @param location the location of the file
+     */
+    public void addExtraFile(byte[] bytes, @NotNull String location) {
+        if (this.extraFiles == null) {
+            this.extraFiles = new HashMap<>();
+        }
+
+        this.extraFiles.put(location, bytes);
+    }
+
+    /**
      * Exports the resource pack to the specified directory.
      *
      * @throws IOException if an error occurs while exporting the resource pack
@@ -486,6 +520,14 @@ public class BedrockResourcePack {
 
             for (Map.Entry<String, Map<String, String>> language : this.languages.languages().entrySet()) {
                 exportProperties(this.directory.resolve("texts/" + language.getKey() + ".lang"), language.getValue());
+            }
+        }
+
+        if (this.extraFiles != null) {
+            for (Map.Entry<String, byte[]> extraFile : this.extraFiles.entrySet()) {
+                Path extraFilePath = this.directory.resolve(extraFile.getKey());
+                Files.createDirectories(extraFilePath.getParent());
+                Files.write(extraFilePath, extraFile.getValue());
             }
         }
     }
