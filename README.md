@@ -4,7 +4,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Discord](https://img.shields.io/discord/613163671870242838.svg?color=%237289da&label=discord)](http://discord.geysermc.org/)
-[![HitCount](http://hits.dwyl.io/GeyserMC/PackConverter.svg)](http://hits.dwyl.io/GeyserMC/PackConverter)
+[![HitCount](http://hits.dwyl.com/GeyserMC/PackConverter.svg)](http://hits.dwyl.com/GeyserMC/PackConverter)
 
 PackConverter is a library for converting Java Edition resource packs to Bedrock Edition.
 
