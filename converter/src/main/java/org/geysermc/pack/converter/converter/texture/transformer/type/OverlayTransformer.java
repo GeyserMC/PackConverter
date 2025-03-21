@@ -70,8 +70,8 @@ public class OverlayTransformer implements TextureTransformer {
             new OverlayData("item/leather_chestplate.png", "item/leather_chestplate_overlay.png", "items/leather_chestplate.png", true),
             new OverlayData("item/leather_helmet.png", "item/leather_helmet_overlay.png", "items/leather_helmet.png", true),
             new OverlayData("item/leather_leggings.png", "item/leather_leggings_overlay.png", "items/leather_leggings.png", true),
-            new OverlayData("models/armor/leather_layer_1.png", "models/armor/leather_layer_1_overlay.png", "models/armor/leather_1.png", true),
-            new OverlayData("models/armor/leather_layer_2.png", "models/armor/leather_layer_2_overlay.png", "models/armor/leather_2.png", true),
+            new OverlayData("entity/equipment/humanoid/leather.png", "entity/equipment/humanoid/leather_overlay.png", "models/armor/leather_1.png", true),
+            new OverlayData("entity/equipment/humanoid_leggings/leather.png", "entity/equipment/humanoid_leggings/leather_overlay.png", "models/armor/leather_2.png", true),
 
             // Phantom
             new OverlayData("entity/phantom.png", "entity/phantom_eyes.png", "entity/phantom.png", true),

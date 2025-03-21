@@ -85,15 +85,29 @@ public class TextureConverter implements Converter<TextureConversionData> {
             Path outputPath = texturePath.resolve(output);
             String relativePath = texturePath.relativize(outputPath).toString();
 
-            String input = relativePath.substring(0, relativePath.indexOf(File.separator));
+            String rootPath = relativePath.substring(0, relativePath.indexOf(File.separator));
 
-            Map<String, String> keyMappings = mappings.textures(input);
-            if (keyMappings != null) {
+            Object mappingObject = mappings.textures(relativePath);
+            String input = null;
+
+            if (mappingObject == null) {
+                input = rootPath;
+                mappingObject = mappings.textures(input);
+            }
+
+            if (mappingObject instanceof Map<?,?> keyMappings) {
                 String sanitizedName = output.substring(output.indexOf(File.separator) + 1).replace(".png", "");
-                String bedrockPath = keyMappings.get(sanitizedName);
+                String bedrockPath = (String) keyMappings.get(sanitizedName);
                 if (bedrockPath != null) {
                     output = output.replace(sanitizedName, bedrockPath);
                 }
+            } else if (mappingObject instanceof String str) {
+                output = str;
+                input = output.substring(0, relativePath.indexOf(File.separator));
+            }
+
+            if (input == null) {
+                input = rootPath;
             }
 
             String bedrockDirectory = DIRECTORY_LOCATIONS.getOrDefault(input, input);

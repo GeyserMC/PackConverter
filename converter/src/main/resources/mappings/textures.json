@@ -1352,5 +1352,17 @@
   },
   "trims": {
 
-  }
+  },
+
+  "entity/equipment/humanoid/chainmail": "models/armor/chain_1",
+  "entity/equipment/humanoid_leggings/chainmail": "models/armor/chain_2",
+  "entity/equipment/humanoid/iron": "models/armor/iron_1",
+  "entity/equipment/humanoid_leggings/iron": "models/armor/iron_2",
+  "entity/equipment/humanoid/gold": "models/armor/gold_1",
+  "entity/equipment/humanoid_leggings/gold": "models/armor/gold_2",
+  "entity/equipment/humanoid/diamond": "models/armor/diamond_1",
+  "entity/equipment/humanoid_leggings/diamond": "models/armor/diamond_2",
+  "entity/equipment/humanoid/netherite": "models/armor/netherite_1",
+  "entity/equipment/humanoid_leggings/netherite": "models/armor/netherite_2",
+  "entity/equipment/humanoid/turtle_scute": "models/armor/turtle_1"
 }

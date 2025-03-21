@@ -37,11 +37,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @ToString
-public class TextureMappings extends LinkedHashMap<String, LinkedHashMap<String, String>> {
+public class TextureMappings extends LinkedHashMap<String, Object> {
     private static TextureMappings INSTANCE;
 
     @Nullable
-    public Map<String, String> textures(@NotNull String key) {
+    public Object textures(@NotNull String key) {
         return this.get(key);
     }
 
