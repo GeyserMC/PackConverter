@@ -26,6 +26,10 @@ dependencyResolutionManagement {
         maven("https://repo.opencollab.dev/maven-snapshots")
 
         // Java pack library
-        maven("https://repo.unnamed.team/repository/unnamed-public/")
+        // maven("https://repo.unnamed.team/repository/unnamed-public/")
+
+        maven { // We need a snapshot version of creative for now
+            url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+        }
     }
 }

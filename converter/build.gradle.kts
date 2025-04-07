@@ -20,8 +20,8 @@ dependencies {
     api("net.kyori:adventure-api:4.14.0")
     api("net.kyori:adventure-text-serializer-gson:4.14.0")
     api("net.kyori:adventure-text-serializer-legacy:4.14.0")
-    api("team.unnamed:creative-api:1.7.0")
-    api("team.unnamed:creative-serializer-minecraft:1.7.0")
+    api("team.unnamed:creative-api:1.8.2-SNAPSHOT")
+    api("team.unnamed:creative-serializer-minecraft:1.8.2-SNAPSHOT")
 
     compileOnly("com.google.auto.service:auto-service:1.0.1")
     annotationProcessor("com.google.auto.service:auto-service:1.0.1")

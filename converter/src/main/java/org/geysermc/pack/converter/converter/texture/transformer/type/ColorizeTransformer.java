@@ -44,8 +44,8 @@ import java.util.List;
 public class ColorizeTransformer implements TextureTransformer {
     private static final List<ColorizeData> COLORIZE_DATA = List.of(
         // Armor (Colors from px 9/1 from original cloth_1.png bedrock texture)
-        new ColorizeData(new Overlay("models/armor/leather_layer_1.png", new Color(167, 105, 67)), "models/armor/cloth_1.png"),
-        new ColorizeData(new Overlay("models/armor/leather_layer_2.png", new Color(167, 105, 67)), "models/armor/cloth_2.png"),
+        new ColorizeData(new Overlay("entity/equipment/humanoid/leather.png", new Color(167, 105, 67)), "models/armor/cloth_1.png"),
+        new ColorizeData(new Overlay("entity/equipment/humanoid_leggings/leather.png", new Color(167, 105, 67)), "models/armor/cloth_2.png"),
 
         // Grass, fern, water & co.
         new ColorizeData(new Overlay("block/large_fern_top.png", new Color(80, 121, 43)), "blocks/double_plant_fern_carried.png"), // 3/5 (double_plant_fern_carried.png)
