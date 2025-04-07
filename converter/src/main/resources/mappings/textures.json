@@ -965,7 +965,18 @@
     "zombie_villager/profession/shepherd": "zombie_villager2/professions/shepherd",
     "zombie_villager/profession/toolsmith": "zombie_villager2/professions/toolsmith",
     "zombie_villager/profession/weaponsmith": "zombie_villager2/professions/weaponsmith",
-    "piglin/zombified_piglin": "piglin/zombie_piglin.png"
+    "piglin/zombified_piglin": "piglin/zombie_piglin.png",
+    "cow/temperate_cow": "cow/cow_v2",
+    "cow/cold_cow": "cow/cow_cold",
+    "cow/warm_cow": "cow/cow_warm",
+    "cow/brown_mooshroom": "cow/brown_mooshroom_v2",
+    "cow/red_mooshroom": "cow/red_mooshroom_v2",
+    "chicken/temperate_chicken": "chicken/chicken",
+    "chicken/cold_chicken": "chicken/chicken_cold",
+    "chicken/warm_chicken": "chicken/chicken_warm",
+    "pig/temperate_pig": "pig/pig_v3",
+    "pig/cold_pig": "pig/pig_cold",
+    "pig/warm_pig": "pig/pig_warm"
   },
   "environment": {
 
