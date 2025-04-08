@@ -40,7 +40,7 @@ jobs:
 
       - name: Archive artifacts (Boostrap)
         # See https://github.com/actions/upload-artifact/commits
-        uses: actions/upload-artifact@a8a3f3ad30e3422c9c7b888a15615d19a852ae32
+        uses: actions/upload-artifact@6027e3dd177782cd8ab9af838c04fd81a07f1d47
         if: success()
         with:
           name: PackConverter CLI
