@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2024 GeyserMC. http://geysermc.org
+ * Copyright (c) 2019-2025 GeyserMC. http://geysermc.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@ import org.geysermc.pack.bedrock.resource.models.entity.ModelEntity;
 import org.geysermc.pack.bedrock.resource.render_controllers.RenderControllers;
 import org.geysermc.pack.bedrock.resource.sounds.SoundDefinitions;
 import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.Sounds;
+import org.geysermc.pack.bedrock.resource.textures.FlipbookTexture;
 import org.geysermc.pack.bedrock.resource.textures.ItemTexture;
 import org.geysermc.pack.bedrock.resource.textures.TerrainTexture;
 import org.geysermc.pack.bedrock.resource.textures.itemtexture.TextureData;
@@ -45,6 +46,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,6 +74,7 @@ public class BedrockResourcePack {
     private SoundDefinitions soundDefinitions;
     private Languages languages;
     private Map<String, RenderControllers> renderControllers;
+    private Map<String, FlipbookTexture> flipbookTextures;
 
     private Map<String, ModelEntity> blockModels;
     private Map<String, ModelEntity> entityModels;
@@ -161,6 +164,26 @@ public class BedrockResourcePack {
      */
     public void terrainTexture(@Nullable TerrainTexture terrainTexture) {
         this.terrainTexture = terrainTexture;
+    }
+
+
+    /**
+     * Get the flipbook textures of the resource pack.
+     *
+     * @return the flipbook textures of the resource pack
+     */
+    @Nullable
+    public Map<String, FlipbookTexture> flipbookTextures() {
+        return this.flipbookTextures;
+    }
+
+    /**
+     * Set the flipbook textures of the resource pack.
+     *
+     * @param flipbookTextures the flipbook textures of the resource pack
+     */
+    public void flipbookTextures(@Nullable Map<String, FlipbookTexture> flipbookTextures) {
+        this.flipbookTextures = flipbookTextures;
     }
 
     /**
@@ -338,6 +361,19 @@ public class BedrockResourcePack {
         this.terrainTexture.textureData().put(id, data);
     }
 
+    public void addFlipbookTexture(@NotNull String id, @NotNull String textureLocation, @NotNull int ticksPerFrame) {
+        if (this.flipbookTextures == null) {
+            this.flipbookTextures = new HashMap<>();
+        }
+
+        FlipbookTexture texture = new FlipbookTexture();
+        texture.atlasTile(id);
+        texture.flipbookTexture(textureLocation);
+        texture.ticksPerFrame(ticksPerFrame);
+
+        this.flipbookTextures.put(id, texture);
+    }
+
     /**
      * Add an attachable to the resource pack.
      *
@@ -485,6 +521,10 @@ public class BedrockResourcePack {
 
         if (this.terrainTexture != null) {
             exportJson(GSON, this.directory.resolve("textures/terrain_texture.json"), this.terrainTexture);
+        }
+
+        if (this.flipbookTextures != null) {
+            exportJson(GSON, this.directory.resolve("textures/flipbook_textures.json"), this.flipbookTextures.values());
         }
 
         if (this.attachables != null) {

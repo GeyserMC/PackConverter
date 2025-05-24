@@ -239,3 +239,5 @@ gradle-app.setting
 # Copyright header files
 .idea/*
 !.idea/copyright/
+
+test/
