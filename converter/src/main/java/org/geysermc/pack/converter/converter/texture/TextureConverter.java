@@ -63,7 +63,8 @@ public class TextureConverter implements Converter<TextureConversionData> {
 
     private static final Map<String, String> DIRECTORY_LOCATIONS = Map.of(
             "block", "blocks",
-            "item", "items"
+            "item", "items",
+            "gui", "ui"
     );
 
     @Override
