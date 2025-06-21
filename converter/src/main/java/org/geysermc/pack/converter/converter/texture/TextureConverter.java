@@ -84,9 +84,11 @@ public class TextureConverter implements Converter<TextureConversionData> {
             String output = texture.key().value();
             Path texturePath = context.outputDirectory().resolve(BEDROCK_TEXTURES_LOCATION);
             Path outputPath = texturePath.resolve(output);
-            String relativePath = texturePath.relativize(outputPath).toString();
+            String relativePath = texturePath.relativize(outputPath).toString().replace(File.separatorChar, '/');
 
-            String rootPath = relativePath.substring(0, relativePath.indexOf(File.separator));
+            if (relativePath.endsWith(".png")) relativePath = relativePath.substring(0, relativePath.length() - 4);
+
+            String rootPath = relativePath.substring(0, relativePath.indexOf('/'));
 
             Object mappingObject = mappings.textures(relativePath);
             String input = null;
@@ -98,13 +100,13 @@ public class TextureConverter implements Converter<TextureConversionData> {
 
             if (mappingObject instanceof Map<?,?> keyMappings) {
                 String sanitizedName = output.substring(output.indexOf(File.separator) + 1).replace(".png", "");
-                String bedrockPath = (String) keyMappings.get(sanitizedName);
+                String bedrockPath = (String) keyMappings.get(sanitizedName.substring(rootPath.length() + 1));
                 if (bedrockPath != null) {
-                    output = output.replace(sanitizedName, bedrockPath);
+                    output = output.replace(sanitizedName, rootPath + "/" + bedrockPath);
                 }
             } else if (mappingObject instanceof String str) {
-                output = str;
-                input = output.substring(0, relativePath.indexOf(File.separator));
+                output = str + ".png";
+                input = output.substring(0, output.indexOf('/'));
             }
 
             if (input == null) {
@@ -115,7 +117,7 @@ public class TextureConverter implements Converter<TextureConversionData> {
             if (context.data().textureSubdirectory() != null) {
                 bedrockDirectory = bedrockDirectory + "/" + context.data().textureSubdirectory();
             }
-            outputPath = texturePath.resolve(bedrockDirectory + "/" + output.substring(input.length()));
+            outputPath = texturePath.resolve((bedrockDirectory + "/" + output.substring(input.length())).replace('/', File.separatorChar));
 
             TransformedTexture transformedTexture = new TransformedTexture(texture, outputPath);
 
