@@ -473,6 +473,10 @@
     "dried_ghast_hydration_3_east": "dried_ghast_state_4_right",
     "dried_ghast_hydration_3_tentacles": "dried_ghast_state_4_tentacles",
     "dried_ghast_hydration_3_top": "dried_ghast_state_4_top",
+    "short_grass": "tallgrass",
+    "closed_eyeblossom": "eyeblossom_dormant",
+    "open_eyeblossom": "eyeblossom_stem_blooming",
+    "open_eyeblossom_emissive": "eyeblossom_eyes_blooming",
 
 
     "acacia_trapdoor": "acacia_trapdoor",
@@ -1659,11 +1663,7 @@
     "zombie_spawn_egg": "spawn_eggs/spawn_egg_zombie",
     "zombie_horse_spawn_egg": "spawn_eggs/spawn_egg_zombie_horse",
     "zombie_villager_spawn_egg": "spawn_eggs/spawn_egg_zombie_villager",
-    "zombified_piglin_spawn_egg": "spawn_eggs/spawn_egg_zombified_piglin",
-
-    "closed_eyeblossom": "eyeblossom_dormant",
-    "open_eyeblossom": "eyeblossom_stem_blooming",
-    "open_eyeblossom_emissive": "eyeblossom_eyes_blooming"
+    "zombified_piglin_spawn_egg": "spawn_eggs/spawn_egg_zombified_piglin"
   },
   "map": {
     "map_background": "map_background",
