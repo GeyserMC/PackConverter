@@ -1183,6 +1183,7 @@
 
     "sprites/hud/jump_bar_background": "horse_jump_empty",
     "sprites/hud/jump_bar_progress": "horse_jump_full",
+    "sprites/hud/jump_bar_cooldown": "dash_cooldown",
 
     "hanging_signs/acacia": "hanging_sign_acacia",
     "hanging_signs/bamboo": "hanging_sign_bamboo",
