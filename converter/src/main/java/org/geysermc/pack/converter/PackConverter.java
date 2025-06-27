@@ -301,8 +301,12 @@ public final class PackConverter {
      * @throws IOException if an I/O error occurs
      */
     public PackConverter pack() throws IOException {
+        this.logListener.info("Packaging pack...");
+
         this.packageHandler.pack(this, this.tmpDir, this.output, this.logListener);
         this.cleanup();
+
+        this.logListener.info("Packaged pack!");
 
         return this;
     }

@@ -855,8 +855,8 @@
     "warped_wart_block": "warped_wart_block",
     "weathered_copper": "weathered_copper",
     "weathered_cut_copper": "weathered_cut_copper",
-    "weeping_vines": "weeping_vines",
-    "weeping_vines_plant": "weeping_vines_plant"
+    "weeping_vines": ["weeping_vines", "weeping_vines_bottom"],
+    "weeping_vines_plant": ["weeping_vines_plant", "weeping_vines_base"]
   },
   "colormap": {
     "dry_foliage": "dry_foliage",

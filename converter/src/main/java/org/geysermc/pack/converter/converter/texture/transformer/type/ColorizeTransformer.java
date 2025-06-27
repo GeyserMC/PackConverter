@@ -85,6 +85,10 @@ public class ColorizeTransformer implements TextureTransformer {
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(72, 130, 242)), new Overlay("item/lingering_potion.png") },"items/potion_bottle_lingering_waterBreathing.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(114, 122, 114)), new Overlay("item/lingering_potion.png") },"items/potion_bottle_lingering_weakness.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(84, 66, 62)), new Overlay("item/lingering_potion.png") },"items/potion_bottle_lingering_wither.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(140, 155, 140)), new Overlay("item/lingering_potion.png") },"items/potion_bottle_lingering_infested.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(153, 255, 163)), new Overlay("item/lingering_potion.png") },"items/potion_bottle_lingering_oozing.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(189, 201, 255)), new Overlay("item/lingering_potion.png") },"items/potion_bottle_lingering_windCharged.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(120, 105, 90)), new Overlay("item/lingering_potion.png") },"items/potion_bottle_lingering_weaving.png"),
 
         // Map (Colors from px 6/7 from original bedrock textures)
         new ColorizeData(new Overlay[] { new Overlay("item/filled_map.png"),  new Overlay("item/filled_map_markings.png", new Color(82, 76, 68)) },"items/map_mansion.png"),
@@ -95,8 +99,8 @@ public class ColorizeTransformer implements TextureTransformer {
         // new ColorizeData(new Overlay[] { new Overlay("ui/cartography_table_map.png"),  new Overlay("ui/cartography_table_glass.png") }, "ui/cartography_table_glass.png"),
 
         // Potion (Colors from px 7/9 from original bedrock textures)
-        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(58, 130, 255)), new Overlay("item/potion.png") }, "items/potion_bottle_absorption.png"),
-        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(50, 50, 56)), new Overlay("item/potion.png") }, "items/potion_bottle_blindness.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(37, 82, 165)), new Overlay("item/potion.png") }, "items/potion_bottle_absorption.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(31, 31, 35)), new Overlay("item/potion.png") }, "items/potion_bottle_blindness.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(134, 46, 118)), new Overlay("item/potion.png") }, "items/potion_bottle_confusion.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(232, 58, 56)), new Overlay("item/potion.png") }, "items/potion_bottle_damageBoost.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(118, 104, 36)), new Overlay("item/potion.png") }, "items/potion_bottle_digSlowdown.png"),
@@ -122,6 +126,10 @@ public class ColorizeTransformer implements TextureTransformer {
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(72, 130, 242)), new Overlay("item/potion.png") }, "items/potion_bottle_waterBreathing.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(114, 112, 114)), new Overlay("item/potion.png") }, "items/potion_bottle_weakness.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(84, 66, 62)), new Overlay("item/potion.png") }, "items/potion_bottle_wither.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(140, 155, 140)), new Overlay("item/potion.png") },"items/potion_bottle_lingering_infested.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(153, 255, 163)), new Overlay("item/potion.png") },"items/potion_bottle_lingering_oozing.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(189, 201, 255)), new Overlay("item/potion.png") },"items/potion_bottle_lingering_windCharged.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(120, 105, 90)), new Overlay("item/potion.png") },"items/potion_bottle_lingering_weaving.png"),
 
         // Redstone dust
         // new ColorizeData(new Overlay[] { new Overlay("blocks/redstone_dust_cross.png"),  new Overlay("blocks/redstone_dust_overlay.png") }, "blocks/redstone_dust_cross.png"),
@@ -160,6 +168,10 @@ public class ColorizeTransformer implements TextureTransformer {
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(72, 130, 242)), new Overlay("item/splash_potion.png") }, "items/potion_bottle_splash_waterBreathing.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(114, 122, 114)), new Overlay("item/splash_potion.png") }, "items/potion_bottle_splash_weakness.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(84, 66, 62)), new Overlay("item/splash_potion.png") }, "items/potion_bottle_splash_wither.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(140, 155, 140)), new Overlay("item/splash_potion.png") },"items/potion_bottle_lingering_infested.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(153, 255, 163)), new Overlay("item/splash_potion.png") },"items/potion_bottle_lingering_oozing.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(189, 201, 255)), new Overlay("item/splash_potion.png") },"items/potion_bottle_lingering_windCharged.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(120, 105, 90)), new Overlay("item/splash_potion.png") },"items/potion_bottle_lingering_weaving.png"),
 
         // Spawn egg (Colors from px 8/9 and 5/9 from original bedrock textures)
         new ColorizeData(new Overlay[] { new Overlay("item/spawn_egg.png", new Color(65, 53, 41)), new Overlay("item/spawn_egg_overlay.png", new Color(13, 13, 13)) }, "items/egg_bat.png"),
@@ -242,7 +254,11 @@ public class ColorizeTransformer implements TextureTransformer {
         new ColorizeData(new Overlay[] { new Overlay("item/tipped_arrow_base.png"),  new Overlay("item/tipped_arrow_head.png", new Color(113, 88, 96)) }, "items/tipped_arrow_turtlemaster.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/tipped_arrow_base.png"),  new Overlay("item/tipped_arrow_head.png", new Color(45, 79, 148)) }, "items/tipped_arrow_waterbreathing.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/tipped_arrow_base.png"),  new Overlay("item/tipped_arrow_head.png", new Color(70, 75, 70)) }, "items/tipped_arrow_weakness.png"),
-        new ColorizeData(new Overlay[] { new Overlay("item/tipped_arrow_base.png"),  new Overlay("item/tipped_arrow_head.png", new Color(50, 39, 36)) }, "items/tipped_arrow_wither.png")
+        new ColorizeData(new Overlay[] { new Overlay("item/tipped_arrow_base.png"),  new Overlay("item/tipped_arrow_head.png", new Color(50, 39, 36)) }, "items/tipped_arrow_wither.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/tipped_arrow_base.png"),  new Overlay("item/tipped_arrow_head.png", new Color(140, 155, 140)) }, "items/tipped_arrow_infested.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/tipped_arrow_base.png"),  new Overlay("item/tipped_arrow_head.png", new Color(153, 255, 163)) }, "items/tipped_arrow_oozing.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/tipped_arrow_base.png"),  new Overlay("item/tipped_arrow_head.png", new Color(120, 105, 90)) }, "items/tipped_arrow_weaving.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/tipped_arrow_base.png"),  new Overlay("item/tipped_arrow_head.png", new Color(189, 201, 255)) }, "items/tipped_arrow_windCharged.png")
     );
     
     @Override

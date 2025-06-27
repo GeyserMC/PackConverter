@@ -80,83 +80,180 @@ public class TextureConverter implements Converter<TextureConversionData> {
         }
 
         context.info("Writing textures...");
+//        for (Texture texture : textures) {
+//            String output = texture.key().value();
+//            Path texturePath = context.outputDirectory().resolve(BEDROCK_TEXTURES_LOCATION);
+//            Path outputPath = texturePath.resolve(output);
+//            String relativePath = texturePath.relativize(outputPath).toString().replace(File.separatorChar, '/');
+//
+//            if (relativePath.endsWith(".png")) relativePath = relativePath.substring(0, relativePath.length() - 4);
+//
+//            String rootPath = relativePath.substring(0, relativePath.indexOf('/'));
+//
+//            Object mappingObject = mappings.textures(relativePath);
+//            String input = null;
+//
+//            if (mappingObject == null) {
+//                input = rootPath;
+//                mappingObject = mappings.textures(input);
+//            }
+//
+//            if (mappingObject instanceof Map<?,?> keyMappings) {
+//                String sanitizedName = output.substring(output.indexOf(File.separator) + 1).replace(".png", "");
+//                String bedrockPath = (String) keyMappings.get(sanitizedName.substring(rootPath.length() + 1));
+//                if (bedrockPath != null) {
+//                    output = output.replace(sanitizedName, rootPath + "/" + bedrockPath);
+//                }
+//            } else if (mappingObject instanceof String str) {
+//                output = str + ".png";
+//                input = output.substring(0, output.indexOf('/'));
+//            }
+//
+//            if (input == null) {
+//                input = rootPath;
+//            }
+//
+//            String bedrockDirectory = DIRECTORY_LOCATIONS.getOrDefault(input, input);
+//            if (context.data().textureSubdirectory() != null) {
+//                bedrockDirectory = bedrockDirectory + "/" + context.data().textureSubdirectory();
+//            }
+//            outputPath = texturePath.resolve((bedrockDirectory + "/" + output.substring(input.length())).replace('/', File.separatorChar));
+//
+//            TransformedTexture transformedTexture = new TransformedTexture(texture, outputPath);
+//
+//            if (outputPath.getParent() != null && Files.notExists(outputPath.getParent())) {
+//                Files.createDirectories(outputPath.getParent());
+//            }
+//
+//            byte[] bytes = texture.data().toByteArray();
+//
+//            BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
+//            BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+//
+//            Graphics2D g = newImage.createGraphics();
+//            g.setComposite(AlphaComposite.Src);
+//            g.drawImage(image, 0, 0, null);
+//            g.dispose();
+//
+//            image = newImage;
+//
+//            String pngKey = context.outputDirectory().relativize(outputPath).toString();
+//            PngToTgaMappings.TgaMapping mapping = PngToTgaMappings.mapping(pngKey);
+//            if (mapping != null) {
+//                Path tgaPath = context.outputDirectory().resolve(mapping.value());
+//                if (Files.notExists(tgaPath.getParent())) {
+//                    Files.createDirectories(tgaPath.getParent());
+//                }
+//
+//                ImageUtil.writeTGA(tgaPath, image);
+//                if (!mapping.keep()) {
+//                    Files.deleteIfExists(outputPath);
+//                    continue;
+//                }
+//            }
+//
+//            try (OutputStream stream = Files.newOutputStream(outputPath)) {
+//                ImageIO.write(image, "png", stream);
+//            }
+//
+//            context.data().addTransformedTexture(transformedTexture);
+//        }
+
         for (Texture texture : textures) {
-            String output = texture.key().value();
+            String input = texture.key().value();
             Path texturePath = context.outputDirectory().resolve(BEDROCK_TEXTURES_LOCATION);
-            Path outputPath = texturePath.resolve(output);
-            String relativePath = texturePath.relativize(outputPath).toString().replace(File.separatorChar, '/');
+            Path potentialOutput = texturePath.resolve(input);
+            String relativePath = texturePath.relativize(potentialOutput).toString().replace(File.separatorChar, '/');
 
             if (relativePath.endsWith(".png")) relativePath = relativePath.substring(0, relativePath.length() - 4);
 
             String rootPath = relativePath.substring(0, relativePath.indexOf('/'));
+            String bedrockRoot = DIRECTORY_LOCATIONS.getOrDefault(rootPath, rootPath);
+
+            List<Path> outputs = new ArrayList<>();
+            List<String> outputPaths = new ArrayList<>();
 
             Object mappingObject = mappings.textures(relativePath);
-            String input = null;
 
             if (mappingObject == null) {
-                input = rootPath;
-                mappingObject = mappings.textures(input);
+                mappingObject = mappings.textures(rootPath);
             }
 
-            if (mappingObject instanceof Map<?,?> keyMappings) {
-                String sanitizedName = output.substring(output.indexOf(File.separator) + 1).replace(".png", "");
-                String bedrockPath = (String) keyMappings.get(sanitizedName.substring(rootPath.length() + 1));
-                if (bedrockPath != null) {
-                    output = output.replace(sanitizedName, rootPath + "/" + bedrockPath);
+            String fallbackPath = bedrockRoot + "/" + relativePath.substring(relativePath.indexOf('/') + 1) + ".png";
+            if (mappingObject instanceof Map<?,?> keyMappings) { // Handles common subdirectories
+                String sanitizedName = input.substring(input.indexOf(File.separator) + 1);
+                if (sanitizedName.endsWith(".png")) sanitizedName = sanitizedName.substring(0, sanitizedName.length() - 4);
+                String javaPath = sanitizedName.substring(rootPath.length() + 1);
+
+                Object bedrockOutput = keyMappings.get(javaPath);
+                if (bedrockOutput instanceof String bedrockPath) {
+                    outputPaths.add(bedrockRoot + "/" + bedrockPath + ".png");
+                } else if (bedrockOutput instanceof List<?> paths) {
+                    for (String bedrockPath : (List<String>) paths) {
+                        outputPaths.add(bedrockRoot + "/" + bedrockPath + ".png");
+                    }
+                } else { // Fallback
+                    outputPaths.add(fallbackPath);
                 }
-            } else if (mappingObject instanceof String str) {
-                output = str + ".png";
-                input = output.substring(0, output.indexOf('/'));
+            } else if (mappingObject instanceof String str) { // Direct mappings
+                outputPaths.add(str + ".png");
+            } else if (mappingObject instanceof List<?> paths) { // Mappings where duplicate code paths exist
+                for (String path : (List<String>) paths) {
+                    outputPaths.add(path + ".png");
+                }
+            } else { // Fallback
+                outputPaths.add(fallbackPath);
             }
 
-            if (input == null) {
-                input = rootPath;
-            }
-
-            String bedrockDirectory = DIRECTORY_LOCATIONS.getOrDefault(input, input);
+            String bedrockDirectory = "";
             if (context.data().textureSubdirectory() != null) {
-                bedrockDirectory = bedrockDirectory + "/" + context.data().textureSubdirectory();
+                bedrockDirectory = context.data().textureSubdirectory() + "/";
             }
-            outputPath = texturePath.resolve((bedrockDirectory + "/" + output.substring(input.length())).replace('/', File.separatorChar));
 
-            TransformedTexture transformedTexture = new TransformedTexture(texture, outputPath);
-
-            if (outputPath.getParent() != null && Files.notExists(outputPath.getParent())) {
-                Files.createDirectories(outputPath.getParent());
+            for (String outputPath : outputPaths) {
+                context.debug(String.format("Converted %s to %s, writing texture.", input, outputPath));
+                outputs.add(texturePath.resolve((bedrockDirectory + outputPath).replace('/', File.separatorChar)));
             }
 
             byte[] bytes = texture.data().toByteArray();
 
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
-            BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
-            Graphics2D g = newImage.createGraphics();
-            g.setComposite(AlphaComposite.Src);
-            g.drawImage(image, 0, 0, null);
-            g.dispose();
+            for (Path output : outputs) {
+                TransformedTexture transformedTexture = new TransformedTexture(texture, output);
 
-            image = newImage;
-
-            String pngKey = context.outputDirectory().relativize(outputPath).toString();
-            PngToTgaMappings.TgaMapping mapping = PngToTgaMappings.mapping(pngKey);
-            if (mapping != null) {
-                Path tgaPath = context.outputDirectory().resolve(mapping.value());
-                if (Files.notExists(tgaPath.getParent())) {
-                    Files.createDirectories(tgaPath.getParent());
+                if (output.getParent() != null && Files.notExists(output.getParent())) {
+                    Files.createDirectories(output.getParent());
                 }
 
-                ImageUtil.writeTGA(tgaPath, image);
-                if (!mapping.keep()) {
-                    Files.deleteIfExists(outputPath);
-                    continue;
+                BufferedImage bedrockImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+                Graphics2D g = bedrockImage.createGraphics();
+                g.setComposite(AlphaComposite.Src);
+                g.drawImage(image, 0, 0, null);
+                g.dispose();
+
+                String pngKey = context.outputDirectory().relativize(output).toString();
+                PngToTgaMappings.TgaMapping mapping = PngToTgaMappings.mapping(pngKey);
+                if (mapping != null) {
+                    Path tgaPath = context.outputDirectory().resolve(mapping.value());
+                    if (Files.notExists(tgaPath.getParent())) {
+                        Files.createDirectories(tgaPath.getParent());
+                    }
+
+                    ImageUtil.writeTGA(tgaPath, bedrockImage);
+                    if (!mapping.keep()) {
+                        Files.deleteIfExists(output);
+                        continue;
+                    }
                 }
-            }
 
-            try (OutputStream stream = Files.newOutputStream(outputPath)) {
-                ImageIO.write(image, "png", stream);
-            }
+                try (OutputStream stream = Files.newOutputStream(output)) {
+                    ImageIO.write(bedrockImage, "png", stream);
+                }
 
-            context.data().addTransformedTexture(transformedTexture);
+                context.data().addTransformedTexture(transformedTexture);
+            }
         }
 
         context.info("Texture conversion complete!");
