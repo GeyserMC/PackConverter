@@ -59,7 +59,7 @@ public class ColorizeTransformer implements TextureTransformer {
         new ColorizeData(new Overlay("block/oak_leaves.png", new Color(23, 63, 3)), "blocks/leaves_oak_carried.png"), // 0/0 (leaves_oak_carried.tga)
         new ColorizeData(new Overlay("block/spruce_leaves.png", new Color(58, 92, 58)), "blocks/leaves_spruce_carried.png"), // 0/0 (leaves_spruce_carried.tga)
         new ColorizeData(new Overlay("block/mangrove_leaves.png", new Color(58, 92, 58)), "blocks/mangrove_leaves_carried.png"), // 0/0 (leaves_spruce_carried.tga)
-        new ColorizeData(new Overlay("block/grass.png", new Color(81, 123, 44)), "blocks/tallgrass_carried.png"), // 1/5 (tallgrass_carried.tga)
+        new ColorizeData(new Overlay("block/short_grass.png", new Color(81, 123, 44)), "blocks/tallgrass_carried.png"), // 1/5 (tallgrass_carried.tga)
         new ColorizeData(new Overlay("block/lily_pad.png", new Color(67, 102, 36)), "blocks/carried_waterlily.png"), // 4/2 (carried_waterlily.png)
         new ColorizeData(new Overlay("block/water_flow.png", new Color(86, 132, 254)), "blocks/water_flow.png"), // 0/0 (water_flow.png)
         new ColorizeData(new Overlay("block/water_still.png", new Color(215, 215, 215)), "blocks/cauldron_water.png"), // 0/0 (cauldron_water.png)
