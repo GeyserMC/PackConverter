@@ -1830,5 +1830,9 @@
   "mob_effect/weakness": "ui/weakness_effect",
   "mob_effect/weaving": "ui/weaving_effect",
   "mob_effect/wind_charged": "ui/wind_charged_effect",
-  "mob_effect/wither": "ui/wither_effect"
+  "mob_effect/wither": "ui/wither_effect",
+
+  "entity/conduit/cage": "blocks/conduit_cage",
+  "entity/conduit/wind": "blocks/conduit_wind_horizontal",
+  "entity/conduit/wind_vertical": "blocks/conduit_wind_vertical"
 }
