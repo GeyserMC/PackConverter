@@ -33,7 +33,7 @@ dependencyResolutionManagement {
 //            url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
 //        }
 
-        // But we still need creative... maven local it is
-        mavenLocal()
+        // But we still need creative... jitpack it is
+        maven("https://jitpack.io")
     }
 }

@@ -874,7 +874,7 @@
     "axolotl/axolotl_gold": "axolotl/axolotl_gold",
     "axolotl/axolotl_lucy": "axolotl/axolotl_lucy",
     "axolotl/axolotl_wild": "axolotl/axolotl_wild",
-    "banner/base": "banner/banner_base",
+    "banner_base": "banner/banner_base",
     "banner/border": "banner/banner_border",
     "banner/bricks": "banner/banner_bricks",
     "banner/circle": "banner/banner_circle",
