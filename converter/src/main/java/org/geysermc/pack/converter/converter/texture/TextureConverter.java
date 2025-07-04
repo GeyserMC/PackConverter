@@ -155,7 +155,7 @@ public class TextureConverter implements Converter<TextureConversionData> {
                 g.drawImage(image, 0, 0, null);
                 g.dispose();
 
-                String pngKey = context.outputDirectory().relativize(output).toString();
+                String pngKey = context.outputDirectory().relativize(output).toString().replace(File.separatorChar, '/');
                 PngToTgaMappings.TgaMapping mapping = PngToTgaMappings.mapping(pngKey);
                 if (mapping != null) {
                     Path tgaPath = context.outputDirectory().resolve(mapping.value());

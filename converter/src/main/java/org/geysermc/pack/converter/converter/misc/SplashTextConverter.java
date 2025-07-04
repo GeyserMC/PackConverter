@@ -28,6 +28,7 @@ package org.geysermc.pack.converter.converter.misc;
 
 import com.google.auto.service.AutoService;
 import com.google.gson.*;
+import net.kyori.adventure.key.Key;
 import org.geysermc.pack.converter.PackConversionContext;
 import org.geysermc.pack.converter.converter.BaseConverter;
 import org.geysermc.pack.converter.converter.Converter;
