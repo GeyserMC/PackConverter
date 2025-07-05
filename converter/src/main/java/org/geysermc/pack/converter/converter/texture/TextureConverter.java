@@ -74,7 +74,7 @@ public class TextureConverter implements Converter<TextureConversionData> {
         List<Texture> textures = new ArrayList<>(context.javaResourcePack().textures());
 
         context.info("Transforming textures...");
-        TransformContext transformContext = new TransformContext(context, mappings, textures);
+        TransformContext transformContext = new TransformContext(context, mappings, textures, context.bedrockResourcePack());
         for (TextureTransformer transformer : this.transformers) {
             transformer.transform(transformContext);
         }

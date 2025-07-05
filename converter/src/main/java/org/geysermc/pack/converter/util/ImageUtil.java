@@ -85,11 +85,22 @@ public class ImageUtil {
      * @return Scaled image
      */
     public static BufferedImage scale(BufferedImage img, float scale) {
+        return scale(img, scale, scale);
+    }
+
+    /**
+     * Scale a buffered image
+     * Based on https://stackoverflow.com/a/4216635/5299903
+     *
+     * @param img Image to use
+     * @return Scaled image
+     */
+    public static BufferedImage scale(BufferedImage img, float scaleX, float scaleY) {
         int w = img.getWidth();
         int h = img.getHeight();
-        BufferedImage after = new BufferedImage(Math.round(w * scale), Math.round(h * scale), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage after = new BufferedImage(Math.round(w * scaleX), Math.round(h * scaleY), BufferedImage.TYPE_INT_ARGB);
         AffineTransform at = new AffineTransform();
-        at.scale(scale, scale);
+        at.scale(scaleX, scaleY);
         AffineTransformOp scaleOp = new AffineTransformOp(at, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
         return scaleOp.filter(img, after);
     }
@@ -392,11 +403,13 @@ public class ImageUtil {
      *
      * @param img Image to use
      * @param newWidth Target width
-     * @param netHeight Target height
+     * @param newHeight Target height
      * @return Scaled image to size
      */
-    public static BufferedImage resize(BufferedImage img, int newWidth, int netHeight) {
-        Image scaled = img.getScaledInstance(newWidth, netHeight, BufferedImage.SCALE_SMOOTH);
+    public static BufferedImage resize(BufferedImage img, int newWidth, int newHeight) {
+        if (img.getWidth() == newWidth && img.getHeight() == newHeight) return img;
+
+        Image scaled = img.getScaledInstance(newWidth, newHeight, BufferedImage.SCALE_SMOOTH);
         return toBufferedImage(scaled);
     }
 

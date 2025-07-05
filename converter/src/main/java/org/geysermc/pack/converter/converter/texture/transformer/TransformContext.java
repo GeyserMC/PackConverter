@@ -27,6 +27,7 @@
 package org.geysermc.pack.converter.converter.texture.transformer;
 
 import net.kyori.adventure.key.Key;
+import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.PackConversionContext;
 import org.geysermc.pack.converter.converter.texture.TextureMappings;
 import org.geysermc.pack.converter.data.TextureConversionData;
@@ -46,12 +47,14 @@ public class TransformContext {
     private final PackConversionContext<TextureConversionData> conversionContext;
     private final TextureMappings mappings;
     private final Collection<Texture> textures;
+    private final BedrockResourcePack pack;
     private final Map<Key, Texture> byKey = new HashMap<>();
 
-    public TransformContext(PackConversionContext<TextureConversionData> conversionContext, TextureMappings mappings, Collection<Texture> textures) {
+    public TransformContext(PackConversionContext<TextureConversionData> conversionContext, TextureMappings mappings, Collection<Texture> textures, BedrockResourcePack pack) {
         this.conversionContext = conversionContext;
         this.mappings = mappings;
         this.textures = textures;
+        this.pack = pack;
 
         for (Texture texture : textures) {
             this.byKey.put(texture.key(), texture);
@@ -60,6 +63,10 @@ public class TransformContext {
 
     public TextureMappings mappings() {
         return this.mappings;
+    }
+
+    public BedrockResourcePack bedrockResourcePack() {
+        return this.pack;
     }
 
     /**
