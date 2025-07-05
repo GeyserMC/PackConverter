@@ -78,6 +78,7 @@ public class TextureConverter implements Converter<TextureConversionData> {
         for (TextureTransformer transformer : this.transformers) {
             transformer.transform(transformContext);
         }
+        context.info("Transformed textures!");
 
         context.info("Writing textures...");
 
@@ -177,6 +178,8 @@ public class TextureConverter implements Converter<TextureConversionData> {
                 context.data().addTransformedTexture(transformedTexture);
             }
         }
+
+        context.info("Written textures!");
 
         context.info("Texture conversion complete!");
     }

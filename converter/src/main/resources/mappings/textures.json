@@ -1255,7 +1255,10 @@
     "title/background/panorama_3": "panorama_3",
     "title/background/panorama_4": "panorama_4",
     "title/background/panorama_5": "panorama_5",
-    "title/background/panorama_overlay": "panorama_overlay"
+    "title/background/panorama_overlay": "panorama_overlay",
+
+    "sprites/hud/experience_bar_background": "experiencebarempty",
+    "sprites/hud/experience_bar_progress": "experiencebarfull"
   },
   "item": {
     "acacia_door": "door_acacia",
