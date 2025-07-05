@@ -1247,7 +1247,15 @@
 
     "sprites/container/enchanting_slot": "enchanting_active_background",
     "sprites/container/enchanting_slot_disabled": "enchanting_dark_background",
-    "sprites/container/enchanting_slot_highlighted": "enchanting_active_background_with_hover_text"
+    "sprites/container/enchanting_slot_highlighted": "enchanting_active_background_with_hover_text",
+
+    "title/background/panorama_0": "panorama_0",
+    "title/background/panorama_1": "panorama_1",
+    "title/background/panorama_2": "panorama_2",
+    "title/background/panorama_3": "panorama_3",
+    "title/background/panorama_4": "panorama_4",
+    "title/background/panorama_5": "panorama_5",
+    "title/background/panorama_overlay": "panorama_overlay"
   },
   "item": {
     "acacia_door": "door_acacia",
