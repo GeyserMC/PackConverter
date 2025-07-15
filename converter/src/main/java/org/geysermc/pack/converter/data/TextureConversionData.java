@@ -29,6 +29,7 @@ package org.geysermc.pack.converter.data;
 import org.geysermc.pack.converter.converter.texture.transformer.TransformedTexture;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import team.unnamed.creative.ResourcePack;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -38,8 +39,8 @@ public class TextureConversionData extends BaseConversionData {
     private final List<TransformedTexture> transformedTextures = new ArrayList<>();
     private final String textureSubdirectory;
 
-    public TextureConversionData(@NotNull Path inputDirectory, @NotNull Path outputDirectory, @Nullable String textureSubdirectory) {
-        super(inputDirectory, outputDirectory);
+    public TextureConversionData(@NotNull Path inputDirectory, @NotNull Path outputDirectory, @Nullable String textureSubdirectory, @NotNull ResourcePack vanillaPack) {
+        super(inputDirectory, outputDirectory, vanillaPack);
 
         this.textureSubdirectory = textureSubdirectory;
     }

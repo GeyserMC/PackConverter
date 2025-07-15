@@ -74,7 +74,12 @@ public class TextureConverter implements Converter<TextureConversionData> {
         List<Texture> textures = new ArrayList<>(context.javaResourcePack().textures());
 
         context.info("Transforming textures...");
-        TransformContext transformContext = new TransformContext(context, mappings, textures, context.bedrockResourcePack());
+        TransformContext transformContext = new TransformContext(
+                context,
+                mappings,
+                textures,
+                context.bedrockResourcePack()
+        );
         for (TextureTransformer transformer : this.transformers) {
             transformer.transform(transformContext);
         }
@@ -186,6 +191,11 @@ public class TextureConverter implements Converter<TextureConversionData> {
 
     @Override
     public TextureConversionData createConversionData(@NotNull ConversionDataCreationContext context) {
-        return new TextureConversionData(context.inputDirectory(), context.outputDirectory(), context.converter().textureSubdirectory());
+        return new TextureConversionData(
+                context.inputDirectory(),
+                context.outputDirectory(),
+                context.converter().textureSubdirectory(),
+                context.vanillaResourcePack()
+        );
     }
 }

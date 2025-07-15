@@ -28,6 +28,7 @@ package org.geysermc.pack.converter.util;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.file.PathUtils;
+import org.geysermc.pack.converter.converter.texture.transformer.type.OverlayTransformer;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
@@ -36,11 +37,13 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 public final class VanillaPackProvider {
     private static final String JAR_DOWNLOAD = "https://piston-data.mojang.com/v1/objects/%s/client.jar";
-    private static final String JAR_HASH = "0c3ec587af28e5a785c0b4a7b8a30f9a8f78f838";
+    private static final String JAR_HASH = "a2db1ea98c37b2d00c83f6867fb8bb581a593e07";
 
     /**
      * Downloads the vanilla jar from Mojang's servers.
@@ -94,9 +97,21 @@ public final class VanillaPackProvider {
                             return;
                         }
 
+                        List<String> validPaths = new ArrayList<>();
+
+                        for (OverlayTransformer.OverlayData overlayData : OverlayTransformer.OVERLAYS) {
+                            validPaths.add("/assets/minecraft/textures/" + overlayData.javaName());
+                            validPaths.add("/assets/minecraft/textures/" + overlayData.overlay());
+                        }
+
                         // At the moment, we only care about models and blockstate info from vanilla.
                         String pathName = path.toString();
-                        if (!pathName.startsWith("/assets/minecraft/models") && !pathName.startsWith("/assets/minecraft/blockstates")) {
+                        if (
+                                !pathName.startsWith("/assets/minecraft/models") &&
+                                !pathName.startsWith("/assets/minecraft/blockstates") &&
+                                !pathName.startsWith("/assets/minecraft/textures/font") &&
+                                !validPaths.contains(pathName)
+                        ) {
                             PathUtils.delete(path);
                             return;
                         }

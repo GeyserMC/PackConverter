@@ -27,6 +27,7 @@
 package org.geysermc.pack.converter.data;
 
 import org.jetbrains.annotations.NotNull;
+import team.unnamed.creative.ResourcePack;
 
 import java.nio.file.Path;
 
@@ -37,4 +38,7 @@ public interface ConversionData {
 
     @NotNull
     Path outputDirectory();
+
+    @NotNull
+    ResourcePack vanillaPack();
 }

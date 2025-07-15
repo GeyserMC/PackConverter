@@ -56,21 +56,21 @@ public class FontTransformer implements TextureTransformer {
         Map<String, BufferedImage> imgs = new HashMap<>();
         Map<String, Integer> scales = new HashMap<>();
 
-        Texture ascii = context.poll(Key.key(Key.MINECRAFT_NAMESPACE, "font/ascii.png"));
+        Texture ascii = context.pollOrPeekVanilla(Key.key(Key.MINECRAFT_NAMESPACE, "font/ascii.png"));
         if (ascii != null) {
             BufferedImage image = this.readImage(ascii);
             imgs.put("ascii", image);
             scales.put("ascii", image.getWidth() / 128);
         }
 
-        Texture accented = context.poll(Key.key(Key.MINECRAFT_NAMESPACE, "font/accented.png"));
+        Texture accented = context.pollOrPeekVanilla(Key.key(Key.MINECRAFT_NAMESPACE, "font/accented.png"));
         if (accented != null) {
             BufferedImage image = this.readImage(accented);
             imgs.put("accented", image);
             scales.put("accented", image.getWidth() / 128);
         }
 
-        Texture nonlatin_european = context.poll(Key.key(Key.MINECRAFT_NAMESPACE, "font/nonlatin_european.png"));
+        Texture nonlatin_european = context.pollOrPeekVanilla(Key.key(Key.MINECRAFT_NAMESPACE, "font/nonlatin_european.png"));
         if (nonlatin_european != null) {
             BufferedImage image = this.readImage(nonlatin_european);
             imgs.put("nonlatin_european", image);

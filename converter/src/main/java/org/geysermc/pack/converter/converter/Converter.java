@@ -50,7 +50,8 @@ public interface Converter<T extends ConversionData> {
         @NotNull LogListener logListener,
         @NotNull Path inputDirectory,
         @NotNull Path outputDirectory,
-        @NotNull ResourcePack javaResourcePack
+        @NotNull ResourcePack javaResourcePack,
+        @NotNull ResourcePack vanillaResourcePack
     ) {
     }
 }

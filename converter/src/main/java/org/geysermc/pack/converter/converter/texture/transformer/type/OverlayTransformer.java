@@ -41,7 +41,8 @@ import java.util.List;
 
 @AutoService(TextureTransformer.class)
 public class OverlayTransformer implements TextureTransformer {
-    private static final List<OverlayData> OVERLAYS = List.of(
+    // This is used in VanillaPackProvider in order to get textures if one is missing out of the two
+    public static final List<OverlayData> OVERLAYS = List.of(
             // Cat
             new OverlayData("entity/cat/cat_collar.png", "entity/cat/all_black.png", "entity/cat/allblackcat_tame.png", true, true),
             new OverlayData("entity/cat/cat_collar.png", "entity/cat/british_shorthair.png", "entity/cat/britishshorthair_tame.png", true, true),
@@ -101,18 +102,23 @@ public class OverlayTransformer implements TextureTransformer {
             boolean noReplace = overlay.noReplace();
             boolean keep = overlay.keep();
 
-            Texture texture = context.peek(Key.key(Key.MINECRAFT_NAMESPACE, javaName));
-            if (texture == null) {
-                context.debug(String.format("Base overlay texture %s not found", javaName)); // TODO only skip if both the base and overlay are not present, if one is present, use the vanilla texture as the other
+            Key javaKey = Key.key(Key.MINECRAFT_NAMESPACE, javaName);
+            Key overlayKey = Key.key(Key.MINECRAFT_NAMESPACE, overlayName);
+
+            // We don't have either textures, skip this
+            if (!context.isTexturePresent(javaKey) && !context.isTexturePresent(overlayKey)) continue;
+
+            Texture texture = context.peekOrVanilla(javaKey);
+            if (texture == null) { // This ideally, shouldn't happen anymore
+                context.info(String.format("Base overlay texture %s not found", javaName));
                 continue;
             }
 
             BufferedImage image = this.readImage(texture);
 
-            Key overlayKey = Key.key(Key.MINECRAFT_NAMESPACE, overlayName);
-            Texture overlayTexture = keep ? context.peek(overlayKey) : context.poll(overlayKey);
-            if (overlayTexture == null) {
-                context.debug(String.format("Overlay texture %s not found", overlayName));
+            Texture overlayTexture = keep ? context.peekOrVanilla(overlayKey) : context.pollOrPeekVanilla(overlayKey);
+            if (overlayTexture == null) { // This ideally, shouldn't happen anymore
+                context.info(String.format("Overlay texture %s not found", overlayName));
                 context.offer(Key.key(Key.MINECRAFT_NAMESPACE, bedrockName), image, "png");
                 continue;
             }
@@ -120,6 +126,11 @@ public class OverlayTransformer implements TextureTransformer {
             context.debug(String.format("Overlaying %s and %s onto %s", overlayName, javaName, bedrockName));
 
             BufferedImage imageOverlay = this.readImage(overlayTexture);
+
+            // Scale to the base image so ensure we don't go out of bounds in the image
+            int resizeX = image.getWidth() / imageOverlay.getWidth();
+            int resizeY = image.getHeight() / imageOverlay.getHeight();
+            imageOverlay = ImageUtil.scale(imageOverlay, resizeX, resizeY);
 
             for (int x = 0; x < image.getWidth(); x++) {
                 for (int y = 0; y < image.getHeight(); y++) {
@@ -143,7 +154,7 @@ public class OverlayTransformer implements TextureTransformer {
         }
     }
     
-    record OverlayData(@NotNull String javaName, @NotNull String overlay, @NotNull String bedrockName, boolean noReplace, boolean keep) {
+    public record OverlayData(@NotNull String javaName, @NotNull String overlay, @NotNull String bedrockName, boolean noReplace, boolean keep) {
         public OverlayData(@NotNull String javaName, @NotNull String overlay, @NotNull String bedrockName, boolean noReplace) {
             this(javaName, overlay, bedrockName, noReplace, false);
         }
