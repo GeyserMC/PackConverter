@@ -103,5 +103,26 @@ public class LocatorTransformer implements TextureTransformer {
 
             context.offer(Key.key(Key.MINECRAFT_NAMESPACE, "ui/locator_arrow_down.png"), bedrockImage, "png");
         }
+
+        Texture bgTexture = context.poll(Key.key(Key.MINECRAFT_NAMESPACE, "gui/sprites/hud/locator_bar_background.png"));
+        if (bgTexture != null) {
+            BufferedImage javaImage = this.readImage(bgTexture);
+
+            int scale = javaImage.getWidth() / 12;
+
+            BufferedImage bedrockImage = new BufferedImage(scale * 182, javaImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
+            Graphics g = bedrockImage.getGraphics();
+
+            g.drawImage(ImageUtil.crop(javaImage, 0, 0, scale * 5, javaImage.getHeight()), 0, 0, null);
+
+            for (int i = 0; i < 86; i++) {
+                g.drawImage(ImageUtil.crop(javaImage, scale * 5, 0, scale * 2, javaImage.getHeight()), (i * scale * 2) + scale * 5, 0, null);
+            }
+
+            g.drawImage(ImageUtil.crop(javaImage, javaImage.getWidth() - (scale * 5), 0, scale * 5, javaImage.getHeight()), (scale * 182) - scale * 5, 0, null);
+
+            context.offer(Key.key(Key.MINECRAFT_NAMESPACE, "ui/locator_bg.png"), bedrockImage, "png");
+        }
     }
 }

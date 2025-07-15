@@ -53,6 +53,12 @@ public class FontTransformer implements TextureTransformer {
 
     @Override
     public void transform(@NotNull TransformContext context) throws IOException {
+        if (
+                !context.isTexturePresent(Key.key(Key.MINECRAFT_NAMESPACE, "font/ascii.png")) &&
+                !context.isTexturePresent(Key.key(Key.MINECRAFT_NAMESPACE, "font/accented.png")) &&
+                !context.isTexturePresent(Key.key(Key.MINECRAFT_NAMESPACE, "font/nonlatin_european.png"))
+        ) return;
+
         Map<String, BufferedImage> imgs = new HashMap<>();
         Map<String, Integer> scales = new HashMap<>();
 

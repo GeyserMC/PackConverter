@@ -42,7 +42,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 // This isn't really a "transformer", we just include some files if an certain UI elements are present
-// in order to get it to appear correctly, the mappings here are still done in textures.json
+// in order to get it to appear correctly, the mappings here are still done in textures.json or elsewhere
+// We should do this before everything else as we poll locator bar bg
 // Credit to Bedrock Tweaks, wouldn't know how to do this without their packs
 @AutoService(TextureTransformer.class)
 public class UISizeTransformer implements TextureTransformer {
@@ -50,14 +51,13 @@ public class UISizeTransformer implements TextureTransformer {
             .setPrettyPrinting()
             .create();
 
-    private static final JsonArray XPSLICE = new JsonArray();
-    private static final JsonArray LOCATORSLICE = new JsonArray();
+    private static final JsonArray FULLBARSLICE = new JsonArray();
 
     @Override
     public void transform(@NotNull TransformContext context) throws IOException {
         Texture emptyXp = context.peek(Key.key(Key.MINECRAFT_NAMESPACE, "gui/sprites/hud/experience_bar_background.png"));
         if (emptyXp != null) {
-            writeUiJson(context, this.readImage(emptyXp), "experiencebarempty", XPSLICE);
+            writeUiJson(context, this.readImage(emptyXp), "experiencebarempty", FULLBARSLICE);
 
             // Since we have the full image, we *don't* want this
             BufferedImage nubImage = new BufferedImage(11, 5, BufferedImage.TYPE_INT_ARGB);
@@ -66,36 +66,44 @@ public class UISizeTransformer implements TextureTransformer {
 
         Texture fullXp = context.peek(Key.key(Key.MINECRAFT_NAMESPACE, "gui/sprites/hud/experience_bar_progress.png"));
         if (fullXp != null) {
-            writeUiJson(context, this.readImage(fullXp), "experiencebarfull", XPSLICE);
+            writeUiJson(context, this.readImage(fullXp), "experiencebarfull", FULLBARSLICE);
         }
 
         Texture locatorBg = context.peek(Key.key(Key.MINECRAFT_NAMESPACE, "gui/sprites/hud/locator_bar_background.png"));
         if (locatorBg != null) {
-            writeUiJson(context, this.readImage(locatorBg), "locator_bg", LOCATORSLICE);
+            BufferedImage image = this.readImage(locatorBg);
+
+            int scale = image.getWidth() / 12;
+
+            writeUiJson(context, image, "locator_bg", FULLBARSLICE, scale * 182, image.getHeight());
         }
     }
 
+    @Override
+    public int order() {
+        return TextureTransformer.ORDER_FIRST;
+    }
+
     private void writeUiJson(TransformContext context, BufferedImage image, String jsonName, JsonArray nineSlice) {
+        writeUiJson(context, image, jsonName, nineSlice, image.getWidth(), image.getHeight());
+    }
+
+    private void writeUiJson(TransformContext context, BufferedImage image, String jsonName, JsonArray nineSlice, int customWidth, int customHeight) {
         JsonObject rootObject = new JsonObject();
         rootObject.add("nineslice_size", nineSlice);
 
         JsonArray baseSize = new JsonArray();
-        baseSize.add(image.getWidth());
-        baseSize.add(image.getHeight());
+        baseSize.add(customWidth);
+        baseSize.add(customHeight);
         rootObject.add("base_size", baseSize);
 
         context.bedrockResourcePack().addExtraFile(GSON.toJson(rootObject).getBytes(StandardCharsets.UTF_8), "textures/ui/%s.json".formatted(jsonName));
     }
 
     static {
-        XPSLICE.add(1);
-        XPSLICE.add(0);
-        XPSLICE.add(1);
-        XPSLICE.add(0);
-
-        LOCATORSLICE.add(5);
-        LOCATORSLICE.add(1);
-        LOCATORSLICE.add(5);
-        LOCATORSLICE.add(1);
+        FULLBARSLICE.add(1);
+        FULLBARSLICE.add(0);
+        FULLBARSLICE.add(1);
+        FULLBARSLICE.add(0);
     }
 }

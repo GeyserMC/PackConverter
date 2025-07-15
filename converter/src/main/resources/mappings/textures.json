@@ -499,6 +499,8 @@
     "stonecutter_side": "stonecutter2_side",
     "stonecutter_bottom": "stonecutter2_bottom",
     "stonecutter_saw": "stonecutter2_saw",
+    "kelp_plant": ["kelp_a", "kelp_b", "kelp_c", "kelp_d"],
+    "kelp": ["kelp_top", "kelp_top_bulb"],
 
 
     "acacia_trapdoor": "acacia_trapdoor",
