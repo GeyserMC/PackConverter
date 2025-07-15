@@ -119,7 +119,6 @@ public class OverlayTransformer implements TextureTransformer {
             Texture overlayTexture = keep ? context.peekOrVanilla(overlayKey) : context.pollOrPeekVanilla(overlayKey);
             if (overlayTexture == null) { // This ideally, shouldn't happen anymore
                 context.info(String.format("Overlay texture %s not found", overlayName));
-                context.offer(Key.key(Key.MINECRAFT_NAMESPACE, bedrockName), image, "png");
                 continue;
             }
 
