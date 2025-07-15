@@ -37,10 +37,11 @@ import team.unnamed.creative.texture.Texture;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @AutoService(TextureTransformer.class)
-public class LocatorDotTransformer implements TextureTransformer {
+public class LocatorTransformer implements TextureTransformer {
     private static final Map<String, String> DOT_MAPPING = Map.of(
         "gui/sprites/hud/locator_bar_dot/default_0.png", "ui/locator_bar_dot_0.png",
         "gui/sprites/hud/locator_bar_dot/default_1.png", "ui/locator_bar_dot_1.png",
@@ -53,8 +54,6 @@ public class LocatorDotTransformer implements TextureTransformer {
         for (Map.Entry<String, String> mapping : DOT_MAPPING.entrySet()) {
             Texture dotTexture = context.poll(Key.key(Key.MINECRAFT_NAMESPACE, mapping.getKey()));
             if (dotTexture == null) continue;
-
-            context.debug("Transforming locator dot...");
 
             BufferedImage dotImage = this.readImage(dotTexture);
 
@@ -73,6 +72,36 @@ public class LocatorDotTransformer implements TextureTransformer {
             g.drawImage(ImageUtil.crop(dotImage, scale, scale, bedrockSize, bedrockSize), 0, 0, null);
 
             context.offer(Key.key(Key.MINECRAFT_NAMESPACE, mapping.getValue()), bedrockDotImage, "png");
+        }
+
+        Texture upArrowTexture = context.poll(Key.key(Key.MINECRAFT_NAMESPACE, "gui/sprites/hud/locator_bar_arrow_up.png"));
+        if (upArrowTexture != null) {
+            BufferedImage javaImage = this.readImage(upArrowTexture);
+
+            int scale = javaImage.getWidth() / 7;
+
+            BufferedImage bedrockImage = new BufferedImage(javaImage.getWidth(), scale * 4, BufferedImage.TYPE_INT_ARGB);
+
+            Graphics g = bedrockImage.getGraphics();
+
+            g.drawImage(ImageUtil.crop(javaImage, 0, 1, javaImage.getWidth(), scale * 4), 0, 0, null);
+
+            context.offer(Key.key(Key.MINECRAFT_NAMESPACE, "ui/locator_arrow_up.png"), bedrockImage, "png");
+        }
+
+        Texture downArrowTexture = context.poll(Key.key(Key.MINECRAFT_NAMESPACE, "gui/sprites/hud/locator_bar_arrow_down.png"));
+        if (downArrowTexture != null) {
+            BufferedImage javaImage = this.readImage(downArrowTexture);
+
+            int scale = javaImage.getWidth() / 7;
+
+            BufferedImage bedrockImage = new BufferedImage(javaImage.getWidth(), scale * 4, BufferedImage.TYPE_INT_ARGB);
+
+            Graphics g = bedrockImage.getGraphics();
+
+            g.drawImage(ImageUtil.crop(javaImage, 0, 0, javaImage.getWidth(), scale * 4), 0, 0, null);
+
+            context.offer(Key.key(Key.MINECRAFT_NAMESPACE, "ui/locator_arrow_down.png"), bedrockImage, "png");
         }
     }
 }

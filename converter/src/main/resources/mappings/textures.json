@@ -1258,7 +1258,9 @@
     "title/background/panorama_overlay": "panorama_overlay",
 
     "sprites/hud/experience_bar_background": "experiencebarempty",
-    "sprites/hud/experience_bar_progress": "experiencebarfull"
+    "sprites/hud/experience_bar_progress": "experiencebarfull",
+
+    "sprites/hud/effect_background": "hud_mob_effect_background"
   },
   "item": {
     "acacia_door": "door_acacia",
