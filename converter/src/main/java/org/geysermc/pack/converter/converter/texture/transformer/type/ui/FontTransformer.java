@@ -73,7 +73,7 @@ public class FontTransformer implements TextureTransformer {
         if (accented != null) {
             BufferedImage image = this.readImage(accented);
             imgs.put("accented", image);
-            scales.put("accented", image.getWidth() / 128);
+            scales.put("accented", image.getWidth() / 144);
         }
 
         Texture nonlatin_european = context.pollOrPeekVanilla(Key.key(Key.MINECRAFT_NAMESPACE, "font/nonlatin_european.png"));
