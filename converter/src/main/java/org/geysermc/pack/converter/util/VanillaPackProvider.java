@@ -26,6 +26,8 @@
 
 package org.geysermc.pack.converter.util;
 
+import com.google.gson.*;
+import lombok.Getter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.file.PathUtils;
 import org.geysermc.pack.converter.converter.texture.transformer.type.OverlayTransformer;
@@ -37,13 +39,16 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 public final class VanillaPackProvider {
-    private static final String JAR_DOWNLOAD = "https://piston-data.mojang.com/v1/objects/%s/client.jar";
-    private static final String JAR_HASH = "a2db1ea98c37b2d00c83f6867fb8bb581a593e07";
+    private static final Gson GSON = new GsonBuilder()
+            .setPrettyPrinting().create();
+
+    private static final Map<String, Asset> ASSET_MAP = new HashMap<>();
+
+    private static final List<String> REQUIRED_ASSETS = List.of(); // While not used yet, it's possible we will need other assets as some point
 
     /**
      * Downloads the vanilla jar from Mojang's servers.
@@ -59,12 +64,56 @@ public final class VanillaPackProvider {
 
         try {
             // Download vanilla jar
-            log.info("Downloading vanilla jar...");
-            PathUtils.copyFile(new URL(String.format(JAR_DOWNLOAD, JAR_HASH)), path);
+            log.info("Fetching vanilla jar file download...");
+            // Get the version manifest from Mojang
+            VersionManifest versionManifest = GSON.fromJson(
+                    WebUtils.getBody("https://launchermeta.mojang.com/mc/game/version_manifest.json"), VersionManifest.class);
+
+            // Get the url for the latest version of the games manifest
+            String latestInfoURL = "";
+            for (Version version : versionManifest.getVersions()) {
+                if (version.getId().equals("1.21.7")) { // TODO De-hardcode this
+                    latestInfoURL = version.getUrl();
+                    break;
+                }
+            }
+
+            // Make sure we definitely got a version
+            if (latestInfoURL.isEmpty()) {
+                throw new IOException("Unable to find a valid version!");
+            }
+
+            // Get the individual version manifest
+            VersionInfo versionInfo = GSON.fromJson(WebUtils.getBody(latestInfoURL), VersionInfo.class);
+
+            // Get the client jar for use when downloading the en_us locale
+            log.debug(GSON.toJson(versionInfo.getDownloads()));
+            VersionDownload clientJarInfo = versionInfo.getDownloads().get("client");
+            log.debug(GSON.toJson(clientJarInfo));
+
+            JsonObject assets = JsonParser.parseString(WebUtils.getBody(versionInfo.getAssetIndex().getUrl())).getAsJsonObject().get("objects").getAsJsonObject();
+
+            // Put each asset into an array for use later
+            for (Map.Entry<String, JsonElement> entry : assets.entrySet()) {
+                if (!REQUIRED_ASSETS.contains(entry.getKey())) {
+                    // No need to cache this asset, we don't use it
+                    continue;
+                }
+
+                Asset asset = GSON.fromJson(entry.getValue(), Asset.class);
+                ASSET_MAP.put(entry.getKey(), asset);
+            }
+
+            log.info("Vanilla jar file found! Downloading vanilla jar...");
+
+            PathUtils.copyFile(new URL(clientJarInfo.url), path);
+
             log.info("Downloaded vanilla jar successfully!");
 
+            log.info("Removing unneeded assets from the vanilla jar...");
             // Clean the jar
             clean(path, log);
+            log.info("Removed unneeded assets from the vanilla jar!");
         } catch (IOException e) {
             log.error("Error downloading vanilla jar", e);
         }
@@ -136,6 +185,94 @@ public final class VanillaPackProvider {
                     }
                 });
             }
+
+            log.info("Applying assets...");
+
+            for (Map.Entry<String, Asset> asset : ASSET_MAP.entrySet()) {
+                String bytes2 = asset.getValue().hash.substring(0, 2);
+
+                PathUtils.copyFile(
+                        new URL("https://resources.download.minecraft.net/%s/%s"
+                                .formatted(bytes2, asset.getValue().hash)),
+                        rootPath.resolve("assets/" + asset.getKey())
+                );
+
+                Files.write(
+                        rootPath.resolve("assets/" + asset.getKey()),
+                        IOUtils.toByteArray(builtinEntity)
+                );
+            }
         });
+    }
+
+    @Getter
+    static class VersionManifest {
+        private LatestVersion latest;
+
+        private List<Version> versions;
+    }
+
+    @Getter
+    static class LatestVersion {
+        private String release;
+
+        private String snapshot;
+    }
+
+    @Getter
+    static class Version {
+        private String id;
+
+        private String type;
+
+        private String url;
+
+        private String time;
+
+        private String releaseTime;
+    }
+
+    @Getter
+    static class VersionInfo {
+        private String id;
+
+        private String type;
+
+        private String time;
+
+        private String releaseTime;
+
+        private AssetIndex assetIndex;
+
+        private Map<String, VersionDownload> downloads;
+    }
+
+    @Getter
+    static class VersionDownload {
+        private String sha1;
+
+        private int size;
+
+        private String url;
+    }
+
+    @Getter
+    static class AssetIndex {
+        private String id;
+
+        private String sha1;
+
+        private int size;
+
+        private int totalSize;
+
+        private String url;
+    }
+
+    @Getter
+    public static class Asset {
+        private String hash;
+
+        private int size;
     }
 }

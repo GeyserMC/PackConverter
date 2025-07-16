@@ -118,6 +118,9 @@ public class FontTransformer implements TextureTransformer {
     }
 
     static {
+        // These mappings were mostly found by manually work and checking if the unicodes match correctly
+        // Some characters were found just by seeing they completely match between default8 (bedrock) and ascii (java)
+
         // Manual stuff...
         MAPPINGS.add(new FontMapping("accented", 0, 0));
         MAPPINGS.add(new FontMapping("accented", 1, 0));
