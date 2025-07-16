@@ -99,7 +99,7 @@ public class FontTransformer implements TextureTransformer {
             g.drawImage(
                     ImageUtil.scale(
                             ImageUtil.crop(
-                                    imgs.getOrDefault(fontMapping.javaTexture, new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB)),
+                                    imgs.getOrDefault(fontMapping.javaTexture, new BufferedImage((fontMapping.javaX * realCharX) + realCharX, (fontMapping.javaY * realCharY) + realCharY, BufferedImage.TYPE_INT_ARGB)),
                                     fontMapping.javaX * realCharX,
                                     fontMapping.javaY * realCharY,
                                     realCharX,
