@@ -132,8 +132,17 @@ public final class VanillaPackProvider {
                 Files.createDirectories(builtinModelsDirectory);
             }
 
-            Files.write(builtinModelsDirectory.resolve("entity.json"), IOUtils.toByteArray(builtinEntity));
-            Files.write(builtinModelsDirectory.resolve("generated.json"), IOUtils.toByteArray(builtinGenerated));
+            if (builtinEntity != null) {
+                Files.write(builtinModelsDirectory.resolve("entity.json"), IOUtils.toByteArray(builtinEntity));
+            } else {
+                log.error("`entity.json` was not found. Continuing without, issues may occur!");
+            }
+
+            if (builtinGenerated != null) {
+                Files.write(builtinModelsDirectory.resolve("generated.json"), IOUtils.toByteArray(builtinGenerated));
+            } else {
+                log.error("`generated.json` was not found. Continuing without, issues may occur!");
+            }
 
             try (Stream<Path> paths = Files.walk(rootPath)) {
                 paths.forEach(path -> {
@@ -189,11 +198,6 @@ public final class VanillaPackProvider {
                         new URL("https://resources.download.minecraft.net/%s/%s"
                                 .formatted(bytes2, asset.getValue().hash)),
                         rootPath.resolve("assets/" + asset.getKey())
-                );
-
-                Files.write(
-                        rootPath.resolve("assets/" + asset.getKey()),
-                        IOUtils.toByteArray(builtinEntity)
                 );
             }
         });
