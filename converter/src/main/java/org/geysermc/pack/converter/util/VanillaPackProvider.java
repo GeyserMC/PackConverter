@@ -104,16 +104,12 @@ public final class VanillaPackProvider {
                 ASSET_MAP.put(entry.getKey(), asset);
             }
 
-            log.info("Vanilla jar file found! Downloading vanilla jar...");
+            log.info("Downloading vanilla jar...");
 
             PathUtils.copyFile(new URL(clientJarInfo.url), path);
-
-            log.info("Downloaded vanilla jar successfully!");
-
-            log.info("Removing unneeded assets from the vanilla jar...");
             // Clean the jar
             clean(path, log);
-            log.info("Removed unneeded assets from the vanilla jar!");
+            log.info("Downloaded vanilla jar!");
         } catch (IOException e) {
             log.error("Error downloading vanilla jar", e);
         }
@@ -185,8 +181,6 @@ public final class VanillaPackProvider {
                     }
                 });
             }
-
-            log.info("Applying assets...");
 
             for (Map.Entry<String, Asset> asset : ASSET_MAP.entrySet()) {
                 String bytes2 = asset.getValue().hash.substring(0, 2);
