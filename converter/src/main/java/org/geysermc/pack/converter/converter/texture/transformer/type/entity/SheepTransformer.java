@@ -41,43 +41,57 @@ import java.io.IOException;
 
 @AutoService(TextureTransformer.class)
 public class SheepTransformer implements TextureTransformer {
-    private static final String SHEEP = "entity/sheep/sheep.png";
-    private static final String SHEEP_FUR = "entity/sheep/sheep_fur.png";
+    public static final String SHEEP = "entity/sheep/sheep.png";
+    public static final String SHEEP_WOOL = "entity/sheep/sheep_wool.png";
+    public static final String SHEEP_UNDERCOAT = "entity/sheep/sheep_wool_undercoat.png";
 
     @Override
     public void transform(@NotNull TransformContext context) throws IOException {
-        Texture sheepTexture = context.poll(Key.key(Key.MINECRAFT_NAMESPACE, SHEEP));
-        Texture sheepFurTexture = context.poll(Key.key(Key.MINECRAFT_NAMESPACE, SHEEP_FUR));
+        Key sheepKey = Key.key(Key.MINECRAFT_NAMESPACE, SHEEP);
+        Key woolKey = Key.key(Key.MINECRAFT_NAMESPACE, SHEEP_WOOL);
+        Key undercoatKey = Key.key(Key.MINECRAFT_NAMESPACE, SHEEP_UNDERCOAT);
 
-        if (sheepTexture == null || sheepFurTexture == null) {
+        if (
+                !context.isTexturePresent(sheepKey) &&
+                !context.isTexturePresent(woolKey) &&
+                !context.isTexturePresent(undercoatKey)
+        ) return;
+
+        Texture sheepTexture = context.pollOrPeekVanilla(sheepKey);
+        Texture sheepWoolTexture = context.pollOrPeekVanilla(woolKey);
+        Texture sheepUndercoatTexture = context.pollOrPeekVanilla(undercoatKey);
+
+        if (sheepTexture == null || sheepWoolTexture == null || sheepUndercoatTexture == null) {
             return;
         }
 
         context.debug(String.format("Converting sheep texture %s", SHEEP));
 
         BufferedImage sheepImage = this.readImage(sheepTexture);
-        BufferedImage sheepFurImage = this.readImage(sheepFurTexture);
+        BufferedImage sheepWoolImage = this.readImage(sheepWoolTexture);
+        BufferedImage sheepUndercoatImage = this.readImage(sheepUndercoatTexture);
 
-        int width = Math.max(sheepImage.getWidth(), sheepFurImage.getWidth());
+        int width = Math.max(Math.max(sheepImage.getWidth(), sheepWoolImage.getWidth()), sheepUndercoatImage.getWidth());
         sheepImage = ImageUtil.ensureMinWidth(sheepImage, width);
-        sheepFurImage = ImageUtil.ensureMinWidth(sheepFurImage, width);
+        sheepWoolImage = ImageUtil.ensureMinWidth(sheepWoolImage, width);
+        sheepUndercoatImage = ImageUtil.ensureMinWidth(sheepUndercoatImage, width);
 
-        BufferedImage newImage = new BufferedImage(sheepImage.getWidth(), sheepImage.getHeight() + sheepFurImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage newImage = new BufferedImage(sheepImage.getWidth(), sheepImage.getHeight() + sheepWoolImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics g = newImage.getGraphics();
 
-        g.drawImage(sheepImage, 0, 0, null);
-
-        g.drawImage(sheepFurImage, 0, sheepImage.getHeight(), null);
-
-        for (int x = 0; x < newImage.getWidth(); x++) {
+        for (int x = 0; x < sheepImage.getWidth(); x++) {
             for (int y = 0; y < sheepImage.getHeight(); y++) {
-                Color c = new Color(newImage.getRGB(x, y), true);
+                Color c = new Color(sheepImage.getRGB(x, y), true);
                 if (c.getAlpha() == 255) {
-                    Color tmpCol = new Color(c.getRed(), c.getGreen(), c.getBlue(), 1);
+                    Color tmpCol = new Color(c.getRed(), c.getGreen(), c.getBlue(), 2);
                     newImage.setRGB(x, y, tmpCol.getRGB());
                 }
             }
         }
+
+        g.drawImage(sheepUndercoatImage, 0, 0, null);
+
+        g.drawImage(sheepWoolImage, 0, sheepImage.getHeight(), null);
 
         context.offer(Key.key(Key.MINECRAFT_NAMESPACE, SHEEP), newImage, "png");
     }

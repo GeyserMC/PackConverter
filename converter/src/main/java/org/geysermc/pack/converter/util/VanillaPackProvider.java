@@ -31,6 +31,7 @@ import lombok.Getter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.file.PathUtils;
 import org.geysermc.pack.converter.converter.texture.transformer.type.OverlayTransformer;
+import org.geysermc.pack.converter.converter.texture.transformer.type.entity.SheepTransformer;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
@@ -157,6 +158,10 @@ public final class VanillaPackProvider {
                             validPaths.add("/assets/minecraft/textures/" + overlayData.javaName());
                             validPaths.add("/assets/minecraft/textures/" + overlayData.overlay());
                         }
+
+                        validPaths.add("/assets/minecraft/textures/" + SheepTransformer.SHEEP);
+                        validPaths.add("/assets/minecraft/textures/" + SheepTransformer.SHEEP_WOOL);
+                        validPaths.add("/assets/minecraft/textures/" + SheepTransformer.SHEEP_UNDERCOAT);
 
                         // At the moment, we only care about models and blockstate info from vanilla.
                         String pathName = path.toString();
