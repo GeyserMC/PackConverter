@@ -30,6 +30,7 @@ import lombok.Getter;
 import net.kyori.adventure.key.Key;
 import org.geysermc.pack.converter.converter.model.ModelStitcher;
 import org.jetbrains.annotations.NotNull;
+import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.model.Model;
 
 import java.nio.file.Path;
@@ -41,8 +42,8 @@ public class ModelConversionData extends BaseConversionData {
     @Getter
     private final ModelStitcher.Provider modelProvider;
 
-    public ModelConversionData(@NotNull Path inputDirectory, @NotNull Path outputDirectory, ModelStitcher.Provider modelProvider) {
-        super(inputDirectory, outputDirectory);
+    public ModelConversionData(@NotNull Path inputDirectory, @NotNull Path outputDirectory, ModelStitcher.Provider modelProvider, @NotNull ResourcePack vanillaPack) {
+        super(inputDirectory, outputDirectory, vanillaPack);
         this.modelProvider = modelProvider;
     }
 

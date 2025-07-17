@@ -31,10 +31,7 @@ import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.converter.ActionListener;
 import org.geysermc.pack.converter.converter.Converter;
 import org.geysermc.pack.converter.data.ConversionData;
-import org.geysermc.pack.converter.util.DefaultLogListener;
-import org.geysermc.pack.converter.util.LogListener;
-import org.geysermc.pack.converter.util.NioDirectoryFileTreeReader;
-import org.geysermc.pack.converter.util.ZipUtils;
+import org.geysermc.pack.converter.util.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.ResourcePack;
@@ -43,6 +40,7 @@ import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackReader;
 import javax.imageio.ImageIO;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -55,6 +53,8 @@ import java.util.function.BiConsumer;
 public final class PackConverter {
     private Path input;
     private Path output;
+
+    private Path vanillaPackPath = Paths.get("vanilla-pack.zip");
 
     private String textureSubdirectory;
 
@@ -118,6 +118,17 @@ public final class PackConverter {
      */
     public PackConverter output(@NotNull Path output) {
         this.output = output;
+        return this;
+    }
+
+    /**
+     * Sets the path where the vanilla pack is downloaded to
+     *
+     * @param vanillaPackPath the vanilla pack location
+     * @return this instance
+     */
+    public PackConverter vanillaPackPath(@NotNull Path vanillaPackPath) {
+        this.vanillaPackPath = vanillaPackPath;
         return this;
     }
 
@@ -245,8 +256,17 @@ public final class PackConverter {
             throw new NullPointerException("Output cannot be null");
         }
 
+        if (this.vanillaPackPath == null) {
+            throw new NullPointerException("Vanilla Pack Path cannot be null");
+        }
+
         // Load any image plugins
         ImageIO.scanForPlugins();
+
+        // Need to download the client jar, then use the
+        // client jar to get the vanilla models and textures, so we can
+        // ensure all parent models exist to convert them to Bedrock.
+        VanillaPackProvider.create(vanillaPackPath, this.logListener);
 
         ZipUtils.openFileSystem(this.input, this.compressed, input -> {
             this.tmpDir = this.output.toAbsolutePath().getParent().resolve(this.output.getFileName() + "_mcpack/");
@@ -256,10 +276,11 @@ public final class PackConverter {
             }
 
             ResourcePack javaResourcePack = this.compressed ? MinecraftResourcePackReader.minecraft().readFromZipFile(this.input) : MinecraftResourcePackReader.minecraft().read(NioDirectoryFileTreeReader.read(this.input));
+            ResourcePack vanillaResourcePack = MinecraftResourcePackReader.minecraft().readFromZipFile(vanillaPackPath);
             BedrockResourcePack bedrockResourcePack = new BedrockResourcePack(this.tmpDir);
 
             final Converter.ConversionDataCreationContext conversionDataCreationContext = new Converter.ConversionDataCreationContext(
-                this, logListener, input, this.tmpDir, javaResourcePack
+                this, logListener, input, this.tmpDir, javaResourcePack, vanillaResourcePack
             );
 
             int errors = 0;
@@ -301,8 +322,12 @@ public final class PackConverter {
      * @throws IOException if an I/O error occurs
      */
     public PackConverter pack() throws IOException {
+        this.logListener.info("Packaging pack...");
+
         this.packageHandler.pack(this, this.tmpDir, this.output, this.logListener);
         this.cleanup();
+
+        this.logListener.info("Packaged pack!");
 
         return this;
     }

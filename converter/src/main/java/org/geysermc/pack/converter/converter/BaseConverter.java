@@ -33,6 +33,6 @@ public abstract class BaseConverter implements Converter<BaseConversionData> {
 
     @Override
     public BaseConversionData createConversionData(@NotNull ConversionDataCreationContext context) {
-        return new BaseConversionData(context.inputDirectory(), context.outputDirectory());
+        return new BaseConversionData(context.inputDirectory(), context.outputDirectory(), context.vanillaResourcePack());
     }
 }

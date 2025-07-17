@@ -195,19 +195,11 @@ public class ModelStitcher {
         return pack::model;
     }
 
-    public static Provider vanillaProvider(@NotNull ResourcePack pack, @NotNull LogListener log) {
-        // Need to download the client jar, then use the
-        // client jar to get the vanilla models, so we can
-        // ensure all parents exist to convert them to Bedrock.
-        // TODO Make the location of this configurable
-        Path vanillaPackPath = Paths.get("vanilla-pack.zip");
-        VanillaPackProvider.create(vanillaPackPath, log);
-
-        ResourcePack vanillaResourcePack = MinecraftResourcePackReader.minecraft().readFromZipFile(vanillaPackPath);
+    public static Provider vanillaProvider(@NotNull ResourcePack pack, @NotNull LogListener log, @NotNull ResourcePack vanillaPack) {
         return key -> {
             Model model = pack.model(key);
             if (model == null) {
-                return vanillaResourcePack.model(key);
+                return vanillaPack.model(key);
             }
 
             return model;

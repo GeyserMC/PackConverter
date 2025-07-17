@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 GeyserMC. http://geysermc.org
+ * Copyright (c) 2025 GeyserMC. http://geysermc.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -24,34 +24,35 @@
  *
  */
 
-package org.geysermc.pack.converter.converter;
+package org.geysermc.pack.converter.converter.texture.transformer.type.entity;
 
-import org.geysermc.pack.converter.PackConversionContext;
+import com.google.auto.service.AutoService;
+import net.kyori.adventure.key.Key;
 import org.geysermc.pack.converter.PackConverter;
-import org.geysermc.pack.converter.data.ConversionData;
-import org.geysermc.pack.converter.util.LogListener;
+import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
+import org.geysermc.pack.converter.converter.texture.transformer.TransformContext;
 import org.jetbrains.annotations.NotNull;
-import team.unnamed.creative.ResourcePack;
 
-import java.nio.file.Path;
+import java.io.IOException;
+import java.io.InputStream;
 
-public interface Converter<T extends ConversionData> {
+@AutoService(TextureTransformer.class)
+public class DolphinTransformer implements TextureTransformer {
+    @Override
+    public void transform(@NotNull TransformContext context) throws IOException {
+        if (context.isTexturePresent(Key.key(Key.MINECRAFT_NAMESPACE, "entity/dolphin.png"))) {
+            InputStream stream = PackConverter.class.getResourceAsStream("/dolphin.geo.json");
 
-    void convert(@NotNull PackConversionContext<T> context) throws Exception;
+            if (stream == null) {
+                context.error("Dolphin geo file not found.");
+                return;
+            }
 
-    T createConversionData(@NotNull ConversionDataCreationContext context);
+            byte[] bytes = new byte[stream.available()];
 
-    default boolean isExperimental() {
-        return false;
-    }
+            stream.read(bytes);
 
-    record ConversionDataCreationContext(
-        @NotNull PackConverter converter,
-        @NotNull LogListener logListener,
-        @NotNull Path inputDirectory,
-        @NotNull Path outputDirectory,
-        @NotNull ResourcePack javaResourcePack,
-        @NotNull ResourcePack vanillaResourcePack
-    ) {
+            context.bedrockResourcePack().addExtraFile(bytes, "models/entity/dolphin.geo.json");
+        }
     }
 }

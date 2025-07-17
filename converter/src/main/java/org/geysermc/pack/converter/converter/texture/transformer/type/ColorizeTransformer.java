@@ -59,7 +59,8 @@ public class ColorizeTransformer implements TextureTransformer {
         new ColorizeData(new Overlay("block/oak_leaves.png", new Color(23, 63, 3)), "blocks/leaves_oak_carried.png"), // 0/0 (leaves_oak_carried.tga)
         new ColorizeData(new Overlay("block/spruce_leaves.png", new Color(58, 92, 58)), "blocks/leaves_spruce_carried.png"), // 0/0 (leaves_spruce_carried.tga)
         new ColorizeData(new Overlay("block/mangrove_leaves.png", new Color(58, 92, 58)), "blocks/mangrove_leaves_carried.png"), // 0/0 (leaves_spruce_carried.tga)
-        new ColorizeData(new Overlay("block/grass.png", new Color(81, 123, 44)), "blocks/tallgrass_carried.png"), // 1/5 (tallgrass_carried.tga)
+        new ColorizeData(new Overlay("block/short_grass.png", new Color(81, 123, 44)), "blocks/tallgrass_carried.png"), // 1/5 (tallgrass_carried.tga)
+        new ColorizeData(new Overlay("block/bush.png", new Color(60, 92, 51)), "items/bush.png"), // 0/10 (items/bush.png)
         new ColorizeData(new Overlay("block/lily_pad.png", new Color(67, 102, 36)), "blocks/carried_waterlily.png"), // 4/2 (carried_waterlily.png)
         new ColorizeData(new Overlay("block/water_flow.png", new Color(86, 132, 254)), "blocks/water_flow.png"), // 0/0 (water_flow.png)
         new ColorizeData(new Overlay("block/water_still.png", new Color(215, 215, 215)), "blocks/cauldron_water.png"), // 0/0 (cauldron_water.png)
@@ -85,6 +86,10 @@ public class ColorizeTransformer implements TextureTransformer {
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(72, 130, 242)), new Overlay("item/lingering_potion.png") },"items/potion_bottle_lingering_waterBreathing.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(114, 122, 114)), new Overlay("item/lingering_potion.png") },"items/potion_bottle_lingering_weakness.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(84, 66, 62)), new Overlay("item/lingering_potion.png") },"items/potion_bottle_lingering_wither.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(140, 155, 140)), new Overlay("item/lingering_potion.png") },"items/potion_bottle_lingering_infested.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(153, 255, 163)), new Overlay("item/lingering_potion.png") },"items/potion_bottle_lingering_oozing.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(189, 201, 255)), new Overlay("item/lingering_potion.png") },"items/potion_bottle_lingering_windCharged.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(120, 105, 90)), new Overlay("item/lingering_potion.png") },"items/potion_bottle_lingering_weaving.png"),
 
         // Map (Colors from px 6/7 from original bedrock textures)
         new ColorizeData(new Overlay[] { new Overlay("item/filled_map.png"),  new Overlay("item/filled_map_markings.png", new Color(82, 76, 68)) },"items/map_mansion.png"),
@@ -122,6 +127,10 @@ public class ColorizeTransformer implements TextureTransformer {
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(72, 130, 242)), new Overlay("item/potion.png") }, "items/potion_bottle_waterBreathing.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(114, 112, 114)), new Overlay("item/potion.png") }, "items/potion_bottle_weakness.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(84, 66, 62)), new Overlay("item/potion.png") }, "items/potion_bottle_wither.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(140, 155, 140)), new Overlay("item/potion.png") },"items/potion_bottle_infested.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(153, 255, 163)), new Overlay("item/potion.png") },"items/potion_bottle_oozing.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(189, 201, 255)), new Overlay("item/potion.png") },"items/potion_bottle_windCharged.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(120, 105, 90)), new Overlay("item/potion.png") },"items/potion_bottle_weaving.png"),
 
         // Redstone dust
         // new ColorizeData(new Overlay[] { new Overlay("blocks/redstone_dust_cross.png"),  new Overlay("blocks/redstone_dust_overlay.png") }, "blocks/redstone_dust_cross.png"),
@@ -160,6 +169,10 @@ public class ColorizeTransformer implements TextureTransformer {
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(72, 130, 242)), new Overlay("item/splash_potion.png") }, "items/potion_bottle_splash_waterBreathing.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(114, 122, 114)), new Overlay("item/splash_potion.png") }, "items/potion_bottle_splash_weakness.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(84, 66, 62)), new Overlay("item/splash_potion.png") }, "items/potion_bottle_splash_wither.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(140, 155, 140)), new Overlay("item/splash_potion.png") },"items/potion_bottle_splash_infested.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(153, 255, 163)), new Overlay("item/splash_potion.png") },"items/potion_bottle_splash_oozing.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(189, 201, 255)), new Overlay("item/splash_potion.png") },"items/potion_bottle_splash_windCharged.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(120, 105, 90)), new Overlay("item/splash_potion.png") },"items/potion_bottle_splash_weaving.png"),
 
         // Spawn egg (Colors from px 8/9 and 5/9 from original bedrock textures)
         new ColorizeData(new Overlay[] { new Overlay("item/spawn_egg.png", new Color(65, 53, 41)), new Overlay("item/spawn_egg_overlay.png", new Color(13, 13, 13)) }, "items/egg_bat.png"),
@@ -242,7 +255,11 @@ public class ColorizeTransformer implements TextureTransformer {
         new ColorizeData(new Overlay[] { new Overlay("item/tipped_arrow_base.png"),  new Overlay("item/tipped_arrow_head.png", new Color(113, 88, 96)) }, "items/tipped_arrow_turtlemaster.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/tipped_arrow_base.png"),  new Overlay("item/tipped_arrow_head.png", new Color(45, 79, 148)) }, "items/tipped_arrow_waterbreathing.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/tipped_arrow_base.png"),  new Overlay("item/tipped_arrow_head.png", new Color(70, 75, 70)) }, "items/tipped_arrow_weakness.png"),
-        new ColorizeData(new Overlay[] { new Overlay("item/tipped_arrow_base.png"),  new Overlay("item/tipped_arrow_head.png", new Color(50, 39, 36)) }, "items/tipped_arrow_wither.png")
+        new ColorizeData(new Overlay[] { new Overlay("item/tipped_arrow_base.png"),  new Overlay("item/tipped_arrow_head.png", new Color(50, 39, 36)) }, "items/tipped_arrow_wither.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/tipped_arrow_base.png"),  new Overlay("item/tipped_arrow_head.png", new Color(140, 155, 140)) }, "items/tipped_arrow_infested.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/tipped_arrow_base.png"),  new Overlay("item/tipped_arrow_head.png", new Color(153, 255, 163)) }, "items/tipped_arrow_oozing.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/tipped_arrow_base.png"),  new Overlay("item/tipped_arrow_head.png", new Color(120, 105, 90)) }, "items/tipped_arrow_weaving.png"),
+        new ColorizeData(new Overlay[] { new Overlay("item/tipped_arrow_base.png"),  new Overlay("item/tipped_arrow_head.png", new Color(189, 201, 255)) }, "items/tipped_arrow_windCharged.png")
     );
     
     @Override

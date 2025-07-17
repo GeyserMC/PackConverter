@@ -27,16 +27,19 @@
 package org.geysermc.pack.converter.data;
 
 import org.jetbrains.annotations.NotNull;
+import team.unnamed.creative.ResourcePack;
 
 import java.nio.file.Path;
 
 public class BaseConversionData implements ConversionData {
     private final Path inputDirectory;
     private final Path outputDirectory;
+    private final ResourcePack vanillaPack;
 
-    public BaseConversionData(@NotNull Path inputDirectory, @NotNull Path outputDirectory) {
+    public BaseConversionData(@NotNull Path inputDirectory, @NotNull Path outputDirectory, @NotNull ResourcePack vanillaPack) {
         this.inputDirectory = inputDirectory;
         this.outputDirectory = outputDirectory;
+        this.vanillaPack = vanillaPack;
     }
 
     @NotNull
@@ -49,5 +52,11 @@ public class BaseConversionData implements ConversionData {
     @Override
     public Path outputDirectory() {
         return this.outputDirectory;
+    }
+
+    @NotNull
+    @Override
+    public ResourcePack vanillaPack() {
+        return this.vanillaPack;
     }
 }

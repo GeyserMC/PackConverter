@@ -27,12 +27,14 @@
 package org.geysermc.pack.converter.converter.texture.transformer;
 
 import net.kyori.adventure.key.Key;
+import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.PackConversionContext;
 import org.geysermc.pack.converter.converter.texture.TextureMappings;
 import org.geysermc.pack.converter.data.TextureConversionData;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.base.Writable;
 import team.unnamed.creative.texture.Texture;
 
@@ -46,12 +48,14 @@ public class TransformContext {
     private final PackConversionContext<TextureConversionData> conversionContext;
     private final TextureMappings mappings;
     private final Collection<Texture> textures;
+    private final BedrockResourcePack pack;
     private final Map<Key, Texture> byKey = new HashMap<>();
 
-    public TransformContext(PackConversionContext<TextureConversionData> conversionContext, TextureMappings mappings, Collection<Texture> textures) {
+    public TransformContext(PackConversionContext<TextureConversionData> conversionContext, TextureMappings mappings, Collection<Texture> textures, BedrockResourcePack pack) {
         this.conversionContext = conversionContext;
         this.mappings = mappings;
         this.textures = textures;
+        this.pack = pack;
 
         for (Texture texture : textures) {
             this.byKey.put(texture.key(), texture);
@@ -60,6 +64,10 @@ public class TransformContext {
 
     public TextureMappings mappings() {
         return this.mappings;
+    }
+
+    public BedrockResourcePack bedrockResourcePack() {
+        return this.pack;
     }
 
     /**
@@ -88,6 +96,56 @@ public class TransformContext {
     @Nullable
     public Texture peek(@NotNull Key key) {
         return this.byKey.get(key);
+    }
+
+    /**
+     * Removes the texture from the list of textures and returns it.
+     * Or will peek the vanilla texture if it does not exist in the pack.
+     * If it still does not exist, we return null
+     *
+     * @param key the key of the texture to remove
+     * @return the texture that was removed, or the vanilla one if it didn't exist, or null
+     */
+    @Nullable
+    public Texture pollOrPeekVanilla(@NotNull Key key) {
+        Texture remove = this.byKey.remove(key);
+        if (remove == null) {
+            // This *shouldn't* be null, but if a bad key is inputted, it is possible this value is null
+            return this.conversionContext.data().vanillaPack().texture(key);
+        }
+
+        this.textures.remove(remove);
+        return remove;
+    }
+
+    /**
+     * Gets the texture from the list of textures and returns it.
+     * Or will peek the vanilla texture if it does not exist in the pack.
+     * If it still does not exist, we return null
+     *
+     * @param key the key of the texture to get
+     * @return the texture that was removed, or the vanilla one if it didn't exist, or null
+     */
+    @Nullable
+    public Texture peekOrVanilla(@NotNull Key key) {
+        Texture texture = this.byKey.get(key);
+        if (texture == null) {
+            // This *shouldn't* be null, but if a bad key is inputted, it is possible this value is null
+            return this.conversionContext.data().vanillaPack().texture(key);
+        }
+
+        return texture;
+    }
+
+    /**
+     * Returns whether the pack has a certain texture
+     *
+     * @param key the key of the texture to check
+     * @return true if the texture is present, else false
+     */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted") // It just doesn't make sense.
+    public boolean isTexturePresent(@NotNull Key key) {
+        return this.byKey.containsKey(key);
     }
 
     /**

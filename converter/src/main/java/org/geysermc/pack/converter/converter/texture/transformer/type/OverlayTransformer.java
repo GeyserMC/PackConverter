@@ -41,47 +41,56 @@ import java.util.List;
 
 @AutoService(TextureTransformer.class)
 public class OverlayTransformer implements TextureTransformer {
-    private static final List<OverlayData> OVERLAYS = List.of(
+    // This is used in VanillaPackProvider in order to get textures if one is missing out of the two
+    public static final List<OverlayData> OVERLAYS = List.of(
             // Cat
-            new OverlayData("entity/cat/cat_collar.png", "entity/cat/all_black.png", "entity/cat/allblackcat_tame.png", false, true),
-            new OverlayData("entity/cat/cat_collar.png", "entity/cat/british_shorthair.png", "entity/cat/britishshorthair_tame.png", false, true),
-            new OverlayData("entity/cat/cat_collar.png", "entity/cat/calico.png", "entity/cat/calico_tame.png", false, true),
-            new OverlayData("entity/cat/cat_collar.png", "entity/cat/jellie.png", "entity/cat/jellie_tame.png", false, true),
-            new OverlayData("entity/cat/cat_collar.png", "entity/cat/ocelot.png", "entity/cat/ocelot_tame.png", false, true),
-            new OverlayData("entity/cat/cat_collar.png", "entity/cat/persian.png", "entity/cat/persian_tame.png", false, true),
-            new OverlayData("entity/cat/cat_collar.png", "entity/cat/ragdoll.png", "entity/cat/ragdoll_tame.png", false, true),
-            new OverlayData("entity/cat/cat_collar.png", "entity/cat/red.png", "entity/cat/redtabby_tame.png", false, true),
-            new OverlayData("entity/cat/cat_collar.png", "entity/cat/siamese.png", "entity/cat/siamesecat_tame.png", false, true),
-            new OverlayData("entity/cat/cat_collar.png", "entity/cat/tabby.png", "entity/cat/tabby_tame.png", false, true),
-            new OverlayData("entity/cat/cat_collar.png", "entity/cat/black.png", "entity/cat/tuxedo_tame.png", false, true),
-            new OverlayData("entity/cat/cat_collar.png", "entity/cat/white.png", "entity/cat/white_tame.png", false, true),
+            new OverlayData("entity/cat/cat_collar.png", "entity/cat/all_black.png", "entity/cat/allblackcat_tame.png", true, true),
+            new OverlayData("entity/cat/cat_collar.png", "entity/cat/british_shorthair.png", "entity/cat/britishshorthair_tame.png", true, true),
+            new OverlayData("entity/cat/cat_collar.png", "entity/cat/calico.png", "entity/cat/calico_tame.png", true, true),
+            new OverlayData("entity/cat/cat_collar.png", "entity/cat/jellie.png", "entity/cat/jellie_tame.png", true, true),
+            new OverlayData("entity/cat/cat_collar.png", "entity/cat/ocelot.png", "entity/cat/ocelot_tame.png", true, true),
+            new OverlayData("entity/cat/cat_collar.png", "entity/cat/persian.png", "entity/cat/persian_tame.png", true, true),
+            new OverlayData("entity/cat/cat_collar.png", "entity/cat/ragdoll.png", "entity/cat/ragdoll_tame.png", true, true),
+            new OverlayData("entity/cat/cat_collar.png", "entity/cat/red.png", "entity/cat/redtabby_tame.png", true, true),
+            new OverlayData("entity/cat/cat_collar.png", "entity/cat/siamese.png", "entity/cat/siamesecat_tame.png", true, true),
+            new OverlayData("entity/cat/cat_collar.png", "entity/cat/tabby.png", "entity/cat/tabby_tame.png", true, true),
+            new OverlayData("entity/cat/cat_collar.png", "entity/cat/black.png", "entity/cat/tuxedo_tame.png", true, true),
+            new OverlayData("entity/cat/cat_collar.png", "entity/cat/white.png", "entity/cat/white_tame.png", true, true),
 
             // Enderman
-            new OverlayData("entity/enderman/enderman.png", "entity/enderman/enderman_eyes.png", "entity/enderman/enderman.png", true),
+            new OverlayData("entity/enderman/enderman.png", "entity/enderman/enderman_eyes.png", "entity/enderman/enderman.png", false),
 
             // Firework
             new OverlayData("item/firework_star_overlay.png", "item/firework_star.png", "items/fireworks_charge.png", false),
 
             // Grass
-            new OverlayData("block/grass_block_side_overlay.png", "block/grass_block_side.png", "blocks/grass_side.png", false, true),
+            new OverlayData("block/grass_block_side_overlay.png", "block/grass_block_side.png", "blocks/grass_side.png", true, true),
 
             // Leather
-            new OverlayData("item/leather_boots.png", "item/leather_boots_overlay.png", "items/leather_boots.png", true),
-            new OverlayData("item/leather_chestplate.png", "item/leather_chestplate_overlay.png", "items/leather_chestplate.png", true),
-            new OverlayData("item/leather_helmet.png", "item/leather_helmet_overlay.png", "items/leather_helmet.png", true),
-            new OverlayData("item/leather_leggings.png", "item/leather_leggings_overlay.png", "items/leather_leggings.png", true),
-            new OverlayData("entity/equipment/humanoid/leather.png", "entity/equipment/humanoid/leather_overlay.png", "models/armor/leather_1.png", true),
-            new OverlayData("entity/equipment/humanoid_leggings/leather.png", "entity/equipment/humanoid_leggings/leather_overlay.png", "models/armor/leather_2.png", true),
+            new OverlayData("item/leather_boots.png", "item/leather_boots_overlay.png", "items/leather_boots.png"),
+            new OverlayData("item/leather_chestplate.png", "item/leather_chestplate_overlay.png", "items/leather_chestplate.png"),
+            new OverlayData("item/leather_helmet.png", "item/leather_helmet_overlay.png", "items/leather_helmet.png"),
+            new OverlayData("item/leather_leggings.png", "item/leather_leggings_overlay.png", "items/leather_leggings.png"),
+            new OverlayData("entity/equipment/humanoid/leather.png", "entity/equipment/humanoid/leather_overlay.png", "models/armor/leather_1.png"),
+            new OverlayData("entity/equipment/humanoid_leggings/leather.png", "entity/equipment/humanoid_leggings/leather_overlay.png", "models/armor/leather_2.png"),
 
             // Phantom
-            new OverlayData("entity/phantom.png", "entity/phantom_eyes.png", "entity/phantom.png", true),
+            new OverlayData("entity/phantom.png", "entity/phantom_eyes.png", "entity/phantom.png", false),
 
             // Spider
-            new OverlayData("entity/spider/cave_spider.png", "entity/spider_eyes.png", "entity/spider/cave_spider.png", true, true),
-            new OverlayData("entity/spider/spider.png", "entity/spider_eyes.png", "entity/spider/spider.png", true),
+            new OverlayData("entity/spider/cave_spider.png", "entity/spider_eyes.png", "entity/spider/cave_spider.png", false, true),
+            new OverlayData("entity/spider/spider.png", "entity/spider_eyes.png", "entity/spider/spider.png"),
 
             // Wolf
-            new OverlayData("entity/wolf/wolf_collar.png", "entity/wolf/wolf_tame.png", "entity/wolf/wolf_tame.png", false, true)
+            new OverlayData("entity/wolf/wolf_collar.png", "entity/wolf/wolf_tame.png", "entity/wolf/wolf_tame.png", true, true),
+            new OverlayData("entity/wolf/wolf_collar.png", "entity/wolf/wolf_ashen_tame.png", "entity/wolf/wolf_ashen_tame.png", true, true),
+            new OverlayData("entity/wolf/wolf_collar.png", "entity/wolf/wolf_black_tame.png", "entity/wolf/wolf_black_tame.png", true, true),
+            new OverlayData("entity/wolf/wolf_collar.png", "entity/wolf/wolf_chestnut_tame.png", "entity/wolf/wolf_chestnut_tame.png", true, true),
+            new OverlayData("entity/wolf/wolf_collar.png", "entity/wolf/wolf_rusty_tame.png", "entity/wolf/wolf_rusty_tame.png", true, true),
+            new OverlayData("entity/wolf/wolf_collar.png", "entity/wolf/wolf_snowy_tame.png", "entity/wolf/wolf_snowy_tame.png", true, true),
+            new OverlayData("entity/wolf/wolf_collar.png", "entity/wolf/wolf_spotted_tame.png", "entity/wolf/wolf_spotted_tame.png", true, true),
+            new OverlayData("entity/wolf/wolf_collar.png", "entity/wolf/wolf_striped_tame.png", "entity/wolf/wolf_striped_tame.png", true, true),
+            new OverlayData("entity/wolf/wolf_collar.png", "entity/wolf/wolf_woods_tame.png", "entity/wolf/wolf_woods_tame.png", true, true)
     );
     
     @Override
@@ -90,32 +99,50 @@ public class OverlayTransformer implements TextureTransformer {
             String javaName = overlay.javaName();
             String overlayName = overlay.overlay();
             String bedrockName = overlay.bedrockName();
-            boolean reverse = overlay.reverse();
+            boolean noReplace = overlay.noReplace();
             boolean keep = overlay.keep();
 
-            Texture texture = context.peek(Key.key(Key.MINECRAFT_NAMESPACE, javaName));
-            if (texture == null) {
-                context.debug(String.format("Base overlay texture %s not found", javaName));
+            Key javaKey = Key.key(Key.MINECRAFT_NAMESPACE, javaName);
+            Key overlayKey = Key.key(Key.MINECRAFT_NAMESPACE, overlayName);
+
+            // We don't have either textures, skip this
+            if (!context.isTexturePresent(javaKey) && !context.isTexturePresent(overlayKey)) continue;
+
+            Texture texture = context.peekOrVanilla(javaKey);
+            if (texture == null) { // This ideally, shouldn't happen anymore
+                context.info(String.format("Base overlay texture %s not found", javaName));
                 continue;
             }
 
-            Texture overlayTexture = keep ? context.peek(Key.key(Key.MINECRAFT_NAMESPACE, overlayName)) : context.poll(Key.key(Key.MINECRAFT_NAMESPACE, overlayName));
-            if (overlayTexture == null) {
-                context.debug(String.format("Overlay texture %s not found", overlayName));
+            BufferedImage image = this.readImage(texture);
+
+            Texture overlayTexture = keep ? context.peekOrVanilla(overlayKey) : context.pollOrPeekVanilla(overlayKey);
+            if (overlayTexture == null) { // This ideally, shouldn't happen anymore
+                context.info(String.format("Overlay texture %s not found", overlayName));
                 continue;
             }
 
             context.debug(String.format("Overlaying %s and %s onto %s", overlayName, javaName, bedrockName));
 
-            BufferedImage image = this.readImage(texture);
             BufferedImage imageOverlay = this.readImage(overlayTexture);
+
+            // Scale to the base image so ensure we don't go out of bounds in the image
+            int resizeX = image.getWidth() / imageOverlay.getWidth();
+            int resizeY = image.getHeight() / imageOverlay.getHeight();
+            imageOverlay = ImageUtil.scale(imageOverlay, resizeX, resizeY);
 
             for (int x = 0; x < image.getWidth(); x++) {
                 for (int y = 0; y < image.getHeight(); y++) {
-                    Color c = new Color(image.getRGB(x, y), true);
-                    if (reverse ? c.getAlpha() > 0 : c.getAlpha() < 255) {
-                        Color newCol = new Color(imageOverlay.getRGB(x, y), true);
-                        newCol = new Color(newCol.getRed(), newCol.getGreen(), newCol.getBlue(), 2);
+                    if (noReplace) {
+                        Color c = new Color(image.getRGB(x, y), true);
+
+                        if (c.getAlpha() > 0) continue;
+                    }
+
+                    Color c = new Color(imageOverlay.getRGB(x, y), true);
+
+                    if (c.getAlpha() == 255) {
+                        Color newCol = new Color(c.getRed(), c.getGreen(), c.getBlue(), 2);
 
                         image.setRGB(x, y, ImageUtil.colorToARGB(newCol));
                     }
@@ -126,10 +153,13 @@ public class OverlayTransformer implements TextureTransformer {
         }
     }
     
-    record OverlayData(@NotNull String javaName, @NotNull String overlay, @NotNull String bedrockName, boolean reverse, boolean keep) {
+    public record OverlayData(@NotNull String javaName, @NotNull String overlay, @NotNull String bedrockName, boolean noReplace, boolean keep) {
+        public OverlayData(@NotNull String javaName, @NotNull String overlay, @NotNull String bedrockName, boolean noReplace) {
+            this(javaName, overlay, bedrockName, noReplace, false);
+        }
 
-        public OverlayData(@NotNull String javaName, @NotNull String overlay, @NotNull String bedrockName, boolean reverse) {
-            this(javaName, overlay, bedrockName, reverse, false);
+        public OverlayData(@NotNull String javaName, @NotNull String overlay, @NotNull String bedrockName) {
+            this(javaName, overlay, bedrockName, false, false);
         }
     }
 }
