@@ -48,14 +48,22 @@ public class TransformContext {
     private final PackConversionContext<TextureConversionData> conversionContext;
     private final TextureMappings mappings;
     private final Collection<Texture> textures;
-    private final BedrockResourcePack pack;
+    private final BedrockResourcePack bedrockPack;
+    private final ResourcePack javaPack;
     private final Map<Key, Texture> byKey = new HashMap<>();
 
-    public TransformContext(PackConversionContext<TextureConversionData> conversionContext, TextureMappings mappings, Collection<Texture> textures, BedrockResourcePack pack) {
+    public TransformContext(
+            PackConversionContext<TextureConversionData> conversionContext,
+            TextureMappings mappings,
+            Collection<Texture> textures,
+            BedrockResourcePack bedrockPack,
+            ResourcePack javaPack
+    ) {
         this.conversionContext = conversionContext;
         this.mappings = mappings;
         this.textures = textures;
-        this.pack = pack;
+        this.bedrockPack = bedrockPack;
+        this.javaPack = javaPack;
 
         for (Texture texture : textures) {
             this.byKey.put(texture.key(), texture);
@@ -67,7 +75,15 @@ public class TransformContext {
     }
 
     public BedrockResourcePack bedrockResourcePack() {
-        return this.pack;
+        return this.bedrockPack;
+    }
+
+    public ResourcePack javaResourcePack() {
+        return this.javaPack;
+    }
+
+    public ResourcePack vanillaPack() {
+        return this.conversionContext.data().vanillaPack();
     }
 
     /**

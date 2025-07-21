@@ -78,7 +78,8 @@ public class TextureConverter implements Converter<TextureConversionData> {
                 context,
                 mappings,
                 textures,
-                context.bedrockResourcePack()
+                context.bedrockResourcePack(),
+                context.javaResourcePack()
         );
         for (TextureTransformer transformer : this.transformers) {
             transformer.transform(transformContext);
