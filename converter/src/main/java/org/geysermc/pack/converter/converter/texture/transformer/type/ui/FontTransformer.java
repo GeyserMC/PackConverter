@@ -140,11 +140,6 @@ public class FontTransformer implements TextureTransformer {
                 int desX = position % 16;
                 int desY = position / 16;
 
-                if (fontData.character == 'ʏ') {
-                    context.info(String.valueOf(desX));
-                    context.info(String.valueOf(desY));
-                }
-
                 g.drawImage(
                         ImageUtil.scale(
                                 ImageUtil.crop(
