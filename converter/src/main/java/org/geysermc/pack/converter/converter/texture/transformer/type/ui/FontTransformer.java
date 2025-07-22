@@ -103,7 +103,7 @@ public class FontTransformer implements TextureTransformer {
             containedCharacters.get(upperData).add(fontData);
 
             images.computeIfAbsent(fontData.filename(), filename -> {
-                Texture texture = context.peekOrVanilla(filename); // TODO Should we poll this instead?
+                Texture texture = context.pollOrPeekVanilla(filename); // TODO Should we poll this instead?
                 try {
                     return texture == null ? null : this.readImage(texture);
                 } catch (IOException e) {
@@ -138,7 +138,7 @@ public class FontTransformer implements TextureTransformer {
 
                 // Now we can find where the character belongs in the bedrock image
                 int desX = position % 16;
-                int desY = position / 16;
+                int desY = position / 16;   
 
                 g.drawImage(
                         ImageUtil.scale(

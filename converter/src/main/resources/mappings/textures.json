@@ -501,6 +501,7 @@
     "stonecutter_saw": "stonecutter2_saw",
     "kelp_plant": ["kelp_a", "kelp_b", "kelp_c", "kelp_d"],
     "kelp": ["kelp_top", "kelp_top_bulb"],
+    "firefly_bush_emissive": "firefly_bush_firefly",
 
 
     "acacia_trapdoor": "acacia_trapdoor",
