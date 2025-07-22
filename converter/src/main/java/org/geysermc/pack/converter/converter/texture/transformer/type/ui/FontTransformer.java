@@ -103,7 +103,7 @@ public class FontTransformer implements TextureTransformer {
             containedCharacters.get(upperData).add(fontData);
 
             images.computeIfAbsent(fontData.filename(), filename -> {
-                Texture texture = context.pollOrPeekVanilla(filename); // TODO Should we poll this instead?
+                Texture texture = context.pollOrPeekVanilla(filename);
                 try {
                     return texture == null ? null : this.readImage(texture);
                 } catch (IOException e) {
