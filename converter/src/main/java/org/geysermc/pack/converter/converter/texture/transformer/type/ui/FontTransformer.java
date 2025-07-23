@@ -102,6 +102,8 @@ public class FontTransformer implements TextureTransformer {
 
             containedCharacters.get(upperData).add(fontData);
 
+            if (fontData.filename() == null) continue;
+
             images.computeIfAbsent(fontData.filename(), filename -> {
                 Texture texture = context.pollOrPeekVanilla(filename);
                 try {
@@ -116,9 +118,11 @@ public class FontTransformer implements TextureTransformer {
 
         for (Map.Entry<Byte, List<UnicodeFontData>> data : containedCharacters.entrySet()) {
             int maxWidth = data.getValue().stream().mapToInt(fontData -> {
+                if (fontData.filename() == null) return fontData.spaces();
                 return (int) (fontData.width() * FONT_DATA.getOrDefault(fontData.filename().value().substring(5, fontData.filename().value().length() - 4), DEFAULT_FONT_DATA).scaleX());
             }).max().getAsInt();
             int maxHeight = data.getValue().stream().mapToInt(fontData -> {
+                if (fontData.filename() == null) return 1;
                 return (int) (fontData.height * FONT_DATA.getOrDefault(fontData.filename().value().substring(5, fontData.filename().value().length() - 4), DEFAULT_FONT_DATA).scaleY());
             }).max().getAsInt();
 
@@ -129,10 +133,32 @@ public class FontTransformer implements TextureTransformer {
             Graphics g = bedrockImage.getGraphics();
 
             for (UnicodeFontData fontData : data.getValue()) {
-                BufferedImage javaImage = images.get(fontData.filename());
-                if (javaImage == null) {
-                    context.warn("Missing %s, unable to write character.".formatted(fontData.filename().asString()));
-                    continue;
+                int dataWidth = fontData.width();
+                int dataHeight = fontData.height();
+                int dataX = fontData.x();
+                int dataY = fontData.y();
+
+                BufferedImage javaImage;
+
+                if (fontData.filename() == null) { // This is a space character, treat it differently
+                    dataWidth = fontData.spaces();
+                    dataHeight = 1;
+                    dataX = 0;
+                    dataY = 0;
+
+                    if (dataWidth < 1) continue; // Skip, the character will just be blank in that case
+
+                    javaImage = new BufferedImage(dataWidth, dataHeight, BufferedImage.TYPE_INT_ARGB);
+
+                    Graphics javaGraphics = javaImage.getGraphics();
+                    javaGraphics.setColor(new Color(255, 255, 255, 1));
+                    javaGraphics.drawRect(0, 0, dataWidth, dataHeight);
+                } else {
+                    javaImage = images.get(fontData.filename());
+                    if (javaImage == null) {
+                        context.warn("Missing %s, unable to write character.".formatted(fontData.filename().asString()));
+                        continue;
+                    }
                 }
 
                 byte[] bytes = String.valueOf(fontData.character()).getBytes(StandardCharsets.UTF_16BE);
@@ -142,21 +168,21 @@ public class FontTransformer implements TextureTransformer {
                 int desX = position % 16;
                 int desY = position / 16;
 
-                float scaleX = (float) maxWidth / fontData.width();
-                float scaleY = (float) maxHeight / fontData.height();
+                float scaleX = (float) maxWidth / dataWidth;
+                float scaleY = (float) maxHeight / dataHeight;
                 float scale = Math.min(scaleX, scaleY);
 
-                int xOffset = (size - fontData.width()) / 2;
-                int yOffset = (size - fontData.height()) / 2;
+                int xOffset = (size - dataWidth) / 2;
+                int yOffset = (size - dataHeight) / 2;
 
                 g.drawImage(
                         ImageUtil.scale(
                                 ImageUtil.crop(
                                         javaImage,
-                                        fontData.x() * fontData.width(),
-                                        fontData.y() * fontData.height(),
-                                        fontData.width(),
-                                        fontData.height()
+                                        dataX * dataWidth,
+                                        dataY * dataHeight,
+                                        dataWidth,
+                                        dataHeight
                                 ),
                                 scale
                         ),
@@ -178,7 +204,14 @@ public class FontTransformer implements TextureTransformer {
         List<UnicodeFontData> unicodeFontData = new ArrayList<>();
 
         if (fontProvider instanceof SpaceFontProvider spaceFontProvider) {
-            // TODO Handle this type of font
+            for (Map.Entry<String, Integer> entry : spaceFontProvider.advances().entrySet()) {
+                unicodeFontData.add(new UnicodeFontData(
+                        null,
+                        entry.getKey().charAt(0),
+                        0, 0, 0, 0,
+                        entry.getValue()
+                ));
+            }
         } else if (fontProvider instanceof BitMapFontProvider bitMapFontProvider) {
             // First of all we need to determine the width and height of the characters
 
@@ -443,5 +476,9 @@ public class FontTransformer implements TextureTransformer {
         }
     }
 
-    private record UnicodeFontData(Key filename, char character, int x, int y, int width, int height) {}
+    private record UnicodeFontData(Key filename, char character, int x, int y, int width, int height, int spaces) {
+        public UnicodeFontData(Key filename, char character, int x, int y, int width, int height) {
+            this(filename, character, x, y, width, height, 0);
+        }
+    }
 }
