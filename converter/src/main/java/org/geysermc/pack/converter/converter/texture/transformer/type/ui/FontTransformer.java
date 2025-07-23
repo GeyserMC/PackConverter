@@ -122,22 +122,7 @@ public class FontTransformer implements TextureTransformer {
                 return (int) (fontData.height * FONT_DATA.getOrDefault(fontData.filename().value().substring(5, fontData.filename().value().length() - 4), DEFAULT_FONT_DATA).scaleY());
             }).max().getAsInt();
 
-            int size;
-
-            int xOffset = 0;
-            int yOffset = 0;
-
-            if (maxWidth > maxHeight) {
-                size = maxWidth;
-
-                yOffset = (maxWidth - maxHeight) / 2;
-            } else if (maxHeight > maxWidth) {
-                size = maxHeight;
-
-                xOffset = (maxHeight - maxWidth) / 2;
-            } else {
-                size = maxHeight;
-            }
+            int size = Math.max(maxWidth, maxHeight);
 
             BufferedImage bedrockImage = new BufferedImage(size * 16, size * 16, BufferedImage.TYPE_INT_ARGB);
 
@@ -155,7 +140,14 @@ public class FontTransformer implements TextureTransformer {
 
                 // Now we can find where the character belongs in the bedrock image
                 int desX = position % 16;
-                int desY = position / 16;   
+                int desY = position / 16;
+
+                float scaleX = (float) maxWidth / fontData.width();
+                float scaleY = (float) maxHeight / fontData.height();
+                float scale = Math.min(scaleX, scaleY);
+
+                int xOffset = (size - fontData.width()) / 2;
+                int yOffset = (size - fontData.height()) / 2;
 
                 g.drawImage(
                         ImageUtil.scale(
@@ -166,8 +158,7 @@ public class FontTransformer implements TextureTransformer {
                                         fontData.width(),
                                         fontData.height()
                                 ),
-                                (float) maxWidth / fontData.width(),
-                                (float) maxHeight / fontData.height()
+                                scale
                         ),
                         (desX * size) + xOffset,
                         (desY * size) + yOffset,
