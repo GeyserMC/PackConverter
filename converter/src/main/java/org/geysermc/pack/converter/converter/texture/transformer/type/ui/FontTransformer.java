@@ -122,7 +122,24 @@ public class FontTransformer implements TextureTransformer {
                 return (int) (fontData.height * FONT_DATA.getOrDefault(fontData.filename().value().substring(5, fontData.filename().value().length() - 4), DEFAULT_FONT_DATA).scaleY());
             }).max().getAsInt();
 
-            BufferedImage bedrockImage = new BufferedImage(maxWidth * 16, maxHeight * 16, BufferedImage.TYPE_INT_ARGB);
+            int size;
+
+            int xOffset = 0;
+            int yOffset = 0;
+
+            if (maxWidth > maxHeight) {
+                size = maxWidth;
+
+                yOffset = (maxWidth - maxHeight) / 2;
+            } else if (maxHeight > maxWidth) {
+                size = maxHeight;
+
+                xOffset = (maxHeight - maxWidth) / 2;
+            } else {
+                size = maxHeight;
+            }
+
+            BufferedImage bedrockImage = new BufferedImage(size * 16, size * 16, BufferedImage.TYPE_INT_ARGB);
 
             Graphics g = bedrockImage.getGraphics();
 
@@ -152,8 +169,8 @@ public class FontTransformer implements TextureTransformer {
                                 (float) maxWidth / fontData.width(),
                                 (float) maxHeight / fontData.height()
                         ),
-                        desX * maxWidth,
-                        desY * maxHeight,
+                        (desX * size) + xOffset,
+                        (desY * size) + yOffset,
                         null
                 );
             }
@@ -180,7 +197,7 @@ public class FontTransformer implements TextureTransformer {
             BufferedImage image = this.readImage(texture);
 
             int width = image.getWidth() / bitMapFontProvider.characters().getFirst().length();
-            int height = bitMapFontProvider.height();
+            int height = image.getHeight() / bitMapFontProvider.characters().size();
 
             int x = 0;
             int y = 0;
