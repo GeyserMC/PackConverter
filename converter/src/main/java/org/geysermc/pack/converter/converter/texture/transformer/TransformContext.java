@@ -186,16 +186,6 @@ public class TransformContext {
         this.byKey.put(texture.key(), texture);
     }
 
-    /**
-     * Returns whether or not the list of textures contains a texture with the given key.
-     *
-     * @param key the key of the texture to check for
-     * @return whether or not the list of textures contains a texture with the given key
-     */
-    public boolean containsKey(@NotNull Key key) {
-        return this.byKey.containsKey(key);
-    }
-
     public void debug(@NotNull String message) {
         this.conversionContext.debug(message);
     }
