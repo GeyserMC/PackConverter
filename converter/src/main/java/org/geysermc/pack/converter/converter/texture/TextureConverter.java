@@ -61,7 +61,7 @@ public class TextureConverter implements Converter<TextureConversionData> {
             .sorted(Comparator.comparingInt(TextureTransformer::order))
             .toList();
 
-    private static final Map<String, String> DIRECTORY_LOCATIONS = Map.of(
+    public static final Map<String, String> DIRECTORY_LOCATIONS = Map.of(
             "block", "blocks",
             "item", "items",
             "gui", "ui"
@@ -134,14 +134,20 @@ public class TextureConverter implements Converter<TextureConversionData> {
                 outputPaths.add(fallbackPath);
             }
 
-            String bedrockDirectory = "";
+            String bedrockDirectory = "%s/%s";
             if (context.data().textureSubdirectory() != null) {
-                bedrockDirectory = context.data().textureSubdirectory() + "/";
+                bedrockDirectory = "%s/" + context.data().textureSubdirectory() + "/%s";
             }
 
             for (String outputPath : outputPaths) {
                 context.debug(String.format("Converted %s to %s, writing texture.", input, outputPath));
-                outputs.add(texturePath.resolve((bedrockDirectory + outputPath).replace('/', File.separatorChar)));
+
+                String root = outputPath.substring(0, outputPath.indexOf('/'));
+                String value = outputPath.substring(outputPath.indexOf('/') + 1);
+
+                outputs.add(texturePath.resolve((
+                        bedrockDirectory.formatted(root, value)
+                ).replace('/', File.separatorChar)));
             }
 
             byte[] bytes = texture.data().toByteArray();
