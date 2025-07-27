@@ -127,8 +127,8 @@ public class OverlayTransformer implements TextureTransformer {
             BufferedImage imageOverlay = this.readImage(overlayTexture);
 
             // Scale to the base image so ensure we don't go out of bounds in the image
-            int resizeX = image.getWidth() / imageOverlay.getWidth();
-            int resizeY = image.getHeight() / imageOverlay.getHeight();
+            float resizeX = (float) image.getWidth() / imageOverlay.getWidth();
+            float resizeY = (float) image.getHeight() / imageOverlay.getHeight();
             imageOverlay = ImageUtil.scale(imageOverlay, resizeX, resizeY);
 
             for (int x = 0; x < image.getWidth(); x++) {

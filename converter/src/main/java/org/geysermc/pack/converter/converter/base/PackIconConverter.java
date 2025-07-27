@@ -27,21 +27,30 @@
 package org.geysermc.pack.converter.converter.base;
 
 import com.google.auto.service.AutoService;
+import net.kyori.adventure.key.Key;
 import org.geysermc.pack.converter.PackConversionContext;
 import org.geysermc.pack.converter.converter.BaseConverter;
 import org.geysermc.pack.converter.converter.Converter;
 import org.geysermc.pack.converter.data.BaseConversionData;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.base.Writable;
+import team.unnamed.creative.texture.Texture;
 
 @AutoService(Converter.class)
 public class PackIconConverter extends BaseConverter {
+    private static final Key UNKNOWN_PACK = Key.key(Key.MINECRAFT_NAMESPACE, "misc/unknown_pack.png");
 
     @Override
     public void convert(@NotNull PackConversionContext<BaseConversionData> context) throws Exception {
         Writable packIcon = context.javaResourcePack().icon();
-        if (packIcon != null) {
-            context.bedrockResourcePack().icon(packIcon.toByteArray());
+        if (packIcon == null) {
+            if (context.javaResourcePack().texture(UNKNOWN_PACK) != null) {
+                packIcon = context.javaResourcePack().texture(UNKNOWN_PACK).data();
+            } else {
+                packIcon = context.data().vanillaPack().texture(UNKNOWN_PACK).data();
+            }
         }
+
+        context.bedrockResourcePack().icon(packIcon.toByteArray());
     }
 }

@@ -59,17 +59,17 @@ public class DrownedTransformer implements TextureTransformer {
         BufferedImage fromImage = this.readImage(drownedTexture);
         BufferedImage overlayImage = ImageUtil.ensureMinWidth(this.readImage(outerLayerTexture), 64);
 
-        int factor = fromImage.getWidth() / 64;
+        float factor = (float) fromImage.getWidth() / 64;
 
         BufferedImage newImage = new BufferedImage(fromImage.getWidth(), fromImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics graphics = newImage.getGraphics();
 
         graphics.drawImage(fromImage, 0, 0, null);
 
-        graphics.drawImage(ImageUtil.crop(overlayImage, 0, 0, (32 * factor), (16 * factor)), (32 * factor), 0, null);
-        graphics.drawImage(ImageUtil.crop(overlayImage, 0, (16 * factor), (64 * factor), (16 * factor)), 0, (32 * factor), null);
-        graphics.drawImage(ImageUtil.crop(overlayImage, (16 * factor), (48 * factor), (16 * factor), (16 * factor)), 0, (48 * factor), null);
-        graphics.drawImage(ImageUtil.crop(overlayImage, (32 * factor), (48 * factor), (16 * factor), (16 * factor)), (48 * factor), (48 * factor), null);
+        graphics.drawImage(ImageUtil.crop(overlayImage, 0, 0, (int) (32 * factor), (int) (16 * factor)), (int) (32 * factor), 0, null);
+        graphics.drawImage(ImageUtil.crop(overlayImage, 0, (int) (16 * factor), (int) (64 * factor), (int) (16 * factor)), 0, (int) (32 * factor), null);
+        graphics.drawImage(ImageUtil.crop(overlayImage, (int) (16 * factor), (int) (48 * factor), (int) (16 * factor), (int) (16 * factor)), 0, (int) (48 * factor), null);
+        graphics.drawImage(ImageUtil.crop(overlayImage, (int) (32 * factor), (int) (48 * factor), (int) (16 * factor), (int) (16 * factor)), (int) (48 * factor), (int) (48 * factor), null);
 
         context.offer(Key.key(Key.MINECRAFT_NAMESPACE, String.format(TEXTURE_PATH, DROWNED_TEXTURE)), newImage, "png");
     }

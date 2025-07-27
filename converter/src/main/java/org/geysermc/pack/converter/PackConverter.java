@@ -260,6 +260,10 @@ public final class PackConverter {
             throw new NullPointerException("Vanilla Pack Path cannot be null");
         }
 
+        if (this.converters.isEmpty()) {
+            throw new IllegalStateException("No converters have been added");
+        }
+
         // Load any image plugins
         ImageIO.scanForPlugins();
 
@@ -270,10 +274,6 @@ public final class PackConverter {
 
         ZipUtils.openFileSystem(this.input, this.compressed, input -> {
             this.tmpDir = this.output.toAbsolutePath().getParent().resolve(this.output.getFileName() + "_mcpack/");
-
-            if (this.converters.isEmpty()) {
-                throw new IllegalStateException("No converters have been added");
-            }
 
             ResourcePack javaResourcePack = this.compressed ? MinecraftResourcePackReader.minecraft().readFromZipFile(this.input) : MinecraftResourcePackReader.minecraft().read(NioDirectoryFileTreeReader.read(this.input));
             ResourcePack vanillaResourcePack = MinecraftResourcePackReader.minecraft().readFromZipFile(vanillaPackPath);
@@ -325,9 +325,9 @@ public final class PackConverter {
         this.logListener.info("Packaging pack...");
 
         this.packageHandler.pack(this, this.tmpDir, this.output, this.logListener);
-        this.cleanup();
+        this.logListener.info("Packaged pack! Cleaning up...");
 
-        this.logListener.info("Packaged pack!");
+        this.cleanup();
 
         return this;
     }
