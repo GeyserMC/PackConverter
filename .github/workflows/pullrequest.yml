@@ -1,15 +1,7 @@
 name: Build Pull Request
 
 on:
-  workflow_dispatch:
-  push:
-    paths-ignore:
-      - '.github/ISSUE_TEMPLATE/*.yml'
-      - '.github/actions/build.yml'
-      - '.idea/copyright/*.xml' 
-      - '.gitignore'
-      - 'LICENSE'
-      - 'README.md'
+  pull_request_target:
 
 jobs:
   build:
