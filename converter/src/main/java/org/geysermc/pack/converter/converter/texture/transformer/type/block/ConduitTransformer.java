@@ -46,12 +46,12 @@ public class ConduitTransformer implements TextureTransformer {
         if (baseTexture != null) {
             BufferedImage baseImage = this.readImage(baseTexture);
 
-            int scale = baseImage.getHeight() / 16;
+            float scale = (float) baseImage.getHeight() / 16;
 
-            BufferedImage bedrockBaseImage = new BufferedImage((24 * scale), (12 * scale), BufferedImage.TYPE_INT_ARGB);
+            BufferedImage bedrockBaseImage = new BufferedImage((int) (24 * scale), (int) (12 * scale), BufferedImage.TYPE_INT_ARGB);
 
             Graphics g = bedrockBaseImage.getGraphics();
-            g.drawImage(ImageUtil.crop(baseImage, 0, 0, (24 * scale), (12 * scale)), 0, 0, null);
+            g.drawImage(ImageUtil.crop(baseImage, 0, 0, (int) (24 * scale), (int) (12 * scale)), 0, 0, null);
 
             context.offer(Key.key(Key.MINECRAFT_NAMESPACE, "blocks/conduit_base.png"), bedrockBaseImage, "png");
         }
@@ -60,12 +60,12 @@ public class ConduitTransformer implements TextureTransformer {
         if (eyeTexture != null) {
             BufferedImage image = this.readImage(eyeTexture);
 
-            int scale = image.getHeight() / 16;
+            float scale = (float) image.getHeight() / 16;
 
-            BufferedImage bedrockImage = new BufferedImage((8 * scale), (8 * scale), BufferedImage.TYPE_INT_ARGB);
+            BufferedImage bedrockImage = new BufferedImage((int) (8 * scale), (int) (8 * scale), BufferedImage.TYPE_INT_ARGB);
 
             Graphics g = bedrockImage.getGraphics();
-            g.drawImage(ImageUtil.crop(image, 0, 0, (8 * scale), (8 * scale)), 0, 0, null);
+            g.drawImage(ImageUtil.crop(image, 0, 0, (int) (8 * scale), (int) (8 * scale)), 0, 0, null);
 
             context.offer(Key.key(Key.MINECRAFT_NAMESPACE, "blocks/conduit_closed.png"), bedrockImage, "png");
         }
@@ -74,12 +74,12 @@ public class ConduitTransformer implements TextureTransformer {
         if (eyeOpenTexture != null) {
             BufferedImage image = this.readImage(eyeOpenTexture);
 
-            int scale = image.getHeight() / 16;
+            float scale = (float) image.getHeight() / 16;
 
-            BufferedImage bedrockImage = new BufferedImage((8 * scale), (8 * scale), BufferedImage.TYPE_INT_ARGB);
+            BufferedImage bedrockImage = new BufferedImage((int) (8 * scale), (int) (8 * scale), BufferedImage.TYPE_INT_ARGB);
 
             Graphics g = bedrockImage.getGraphics();
-            g.drawImage(ImageUtil.crop(image, 0, 0, (8 * scale), (8 * scale)), 0, 0, null);
+            g.drawImage(ImageUtil.crop(image, 0, 0, (int) (8 * scale), (int) (8 * scale)), 0, 0, null);
 
             context.offer(Key.key(Key.MINECRAFT_NAMESPACE, "blocks/conduit_open.png"), bedrockImage, "png");
         }

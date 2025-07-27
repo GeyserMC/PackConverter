@@ -62,12 +62,12 @@ public class PaintingTransformer implements TextureTransformer {
 
         // Now lets determine our scale base image, we'll scale anything else if needed
         Map<String, BufferedImage> javaImages = new HashMap<>();
-        Map<String, Integer> scales = new HashMap<>();
+        Map<String, Float> scales = new HashMap<>();
 
         PAINTING_DATA.forEach((key, value) -> {
             Texture javaTexture = context.pollOrPeekVanilla(Key.key(Key.MINECRAFT_NAMESPACE, JAVA_LOCATION.formatted(key)));
             if (javaTexture == null) {
-                scales.put(key, 1);
+                scales.put(key, 1f);
                 return;
             }
 
@@ -79,7 +79,7 @@ public class PaintingTransformer implements TextureTransformer {
             }
 
             javaImages.put(key, image);
-            scales.put(key, image.getWidth() / value.baseWidth());
+            scales.put(key, (float) image.getWidth() / value.baseWidth());
         });
 
         // Again, bedrock being difficult with back.
@@ -88,16 +88,16 @@ public class PaintingTransformer implements TextureTransformer {
             BufferedImage image = this.readImage(backTexture);
 
             javaImages.put("back", image);
-            scales.put("back", image.getWidth() / 16);
+            scales.put("back", (float) image.getWidth() / 16);
         }
 
-        int finalScale = scales.values().stream().mapToInt(i -> i).max().getAsInt();
+        float finalScale = (float) scales.values().stream().mapToDouble(f -> f).max().getAsDouble();
 
-        BufferedImage bedrockImage = new BufferedImage(256 * finalScale, 256 * finalScale, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bedrockImage = new BufferedImage((int) (256 * finalScale), (int) (256 * finalScale), BufferedImage.TYPE_INT_ARGB);
         Graphics g = bedrockImage.getGraphics();
 
         for (Map.Entry<String, BufferedImage> entry : javaImages.entrySet()) {
-            int scale = finalScale / scales.get(entry.getKey());
+            float scale = finalScale / scales.get(entry.getKey());
 
             if (PAINTING_DATA.containsKey(entry.getKey())) {
                 PaintingData paintingData = PAINTING_DATA.get(entry.getKey());
@@ -107,8 +107,8 @@ public class PaintingTransformer implements TextureTransformer {
                                 javaImages.get(entry.getKey()),
                                 scale
                         ),
-                        finalScale * paintingData.bedrockX(),
-                        finalScale * paintingData.bedrockY(),
+                        (int) finalScale * paintingData.bedrockX(),
+                        (int) finalScale * paintingData.bedrockY(),
                         null
                 );
             } else { // *back* is a special case here, we need to tile it in a 4x4 grid
@@ -119,8 +119,8 @@ public class PaintingTransformer implements TextureTransformer {
                                         javaImages.get(entry.getKey()),
                                         scale
                                 ),
-                                (finalScale * 192) + (finalScale * 16 * x),
-                                (finalScale * 16 * y),
+                                (int) (finalScale * 192) + (int) (finalScale * 16 * x),
+                                (int) (finalScale * 16 * y),
                                 null
                         );
                     }

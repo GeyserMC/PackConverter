@@ -34,7 +34,7 @@ import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
 
-import java.awt.Graphics;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -57,17 +57,17 @@ public class WeatherTransformer implements TextureTransformer {
         BufferedImage snowImage = this.readImage(snowTexture);
         BufferedImage rainImage = this.readImage(rainTexture);
 
-        int factor = snowImage.getWidth() / 64;
+        float factor = (float) snowImage.getWidth() / 64;
 
-        BufferedImage weatherImage = new BufferedImage((32 * factor), (32 * factor), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage weatherImage = new BufferedImage((int) (32 * factor), (int) (32 * factor), BufferedImage.TYPE_INT_ARGB);
 
         Graphics graphics = weatherImage.getGraphics();
 
         // Snow
-        graphics.drawImage(ImageUtil.cover(ImageUtil.crop(snowImage, snowImage.getWidth(), (3 * factor)), weatherImage.getWidth(), (3 * factor)), 0, 0, null);
+        graphics.drawImage(ImageUtil.cover(ImageUtil.crop(snowImage, snowImage.getWidth(), (int) (3 * factor)), weatherImage.getWidth(), (int) (3 * factor)), 0, 0, null);
 
         // Rain
-        graphics.drawImage(ImageUtil.cover(ImageUtil.crop(rainImage, rainImage.getWidth(), (5 * factor)), weatherImage.getWidth(), (5 * factor)), 0, (5 * factor), null);
+        graphics.drawImage(ImageUtil.cover(ImageUtil.crop(rainImage, rainImage.getWidth(), (int) (5 * factor)), weatherImage.getWidth(), (int) (5 * factor)), 0, (int) (5 * factor), null);
 
         context.offer(Key.key(Key.MINECRAFT_NAMESPACE, WEATHER_OUTPUT), weatherImage, "png");
     }

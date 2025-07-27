@@ -67,13 +67,13 @@ public class SignTransformer implements TextureTransformer {
 
             BufferedImage javaImage = this.readImage(javaTexture);
 
-            int scale = javaImage.getHeight() / 32;
+            float scale = (float) javaImage.getHeight() / 32;
 
-            BufferedImage bedrockImage = new BufferedImage(scale * 24, scale * 12, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage bedrockImage = new BufferedImage((int) (scale * 24), (int) (scale * 12), BufferedImage.TYPE_INT_ARGB);
 
             Graphics g = bedrockImage.getGraphics();
 
-            g.drawImage(ImageUtil.crop(javaImage, 2 * scale, 2 * scale, scale * 24, scale * 12), 0, 0, null);
+            g.drawImage(ImageUtil.crop(javaImage, (int) (2 * scale), (int) (2 * scale), (int) (scale * 24), (int) (scale * 12)), 0, 0, null);
 
             context.offer(Key.key(Key.MINECRAFT_NAMESPACE, BEDROCK_LOCATION.formatted(signData.bedrockName)), bedrockImage, "png");
         }
