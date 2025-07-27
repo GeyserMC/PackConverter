@@ -162,6 +162,7 @@ public final class VanillaPackProvider {
                         validPaths.add("/assets/minecraft/textures/" + SheepTransformer.SHEEP);
                         validPaths.add("/assets/minecraft/textures/" + SheepTransformer.SHEEP_WOOL);
                         validPaths.add("/assets/minecraft/textures/" + SheepTransformer.SHEEP_UNDERCOAT);
+                        validPaths.add("/assets/minecraft/textures/misc/unknown_pack.png");
 
                         // At the moment, we only care about models and blockstate info from vanilla.
                         String pathName = path.toString();
