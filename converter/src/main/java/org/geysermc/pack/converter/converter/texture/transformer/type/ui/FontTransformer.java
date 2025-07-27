@@ -36,34 +36,39 @@ import team.unnamed.creative.font.*;
 import team.unnamed.creative.font.Font;
 import team.unnamed.creative.texture.Texture;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @AutoService(TextureTransformer.class)
 public class FontTransformer implements TextureTransformer {
+    // Mappings for where characters should go in the default8.png file
     private static final List<FontMapping> DEFAULT8_MAPPINGS = new ArrayList<>();
+
+    // Data for the 3 common font images in java
     private static final Map<String, FontData> FONT_DATA = Map.of(
             "ascii", new FontData(8, 8),
             "accented", new FontData(9, 12, 0.888f, 0.666f),
             "nonlatin_european", new FontData(8, 8)
     );
 
+    // A fallback for the above
     private static final FontData DEFAULT_FONT_DATA = new FontData(8, 8);
 
     @Override
     public void transform(@NotNull TransformContext context) throws IOException {
+        // We first do default8, since we may return if needed below
         transformDefault8(context);
 
         List<UnicodeFontData> unicodeFontData = new ArrayList<>();
 
+        // Currently, only the default font is converted, custom fonts are not supported on bedrock
         for (Font font : context.javaResourcePack().fonts()) {
-            // TODO Can we register custom fonts to bedrock and use those instead?
             if (!font.key().equals(Key.key(Key.MINECRAFT_NAMESPACE, "default"))) continue;
 
             for (FontProvider fontProvider : font.providers()) {
@@ -80,7 +85,6 @@ public class FontTransformer implements TextureTransformer {
             ) return;
 
             for (Font font : context.vanillaPack().fonts()) {
-                // TODO Can we register custom fonts to bedrock and use those instead?
                 if (!font.key().equals(Key.key(Key.MINECRAFT_NAMESPACE, "default"))) continue;
 
                 for (FontProvider fontProvider : font.providers()) {
@@ -96,35 +100,32 @@ public class FontTransformer implements TextureTransformer {
 
         for (UnicodeFontData fontData : unicodeFontData) {
             byte[] bytes = String.valueOf(fontData.character()).getBytes(StandardCharsets.UTF_16BE);
-            byte upperData = bytes.length == 1 ? 0 : bytes[0];
+            byte upperData = bytes.length == 1 ? 0 : bytes[0]; // The first byte, determines which image this character will be written to
 
             containedCharacters.computeIfAbsent(upperData, ignored -> new ArrayList<>());
 
             containedCharacters.get(upperData).add(fontData);
 
-            if (fontData.filename() == null) continue;
-
-            images.computeIfAbsent(fontData.filename(), filename -> {
-                Texture texture = context.pollOrPeekVanilla(filename);
-                try {
-                    return texture == null ? null : this.readImage(texture);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+            fontData.computeCache(context, images);
         }
 
+        // A formatter for our hex value, used when writing the glyph files
         HexFormat hexFormat = HexFormat.of();
 
         for (Map.Entry<Byte, List<UnicodeFontData>> data : containedCharacters.entrySet()) {
-            int maxWidth = data.getValue().stream().mapToInt(fontData -> {
-                if (fontData.filename() == null) return fontData.spaces();
-                return (int) (fontData.width() * FONT_DATA.getOrDefault(fontData.filename().value().substring(5, fontData.filename().value().length() - 4), DEFAULT_FONT_DATA).scaleX());
-            }).max().getAsInt();
-            int maxHeight = data.getValue().stream().mapToInt(fontData -> {
-                if (fontData.filename() == null) return 1;
-                return (int) (fontData.height * FONT_DATA.getOrDefault(fontData.filename().value().substring(5, fontData.filename().value().length() - 4), DEFAULT_FONT_DATA).scaleY());
-            }).max().getAsInt();
+            if (data.getValue().isEmpty()) continue; // We have nothing to work with
+
+            // Determine the size the image should be to fit all our characters
+            // Better to default to something than an exception, so lets default to 1
+            int maxWidth = data.getValue().stream().mapToInt(
+                    fontData ->
+                            (int) (fontData.width() * fontData.fontData().scaleX())
+            ).max().orElse(1);
+
+            int maxHeight = data.getValue().stream().mapToInt(
+                    fontData ->
+                            (int) (fontData.height() * fontData.fontData().scaleY())
+            ).max().orElse(1);
 
             int size = Math.max(maxWidth, maxHeight);
 
@@ -133,45 +134,32 @@ public class FontTransformer implements TextureTransformer {
             Graphics g = bedrockImage.getGraphics();
 
             for (UnicodeFontData fontData : data.getValue()) {
+                if (!fontData.shouldRead()) continue;
+
                 int dataWidth = fontData.width();
                 int dataHeight = fontData.height();
                 int dataX = fontData.x();
                 int dataY = fontData.y();
 
-                BufferedImage javaImage;
-
-                if (fontData.filename() == null) { // This is a space character, treat it differently
-                    dataWidth = fontData.spaces();
-                    dataHeight = 1;
-                    dataX = 0;
-                    dataY = 0;
-
-                    if (dataWidth < 1) continue; // Skip, the character will just be blank in that case
-
-                    javaImage = new BufferedImage(dataWidth, dataHeight, BufferedImage.TYPE_INT_ARGB);
-
-                    Graphics javaGraphics = javaImage.getGraphics();
-                    javaGraphics.setColor(new Color(255, 255, 255, 1));
-                    javaGraphics.drawRect(0, 0, dataWidth, dataHeight);
-                } else {
-                    javaImage = images.get(fontData.filename());
-                    if (javaImage == null) {
-                        context.warn("Missing %s, unable to write character.".formatted(fontData.filename().asString()));
-                        continue;
-                    }
+                BufferedImage javaImage = fontData.readJavaImage(images);
+                if (javaImage == null) {
+                    context.warn("Missing font file, unable to write character '%s'.".formatted(fontData.character()));
+                    continue;
                 }
 
                 byte[] bytes = String.valueOf(fontData.character()).getBytes(StandardCharsets.UTF_16BE);
-                int position = (bytes.length == 1 ? bytes[0] : bytes[1]) & 0xff;
+                int position = bytes[bytes.length - 1] & 0xff; // The last byte of the character
 
                 // Now we can find where the character belongs in the bedrock image
                 int desX = position % 16;
                 int desY = position / 16;
 
+                // Determine how to scale the image to ensure they're in line with every other character
                 float scaleX = (float) maxWidth / dataWidth;
                 float scaleY = (float) maxHeight / dataHeight;
-                float scale = Math.min(scaleX, scaleY);
+                float scale = Math.min(scaleX, scaleY); // Prevent stretching, use the minimum one
 
+                // Since we don't stretch fully, we should offset to ensure the character appears correctly in bedrock
                 int xOffset = (size - dataWidth) / 2;
                 int yOffset = (size - dataHeight) / 2;
 
@@ -204,17 +192,12 @@ public class FontTransformer implements TextureTransformer {
         List<UnicodeFontData> unicodeFontData = new ArrayList<>();
 
         if (fontProvider instanceof SpaceFontProvider spaceFontProvider) {
+            // Simple space fonts, easy to handle
             for (Map.Entry<String, Integer> entry : spaceFontProvider.advances().entrySet()) {
-                unicodeFontData.add(new UnicodeFontData(
-                        null,
-                        entry.getKey().charAt(0),
-                        0, 0, 0, 0,
-                        entry.getValue()
-                ));
+                unicodeFontData.add(new SpaceFontData(entry.getKey().charAt(0), entry.getValue()));
             }
         } else if (fontProvider instanceof BitMapFontProvider bitMapFontProvider) {
             // First of all we need to determine the width and height of the characters
-
             Texture texture = context.peek(bitMapFontProvider.file());
             if (texture == null) return unicodeFontData; // We don't have the texture, so we can't continue
 
@@ -228,7 +211,7 @@ public class FontTransformer implements TextureTransformer {
 
             for (String charLines : bitMapFontProvider.characters()) {
                 for (char character : charLines.toCharArray()) {
-                    unicodeFontData.add(new UnicodeFontData(
+                    unicodeFontData.add(new BitMapFontData(
                             bitMapFontProvider.file(),
                             character,
                             x, y, width, height
@@ -240,7 +223,18 @@ public class FontTransformer implements TextureTransformer {
                 y++;
             }
         } else if (fontProvider instanceof ReferenceFontProvider referenceFontProvider) {
-            for (FontProvider fontProvider1 : context.javaResourcePack().font(referenceFontProvider.id()).providers()) {
+            // Refers to other fonts, so we need to read those
+            Font font = context.javaResourcePack().font(referenceFontProvider.id());
+            if (font == null) { // Just maybe, the vanilla files are used
+                font = context.vanillaPack().font(referenceFontProvider.id());
+            }
+
+            if (font == null) {
+                context.warn("Unable to find font %s, continuing without.".formatted(referenceFontProvider.id().asString()));
+                return unicodeFontData;
+            }
+
+            for (FontProvider fontProvider1 : font.providers()) {
                 unicodeFontData.addAll(handleFont(context, fontProvider1));
             }
         } else if (fontProvider instanceof UnihexFontProvider unihexFontProvider) {
@@ -251,12 +245,14 @@ public class FontTransformer implements TextureTransformer {
     }
 
     private void transformDefault8(@NotNull TransformContext context) throws IOException {
+        // Don't attempt to write default8 if we have no data to pull from, otherwise it's vanilla to vanilla
         if (
                 !context.isTexturePresent(Key.key(Key.MINECRAFT_NAMESPACE, "font/ascii.png")) &&
                 !context.isTexturePresent(Key.key(Key.MINECRAFT_NAMESPACE, "font/accented.png")) &&
                 !context.isTexturePresent(Key.key(Key.MINECRAFT_NAMESPACE, "font/nonlatin_european.png"))
         ) return;
 
+        // Store the java images to prevent constant image reading
         Map<String, BufferedImage> imgs = new HashMap<>();
         Map<String, Integer> scales = new HashMap<>();
 
@@ -281,9 +277,11 @@ public class FontTransformer implements TextureTransformer {
             scales.put("nonlatin_european", image.getWidth() / 128);
         }
 
+        // Use ASCII as a base, since bedrock's default8 has the same character size as ASCII
         int charWidth = scales.get("ascii") * 8;
         int charHeight = scales.get("ascii") * 8;
 
+        // default8 is 16 by 16 characters in size
         BufferedImage bedrockImage = new BufferedImage(16 * charWidth, 16 * charHeight, BufferedImage.TYPE_INT_ARGB);
 
         Graphics g = bedrockImage.getGraphics();
@@ -291,6 +289,7 @@ public class FontTransformer implements TextureTransformer {
         for (FontMapping fontMapping : DEFAULT8_MAPPINGS) {
             FontData fontData = FONT_DATA.get(fontMapping.javaTexture);
 
+            // Determines the position in the java image, accounting for scale
             int realCharX = fontData.charSizeX * scales.get(fontMapping.javaTexture);
             int realCharY = fontData.charSizeY * scales.get(fontMapping.javaTexture);
 
@@ -476,9 +475,96 @@ public class FontTransformer implements TextureTransformer {
         }
     }
 
-    private record UnicodeFontData(Key filename, char character, int x, int y, int width, int height, int spaces) {
-        public UnicodeFontData(Key filename, char character, int x, int y, int width, int height) {
-            this(filename, character, x, y, width, height, 0);
+    // The base for our unicode fonts
+    private interface UnicodeFontData {
+        BufferedImage readJavaImage(Map<Key, BufferedImage> imageCache);
+
+        default boolean shouldRead() {
+            return true;
+        }
+
+        default void computeCache(TransformContext context, Map<Key, BufferedImage> imageCache) {} // No caching if not needed
+
+        char character();
+
+        int x();
+        int y();
+
+        int width();
+        int height();
+
+        default FontData fontData() {
+            return DEFAULT_FONT_DATA;
+        }
+    }
+
+    // Bitmap implementation of our fonts, the simplest to read
+    private record BitMapFontData(Key textureName, char character, int x, int y, int width, int height) implements UnicodeFontData {
+        @Override
+        public BufferedImage readJavaImage(Map<Key, BufferedImage> imageCache) {
+            return imageCache.get(textureName);
+        }
+
+        @Override
+        public void computeCache(TransformContext context, Map<Key, BufferedImage> imageCache) {
+            Texture texture = context.pollOrPeekVanilla(textureName);
+
+            if (texture != null) {
+                try {
+                    imageCache.put(
+                            textureName,
+                            ImageUtil.ensure32BitImage(
+                                    ImageIO.read(new ByteArrayInputStream(texture.data().toByteArray()))
+                            )
+                    );
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        @Override
+        public FontData fontData() {
+            return FONT_DATA.getOrDefault(textureName.value().substring(5, textureName.value().length() - 4), DEFAULT_FONT_DATA);
+        }
+    }
+
+    // The simplest font, *empty*
+    private record SpaceFontData(char character, int spaces) implements UnicodeFontData {
+        @Override
+        public BufferedImage readJavaImage(Map<Key, BufferedImage> imageCache) {
+            BufferedImage javaImage = new BufferedImage(spaces, 1, BufferedImage.TYPE_INT_ARGB);
+
+            Graphics javaGraphics = javaImage.getGraphics();
+            javaGraphics.setColor(new Color(255, 255, 255, 1)); // Just so bedrock knows the width of our character, not noticable to the human eye
+            javaGraphics.drawRect(0, 0, spaces, 1);
+
+            return javaImage;
+        }
+
+        @Override
+        public boolean shouldRead() {
+            return spaces > 0;
+        }
+
+        @Override
+        public int x() {
+            return 0;
+        }
+
+        @Override
+        public int y() {
+            return 0;
+        }
+
+        @Override
+        public int width() {
+            return spaces;
+        }
+
+        @Override
+        public int height() {
+            return 1;
         }
     }
 }
