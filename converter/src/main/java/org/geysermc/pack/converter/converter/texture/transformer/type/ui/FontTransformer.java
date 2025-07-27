@@ -203,7 +203,7 @@ public class FontTransformer implements TextureTransformer {
 
             BufferedImage image = this.readImage(texture);
 
-            int width = image.getWidth() / bitMapFontProvider.characters().getFirst().length();
+            int width = image.getWidth() / bitMapFontProvider.characters().get(0).length();
             int height = image.getHeight() / bitMapFontProvider.characters().size();
 
             int x = 0;
