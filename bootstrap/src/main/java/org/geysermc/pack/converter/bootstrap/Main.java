@@ -47,8 +47,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Main {
-    private static final boolean canOpenExplorer = Desktop.getDesktop().isSupported(Desktop.Action.BROWSE_FILE_DIR);
-
     private JFrame frame;
     private Path javaPackPath = null;
     private Path output = null;
@@ -86,7 +84,7 @@ public class Main {
         FlatArcDarkIJTheme.setup();
 
         frame = new JFrame();
-        frame.setTitle("Icicle");
+        frame.setTitle("Thunder");
         InputStream iconStream = Main.class.getResourceAsStream("/icon.png");
         if (iconStream != null) frame.setIconImage(ImageIO.read(iconStream));
         frame.setSize(800, 300);
