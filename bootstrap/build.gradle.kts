@@ -24,5 +24,5 @@ application {
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    archiveFileName.set("PackConverter.jar")
+    archiveFileName.set("Thunder.jar")
 }
