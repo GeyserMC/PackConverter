@@ -47,10 +47,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Main {
-    private JFrame frame;
     private Path javaPackPath = null;
     private Path output = null;
 
+    private final JFrame frame;
     private final AtomicBoolean converting = new AtomicBoolean(false);
     private final AtomicLong startTime = new AtomicLong(0);
     private final BootstrapLogListener logListener;
@@ -79,7 +79,7 @@ public class Main {
 
     private Main(boolean debug) throws IOException {
         DecimalFormat df = new DecimalFormat("#.##");
-        df.setRoundingMode(RoundingMode.CEILING);
+        df.setRoundingMode(RoundingMode.HALF_UP);
 
         FlatArcDarkIJTheme.setup();
 
