@@ -62,13 +62,25 @@ public class Main {
         if (args.contains("nogui")) {
             if (!args.contains("--input")) {
                 throw new IllegalArgumentException("No input provided.");
+            } else if (args.indexOf("--input") + 1 >= args.size()) {
+                throw new IllegalArgumentException("Input specified with no value.");
             }
 
             String inputPath = args.get(args.indexOf("--input") + 1);
 
+            String outputPath = inputPath.substring(0, inputPath.length() - 4);
+
+            if (args.contains("--output")) {
+                if (args.indexOf("--output") + 1 >= args.size()) {
+                    throw new IllegalArgumentException("Output specified with no value.");
+                }
+
+                outputPath = args.get(args.indexOf("--output") + 1);
+            }
+
             new PackConverter()
                     .input(Path.of(inputPath))
-                    .output(Path.of(inputPath.substring(0, inputPath.length() - 4)))
+                    .output(Path.of(outputPath))
                     .converters(Converters.defaultConverters(debug))
                     .convert()
                     .pack();
