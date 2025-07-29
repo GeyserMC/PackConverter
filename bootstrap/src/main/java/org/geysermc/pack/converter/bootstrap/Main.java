@@ -58,7 +58,7 @@ public class Main {
 
                 outputPath = args.get(args.indexOf("--output") + 1);
             } else {
-                outputPath = inputPath.substring(0, inputPath.length() - 4);
+                outputPath = inputPath.substring(0, inputPath.length() - 4) + ".mcpack";
             }
 
             new PackConverter()
