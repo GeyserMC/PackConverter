@@ -61,6 +61,8 @@ public class Main {
                 outputPath = inputPath.substring(0, inputPath.length() - 4) + ".mcpack";
             }
 
+            System.setProperty("PackConverter.Debug", String.valueOf(debug));
+
             new PackConverter()
                     .input(Path.of(inputPath))
                     .output(Path.of(outputPath))
