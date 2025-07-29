@@ -30,20 +30,16 @@ import org.geysermc.pack.converter.util.LogListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.swing.*;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 public class BootstrapLogListener implements LogListener {
-    private final JTextArea output;
-    public final AtomicBoolean isDebug = new AtomicBoolean(false);
+    private final ThunderGUI gui;
 
-    public BootstrapLogListener(JTextArea output) {
-        this.output = output;
+    public BootstrapLogListener(ThunderGUI gui) {
+        this.gui = gui;
     }
 
     @Override
     public void debug(@NotNull String message) {
-        if (this.isDebug.get()) {
+        if (gui.debugMode.get()) {
             appendText("DEBUG: " + message);
         }
     }
@@ -69,17 +65,17 @@ public class BootstrapLogListener implements LogListener {
     }
 
     private void appendText(String text) {
-        if (output.getText().isEmpty()) {
-            output.setText(
+        if (gui.outputArea.getText().isEmpty()) {
+            gui.outputArea.setText(
                     text
             );
             return;
         }
 
-        output.setText(
-                output.getText() + "\n" + text
+        gui.outputArea.setText(
+                gui.outputArea.getText() + "\n" + text
         );
 
-        output.setCaretPosition(output.getDocument().getLength());
+        gui.outputArea.setCaretPosition(gui.outputArea.getDocument().getLength());
     }
 }
