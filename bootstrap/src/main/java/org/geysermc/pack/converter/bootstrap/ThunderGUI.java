@@ -74,7 +74,6 @@ public class ThunderGUI extends JFrame {
         this.outputArea = new JTextArea("");
         this.outputArea.setEditable(false);
         this.outputArea.setFocusable(false);
-        this.outputArea.setDisabledTextColor(Color.BLACK);
         this.outputArea.setLineWrap(true);
 
         JScrollPane scrollArea = new JScrollPane(this.outputArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
