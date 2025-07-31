@@ -141,6 +141,7 @@ public class ThunderGUI extends JFrame {
         JButton javaPackButton = new JButton("Select Pack");
         javaPackButton.setBounds(20, 20, 200, 200);
         javaPackButton.addActionListener(event -> {
+            if (converting.get()) return;
             FileDialog chooser = new FileDialog(this);
             chooser.setTitle("Select Resource Pack");
             chooser.setMultipleMode(false);
