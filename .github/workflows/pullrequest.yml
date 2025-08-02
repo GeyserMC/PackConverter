@@ -11,6 +11,8 @@ jobs:
         # See https://github.com/actions/checkout/commits
         uses: actions/checkout@72f2cec99f417b1a1c5e2e88945068983b7965f9
         with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.sha }}
           submodules: recursive
 
       - name: Validate Gradle Wrapper
