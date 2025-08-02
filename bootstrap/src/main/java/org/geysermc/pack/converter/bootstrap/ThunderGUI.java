@@ -75,6 +75,7 @@ public class ThunderGUI extends JFrame {
         this.outputArea.setEditable(false);
         this.outputArea.setFocusable(false);
         this.outputArea.setLineWrap(true);
+        this.outputArea.setTabSize(2);
 
         JScrollPane scrollArea = new JScrollPane(this.outputArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scrollArea.setBounds(225, 90, 535, 125);

@@ -30,6 +30,9 @@ import org.geysermc.pack.converter.util.LogListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 public class BootstrapLogListener implements LogListener {
     private final ThunderGUI gui;
 
@@ -62,6 +65,14 @@ public class BootstrapLogListener implements LogListener {
     @Override
     public void error(@NotNull String message, @Nullable Throwable exception) {
         appendText("ERROR: " + message);
+        if (exception != null) {
+            StringWriter writer = new StringWriter();
+            PrintWriter printWriter = new PrintWriter(writer);
+
+            exception.printStackTrace(printWriter);
+
+            appendText(writer.toString());
+        }
     }
 
     private void appendText(String text) {
