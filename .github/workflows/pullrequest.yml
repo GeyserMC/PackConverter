@@ -44,5 +44,7 @@ jobs:
         if: success()
         with:
           name: PackConverter CLI
-          path: bootstrap/build/libs/Thunder.jar
+          path: |
+            bootstrap/build/libs/*.jar
+            !bootstrap/build/libs/bootstrap-*.jar
           if-no-files-found: error
