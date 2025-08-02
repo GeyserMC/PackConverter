@@ -46,7 +46,7 @@ jobs:
         if: success()
         with:
           name: PackConverter CLI
-          path: bootstrap/build/libs/PackConverter.jar
+          path: bootstrap/build/libs/Thunder.jar
           if-no-files-found: error
 
       - name: Publish to Maven Repository
