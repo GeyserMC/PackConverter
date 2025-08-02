@@ -26,42 +26,52 @@
 
 package org.geysermc.pack.converter.bootstrap;
 
+import com.formdev.flatlaf.intellijthemes.FlatArcDarkIJTheme;
 import org.geysermc.pack.converter.PackConverter;
 import org.geysermc.pack.converter.converter.Converters;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 
 public class Main {
+    public static void main(String[] arguments) throws IOException {
+        List<String> args = Arrays.asList(arguments);
+        boolean debug = args.contains("debug");
 
-    public static void main(String[] args) throws FileNotFoundException {
-        if (args.length != 1) {
-            throw new AssertionError("Please choose a .zip file to convert");
+        if (args.contains("nogui")) {
+            if (!args.contains("--input")) {
+                throw new IllegalArgumentException("No input provided.");
+            } else if (args.indexOf("--input") + 1 >= args.size()) {
+                throw new IllegalArgumentException("Input specified with no value.");
+            }
+
+            String inputPath = args.get(args.indexOf("--input") + 1);
+
+            String outputPath;
+
+            if (args.contains("--output")) {
+                if (args.indexOf("--output") + 1 >= args.size()) {
+                    throw new IllegalArgumentException("Output specified with no value.");
+                }
+
+                outputPath = args.get(args.indexOf("--output") + 1);
+            } else {
+                outputPath = inputPath.substring(0, inputPath.length() - 4) + ".mcpack";
+            }
+
+            System.setProperty("PackConverter.Debug", String.valueOf(debug));
+
+            new PackConverter()
+                    .input(Path.of(inputPath))
+                    .output(Path.of(outputPath))
+                    .converters(Converters.defaultConverters(debug))
+                    .convert()
+                    .pack();
         } else {
-            Path packFile = Paths.get(args[0]);
-
-            // Check the file exists
-            if (!packFile.toFile().exists()) {
-                throw new FileNotFoundException(String.format("Specified pack zip file not found (%s)", packFile));
-            }
-
-            // Check its a zip
-            if (!packFile.toString().endsWith(".zip") && !packFile.toString().endsWith(".jar")) {
-                throw new AssertionError(String.format("Specified pack is not a zip (%s)", packFile));
-            }
-
-            try {
-                new PackConverter()
-                        .input(packFile)
-                        .output(Paths.get(packFile.toString().replaceFirst("[.][^.]+$", ".mcpack")))
-                        .converters(Converters.defaultConverters())
-                        .convert()
-                        .pack();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            FlatArcDarkIJTheme.setup();
+            new ThunderGUI(debug);
         }
     }
 }
