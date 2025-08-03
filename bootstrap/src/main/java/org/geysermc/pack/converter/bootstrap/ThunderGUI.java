@@ -49,6 +49,7 @@ public class ThunderGUI extends JFrame {
     private final AtomicBoolean converting = new AtomicBoolean(false);
     private final AtomicLong startTime = new AtomicLong(0);
     private final BootstrapLogListener logListener = new BootstrapLogListener(this);
+    private final Path vanillaPackPath;
     protected final AtomicBoolean debugMode = new AtomicBoolean(false);
     protected final JTextArea outputArea;
 
@@ -56,6 +57,8 @@ public class ThunderGUI extends JFrame {
     private Path outputPath = null;
 
     public ThunderGUI(boolean debug) throws IOException {
+        vanillaPackPath = Path.of(System.getenv("LOCALAPPDATA") != null ? System.getenv("LOCALAPPDATA") : System.getProperty("user.home"), "Thunder", "Vanilla-Assets.zip");
+
         decimalFormat = new DecimalFormat("#.##");
         decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
 
@@ -114,6 +117,7 @@ public class ThunderGUI extends JFrame {
                         new PackConverter()
                                 .input(inputPath)
                                 .output(outputPath)
+                                .vanillaPackPath(vanillaPackPath)
                                 .converters(Converters.defaultConverters(this.debugMode.get()))
                                 .logListener(logListener)
                                 .convert()
