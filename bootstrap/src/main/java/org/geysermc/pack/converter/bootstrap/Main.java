@@ -38,7 +38,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] arguments) throws IOException {
         List<String> args = Arrays.asList(arguments);
-        boolean debug = args.contains("debug");
+        boolean debug = args.contains("--debug") || args.contains("-d");
 
         if (args.contains("nogui")) {
             if (!args.contains("--input")) {
