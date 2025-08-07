@@ -70,8 +70,16 @@ public class ThunderGUI extends JFrame {
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setResizable(false);
 
+        JLabel packNameLabel = new JLabel("Pack Name:");
+        packNameLabel.setBounds(225, 20, 70, 30);
+        this.add(packNameLabel);
+
+        JTextField packName = new JTextField("");
+        packName.setBounds(295, 20, 475, 30);
+        this.add(packName);
+
         JLabel dataLabel = new JLabel("Input: None | Output: None");
-        dataLabel.setBounds(225, 20, 535, 50);
+        dataLabel.setBounds(225, 50, 535, 30);
         this.add(dataLabel);
 
         this.outputArea = new JTextArea("");
@@ -117,6 +125,7 @@ public class ThunderGUI extends JFrame {
                         new PackConverter()
                                 .input(inputPath)
                                 .output(outputPath)
+                                .packName(packName.getText().isBlank() ? inputPath.getFileName().toString() : packName.getText())
                                 .vanillaPackPath(vanillaPackPath)
                                 .converters(Converters.defaultConverters(this.debugMode.get()))
                                 .logListener(logListener)
@@ -162,14 +171,17 @@ public class ThunderGUI extends JFrame {
                 dataLabel.setText("Please provide a Java Edition resource pack.");
                 convertButton.setEnabled(false);
             } else {
-                String name = inputPath.toAbsolutePath().toString();
-                outputPath = Path.of(name.substring(0, name.length() - 4) + ".mcpack");
+                outputPath = Path.of(chooser.getDirectory(), chooser.getFile().replaceFirst("[.][^.]+$", ".mcpack"));
 
                 dataLabel.setText(
                         "Input: %s | Output: %s"
                                 .formatted(inputPath.toAbsolutePath().toString(), outputPath.toAbsolutePath().toString())
                 );
                 convertButton.setEnabled(true);
+
+                if (packName.getText().isEmpty()) {
+                    packName.setText(chooser.getFile().replaceFirst("[.][^.]+$", ""));
+                }
 
                 try {
                     ZipUtils.openFileSystem(inputPath, true, path -> {
@@ -194,10 +206,6 @@ public class ThunderGUI extends JFrame {
             }
         });
         this.add(javaPackButton);
-
-        JLabel outputLabel = new JLabel("Output:");
-        outputLabel.setBounds(225, 50, 535, 50);
-        this.add(outputLabel);
 
         this.setVisible(true);
     }

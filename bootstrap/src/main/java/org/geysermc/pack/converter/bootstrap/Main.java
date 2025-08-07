@@ -51,6 +51,8 @@ public class Main {
 
             String outputPath;
 
+            String packName;
+
             if (args.contains("--output")) {
                 if (args.indexOf("--output") + 1 >= args.size()) {
                     throw new IllegalArgumentException("Output specified with no value.");
@@ -58,7 +60,17 @@ public class Main {
 
                 outputPath = args.get(args.indexOf("--output") + 1);
             } else {
-                outputPath = inputPath.substring(0, inputPath.length() - 4) + ".mcpack";
+                outputPath = inputPath.replaceFirst("[.][^.]+$", ".mcpack");
+            }
+
+            if (args.contains("--name")) {
+                if (args.indexOf("--name") + 1 >= args.size()) {
+                    throw new IllegalArgumentException("Name specified with no value.");
+                }
+
+                packName = args.get(args.indexOf("--name") + 1);
+            } else {
+                packName = inputPath.replaceFirst("[.][^.]+$", "");
             }
 
             System.setProperty("PackConverter.Debug", String.valueOf(debug));
@@ -66,6 +78,7 @@ public class Main {
             new PackConverter()
                     .input(Path.of(inputPath))
                     .output(Path.of(outputPath))
+                    .packName(packName)
                     .converters(Converters.defaultConverters(debug))
                     .convert()
                     .pack();

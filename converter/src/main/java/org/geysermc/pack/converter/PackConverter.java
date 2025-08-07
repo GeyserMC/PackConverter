@@ -53,6 +53,7 @@ import java.util.function.BiConsumer;
 public final class PackConverter {
     private Path input;
     private Path output;
+    private String packName;
 
     private Path vanillaPackPath = Paths.get("vanilla-pack.zip");
 
@@ -119,6 +120,28 @@ public final class PackConverter {
     public PackConverter output(@NotNull Path output) {
         this.output = output;
         return this;
+    }
+
+    /**
+     * Sets the output (Bedrock Edition) pack name.
+     *
+     * @param packName the output pack name
+     * @return this instance
+     */
+    public PackConverter packName(@NotNull String packName) {
+        this.packName = packName;
+        return this;
+    }
+
+    /**
+     * Gets the output (Bedrock Edition) pack name.
+     *
+     * @return the pack name
+     */
+    public @NotNull String packName() {
+        if (packName == null || packName.isBlank()) return input.getFileName().toString();
+
+        return packName;
     }
 
     /**
