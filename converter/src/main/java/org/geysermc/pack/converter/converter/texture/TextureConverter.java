@@ -110,11 +110,10 @@ public class TextureConverter implements Converter<TextureConversionData> {
 
             String fallbackPath = bedrockRoot + "/" + relativePath.substring(relativePath.indexOf('/') + 1) + ".png";
             if (mappingObject instanceof Map<?,?> keyMappings) { // Handles common subdirectories
-                String sanitizedName = input.substring(input.indexOf(File.separator) + 1);
+                String sanitizedName = input.substring(input.indexOf('/') + 1);
                 if (sanitizedName.endsWith(".png")) sanitizedName = sanitizedName.substring(0, sanitizedName.length() - 4);
-                String javaPath = sanitizedName.substring(rootPath.length() + 1);
 
-                Object bedrockOutput = keyMappings.get(javaPath);
+                Object bedrockOutput = keyMappings.get(sanitizedName);
                 if (bedrockOutput instanceof String bedrockPath) {
                     outputPaths.add(bedrockRoot + "/" + bedrockPath + ".png");
                 } else if (bedrockOutput instanceof List<?> paths) {
