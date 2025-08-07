@@ -41,16 +41,13 @@ public class Main {
         boolean debug = args.contains("--debug") || args.contains("-d");
 
         if (args.contains("nogui")) {
-            if (!args.contains("--input")) {
+            if (!args.contains("--input") || args.indexOf("--input") + 1 >= args.size()) {
                 throw new IllegalArgumentException("No input provided.");
-            } else if (args.indexOf("--input") + 1 >= args.size()) {
-                throw new IllegalArgumentException("Input specified with no value.");
             }
 
             String inputPath = args.get(args.indexOf("--input") + 1);
 
             String outputPath;
-
             String packName;
 
             if (args.contains("--output")) {

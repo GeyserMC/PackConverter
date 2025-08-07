@@ -139,7 +139,7 @@ public final class PackConverter {
      * @return the pack name
      */
     public @NotNull String packName() {
-        if (packName == null || packName.isBlank()) return input.getFileName().toString();
+        if (packName == null || packName.isBlank()) return input.getFileName().toString().replaceFirst("[.][^.]+$", "");
 
         return packName;
     }
