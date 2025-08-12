@@ -107,6 +107,8 @@ public final class VanillaPackProvider {
 
             log.info("Downloading vanilla jar...");
 
+            if (path.getParent() != null) Files.createDirectories(path.getParent());
+
             PathUtils.copyFile(new URL(clientJarInfo.url), path);
             // Clean the jar
             clean(path, log);

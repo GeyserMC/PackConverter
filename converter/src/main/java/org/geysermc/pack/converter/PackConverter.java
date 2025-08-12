@@ -39,6 +39,7 @@ import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackReader;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ import java.util.function.BiConsumer;
 public final class PackConverter {
     private Path input;
     private Path output;
+    private String packName;
 
     private Path vanillaPackPath = Paths.get("vanilla-pack.zip");
 
@@ -119,6 +121,28 @@ public final class PackConverter {
     public PackConverter output(@NotNull Path output) {
         this.output = output;
         return this;
+    }
+
+    /**
+     * Sets the output (Bedrock Edition) pack name.
+     *
+     * @param packName the output pack name
+     * @return this instance
+     */
+    public PackConverter packName(@NotNull String packName) {
+        this.packName = packName;
+        return this;
+    }
+
+    /**
+     * Gets the output (Bedrock Edition) pack name.
+     *
+     * @return the pack name
+     */
+    public @NotNull String packName() {
+        if (packName == null || packName.isBlank()) return input.getFileName().toString().replaceFirst("[.][^.]+$", "");
+
+        return packName;
     }
 
     /**
@@ -273,6 +297,11 @@ public final class PackConverter {
         VanillaPackProvider.create(vanillaPackPath, this.logListener);
 
         ZipUtils.openFileSystem(this.input, this.compressed, input -> {
+            if (!Files.exists(input.resolve("pack.mcmeta"))) {
+                logListener.error("Invalid Java Edition resource pack. No pack.mcmeta found.");
+                return;
+            }
+
             this.tmpDir = this.output.toAbsolutePath().getParent().resolve(this.output.getFileName() + "_mcpack/");
 
             ResourcePack javaResourcePack = this.compressed ? MinecraftResourcePackReader.minecraft().readFromZipFile(this.input) : MinecraftResourcePackReader.minecraft().read(NioDirectoryFileTreeReader.read(this.input));
@@ -322,12 +351,16 @@ public final class PackConverter {
      * @throws IOException if an I/O error occurs
      */
     public PackConverter pack() throws IOException {
+        if (tmpDir == null || !Files.exists(this.tmpDir)) return this;
+
         this.logListener.info("Packaging pack...");
 
         this.packageHandler.pack(this, this.tmpDir, this.output, this.logListener);
         this.logListener.info("Packaged pack! Cleaning up...");
 
         this.cleanup();
+
+        this.logListener.info("Pack converted.");
 
         return this;
     }

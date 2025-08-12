@@ -14,6 +14,9 @@ sourceSets {
 
 dependencies {
     api(project(":converter"))
+    implementation("com.twelvemonkeys.imageio:imageio-tga:3.9.4")
+    implementation("com.formdev:flatlaf:3.6")
+    implementation("com.formdev:flatlaf-intellij-themes:3.6")
 }
 
 application {
@@ -21,5 +24,5 @@ application {
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    archiveFileName.set("PackConverter.jar")
+    archiveFileName.set("Thunder.jar")
 }
