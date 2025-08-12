@@ -132,7 +132,6 @@ public class ThunderGUI extends JFrame {
                                 .convert()
                                 .pack();
 
-                        logListener.info("Converted pack.");
                         dataLabel.setText("%s Converted! Time elapsed: %ss".formatted(inputPath.getFileName().toString(), decimalFormat.format((System.currentTimeMillis() - startTime.get()) / 1000d)));
                         converting.set(false);
                         convertButton.setEnabled(true);
