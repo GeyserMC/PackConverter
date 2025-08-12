@@ -1,3 +1,5 @@
+import java.net.URI
+
 plugins {
     `maven-publish` apply true
     id("com.github.johnrengelman.shadow") apply false
@@ -5,11 +7,17 @@ plugins {
 
 publishing {
     repositories {
-        val repoName = if (project.version.toString().endsWith("SNAPSHOT")) "maven-snapshots" else "maven-releases"
-        maven("https://repo.opencollab.dev/${repoName}/") {
-            credentials.username = System.getenv("OPENCOLLAB_USERNAME")
-            credentials.password = System.getenv("OPENCOLLAB_PASSWORD")
-            name = "opencollab"
+        maven {
+            name = "geysermc"
+            url = URI.create(
+                when {
+                    version.toString().endsWith("-SNAPSHOT") ->
+                        "https://repo.opencollab.dev/maven-snapshots"
+                    else ->
+                        "https://repo.opencollab.dev/maven-releases"
+                }
+            )
+            credentials(PasswordCredentials::class.java)
         }
     }
 
