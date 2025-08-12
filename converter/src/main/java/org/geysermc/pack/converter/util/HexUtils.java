@@ -26,10 +26,12 @@
 
 package org.geysermc.pack.converter.util;
 
+import java.util.Locale;
+
 public class HexUtils {
     // Seems stupid, but keeps leading zeros
     public static String hexToBinary(String hex) {
-        return hex.replace("0", "0000")
+        return hex.toUpperCase(Locale.ROOT).replace("0", "0000")
                 .replace("1", "0001")
                 .replace("2", "0010")
                 .replace("3", "0011")
