@@ -24,7 +24,7 @@ jobs:
       - name: Setup Gradle
         uses: GeyserMC/actions/setup-gradle-composite@master
         with:
-          setup-java_java-version: 21
+          setup-java_java-version: 17
 
       - name: Build Thunder
         run: ./gradlew build
