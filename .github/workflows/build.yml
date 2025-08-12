@@ -10,8 +10,6 @@ on:
       - '.gitignore'
       - 'LICENSE'
       - 'README.md'
-    branches:
-      - master
 
 jobs:
   build:
@@ -87,4 +85,4 @@ jobs:
           discordWebhook: ${{ secrets.DISCORD_WEBHOOK }}
           status: ${{ job.status }}
           body: ${{ steps.metadata.outputs.body }}
-          includeDownloads: true
+          includeDownloads: ${{ github.ref_name == 'master' }}
