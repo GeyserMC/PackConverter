@@ -14,6 +14,7 @@ This is based on the Node.js module ConvertJavaTextureToBedrockApi by ozelot379.
 If you are looking for a program capable of creating such custom item mappings, take a look at [Rainbow](https://github.com/GeyserMC/Rainbow/).
 
 ## Usage
+- Ensure Java is installed, you can use [PaperMC's guide](https://docs.papermc.io/misc/java-install/) on installing java if you do not have Java installed.
 - Download Thunder, the PackConverter GUI, from the Actions tab on GitHub.
 - Double-click on the JAR file to open up the UI, then select your java pack and hit convert!
 
