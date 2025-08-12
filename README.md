@@ -9,9 +9,9 @@ This is based on the Node.js module ConvertJavaTextureToBedrockApi by ozelot379.
 
 **Please note, this project is still a work in progress and should not be used on production. Expect bugs!**
 
-**This project also does not convert custom items fully, it will only convert the textures, not any mappings.**
+**This project also does not convert custom items fully, it will only convert the textures, but does not create any Geyser mappings.**
 
-If you are looking for a project to do so, you can take a look at [Rainbow](https://github.com/GeyserMC/Rainbow/).
+If you are looking for a program capable of creating such custom item mappings, take a look at [Rainbow](https://github.com/GeyserMC/Rainbow/).
 
 ## Usage
 - Download Thunder, the PackConverter GUI, from the Actions tab on GitHub.
