@@ -40,6 +40,7 @@ import team.unnamed.creative.texture.Texture;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -84,6 +85,10 @@ public class TransformContext {
 
     public ResourcePack vanillaPack() {
         return this.conversionContext.data().vanillaPack();
+    }
+
+    public Path javaPackPath() {
+        return this.conversionContext.inputDirectory();
     }
 
     /**

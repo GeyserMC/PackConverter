@@ -30,8 +30,12 @@ import com.google.auto.service.AutoService;
 import net.kyori.adventure.key.Key;
 import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
 import org.geysermc.pack.converter.converter.texture.transformer.TransformContext;
+import org.geysermc.pack.converter.util.HexUtils;
 import org.geysermc.pack.converter.util.ImageUtil;
+import org.geysermc.pack.converter.util.ZipUtils;
 import org.jetbrains.annotations.NotNull;
+import team.unnamed.creative.ResourcePack;
+import team.unnamed.creative.base.Writable;
 import team.unnamed.creative.font.*;
 import team.unnamed.creative.font.Font;
 import team.unnamed.creative.texture.Texture;
@@ -42,6 +46,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.List;
 
@@ -141,7 +146,12 @@ public class FontTransformer implements TextureTransformer {
                 int dataX = fontData.x();
                 int dataY = fontData.y();
 
-                BufferedImage javaImage = fontData.readJavaImage(images);
+                BufferedImage javaImage;
+                try {
+                    javaImage = fontData.readJavaImage(images, context.javaResourcePack());
+                } catch (FontFormatException e) {
+                    throw new IOException(e);
+                }
                 if (javaImage == null) {
                     context.warn("Missing font file, unable to write character '%s'.".formatted(fontData.character()));
                     continue;
@@ -238,7 +248,58 @@ public class FontTransformer implements TextureTransformer {
                 unicodeFontData.addAll(handleFont(context, fontProvider1));
             }
         } else if (fontProvider instanceof UnihexFontProvider unihexFontProvider) {
-            // TODO Handle this type of font
+            String fileLocation = "assets/%s/%s".formatted(unihexFontProvider.file().namespace(), unihexFontProvider.file().value());
+
+            ZipUtils.openFileSystem(context.javaPackPath().resolve(fileLocation), true, (path) -> {
+                Files.list(path).forEach(file -> {
+                    if (Files.isDirectory(file)) return; // Sub-directories are ignored with hex fonts
+
+                    if (!file.getFileName().toString().endsWith(".hex")) return;
+
+                    // We found a hex file!
+                    String hexFontContents;
+                    try {
+                        hexFontContents = Files.readString(file); // Assumes UTF_8
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    String[] hexEntries = hexFontContents.split("\n");
+
+                    for (String hexEntry : hexEntries) {
+                        hexEntry = hexEntry.replaceAll("\\s+",""); // Remove whitespace
+
+                        String[] data = hexEntry.split(":");
+                        if (data.length != 2) {
+                            if (data.length != 0) { // There might have been an empty line, don't throw there
+                                context.warn("Invalid data found in hex font, a character will likely be missing.");
+                            }
+                        }
+
+                        int characterValue = Integer.parseInt(data[0], 16);
+
+                        if (characterValue > Character.MAX_VALUE) continue; // We can't translate this, bedrock only supports 2 bytes worth of data for each character
+
+                        char character = (char) characterValue;
+                        // Now, this is the messy part, but helps to make a nice image later
+
+                        List<Boolean> binaryData = Arrays.stream(HexUtils.hexToBinary(data[1]).split("")).map("1"::equals).toList();
+
+                        unicodeFontData.add(new UniHexFontData(binaryData, character));
+                    }
+                });
+            });
+        } else if (fontProvider instanceof TrueTypeFontProvider trueTypeFontProvider) {
+//            for (char i = 0; i < 65535; i++) {
+//                // If the skip strings contain this character, we don't want it
+//                if (String.join("", trueTypeFontProvider.skip()).contains(String.valueOf(i))) continue;
+//
+//                unicodeFontData.add(new TTFFontData(
+//                        "assets/%s/%s".formatted(trueTypeFontProvider.file().namespace(), trueTypeFontProvider.file().value()),
+//                        i,
+//                        trueTypeFontProvider.oversample()
+//                ));
+//            }
         }
 
         return unicodeFontData;
@@ -248,8 +309,8 @@ public class FontTransformer implements TextureTransformer {
         // Don't attempt to write default8 if we have no data to pull from, otherwise it's vanilla to vanilla
         if (
                 !context.isTexturePresent(Key.key(Key.MINECRAFT_NAMESPACE, "font/ascii.png")) &&
-                !context.isTexturePresent(Key.key(Key.MINECRAFT_NAMESPACE, "font/accented.png")) &&
-                !context.isTexturePresent(Key.key(Key.MINECRAFT_NAMESPACE, "font/nonlatin_european.png"))
+                        !context.isTexturePresent(Key.key(Key.MINECRAFT_NAMESPACE, "font/accented.png")) &&
+                        !context.isTexturePresent(Key.key(Key.MINECRAFT_NAMESPACE, "font/nonlatin_european.png"))
         ) return;
 
         // Store the java images to prevent constant image reading
@@ -278,11 +339,10 @@ public class FontTransformer implements TextureTransformer {
         }
 
         // Use ASCII as a base, since bedrock's default8 has the same character size as ASCII
-        int charWidth = scales.get("ascii") * 8;
-        int charHeight = scales.get("ascii") * 8;
+        int charSize = scales.get("ascii") * 8;
 
         // default8 is 16 by 16 characters in size
-        BufferedImage bedrockImage = new BufferedImage(16 * charWidth, 16 * charHeight, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bedrockImage = new BufferedImage(16 * charSize, 16 * charSize, BufferedImage.TYPE_INT_ARGB);
 
         Graphics g = bedrockImage.getGraphics();
 
@@ -305,8 +365,8 @@ public class FontTransformer implements TextureTransformer {
                             fontData.scaleX,
                             fontData.scaleY
                     ),
-                    (fontMapping.bedrockX * charWidth),
-                    (fontMapping.bedrockY * charHeight),
+                    (fontMapping.bedrockX * charSize),
+                    (fontMapping.bedrockY * charSize),
                     null
             );
         }
@@ -477,7 +537,7 @@ public class FontTransformer implements TextureTransformer {
 
     // The base for our unicode fonts
     private interface UnicodeFontData {
-        BufferedImage readJavaImage(Map<Key, BufferedImage> imageCache);
+        BufferedImage readJavaImage(Map<Key, BufferedImage> imageCache, ResourcePack pack) throws IOException, FontFormatException;
 
         default boolean shouldRead() {
             return true;
@@ -501,7 +561,7 @@ public class FontTransformer implements TextureTransformer {
     // Bitmap implementation of our fonts, the simplest to read
     private record BitMapFontData(Key textureName, char character, int x, int y, int width, int height) implements UnicodeFontData {
         @Override
-        public BufferedImage readJavaImage(Map<Key, BufferedImage> imageCache) {
+        public BufferedImage readJavaImage(Map<Key, BufferedImage> imageCache, ResourcePack pack) {
             return imageCache.get(textureName);
         }
 
@@ -532,7 +592,7 @@ public class FontTransformer implements TextureTransformer {
     // The simplest font, *empty*
     private record SpaceFontData(char character, int spaces) implements UnicodeFontData {
         @Override
-        public BufferedImage readJavaImage(Map<Key, BufferedImage> imageCache) {
+        public BufferedImage readJavaImage(Map<Key, BufferedImage> imageCache, ResourcePack pack) {
             BufferedImage javaImage = new BufferedImage(spaces, 1, BufferedImage.TYPE_INT_ARGB);
 
             Graphics javaGraphics = javaImage.getGraphics();
@@ -565,6 +625,95 @@ public class FontTransformer implements TextureTransformer {
         @Override
         public int height() {
             return 1;
+        }
+    }
+
+    // Bitmap implementation of our fonts, the simplest to read
+    private record TTFFontData(String fileLocation, char character, float size) implements UnicodeFontData {
+        @Override
+        public BufferedImage readJavaImage(Map<Key, BufferedImage> imageCache, ResourcePack pack) throws IOException, FontFormatException {
+            BufferedImage image = new BufferedImage((int) Math.ceil(size), (int) Math.ceil(size), BufferedImage.TYPE_INT_ARGB);
+            Graphics g = image.getGraphics();
+
+            Writable fontAsset = pack.unknownFile(fileLocation);
+
+            if (fontAsset == null) return null;
+
+            java.awt.Font font = java.awt.Font.createFont(java.awt.Font.TRUETYPE_FONT, new ByteArrayInputStream(fontAsset.toByteArray()))
+                    .deriveFont(java.awt.Font.PLAIN, size);
+
+            g.setFont(font);
+            g.setColor(Color.WHITE);
+            g.drawString(String.valueOf(character), 0, 0);
+
+            return image;
+        }
+
+        @Override
+        public int x() {
+            return 0;
+        }
+
+        @Override
+        public int y() {
+            return 0;
+        }
+
+        @Override
+        public int width() {
+            return (int) Math.ceil(size);
+        }
+
+        @Override
+        public int height() {
+            return (int) Math.ceil(size);
+        }
+    }
+
+    private record UniHexFontData(List<Boolean> data, char character) implements UnicodeFontData {
+        @Override
+        public BufferedImage readJavaImage(Map<Key, BufferedImage> imageCache, ResourcePack pack) {
+            BufferedImage image = new BufferedImage(width(), height(), BufferedImage.TYPE_INT_ARGB);
+
+            image.getGraphics().setColor(new Color(0, 0, 0, 0));
+            image.getGraphics().drawRect(0, 0, width(), height());
+
+            int x = 0;
+            int y = 0;
+
+            for (Boolean pixel : data) {
+                Color color = pixel ? Color.WHITE : new Color(0, 0, 0, 0);
+                image.setRGB(x, y, color.getRGB());
+
+                x++;
+
+                if (x == width()) {
+                    x = 0;
+                    y++;
+                }
+            }
+
+            return image;
+        }
+
+        @Override
+        public int x() {
+            return 0;
+        }
+
+        @Override
+        public int y() {
+            return 0;
+        }
+
+        @Override
+        public int width() {
+            return Math.max((int) Math.ceil(data.size() / (float) 16), 1); // Because the height is always known, we can find the width easily
+        }
+
+        @Override
+        public int height() {
+            return 16; // UniHex fonts are *always* 16 in height
         }
     }
 }
