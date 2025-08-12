@@ -50,7 +50,7 @@ jobs:
         if: ${{ (success() || failure()) && github.repository == 'GeyserMC/PackConverter' }}
         id: get-version
         run: |
-          version=$(grep -o "version=[0-9\\.]*" gradle.properties | cut -d"=" -f2 | cut -d"-" -f1)
+          version=$(cat gradle.properties | grep -o "version=[0-9\\.]*" | cut -d"=" -f2)
           echo "VERSION=${version}" >> $GITHUB_OUTPUT
 
       - name: Get Release Metadata
