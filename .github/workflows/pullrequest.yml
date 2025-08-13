@@ -1,44 +1,28 @@
 name: Build Pull Request
 
 on:
-  pull_request_target:
+  workflow_dispatch:
+  pull_request:
+    paths-ignore:
+      - '.gitignore'
+      - 'LICENSE'
+      - 'README.md'
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository and submodules
-        # See https://github.com/actions/checkout/commits
-        uses: actions/checkout@72f2cec99f417b1a1c5e2e88945068983b7965f9
+      - name: Setup Gradle
+        uses: GeyserMC/actions/setup-gradle-composite@master
         with:
-          repository: ${{ github.event.pull_request.head.repo.full_name }}
-          ref: ${{ github.event.pull_request.head.sha }}
-          submodules: recursive
+          setup-java_java-version: 17
 
-      - name: Validate Gradle Wrapper
-        # See https://github.com/gradle/wrapper-validation-action/commits
-        uses: gradle/wrapper-validation-action@56b90f209b02bf6d1deae490e9ef18b21a389cd4
+      - name: Build Thunder
+        run: ./gradlew build
 
-        # See https://github.com/actions/setup-java/commits
-      - uses: actions/setup-java@4075bfc1b51bf22876335ae1cd589602d60d8758
-        with:
-          java-version: 17
-          distribution: temurin
-
-      - name: Build
-        # See https://github.com/gradle/gradle-build-action/commits
-        uses: gradle/gradle-build-action@3bfe3a46584a206fb8361cdedd0647b0c4204232
-        with:
-          arguments: build
-          gradle-home-cache-cleanup: true
-
-      - name: Archive artifacts (Boostrap)
-        # See https://github.com/actions/upload-artifact/commits
-        uses: actions/upload-artifact@6027e3dd177782cd8ab9af838c04fd81a07f1d47
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: PackConverter CLI
-          path: |
-            bootstrap/build/libs/*.jar
-            !bootstrap/build/libs/bootstrap-*.jar
-          if-no-files-found: error
+          name: Thunder
+          path: bootstrap/build/libs/Thunder.jar
