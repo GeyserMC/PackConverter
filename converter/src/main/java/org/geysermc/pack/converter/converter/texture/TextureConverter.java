@@ -32,6 +32,7 @@ import org.geysermc.pack.converter.converter.Converter;
 import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
 import org.geysermc.pack.converter.converter.texture.transformer.TransformContext;
 import org.geysermc.pack.converter.converter.texture.transformer.TransformedTexture;
+import org.geysermc.pack.converter.data.JSONMappings;
 import org.geysermc.pack.converter.data.TextureConversionData;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
@@ -69,7 +70,7 @@ public class TextureConverter implements Converter<TextureConversionData> {
 
     @Override
     public void convert(@NotNull PackConversionContext<TextureConversionData> context) throws Exception {
-        TextureMappings mappings = TextureMappings.textureMappings();
+        JSONMappings mappings = JSONMappings.mappings("textures");
 
         List<Texture> textures = new ArrayList<>(context.javaResourcePack().textures());
 
@@ -102,35 +103,11 @@ public class TextureConverter implements Converter<TextureConversionData> {
             List<Path> outputs = new ArrayList<>();
             List<String> outputPaths = new ArrayList<>();
 
-            Object mappingObject = mappings.textures(relativePath);
+            List<String> mapping = mappings.map(relativePath);
 
-            if (mappingObject == null) {
-                mappingObject = mappings.textures(rootPath);
-            }
-
-            String fallbackPath = bedrockRoot + "/" + relativePath.substring(relativePath.indexOf('/') + 1) + ".png";
-            if (mappingObject instanceof Map<?,?> keyMappings) { // Handles common subdirectories
-                String sanitizedName = input.substring(input.indexOf('/') + 1);
-                if (sanitizedName.endsWith(".png")) sanitizedName = sanitizedName.substring(0, sanitizedName.length() - 4);
-
-                Object bedrockOutput = keyMappings.get(sanitizedName);
-                if (bedrockOutput instanceof String bedrockPath) {
-                    outputPaths.add(bedrockRoot + "/" + bedrockPath + ".png");
-                } else if (bedrockOutput instanceof List<?> paths) {
-                    for (String bedrockPath : (List<String>) paths) {
-                        outputPaths.add(bedrockRoot + "/" + bedrockPath + ".png");
-                    }
-                } else { // Fallback
-                    outputPaths.add(fallbackPath);
-                }
-            } else if (mappingObject instanceof String str) { // Direct mappings
-                outputPaths.add(str + ".png");
-            } else if (mappingObject instanceof List<?> paths) { // Mappings where duplicate code paths exist
-                for (String path : (List<String>) paths) {
-                    outputPaths.add(path + ".png");
-                }
-            } else { // Fallback
-                outputPaths.add(fallbackPath);
+            for (String path : mapping) {
+                path = path.replace(rootPath, bedrockRoot);
+                outputPaths.add(path + ".png");
             }
 
             String bedrockDirectory = "%s/%s";
@@ -168,15 +145,15 @@ public class TextureConverter implements Converter<TextureConversionData> {
                 g.dispose();
 
                 String pngKey = context.outputDirectory().relativize(output).toString().replace(File.separatorChar, '/');
-                PngToTgaMappings.TgaMapping mapping = PngToTgaMappings.mapping(pngKey);
-                if (mapping != null) {
-                    Path tgaPath = context.outputDirectory().resolve(mapping.value());
+                PngToTgaMappings.TgaMapping tgaMapping = PngToTgaMappings.mapping(pngKey);
+                if (tgaMapping != null) {
+                    Path tgaPath = context.outputDirectory().resolve(tgaMapping.value());
                     if (Files.notExists(tgaPath.getParent())) {
                         Files.createDirectories(tgaPath.getParent());
                     }
 
                     ImageUtil.writeTGA(tgaPath, bedrockImage);
-                    if (!mapping.keep()) {
+                    if (!tgaMapping.keep()) {
                         Files.deleteIfExists(output);
                         continue;
                     }

@@ -29,7 +29,7 @@ package org.geysermc.pack.converter.converter.texture.transformer;
 import net.kyori.adventure.key.Key;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.PackConversionContext;
-import org.geysermc.pack.converter.converter.texture.TextureMappings;
+import org.geysermc.pack.converter.data.JSONMappings;
 import org.geysermc.pack.converter.data.TextureConversionData;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +46,7 @@ import java.util.Map;
 
 public class TransformContext {
     private final PackConversionContext<TextureConversionData> conversionContext;
-    private final TextureMappings mappings;
+    private final JSONMappings mappings;
     private final Collection<Texture> textures;
     private final BedrockResourcePack bedrockPack;
     private final ResourcePack javaPack;
@@ -54,7 +54,7 @@ public class TransformContext {
 
     public TransformContext(
             PackConversionContext<TextureConversionData> conversionContext,
-            TextureMappings mappings,
+            JSONMappings mappings,
             Collection<Texture> textures,
             BedrockResourcePack bedrockPack,
             ResourcePack javaPack
@@ -70,7 +70,7 @@ public class TransformContext {
         }
     }
 
-    public TextureMappings mappings() {
+    public JSONMappings mappings() {
         return this.mappings;
     }
 

@@ -33,6 +33,7 @@ import org.geysermc.pack.converter.converter.BaseConverter;
 import org.geysermc.pack.converter.converter.Converter;
 import org.geysermc.pack.converter.data.BaseConversionData;
 import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.Text;
 import team.unnamed.creative.base.Writable;
 import team.unnamed.creative.texture.Texture;
 
@@ -44,13 +45,17 @@ public class PackIconConverter extends BaseConverter {
     public void convert(@NotNull PackConversionContext<BaseConversionData> context) throws Exception {
         Writable packIcon = context.javaResourcePack().icon();
         if (packIcon == null) {
-            if (context.javaResourcePack().texture(UNKNOWN_PACK) != null) {
-                packIcon = context.javaResourcePack().texture(UNKNOWN_PACK).data();
-            } else {
-                packIcon = context.data().vanillaPack().texture(UNKNOWN_PACK).data();
+            Texture unknownPackIcon = context.javaResourcePack().texture(UNKNOWN_PACK);
+
+            if (unknownPackIcon == null) {
+                unknownPackIcon = context.data().vanillaPack().texture(UNKNOWN_PACK);
+            }
+
+            if (unknownPackIcon != null) {
+                packIcon = unknownPackIcon.data();
             }
         }
 
-        context.bedrockResourcePack().icon(packIcon.toByteArray());
+        if (packIcon != null) context.bedrockResourcePack().icon(packIcon.toByteArray());
     }
 }

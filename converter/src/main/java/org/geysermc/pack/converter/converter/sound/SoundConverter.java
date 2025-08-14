@@ -27,7 +27,6 @@
 package org.geysermc.pack.converter.converter.sound;
 
 import com.google.auto.service.AutoService;
-import org.apache.commons.io.file.PathUtils;
 import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitions;
 import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.Sounds;
 import org.geysermc.pack.converter.Constants;
@@ -35,16 +34,21 @@ import org.geysermc.pack.converter.PackConversionContext;
 import org.geysermc.pack.converter.converter.BaseConverter;
 import org.geysermc.pack.converter.converter.Converter;
 import org.geysermc.pack.converter.data.BaseConversionData;
+import org.geysermc.pack.converter.data.JSONMappings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
 import team.unnamed.creative.sound.SoundEntry;
 import team.unnamed.creative.sound.SoundEvent;
 import team.unnamed.creative.sound.SoundRegistry;
 
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Stream;
 
 @AutoService(Converter.class)
 public class SoundConverter extends BaseConverter {
@@ -86,7 +90,24 @@ public class SoundConverter extends BaseConverter {
                 Files.createDirectories(output);
             }
 
-            PathUtils.copyDirectory(input, output, StandardCopyOption.REPLACE_EXISTING);
+            JSONMappings mappings = JSONMappings.mappings("sounds");
+
+            try (Stream<Path> paths = Files.walk(input)) {
+                paths.forEach(inputPath -> {
+                    if (Files.isDirectory(inputPath)) return;
+
+                    String relativePath = inputPath.relativize(input).toString();
+                    List<String> outputs = mappings.map(relativePath);
+
+                    for (String outputPath : outputs) {
+                        try {
+                            Files.copy(inputPath, output.resolve(outputPath), StandardCopyOption.REPLACE_EXISTING);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+            }
         }
     }
 }
