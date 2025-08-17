@@ -48,7 +48,8 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class ThunderGUI extends JFrame {
     private static List<String> MESSAGES = List.of(
-            "Your order is ready!", "/plugins/Geyser-Spigot/packs is where this will end up.", "Also try Rainbow!", "The floodgates are open!"
+            "Your order is ready!", "Also try Rainbow!", "The floodgates are open!",
+            "Your pack has been converted!", "(╯°□°)╯︵ ┻━┻"
     );
 
     private final DecimalFormat decimalFormat;
@@ -140,21 +141,28 @@ public class ThunderGUI extends JFrame {
                                 .pack();
 
                         dataLabel.setText("%s Converted! Time elapsed: %ss".formatted(inputPath.getFileName().toString(), decimalFormat.format((System.currentTimeMillis() - startTime.get()) / 1000d)));
+
+                        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+                            int option = JOptionPane.showConfirmDialog(
+                                    this,
+                                    "%s Would you like to view the pack?".formatted(MESSAGES.get(new Random().nextInt(MESSAGES.size()))),
+                                    "Pack Converted!",
+                                    JOptionPane.YES_NO_OPTION,
+                                    JOptionPane.QUESTION_MESSAGE,
+                                    currentIcon
+                            );
+
+                            if (option == JOptionPane.YES_OPTION) {
+                                Desktop.getDesktop().open(outputPath.getParent().toFile());
+                            }
+                        }
+                    } catch (Exception e) {
+                        logListener.error("An issue occured while converting:", e);
+                    } finally {
                         converting.set(false);
                         convertButton.setEnabled(true);
                         if (debugCheckbox != null) debugCheckbox.setEnabled(true);
                         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-                        JOptionPane.showConfirmDialog(
-                                this,
-                                "%s Would you like to view the pack?".formatted(MESSAGES.get(new Random().nextInt(MESSAGES.size()))),
-                                "Pack Converted!",
-                                JOptionPane.YES_NO_OPTION,
-                                JOptionPane.QUESTION_MESSAGE,
-                                currentIcon
-                        );
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
                     }
                 }).start();
             } catch (Exception e) {
