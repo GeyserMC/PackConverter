@@ -41,10 +41,16 @@ import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
+import java.util.List;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ThunderGUI extends JFrame {
+    private static List<String> MESSAGES = List.of(
+            "Your order is ready!", "/plugins/Geyser-Spigot/packs is where this will end up.", "Also try Rainbow!", "The floodgates are open!"
+    );
+
     private final DecimalFormat decimalFormat;
     private final AtomicBoolean converting = new AtomicBoolean(false);
     private final AtomicLong startTime = new AtomicLong(0);
@@ -55,6 +61,7 @@ public class ThunderGUI extends JFrame {
 
     private Path inputPath = null;
     private Path outputPath = null;
+    private Icon currentIcon = null;
 
     public ThunderGUI(boolean debug) throws IOException {
         vanillaPackPath = Path.of(System.getenv("LOCALAPPDATA") != null ? System.getenv("LOCALAPPDATA") : System.getProperty("user.home"), "Thunder", "Vanilla-Assets.zip");
@@ -137,6 +144,15 @@ public class ThunderGUI extends JFrame {
                         convertButton.setEnabled(true);
                         if (debugCheckbox != null) debugCheckbox.setEnabled(true);
                         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+                        JOptionPane.showConfirmDialog(
+                                this,
+                                "%s Would you like to view the pack?".formatted(MESSAGES.get(new Random().nextInt(MESSAGES.size()))),
+                                "Pack Converted!",
+                                JOptionPane.YES_NO_OPTION,
+                                JOptionPane.QUESTION_MESSAGE,
+                                currentIcon
+                        );
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -191,11 +207,10 @@ public class ThunderGUI extends JFrame {
                             javaPackButton.setIcon(null);
                         } else {
                             javaPackButton.setText(null);
-                            javaPackButton.setIcon(
-                                    new BufferedImageIcon(
-                                            ImageUtil.resize(ImageIO.read(Files.newInputStream(iconPath)), 175, 175)
-                                    )
+                            currentIcon = new BufferedImageIcon(
+                                    ImageUtil.resize(ImageIO.read(Files.newInputStream(iconPath)), 175, 175)
                             );
+                            javaPackButton.setIcon(currentIcon);
                         }
                     });
                 } catch (IOException e) {
