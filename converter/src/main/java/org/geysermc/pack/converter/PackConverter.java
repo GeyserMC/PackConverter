@@ -297,10 +297,11 @@ public final class PackConverter {
         VanillaPackProvider.create(vanillaPackPath, this.logListener);
 
         ZipUtils.openFileSystem(this.input, this.compressed, input -> {
-            if (!Files.exists(input.resolve("pack.mcmeta"))) {
-                logListener.error("Invalid Java Edition resource pack. No pack.mcmeta found.");
-                return;
-            }
+            // TODO: Add this back as an optional thing in API once it's been sorted out
+//            if (!Files.exists(input.resolve("pack.mcmeta"))) {
+//                logListener.error("Invalid Java Edition resource pack. No pack.mcmeta found.");
+//                return;
+//            }
 
             this.tmpDir = this.output.toAbsolutePath().getParent().resolve(this.output.getFileName() + "_mcpack/");
 
