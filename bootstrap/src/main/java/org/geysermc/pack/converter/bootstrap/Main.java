@@ -26,7 +26,6 @@
 
 package org.geysermc.pack.converter.bootstrap;
 
-import com.formdev.flatlaf.intellijthemes.FlatArcDarkIJTheme;
 import org.geysermc.pack.converter.PackConverter;
 import org.geysermc.pack.converter.converter.Converters;
 
@@ -80,8 +79,7 @@ public class Main {
                     .convert()
                     .pack();
         } else {
-            FlatArcDarkIJTheme.setup();
-            new ThunderGUI(debug);
+            ThunderGUI.start(debug);
         }
     }
 }

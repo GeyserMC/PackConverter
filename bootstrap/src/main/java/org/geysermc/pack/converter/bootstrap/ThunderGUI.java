@@ -26,19 +26,27 @@
 
 package org.geysermc.pack.converter.bootstrap;
 
+import com.formdev.flatlaf.intellijthemes.FlatArcDarkIJTheme;
 import com.twelvemonkeys.image.BufferedImageIcon;
 import org.geysermc.pack.converter.PackConverter;
+import org.geysermc.pack.converter.bootstrap.components.DefaultButtonBorder;
+import org.geysermc.pack.converter.bootstrap.components.HelpButton;
+import org.geysermc.pack.converter.bootstrap.components.PrideButtonBorder;
+import org.geysermc.pack.converter.bootstrap.components.StaticButtonBorder;
 import org.geysermc.pack.converter.converter.Converters;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.geysermc.pack.converter.util.ZipUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.RoundingMode;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
@@ -62,11 +70,25 @@ public class ThunderGUI extends JFrame {
     private Path outputPath = null;
     private BufferedImage currentIcon = null;
 
+    public static void start(boolean debug) throws IOException {
+        FlatArcDarkIJTheme.setup();
+
+        new ThunderGUI(debug);
+    }
+
     public ThunderGUI(boolean debug) throws IOException {
         vanillaPackPath = Path.of(System.getenv("LOCALAPPDATA") != null ? System.getenv("LOCALAPPDATA") : System.getProperty("user.home"), "Thunder", "Vanilla-Assets.zip");
 
         decimalFormat = new DecimalFormat("#.##");
         decimalFormat.setRoundingMode(RoundingMode.HALF_UP);
+
+        Border border;
+
+        if (LocalDate.now().getMonth().equals(Month.JUNE)) {
+            border = new PrideButtonBorder();
+        } else {
+            border = new DefaultButtonBorder();
+        }
 
         this.setTitle("Thunder");
         InputStream iconStream = Main.class.getResourceAsStream("/icon.png");
@@ -82,8 +104,25 @@ public class ThunderGUI extends JFrame {
         this.add(packNameLabel);
 
         JTextField packName = new JTextField("");
-        packName.setBounds(295, 20, 475, 30);
+        packName.setBorder(border);
+        packName.setEnabled(false);
+        packName.setToolTipText("Please select a pack first!");
+        packName.setBounds(295, 20, 425, 30);
         this.add(packName);
+
+        JButton helpButton = new JButton(new HelpButton());
+        helpButton.setToolTipText("Open the wiki page");
+        helpButton.setFocusPainted(false);
+        helpButton.setBorder(border);
+        helpButton.setBounds(730, 20, 30, 30);
+        helpButton.addActionListener(event -> {
+            try {
+                Desktop.getDesktop().browse(new URI("https://geysermc.org/wiki/other/thunder"));
+            } catch (IOException | URISyntaxException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        this.add(helpButton);
 
         JLabel dataLabel = new JLabel("Input: None | Output: None");
         dataLabel.setBounds(225, 50, 535, 30);
@@ -94,9 +133,11 @@ public class ThunderGUI extends JFrame {
         this.outputArea.setFocusable(false);
         this.outputArea.setLineWrap(true);
         this.outputArea.setTabSize(2);
+        this.outputArea.setBorder(BorderFactory.createEmptyBorder());
 
         JScrollPane scrollArea = new JScrollPane(this.outputArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        scrollArea.setBounds(225, 90, 535, 125);
+        scrollArea.setBounds(225, 90, 535, 130);
+        scrollArea.setBorder(new StaticButtonBorder());
 
         this.add(scrollArea);
 
@@ -105,15 +146,15 @@ public class ThunderGUI extends JFrame {
         if (debug) {
             debugCheckbox = new JCheckBox("Debug Mode");
             debugCheckbox.setBounds(650, 225, 105, 25);
-            debugCheckbox.addActionListener(event -> {
-                this.debugMode.set(debugCheckbox.isSelected());
-            });
+            debugCheckbox.addActionListener(event -> this.debugMode.set(debugCheckbox.isSelected()));
             this.add(debugCheckbox);
         } else {
             debugCheckbox = null;
         }
 
         JButton convertButton = new JButton("Convert");
+        convertButton.setBorder(border);
+        convertButton.setFocusPainted(false);
         convertButton.setBounds(20, 225, debug ? 625 : 740, 25);
         convertButton.setEnabled(false);
         convertButton.addActionListener(event -> {
@@ -123,6 +164,7 @@ public class ThunderGUI extends JFrame {
             converting.set(true);
             if (debugCheckbox != null) debugCheckbox.setEnabled(false);
             convertButton.setEnabled(false);
+            this.requestFocus();
             this.outputArea.setText("");
             dataLabel.setText("Converting %s...".formatted(inputPath.getFileName().toString()));
             this.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -160,6 +202,8 @@ public class ThunderGUI extends JFrame {
         this.add(convertButton);
 
         JButton javaPackButton = new JButton("Select Pack");
+        javaPackButton.setBorder(border);
+        javaPackButton.setFocusPainted(false);
         javaPackButton.setBounds(20, 20, 200, 200);
         javaPackButton.addActionListener(event -> {
             if (converting.get()) return;
@@ -186,9 +230,9 @@ public class ThunderGUI extends JFrame {
                 );
                 convertButton.setEnabled(true);
 
-                if (packName.getText().isEmpty()) {
-                    packName.setText(chooser.getFile().replaceFirst("[.][^.]+$", ""));
-                }
+                packName.setToolTipText(null);
+                packName.setEnabled(true);
+                packName.setText(chooser.getFile().replaceFirst("[.][^.]+$", ""));
 
                 try {
                     ZipUtils.openFileSystem(inputPath, true, path -> {
@@ -202,13 +246,10 @@ public class ThunderGUI extends JFrame {
 
                             LocalDate date = LocalDate.now();
 
-                            currentIcon = ImageUtil.borderRadias(
-                                    ImageUtil.resize(
-                                            ImageIO.read(Files.newInputStream(iconPath)),
-                                            198,
-                                            198
-                                    ),
-                                    5
+                            currentIcon = ImageUtil.resize(
+                                    ImageIO.read(Files.newInputStream(iconPath)),
+                                    198,
+                                    198
                             );
 
                             if (date.getMonth().equals(Month.APRIL) && date.getDayOfMonth() == 1) {

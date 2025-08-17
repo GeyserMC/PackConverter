@@ -78,13 +78,13 @@ public class BootstrapLogListener implements LogListener {
     private void appendText(String text) {
         if (gui.outputArea.getText().isEmpty()) {
             gui.outputArea.setText(
-                    text
+                    " " + text
             );
             return;
         }
 
         gui.outputArea.setText(
-                gui.outputArea.getText() + "\n" + text
+                gui.outputArea.getText() + "\n " + text
         );
 
         gui.outputArea.setCaretPosition(gui.outputArea.getDocument().getLength());
