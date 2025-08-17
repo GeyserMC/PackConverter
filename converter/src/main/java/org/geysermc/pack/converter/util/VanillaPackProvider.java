@@ -172,6 +172,7 @@ public final class VanillaPackProvider {
                                 !pathName.startsWith("/assets/minecraft/models") &&
                                 !pathName.startsWith("/assets/minecraft/blockstates") &&
                                 !pathName.startsWith("/assets/minecraft/textures/font") &&
+                                !pathName.startsWith("/assets/minecraft/font") &&
                                 !validPaths.contains(pathName)
                         ) {
                             PathUtils.delete(path);

@@ -27,11 +27,16 @@
 package org.geysermc.pack.converter.converter.texture.transformer.type.ui;
 
 import com.google.auto.service.AutoService;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import net.kyori.adventure.key.Key;
 import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
 import org.geysermc.pack.converter.converter.texture.transformer.TransformContext;
 import org.geysermc.pack.converter.util.HexUtils;
 import org.geysermc.pack.converter.util.ImageUtil;
+import org.geysermc.pack.converter.util.Vec2i;
 import org.geysermc.pack.converter.util.ZipUtils;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.ResourcePack;
@@ -45,6 +50,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
@@ -53,7 +59,7 @@ import java.util.List;
 @AutoService(TextureTransformer.class)
 public class FontTransformer implements TextureTransformer {
     // Mappings for where characters should go in the default8.png file
-    private static final List<FontMapping> DEFAULT8_MAPPINGS = new ArrayList<>();
+    private static final Map<Character, Vec2i> DEFAULT8_MAPPINGS = new HashMap<>();
 
     // Data for the 3 common font images in java
     private static final Map<String, FontData> FONT_DATA = Map.of(
@@ -67,9 +73,6 @@ public class FontTransformer implements TextureTransformer {
 
     @Override
     public void transform(@NotNull TransformContext context) throws IOException {
-        // We first do default8, since we may return if needed below
-        transformDefault8(context);
-
         List<UnicodeFontData> unicodeFontData = new ArrayList<>();
 
         // Currently, only the default font is converted, custom fonts are not supported on bedrock
@@ -98,102 +101,21 @@ public class FontTransformer implements TextureTransformer {
             }
         }
 
-        // Now we need to gather the images and calculate the sizes for this
-        // This could use with a little bit of optimisation...
-        Map<Byte, List<UnicodeFontData>> containedCharacters = new HashMap<>();
-        Map<Key, BufferedImage> images = new HashMap<>(); // Just so we aren't reading an image several times over
+        Map<Key, BufferedImage> cachedImages = new HashMap<>(); // Just so we aren't reading an image several times over
 
         for (UnicodeFontData fontData : unicodeFontData) {
-            byte[] bytes = String.valueOf(fontData.character()).getBytes(StandardCharsets.UTF_16BE);
-            byte upperData = bytes.length == 1 ? 0 : bytes[0]; // The first byte, determines which image this character will be written to
-
-            containedCharacters.computeIfAbsent(upperData, ignored -> new ArrayList<>());
-
-            containedCharacters.get(upperData).add(fontData);
-
-            fontData.computeCache(context, images);
+            fontData.computeCache(context, cachedImages);
         }
 
-        // A formatter for our hex value, used when writing the glyph files
-        HexFormat hexFormat = HexFormat.of();
+        Map<String, BufferedImage> finishedImages = new HashMap<>();
 
-        for (Map.Entry<Byte, List<UnicodeFontData>> data : containedCharacters.entrySet()) {
-            if (data.getValue().isEmpty()) continue; // We have nothing to work with
+        finishedImages.putAll(new GlyphWriter().generateImage(context, unicodeFontData, cachedImages));
+        finishedImages.putAll(new Default8Writer().generateImage(context, unicodeFontData, cachedImages));
 
-            // Determine the size the image should be to fit all our characters
-            // Better to default to something than an exception, so lets default to 1
-            int maxWidth = data.getValue().stream().mapToInt(
-                    fontData ->
-                            (int) (fontData.width() * fontData.fontData().scaleX())
-            ).max().orElse(1);
-
-            int maxHeight = data.getValue().stream().mapToInt(
-                    fontData ->
-                            (int) (fontData.height() * fontData.fontData().scaleY())
-            ).max().orElse(1);
-
-            int size = Math.max(maxWidth, maxHeight);
-
-            BufferedImage bedrockImage = new BufferedImage(size * 16, size * 16, BufferedImage.TYPE_INT_ARGB);
-
-            Graphics g = bedrockImage.getGraphics();
-
-            for (UnicodeFontData fontData : data.getValue()) {
-                if (!fontData.shouldRead()) continue;
-
-                int dataWidth = fontData.width();
-                int dataHeight = fontData.height();
-                int dataX = fontData.x();
-                int dataY = fontData.y();
-
-                BufferedImage javaImage;
-                try {
-                    javaImage = fontData.readJavaImage(images, context.javaResourcePack());
-                } catch (FontFormatException e) {
-                    throw new IOException(e);
-                }
-                if (javaImage == null) {
-                    context.warn("Missing font file, unable to write character '%s'.".formatted(fontData.character()));
-                    continue;
-                }
-
-                byte[] bytes = String.valueOf(fontData.character()).getBytes(StandardCharsets.UTF_16BE);
-                int position = bytes[bytes.length - 1] & 0xff; // The last byte of the character
-
-                // Now we can find where the character belongs in the bedrock image
-                int desX = position % 16;
-                int desY = position / 16;
-
-                // Determine how to scale the image to ensure they're in line with every other character
-                float scaleX = (float) maxWidth / dataWidth;
-                float scaleY = (float) maxHeight / dataHeight;
-                float scale = Math.min(scaleX, scaleY); // Prevent stretching, use the minimum one
-
-                // Since we don't stretch fully, we should offset to ensure the character appears correctly in bedrock
-                int xOffset = (size - dataWidth) / 2;
-                int yOffset = (size - dataHeight) / 2;
-
-                g.drawImage(
-                        ImageUtil.scale(
-                                ImageUtil.crop(
-                                        javaImage,
-                                        dataX * dataWidth,
-                                        dataY * dataHeight,
-                                        dataWidth,
-                                        dataHeight
-                                ),
-                                scale
-                        ),
-                        (desX * size) + xOffset,
-                        (desY * size) + yOffset,
-                        null
-                );
-            }
-
+        for (Map.Entry<String, BufferedImage> imageEntry : finishedImages.entrySet()) {
             context.bedrockResourcePack().addExtraFile(
-                    ImageUtil.toByteArray(bedrockImage, "png"),
-                    "font/glyph_%s.png"
-                            .formatted(hexFormat.toHexDigits(data.getKey()).toUpperCase())
+                    ImageUtil.toByteArray(imageEntry.getValue(), "png"),
+                    imageEntry.getKey()
             );
         }
     }
@@ -305,213 +227,20 @@ public class FontTransformer implements TextureTransformer {
         return unicodeFontData;
     }
 
-    private void transformDefault8(@NotNull TransformContext context) throws IOException {
-        // Don't attempt to write default8 if we have no data to pull from, otherwise it's vanilla to vanilla
-        if (
-                !context.isTexturePresent(Key.key(Key.MINECRAFT_NAMESPACE, "font/ascii.png")) &&
-                        !context.isTexturePresent(Key.key(Key.MINECRAFT_NAMESPACE, "font/accented.png")) &&
-                        !context.isTexturePresent(Key.key(Key.MINECRAFT_NAMESPACE, "font/nonlatin_european.png"))
-        ) return;
-
-        // Store the java images to prevent constant image reading
-        Map<String, BufferedImage> imgs = new HashMap<>();
-        Map<String, Integer> scales = new HashMap<>();
-
-        Texture ascii = context.peekOrVanilla(Key.key(Key.MINECRAFT_NAMESPACE, "font/ascii.png"));
-        if (ascii != null) {
-            BufferedImage image = this.readImage(ascii);
-            imgs.put("ascii", image);
-            scales.put("ascii", image.getWidth() / 128);
-        }
-
-        Texture accented = context.peekOrVanilla(Key.key(Key.MINECRAFT_NAMESPACE, "font/accented.png"));
-        if (accented != null) {
-            BufferedImage image = this.readImage(accented);
-            imgs.put("accented", image);
-            scales.put("accented", image.getWidth() / 144);
-        }
-
-        Texture nonlatin_european = context.peekOrVanilla(Key.key(Key.MINECRAFT_NAMESPACE, "font/nonlatin_european.png"));
-        if (nonlatin_european != null) {
-            BufferedImage image = this.readImage(nonlatin_european);
-            imgs.put("nonlatin_european", image);
-            scales.put("nonlatin_european", image.getWidth() / 128);
-        }
-
-        // Use ASCII as a base, since bedrock's default8 has the same character size as ASCII
-        int charSize = scales.get("ascii") * 8;
-
-        // default8 is 16 by 16 characters in size
-        BufferedImage bedrockImage = new BufferedImage(16 * charSize, 16 * charSize, BufferedImage.TYPE_INT_ARGB);
-
-        Graphics g = bedrockImage.getGraphics();
-
-        for (FontMapping fontMapping : DEFAULT8_MAPPINGS) {
-            FontData fontData = FONT_DATA.get(fontMapping.javaTexture);
-
-            // Determines the position in the java image, accounting for scale
-            int realCharX = fontData.charSizeX * scales.get(fontMapping.javaTexture);
-            int realCharY = fontData.charSizeY * scales.get(fontMapping.javaTexture);
-
-            g.drawImage(
-                    ImageUtil.scale(
-                            ImageUtil.crop(
-                                    imgs.getOrDefault(fontMapping.javaTexture, new BufferedImage((fontMapping.javaX * realCharX) + realCharX, (fontMapping.javaY * realCharY) + realCharY, BufferedImage.TYPE_INT_ARGB)),
-                                    fontMapping.javaX * realCharX,
-                                    fontMapping.javaY * realCharY,
-                                    realCharX,
-                                    realCharY
-                            ),
-                            fontData.scaleX,
-                            fontData.scaleY
-                    ),
-                    (fontMapping.bedrockX * charSize),
-                    (fontMapping.bedrockY * charSize),
-                    null
-            );
-        }
-
-        context.bedrockResourcePack().addExtraFile(ImageUtil.toByteArray(bedrockImage, "png"), "font/default8.png");
-    }
-
     static {
-        // These mappings were mostly found by manually work and checking if the unicodes match correctly
-        // Some characters were found just by seeing they completely match between default8 (bedrock) and ascii (java)
+        JsonArray mappingArray = JsonParser.parseReader(
+                new InputStreamReader(FontTransformer.class.getResourceAsStream("/mappings/default8.json"))
+        ).getAsJsonObject().getAsJsonArray("mappings");
 
-        // Manual stuff...
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 0, 0));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 1, 0));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 2, 0));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 8, 0, 3, 0));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 10, 0, 4, 0));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 11, 0, 5, 0));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 12, 0, 6, 0));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 3, 1, 7, 0));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 4, 1, 8, 0));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 5, 1, 9, 0));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 8, 1, 10, 0));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 6, 10, 11, 0));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 3, 0, 12, 0));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 5, 1, 13, 0));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 5, 5, 14, 0));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 6, 6, 15, 0));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 7, 6, 0, 1));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 4, 8, 1, 1));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 5, 8, 2, 1));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 0, 9, 3, 1));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 1, 9, 4, 1));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 6, 10, 5, 1));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 7, 10, 6, 1));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 15, 10, 7, 1));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 14, 15, 8, 1));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 15, 37, 9, 1));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 13, 14, 10, 1));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 15, 11, 11, 1));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 14, 14, 12, 1));
-
-        // We have a few good matching ones, so lets save some time
         int x = 0;
-        int y = 2;
+        int y = 0;
 
-        for (int i = 0; i < 92; i++) {
-            DEFAULT8_MAPPINGS.add(new FontMapping(x, y));
-            x++;
-            if (x == 16) {
-                x = 0;
-                y++;
+        for (JsonElement element : mappingArray) {
+            for (char character : element.getAsString().toCharArray()) {
+                DEFAULT8_MAPPINGS.put(character, new Vec2i(x++, y));
             }
-        }
-
-        // Back to manual
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 1, 1, 15, 7));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 7, 0, 0, 8));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 1, 3, 1, 8));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 13, 15, 2, 8));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 14, 1, 3, 8));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 0, 2, 4, 8));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 12, 1, 5, 8));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 12, 30, 6, 8));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 3, 2, 7, 8));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 14, 15, 8, 8));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 7, 13, 9, 8));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 6, 13, 10, 8));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 7, 2, 11, 8));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 6, 2, 12, 8));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 4, 2, 13, 8));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 6, 3, 14, 8));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 11, 30, 15, 8));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 8, 0, 0, 9));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 2, 2, 1, 9));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 6, 0, 2, 9));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 11, 2, 3, 9));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 13, 2, 4, 9));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 9, 2, 5, 9));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 0, 3, 6, 9));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 14, 2, 7, 9));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 3, 3, 8, 9));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 6, 1, 9, 9));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 10, 1, 10, 9));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 14, 14, 11, 9));
-        DEFAULT8_MAPPINGS.add(new FontMapping(0, 3, 13, 9));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 10, 16, 14, 9));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 13, 1, 0, 10));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 4, 2, 1, 10));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 10, 2, 2, 10));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 15, 2, 3, 10));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 8, 2, 4, 10));
-        DEFAULT8_MAPPINGS.add(new FontMapping("accented", 1, 1, 5, 10));
-        DEFAULT8_MAPPINGS.add(new FontMapping(6, 10));
-        DEFAULT8_MAPPINGS.add(new FontMapping(7, 10));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 6, 0, 8, 10));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 14, 14, 9, 10));
-        DEFAULT8_MAPPINGS.add(new FontMapping(10, 10));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 2, 15, 11, 10));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 1, 15, 12, 10));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 0, 0, 13, 10));
-        DEFAULT8_MAPPINGS.add(new FontMapping(14, 10));
-        DEFAULT8_MAPPINGS.add(new FontMapping(15, 10));
-
-        // More duplicates
-        x = 0;
-        y = 11;
-
-        for (int i = 0; i < 48; i++) {
-            DEFAULT8_MAPPINGS.add(new FontMapping(x, y));
-            x++;
-            if (x == 16) {
-                x = 0;
-                y++;
-            }
-        }
-
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 6, 2, 0, 14));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 7, 2, 1, 14));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 0, 1, 2, 14));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 5, 3, 3, 14));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 15, 1, 4, 14));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 8, 3, 5, 14));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 1, 3, 6, 14));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 9, 3, 7, 14));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 2, 2, 8, 14));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 5, 1, 9, 14));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 5, 2, 10, 14));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 9, 2, 11, 14));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 2, 17, 12, 14));
-        DEFAULT8_MAPPINGS.add(new FontMapping(13, 14));
-        DEFAULT8_MAPPINGS.add(new FontMapping(14, 14));
-        DEFAULT8_MAPPINGS.add(new FontMapping("nonlatin_european", 2, 17, 15, 14));
-
-        // Even more duplicates
-        x = 0;
-        y = 15;
-
-        for (int i = 0; i < 16; i++) {
-            DEFAULT8_MAPPINGS.add(new FontMapping(x, y));
-            x++;
-            if (x == 16) {
-                x = 0;
-                y++;
-            }
+            y++;
+            x = 0;
         }
     }
 
@@ -567,6 +296,8 @@ public class FontTransformer implements TextureTransformer {
 
         @Override
         public void computeCache(TransformContext context, Map<Key, BufferedImage> imageCache) {
+            if (imageCache.containsKey(textureName)) return; // Already cached
+
             Texture texture = context.pollOrPeekVanilla(textureName);
 
             if (texture != null) {
@@ -714,6 +445,216 @@ public class FontTransformer implements TextureTransformer {
         @Override
         public int height() {
             return 16; // UniHex fonts are *always* 16 in height
+        }
+    }
+
+    private interface FontWriter {
+        Map<String, BufferedImage> generateImage(TransformContext context, List<UnicodeFontData> data, Map<Key, BufferedImage> cache) throws IOException;
+    }
+
+    private static class GlyphWriter implements FontWriter {
+        @Override
+        public Map<String, BufferedImage> generateImage(TransformContext context, List<UnicodeFontData> unicodeFontData, Map<Key, BufferedImage> cache) throws IOException {
+            Map<String, BufferedImage> paths = new HashMap<>();
+
+            Map<Byte, List<UnicodeFontData>> containedCharacters = new HashMap<>();
+            for (UnicodeFontData fontData : unicodeFontData) {
+                byte[] bytes = String.valueOf(fontData.character()).getBytes(StandardCharsets.UTF_16BE);
+                byte upperData = bytes.length == 1 ? 0 : bytes[0]; // The first byte, determines which image this character will be written to
+
+                containedCharacters.computeIfAbsent(upperData, ignored -> new ArrayList<>());
+
+                containedCharacters.get(upperData).add(fontData);
+            }
+
+            // A formatter for our hex value, used when writing the glyph files
+            HexFormat hexFormat = HexFormat.of();
+
+            for (Map.Entry<Byte, List<UnicodeFontData>> data : containedCharacters.entrySet()) {
+                if (data.getValue().isEmpty()) continue; // We have nothing to work with
+
+                // Determine the size the image should be to fit all our characters
+                // Better to default to something than an exception, so lets default to 1
+                int maxWidth = data.getValue().stream().mapToInt(
+                        fontData ->
+                                (int) (fontData.width() * fontData.fontData().scaleX())
+                ).max().orElse(1);
+
+                int maxHeight = data.getValue().stream().mapToInt(
+                        fontData ->
+                                (int) (fontData.height() * fontData.fontData().scaleY())
+                ).max().orElse(1);
+
+                int size = Math.max(maxWidth, maxHeight);
+
+                BufferedImage bedrockImage = new BufferedImage(size * 16, size * 16, BufferedImage.TYPE_INT_ARGB);
+
+                Graphics g = bedrockImage.getGraphics();
+
+                for (UnicodeFontData fontData : data.getValue()) {
+                    if (!fontData.shouldRead()) continue;
+
+                    int dataWidth = fontData.width();
+                    int dataHeight = fontData.height();
+                    int dataX = fontData.x();
+                    int dataY = fontData.y();
+
+                    BufferedImage javaImage;
+                    try {
+                        javaImage = fontData.readJavaImage(cache, context.javaResourcePack());
+                    } catch (FontFormatException e) {
+                        throw new IOException(e);
+                    }
+                    if (javaImage == null) {
+                        context.warn("Missing font file, unable to write character '%s'.".formatted(fontData.character()));
+                        continue;
+                    }
+
+                    byte[] bytes = String.valueOf(fontData.character()).getBytes(StandardCharsets.UTF_16BE);
+                    int position = bytes[bytes.length - 1] & 0xff; // The last byte of the character
+
+                    // Now we can find where the character belongs in the bedrock image
+                    int desX = position % 16;
+                    int desY = position / 16;
+
+                    // Determine how to scale the image to ensure they're in line with every other character
+                    float scaleX = (float) maxWidth / dataWidth;
+                    float scaleY = (float) maxHeight / dataHeight;
+                    float scale = Math.min(scaleX, scaleY); // Prevent stretching, use the minimum one
+
+                    // Since we don't stretch fully, we should offset to ensure the character appears correctly in bedrock
+                    int xOffset = (size - dataWidth) / 2;
+                    int yOffset = (size - dataHeight) / 2;
+
+                    g.drawImage(
+                            ImageUtil.scale(
+                                    ImageUtil.crop(
+                                            javaImage,
+                                            dataX * dataWidth,
+                                            dataY * dataHeight,
+                                            dataWidth,
+                                            dataHeight
+                                    ),
+                                    scale
+                            ),
+                            (desX * size) + xOffset,
+                            (desY * size) + yOffset,
+                            null
+                    );
+                }
+
+                paths.put("font/glyph_%s.png"
+                        .formatted(hexFormat.toHexDigits(data.getKey()).toUpperCase()), bedrockImage);
+            }
+
+            return paths;
+        }
+    }
+
+    private static class Default8Writer implements FontWriter {
+        @Override
+        public Map<String, BufferedImage> generateImage(TransformContext context, List<UnicodeFontData> data, Map<Key, BufferedImage> cache) throws IOException {
+            int maxWidth = data.stream().filter(fontData -> DEFAULT8_MAPPINGS.containsKey(fontData.character())).mapToInt(
+                    fontData ->
+                            (int) (fontData.width() * fontData.fontData().scaleX())
+            ).max().orElse(1);
+
+            int maxHeight = data.stream().filter(fontData -> DEFAULT8_MAPPINGS.containsKey(fontData.character())).mapToInt(
+                    fontData ->
+                            (int) (fontData.height() * fontData.fontData().scaleY())
+            ).max().orElse(1);
+
+            int size = Math.max(maxWidth, maxHeight);
+
+            BufferedImage bedrockImage = new BufferedImage(size * 16, size * 16, BufferedImage.TYPE_INT_ARGB);
+
+            Graphics g = bedrockImage.getGraphics();
+
+            List<UnicodeFontData> default8Data = data.stream().filter(fontData -> DEFAULT8_MAPPINGS.containsKey(fontData.character())).toList();
+
+            for (UnicodeFontData fontData : default8Data) {
+                if (!fontData.shouldRead()) {
+                    continue;
+                }
+
+                int dataWidth = fontData.width();
+                int dataHeight = fontData.height();
+                int dataX = fontData.x();
+                int dataY = fontData.y();
+
+                BufferedImage javaImage;
+                try {
+                    javaImage = fontData.readJavaImage(cache, context.javaResourcePack());
+                } catch (FontFormatException e) {
+                    throw new IOException(e);
+                }
+                if (javaImage == null) {
+                    context.warn("Missing font file, unable to write character '%s'.".formatted(fontData.character()));
+                    continue;
+                }
+
+                // We do some processing here just to prevent images that are scaled from scaling poorly
+                if (javaImage.getWidth() > size) {
+                    int startRows = 0;
+                    xStartLoop: for (int x = 0; x < javaImage.getWidth(); x++) {
+                        for (int y = 0; y < javaImage.getHeight(); y++) {
+                            Color c = new Color(javaImage.getRGB(x, y), true);
+
+                            if (c.getAlpha() > 0) break xStartLoop;
+                        }
+
+                        startRows++;
+                    }
+
+                    int endRows = 0;
+                    xEndLoop: for (int x = javaImage.getWidth() - 1; x >= 0; x--) {
+                        for (int y = javaImage.getHeight() - 1; y >= 0; y--) {
+                            Color c = new Color(javaImage.getRGB(x, y), true);
+
+                            if (c.getAlpha() > 0) break xEndLoop;
+                        }
+
+                        endRows++;
+                    }
+
+                    if (startRows > 0 || endRows > 0) {
+                        context.info("Start rows: %d | End rows: %d".formatted(startRows, endRows));
+                    }
+
+                    javaImage = ImageUtil.crop(javaImage, startRows, 0, javaImage.getWidth() - (startRows + endRows), javaImage.getHeight());
+                }
+
+                // Now we can find where the character belongs in the bedrock image
+                int desX = DEFAULT8_MAPPINGS.get(fontData.character()).x();
+                int desY = DEFAULT8_MAPPINGS.get(fontData.character()).y();
+
+                // Determine how to scale the image to ensure they're in line with every other character
+                float scaleX = (float) maxWidth / dataWidth;
+                float scaleY = (float) maxHeight / dataHeight;
+                float scale = Math.min(scaleX, scaleY); // Prevent stretching, use the minimum one
+
+                // Since we don't stretch fully, we should offset to ensure the character appears correctly in bedrock
+                int xOffset = (size - dataWidth) / 2;
+                int yOffset = (size - dataHeight) / 2;
+
+                g.drawImage(
+                        ImageUtil.scale(
+                                ImageUtil.crop(
+                                        javaImage,
+                                        dataX * dataWidth,
+                                        dataY * dataHeight,
+                                        dataWidth,
+                                        dataHeight
+                                ),
+                                scale
+                        ),
+                        (desX * size) + xOffset,
+                        (desY * size) + yOffset,
+                        null
+                );
+            }
+
+            return Map.of("font/default8.png", bedrockImage);
         }
     }
 }

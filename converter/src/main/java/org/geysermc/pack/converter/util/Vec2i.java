@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 GeyserMC. http://geysermc.org
+ * Copyright (c) 2025 GeyserMC. http://geysermc.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -24,21 +24,6 @@
  *
  */
 
-package org.geysermc.pack.converter;
+package org.geysermc.pack.converter.util;
 
-import org.geysermc.pack.converter.util.LogListener;
-import org.geysermc.pack.converter.util.ZipUtils;
-import org.jetbrains.annotations.NotNull;
-
-import java.io.IOException;
-import java.nio.file.Path;
-
-public interface PackageHandler {
-    PackageHandler ZIP = (converter, path, outputPath, logger) -> {
-        ZipUtils zipUtils = new ZipUtils(converter, path.toFile());
-        zipUtils.generateFileList();
-        return zipUtils.zipIt(logger, outputPath.toString());
-    };
-
-    boolean pack(@NotNull PackConverter converter, @NotNull Path path, @NotNull Path outputPath, @NotNull LogListener logger) throws IOException;
-}
+public record Vec2i(int x, int y) {}

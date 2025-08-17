@@ -56,13 +56,19 @@ public class ZipUtils {
         this.sourceFolder = sourceFolder;
     }
 
-    public void zipIt(LogListener listener, String zipFile) {
+    public boolean zipIt(LogListener listener, String zipFile) {
+        File fileZip = new File(zipFile);
+        if (fileZip.exists() && !fileZip.delete()) { // A simple file open check, fails if the file is open or can't be changed
+            listener.warn("Unable to zip %s, the file is either open in another program, or cannot be accessed.".formatted(zipFile));
+            return false;
+        }
+
         byte[] buffer = new byte[1024];
         String source = sourceFolder.getName();
         FileOutputStream fos = null;
         ZipOutputStream zos = null;
         try {
-            fos = new FileOutputStream(zipFile);
+            fos = new FileOutputStream(fileZip);
             zos = new ZipOutputStream(fos);
 
             listener.debug("Output to zip " + zipFile);
@@ -88,6 +94,7 @@ public class ZipUtils {
             listener.debug("Folder successfully compressed");
         } catch (IOException ex) {
             ex.printStackTrace();
+            return false;
         } finally {
             try {
                 zos.close();
@@ -95,6 +102,8 @@ public class ZipUtils {
                 e.printStackTrace();
             }
         }
+
+        return true;
     }
 
     public void generateFileList() {

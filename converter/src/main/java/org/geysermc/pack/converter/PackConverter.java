@@ -355,10 +355,13 @@ public final class PackConverter {
 
         this.logListener.info("Packaging pack...");
 
-        this.packageHandler.pack(this, this.tmpDir, this.output, this.logListener);
-        this.logListener.info("Packaged pack! Cleaning up...");
+        if (this.packageHandler.pack(this, this.tmpDir, this.output, this.logListener)) {
+            this.logListener.info("Packaged pack! Cleaning up...");
 
-        this.cleanup();
+            this.cleanup();
+        } else {
+            this.logListener.info("Pack will not be compressed, not clearing temporary directory.");
+        }
 
         this.logListener.info("Pack converted.");
 
