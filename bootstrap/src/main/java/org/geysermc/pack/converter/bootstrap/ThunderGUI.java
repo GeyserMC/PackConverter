@@ -35,23 +35,21 @@ import org.geysermc.pack.converter.util.ZipUtils;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.RoundingMode;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ThunderGUI extends JFrame {
-    private static List<String> MESSAGES = List.of(
-            "Your order is ready!", "Also try Rainbow!", "The floodgates are open!",
-            "Your pack has been converted!", "(╯°□°)╯︵ ┻━┻"
-    );
-
     private final DecimalFormat decimalFormat;
     private final AtomicBoolean converting = new AtomicBoolean(false);
     private final AtomicLong startTime = new AtomicLong(0);
@@ -62,7 +60,7 @@ public class ThunderGUI extends JFrame {
 
     private Path inputPath = null;
     private Path outputPath = null;
-    private Icon currentIcon = null;
+    private BufferedImage currentIcon = null;
 
     public ThunderGUI(boolean debug) throws IOException {
         vanillaPackPath = Path.of(System.getenv("LOCALAPPDATA") != null ? System.getenv("LOCALAPPDATA") : System.getProperty("user.home"), "Thunder", "Vanilla-Assets.zip");
@@ -74,6 +72,7 @@ public class ThunderGUI extends JFrame {
         InputStream iconStream = Main.class.getResourceAsStream("/icon.png");
         if (iconStream != null) this.setIconImage(ImageIO.read(iconStream));
         this.setSize(800, 300);
+        this.setLocationRelativeTo(null);
         this.setLayout(null);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setResizable(false);
@@ -141,21 +140,6 @@ public class ThunderGUI extends JFrame {
                                 .pack();
 
                         dataLabel.setText("%s Converted! Time elapsed: %ss".formatted(inputPath.getFileName().toString(), decimalFormat.format((System.currentTimeMillis() - startTime.get()) / 1000d)));
-
-                        if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
-                            int option = JOptionPane.showConfirmDialog(
-                                    this,
-                                    "%s Would you like to view the pack?".formatted(MESSAGES.get(new Random().nextInt(MESSAGES.size()))),
-                                    "Pack Converted!",
-                                    JOptionPane.YES_NO_OPTION,
-                                    JOptionPane.QUESTION_MESSAGE,
-                                    currentIcon
-                            );
-
-                            if (option == JOptionPane.YES_OPTION) {
-                                Desktop.getDesktop().open(outputPath.getParent().toFile());
-                            }
-                        }
                     } catch (Exception e) {
                         logListener.error("An issue occured while converting:", e);
                     } finally {
@@ -215,10 +199,24 @@ public class ThunderGUI extends JFrame {
                             javaPackButton.setIcon(null);
                         } else {
                             javaPackButton.setText(null);
-                            currentIcon = new BufferedImageIcon(
-                                    ImageUtil.resize(ImageIO.read(Files.newInputStream(iconPath)), 175, 175)
+
+                            LocalDate date = LocalDate.now();
+
+                            currentIcon = ImageUtil.borderRadias(
+                                    ImageUtil.resize(
+                                            ImageIO.read(Files.newInputStream(iconPath)),
+                                            198,
+                                            198
+                                    ),
+                                    5
                             );
-                            javaPackButton.setIcon(currentIcon);
+
+                            if (date.getMonth().equals(Month.APRIL) && date.getDayOfMonth() == 1) {
+                                List<Integer> rotations = List.of(90, 180, 270);
+                                currentIcon = ImageUtil.rotate(currentIcon, rotations.get(new Random().nextInt(rotations.size())));
+                            }
+
+                            javaPackButton.setIcon(new BufferedImageIcon(currentIcon));
                         }
                     });
                 } catch (IOException e) {
