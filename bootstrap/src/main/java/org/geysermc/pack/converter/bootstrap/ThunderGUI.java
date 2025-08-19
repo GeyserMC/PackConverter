@@ -123,6 +123,7 @@ public class ThunderGUI extends JFrame {
                 new Thread(() -> {
                     try {
                         new PackConverter()
+                                .enforcePackCheck(true)
                                 .input(inputPath)
                                 .output(outputPath)
                                 .packName(packName.getText().isBlank() ? inputPath.getFileName().toString() : packName.getText())
