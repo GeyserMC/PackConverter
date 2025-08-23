@@ -73,6 +73,7 @@ public class Main {
             System.setProperty("PackConverter.Debug", String.valueOf(debug));
 
             new PackConverter()
+                    .enforcePackCheck(true)
                     .input(Path.of(inputPath))
                     .output(Path.of(outputPath))
                     .packName(packName)

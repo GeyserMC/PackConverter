@@ -61,6 +61,7 @@ public final class PackConverter {
     private String textureSubdirectory;
 
     private boolean compressed;
+    private boolean enforcePackCheck = false;
 
     private final Map<Class<?>, List<ActionListener<?>>> actionListeners = new IdentityHashMap<>();
 
@@ -166,6 +167,17 @@ public final class PackConverter {
      */
     public PackConverter textureSubdirectory(@NotNull String textureSubdirectory) {
         this.textureSubdirectory = textureSubdirectory;
+        return this;
+    }
+
+    /**
+     * Sets if PackConverter should enforce a check for `pack.mcmeta` in the input.
+     *
+     * @param enforcePackCheck whether the check should be done
+     * @return this instance
+     */
+    public PackConverter enforcePackCheck(boolean enforcePackCheck) {
+        this.enforcePackCheck = enforcePackCheck;
         return this;
     }
 
@@ -294,10 +306,10 @@ public final class PackConverter {
         // Need to download the client jar, then use the
         // client jar to get the vanilla models and textures, so we can
         // ensure all parent models exist to convert them to Bedrock.
-        VanillaPackProvider.create(vanillaPackPath, this.logListener);
+        VanillaPackProvider.create(this.vanillaPackPath, this.logListener);
 
         ZipUtils.openFileSystem(this.input, this.compressed, input -> {
-            if (!Files.exists(input.resolve("pack.mcmeta"))) {
+            if (this.enforcePackCheck && !Files.exists(input.resolve("pack.mcmeta"))) {
                 logListener.error("Invalid Java Edition resource pack. No pack.mcmeta found.");
                 return;
             }
