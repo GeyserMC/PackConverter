@@ -212,16 +212,16 @@ public class FontTransformer implements TextureTransformer {
                 });
             });
         } else if (fontProvider instanceof TrueTypeFontProvider trueTypeFontProvider) {
-//            for (char i = 0; i < 65535; i++) {
-//                // If the skip strings contain this character, we don't want it
-//                if (String.join("", trueTypeFontProvider.skip()).contains(String.valueOf(i))) continue;
-//
-//                unicodeFontData.add(new TTFFontData(
-//                        "assets/%s/%s".formatted(trueTypeFontProvider.file().namespace(), trueTypeFontProvider.file().value()),
-//                        i,
-//                        trueTypeFontProvider.oversample()
-//                ));
-//            }
+            for (char i = 0; i < 65535; i++) {
+                // If the skip strings contain this character, we don't want it
+                if (String.join("", trueTypeFontProvider.skip()).contains(String.valueOf(i))) continue;
+
+                unicodeFontData.add(new TTFFontData(
+                        "assets/%s/%s".formatted(trueTypeFontProvider.file().namespace(), trueTypeFontProvider.file().value()),
+                        i,
+                        trueTypeFontProvider.oversample()
+                ));
+            }
         }
 
         return unicodeFontData;
@@ -241,20 +241,6 @@ public class FontTransformer implements TextureTransformer {
             }
             y++;
             x = 0;
-        }
-    }
-
-    private record FontMapping(String javaTexture, int javaX, int javaY, int bedrockX, int bedrockY) {
-        public FontMapping(int javaX, int javaY, int bedrockX, int bedrockY) {
-            this("ascii", javaX, javaY, bedrockX, bedrockY);
-        }
-
-        public FontMapping(String javaTexture, int x, int y) {
-            this(javaTexture, x, y, x, y);
-        }
-
-        public FontMapping(int x, int y) {
-            this("ascii", x, y, x, y);
         }
     }
 
@@ -359,7 +345,7 @@ public class FontTransformer implements TextureTransformer {
         }
     }
 
-    // Bitmap implementation of our fonts, the simplest to read
+    // TrueType fonts
     private record TTFFontData(String fileLocation, char character, float size) implements UnicodeFontData {
         @Override
         public BufferedImage readJavaImage(Map<Key, BufferedImage> imageCache, ResourcePack pack) throws IOException, FontFormatException {
@@ -392,7 +378,7 @@ public class FontTransformer implements TextureTransformer {
 
         @Override
         public int width() {
-            return (int) Math.ceil(size);
+            return height();
         }
 
         @Override
