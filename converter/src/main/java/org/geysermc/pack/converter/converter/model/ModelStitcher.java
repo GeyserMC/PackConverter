@@ -29,7 +29,6 @@ package org.geysermc.pack.converter.converter.model;
 import net.kyori.adventure.key.Key;
 import org.geysermc.pack.converter.util.DefaultLogListener;
 import org.geysermc.pack.converter.util.LogListener;
-import org.geysermc.pack.converter.util.VanillaPackProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.ResourcePack;
@@ -39,10 +38,7 @@ import team.unnamed.creative.model.ItemTransform;
 import team.unnamed.creative.model.Model;
 import team.unnamed.creative.model.ModelTexture;
 import team.unnamed.creative.model.ModelTextures;
-import team.unnamed.creative.serialize.minecraft.MinecraftResourcePackReader;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -195,7 +191,7 @@ public class ModelStitcher {
         return pack::model;
     }
 
-    public static Provider vanillaProvider(@NotNull ResourcePack pack, @NotNull LogListener log, @NotNull ResourcePack vanillaPack) {
+    public static Provider vanillaProvider(@NotNull ResourcePack pack, @NotNull ResourcePack vanillaPack) {
         return key -> {
             Model model = pack.model(key);
             if (model == null) {

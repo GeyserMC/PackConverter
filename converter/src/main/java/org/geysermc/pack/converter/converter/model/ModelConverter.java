@@ -185,7 +185,7 @@ public class ModelConverter implements Converter<ModelConversionData> {
     public ModelConversionData createConversionData(@NotNull ConversionDataCreationContext context) {
         return new ModelConversionData(
             context.inputDirectory(), context.outputDirectory(),
-            ModelStitcher.vanillaProvider(context.javaResourcePack(), context.logListener(), context.vanillaResourcePack()),
+            ModelStitcher.vanillaProvider(context.javaResourcePack(), context.vanillaResourcePack()),
             context.vanillaResourcePack()
         );
     }

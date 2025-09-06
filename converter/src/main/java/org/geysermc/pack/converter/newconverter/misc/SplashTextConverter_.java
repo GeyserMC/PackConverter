@@ -1,0 +1,50 @@
+/*
+ * Copyright (c) 2025 GeyserMC. http://geysermc.org
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in
+ *  all copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ *  THE SOFTWARE.
+ *
+ *  @author GeyserMC
+ *  @link https://github.com/GeyserMC/PackConverter
+ *
+ */
+
+package org.geysermc.pack.converter.newconverter.misc;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import org.geysermc.pack.converter.newconverter.AssetConverter;
+import org.geysermc.pack.converter.newconverter.ConversionContext;
+import team.unnamed.creative.base.Writable;
+
+import java.util.Arrays;
+
+public class SplashTextConverter_ implements AssetConverter<Writable, JsonElement> {
+    public static final SplashTextConverter_ INSTANCE = new SplashTextConverter_();
+
+    @Override
+    public JsonElement convert(Writable writable, ConversionContext context) throws Exception {
+        String[] splashes = writable.toUTF8String().split("\n");
+        JsonArray splashesArray = new JsonArray();
+        Arrays.stream(splashes).toList().forEach(splashesArray::add);
+        JsonObject object = new JsonObject();
+        object.add("splashes", splashesArray);
+        return object;
+    }
+}
