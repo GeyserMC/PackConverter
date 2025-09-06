@@ -77,14 +77,14 @@ public class FontTransformer implements TextureTransformer {
         }
 
         // if we have no data, don't stop yet, we may still want to generate some stuff from vanilla
-        if (unicodeFontData.isEmpty()) {
+        if (unicodeFontData.isEmpty() && context.vanillaPack().isPresent()) {
             if (
                     !context.isTexturePresent(Key.key(Key.MINECRAFT_NAMESPACE, "font/ascii.png")) &&
                             !context.isTexturePresent(Key.key(Key.MINECRAFT_NAMESPACE, "font/accented.png")) &&
                             !context.isTexturePresent(Key.key(Key.MINECRAFT_NAMESPACE, "font/nonlatin_european.png"))
             ) return;
 
-            for (Font font : context.vanillaPack().fonts()) {
+            for (Font font : context.vanillaPack().get().fonts()) {
                 if (!font.key().equals(Key.key(Key.MINECRAFT_NAMESPACE, "default"))) continue;
 
                 for (FontProvider fontProvider : font.providers()) {
@@ -180,11 +180,13 @@ public class FontTransformer implements TextureTransformer {
                 );
             }
 
+            /* TODO how?
             context.bedrockResourcePack().addExtraFile(
                     ImageUtil.toByteArray(bedrockImage, "png"),
                     "font/glyph_%s.png"
                             .formatted(hexFormat.toHexDigits(data.getKey()).toUpperCase())
             );
+             */
         }
     }
 
@@ -225,8 +227,8 @@ public class FontTransformer implements TextureTransformer {
         } else if (fontProvider instanceof ReferenceFontProvider referenceFontProvider) {
             // Refers to other fonts, so we need to read those
             Font font = context.javaResourcePack().font(referenceFontProvider.id());
-            if (font == null) { // Just maybe, the vanilla files are used
-                font = context.vanillaPack().font(referenceFontProvider.id());
+            if (font == null && context.vanillaPack().isPresent()) { // Just maybe, the vanilla files are used
+                font = context.vanillaPack().get().font(referenceFontProvider.id());
             }
 
             if (font == null) {
@@ -311,7 +313,7 @@ public class FontTransformer implements TextureTransformer {
             );
         }
 
-        context.bedrockResourcePack().addExtraFile(ImageUtil.toByteArray(bedrockImage, "png"), "font/default8.png");
+        // TODO how? context.bedrockResourcePack().addExtraFile(ImageUtil.toByteArray(bedrockImage, "png"), "font/default8.png");
     }
 
     static {

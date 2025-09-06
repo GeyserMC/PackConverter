@@ -97,7 +97,7 @@ public class UISizeTransformer implements TextureTransformer {
         baseSize.add(customHeight);
         rootObject.add("base_size", baseSize);
 
-        context.bedrockResourcePack().addExtraFile(GSON.toJson(rootObject).getBytes(StandardCharsets.UTF_8), "textures/ui/%s.json".formatted(jsonName));
+        // TODO how? context.bedrockResourcePack().addExtraFile(GSON.toJson(rootObject).getBytes(StandardCharsets.UTF_8), "textures/ui/%s.json".formatted(jsonName));
     }
 
     static {

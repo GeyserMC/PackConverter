@@ -326,9 +326,7 @@ public final class PackConverter {
 
             int errors = 0;
 
-            System.out.println("start conversion " + System.currentTimeMillis());
-            AssetConverters.converters().forEach(converter -> converter.convert(javaResourcePack, Optional.of(vanillaResourcePack), bedrockResourcePack, packName(), logListener));
-            System.out.println("end conversion " + System.currentTimeMillis());
+            AssetConverters.converters().forEach(converter -> converter.convert(javaResourcePack, Optional.of(vanillaResourcePack), bedrockResourcePack, packName(), textureSubdirectory, logListener));
             /*
             final Converter.ConversionDataCreationContext conversionDataCreationContext = new Converter.ConversionDataCreationContext(
                 this, logListener, input, this.tmpDir, javaResourcePack, vanillaResourcePack

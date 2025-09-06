@@ -28,5 +28,5 @@ package org.geysermc.pack.converter.newconverter;
 
 import org.geysermc.pack.converter.util.LogListener;
 
-public record CollectionContext(LogListener logListener) implements LogHelpers {
+public record CollectionContext(String textureSubDirectory, LogListener logListener) implements LogHelpers {
 }

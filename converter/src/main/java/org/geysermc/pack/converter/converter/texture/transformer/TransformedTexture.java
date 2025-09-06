@@ -30,14 +30,15 @@ import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TransformedTexture {
     private final Texture texture;
-    private Path output;
+    private final List<String> outputs = new ArrayList<>();
 
-    public TransformedTexture(@NotNull Texture texture, @NotNull Path output) {
+    public TransformedTexture(@NotNull Texture texture) {
         this.texture = texture;
-        this.output = output;
     }
 
     @NotNull
@@ -46,11 +47,11 @@ public class TransformedTexture {
     }
 
     @NotNull
-    public Path output() {
-        return output;
+    public List<String> output() {
+        return outputs;
     }
 
-    public void output(@NotNull Path output) {
-        this.output = output;
+    public void output(@NotNull String output) {
+        outputs.add(output);
     }
 }

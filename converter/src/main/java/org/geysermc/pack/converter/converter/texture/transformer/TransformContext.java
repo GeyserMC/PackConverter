@@ -27,11 +27,10 @@
 package org.geysermc.pack.converter.converter.texture.transformer;
 
 import net.kyori.adventure.key.Key;
-import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
-import org.geysermc.pack.converter.PackConversionContext;
 import org.geysermc.pack.converter.converter.texture.TextureMappings;
-import org.geysermc.pack.converter.data.TextureConversionData;
+import org.geysermc.pack.converter.newconverter.LogHelpers;
 import org.geysermc.pack.converter.util.ImageUtil;
+import org.geysermc.pack.converter.util.LogListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.ResourcePack;
@@ -43,27 +42,28 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-public class TransformContext {
-    private final PackConversionContext<TextureConversionData> conversionContext;
+public class TransformContext implements LogHelpers {
     private final TextureMappings mappings;
     private final Collection<Texture> textures;
-    private final BedrockResourcePack bedrockPack;
     private final ResourcePack javaPack;
+    private final Optional<ResourcePack> vanillaPack;
+    private final LogListener logListener;
     private final Map<Key, Texture> byKey = new HashMap<>();
 
     public TransformContext(
-            PackConversionContext<TextureConversionData> conversionContext,
             TextureMappings mappings,
             Collection<Texture> textures,
-            BedrockResourcePack bedrockPack,
-            ResourcePack javaPack
+            ResourcePack javaPack,
+            Optional<ResourcePack> vanillaPack,
+            LogListener logListener
     ) {
-        this.conversionContext = conversionContext;
         this.mappings = mappings;
         this.textures = textures;
-        this.bedrockPack = bedrockPack;
         this.javaPack = javaPack;
+        this.vanillaPack = vanillaPack;
+        this.logListener = logListener;
 
         for (Texture texture : textures) {
             this.byKey.put(texture.key(), texture);
@@ -74,16 +74,12 @@ public class TransformContext {
         return this.mappings;
     }
 
-    public BedrockResourcePack bedrockResourcePack() {
-        return this.bedrockPack;
-    }
-
     public ResourcePack javaResourcePack() {
         return this.javaPack;
     }
 
-    public ResourcePack vanillaPack() {
-        return this.conversionContext.data().vanillaPack();
+    public Optional<ResourcePack> vanillaPack() {
+        return vanillaPack;
     }
 
     /**
@@ -126,8 +122,7 @@ public class TransformContext {
     public Texture pollOrPeekVanilla(@NotNull Key key) {
         Texture remove = this.byKey.remove(key);
         if (remove == null) {
-            // This *shouldn't* be null, but if a bad key is inputted, it is possible this value is null
-            return this.conversionContext.data().vanillaPack().texture(key);
+            return vanillaPack.map(pack -> pack.texture(key)).orElse(null);
         }
 
         this.textures.remove(remove);
@@ -146,8 +141,7 @@ public class TransformContext {
     public Texture peekOrVanilla(@NotNull Key key) {
         Texture texture = this.byKey.get(key);
         if (texture == null) {
-            // This *shouldn't* be null, but if a bad key is inputted, it is possible this value is null
-            return this.conversionContext.data().vanillaPack().texture(key);
+            return vanillaPack.map(pack -> pack.texture(key)).orElse(null);
         }
 
         return texture;
@@ -186,23 +180,7 @@ public class TransformContext {
         this.byKey.put(texture.key(), texture);
     }
 
-    public void debug(@NotNull String message) {
-        this.conversionContext.debug(message);
-    }
-
-    public void info(@NotNull String message) {
-        this.conversionContext.info(message);
-    }
-
-    public void warn(@NotNull String message) {
-        this.conversionContext.warn(message);
-    }
-
-    public void error(@NotNull String message) {
-        this.conversionContext.error(message);
-    }
-
-    public void error(@NotNull String message, @NotNull Throwable throwable) {
-        this.conversionContext.error(message, throwable);
+    public LogListener logListener() {
+        return logListener;
     }
 }

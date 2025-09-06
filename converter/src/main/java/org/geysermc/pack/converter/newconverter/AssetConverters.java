@@ -31,6 +31,7 @@ import net.kyori.adventure.key.Keyed;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.bedrock.resource.Manifest;
 import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitions;
+import org.geysermc.pack.converter.converter.texture.transformer.TransformedTexture;
 import org.geysermc.pack.converter.newconverter.base.PackIconConverter_;
 import org.geysermc.pack.converter.newconverter.base.PackManifestConverter_;
 import org.geysermc.pack.converter.newconverter.lang.BedrockLanguage;
@@ -40,6 +41,7 @@ import org.geysermc.pack.converter.newconverter.model.BedrockModel;
 import org.geysermc.pack.converter.newconverter.model.ModelConverter_;
 import org.geysermc.pack.converter.newconverter.sound.SoundConverter_;
 import org.geysermc.pack.converter.newconverter.sound.SoundRegistryConverter_;
+import org.geysermc.pack.converter.newconverter.texture.TextureConverter_;
 import org.geysermc.pack.converter.util.LogListener;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.ResourcePack;
@@ -53,6 +55,7 @@ import team.unnamed.creative.serialize.minecraft.language.LanguageSerializer;
 import team.unnamed.creative.serialize.minecraft.sound.SoundSerializer;
 import team.unnamed.creative.sound.Sound;
 import team.unnamed.creative.sound.SoundRegistry;
+import team.unnamed.creative.texture.Texture;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -81,6 +84,7 @@ public final class AssetConverters {
     public static final ConverterPipeline<SoundRegistry, Map<String, SoundDefinitions>> SOUND_REGISTRY = create(
             (pack, context) -> pack.soundRegistries(), SoundRegistryConverter_.INSTANCE);
     public static final ConverterPipeline<Sound, Sound> SOUND = create(extractor(SoundSerializer.CATEGORY), SoundConverter_.INSTANCE);
+    public static final ConverterPipeline<Texture, TransformedTexture> TEXTURE = create(TextureConverter_.INSTANCE);
 
     private static <JavaAsset, BedrockAsset> ConverterPipeline<JavaAsset, BedrockAsset> createSingle(BiFunction<ResourcePack, ExtractionContext, JavaAsset> extractor,
                                                                                                      AssetConverter<JavaAsset, BedrockAsset> converter,
@@ -142,10 +146,10 @@ public final class AssetConverters {
             collector.include(pack, assets, context);
         }
 
-        public void convert(ResourcePack pack, Optional<ResourcePack> vanillaPack, BedrockResourcePack bedrockPack, String packName, LogListener logListener) {
+        public void convert(ResourcePack pack, Optional<ResourcePack> vanillaPack, BedrockResourcePack bedrockPack, String packName, String textureSubDirectory, LogListener logListener) {
             ExtractionContext extractionContext = new ExtractionContext(vanillaPack, logListener);
             ConversionContext conversionContext = new ConversionContext(packName, logListener);
-            CollectionContext collectionContext = new CollectionContext(logListener);
+            CollectionContext collectionContext = new CollectionContext(textureSubDirectory, logListener);
 
             List<BedrockAsset> converted = extract(pack, extractionContext).parallelStream()
                     .map(asset -> {

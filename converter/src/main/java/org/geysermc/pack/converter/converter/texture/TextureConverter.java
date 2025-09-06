@@ -74,16 +74,14 @@ public class TextureConverter implements Converter<TextureConversionData> {
         List<Texture> textures = new ArrayList<>(context.javaResourcePack().textures());
 
         context.info("Transforming textures...");
-        TransformContext transformContext = new TransformContext(
-                context,
+        /*TransformContext transformContext = new TransformContext(
                 mappings,
                 textures,
-                context.bedrockResourcePack(),
                 context.javaResourcePack()
         );
         for (TextureTransformer transformer : this.transformers) {
             transformer.transform(transformContext);
-        }
+        }*/
         context.info("Transformed textures!");
 
         context.info("Writing textures...");
@@ -154,7 +152,7 @@ public class TextureConverter implements Converter<TextureConversionData> {
             BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
 
             for (Path output : outputs) {
-                TransformedTexture transformedTexture = new TransformedTexture(texture, output);
+                TransformedTexture transformedTexture = new TransformedTexture(texture);
 
                 if (output.getParent() != null && Files.notExists(output.getParent())) {
                     Files.createDirectories(output.getParent());
