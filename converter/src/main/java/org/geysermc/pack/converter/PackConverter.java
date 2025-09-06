@@ -31,6 +31,8 @@ import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.converter.ActionListener;
 import org.geysermc.pack.converter.converter.Converter;
 import org.geysermc.pack.converter.data.ConversionData;
+import org.geysermc.pack.converter.newconverter.AssetConverter;
+import org.geysermc.pack.converter.newconverter.AssetConverters;
 import org.geysermc.pack.converter.util.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -46,6 +48,7 @@ import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 
 /**
@@ -296,9 +299,10 @@ public final class PackConverter {
             throw new NullPointerException("Vanilla Pack Path cannot be null");
         }
 
+        /*
         if (this.converters.isEmpty()) {
             throw new IllegalStateException("No converters have been added");
-        }
+        }*/
 
         // Load any image plugins
         ImageIO.scanForPlugins();
@@ -320,6 +324,12 @@ public final class PackConverter {
             ResourcePack vanillaResourcePack = MinecraftResourcePackReader.minecraft().readFromZipFile(vanillaPackPath);
             BedrockResourcePack bedrockResourcePack = new BedrockResourcePack(this.tmpDir);
 
+            int errors = 0;
+
+            System.out.println("start conversion " + System.currentTimeMillis());
+            AssetConverters.converters().forEach(converter -> converter.convert(javaResourcePack, Optional.of(vanillaResourcePack), bedrockResourcePack, packName(), logListener));
+            System.out.println("end conversion " + System.currentTimeMillis());
+            /*
             final Converter.ConversionDataCreationContext conversionDataCreationContext = new Converter.ConversionDataCreationContext(
                 this, logListener, input, this.tmpDir, javaResourcePack, vanillaResourcePack
             );
@@ -342,7 +352,7 @@ public final class PackConverter {
 
             if (this.postProcessor != null) {
                 this.postProcessor.accept(javaResourcePack, bedrockResourcePack);
-            }
+            }*/
 
             bedrockResourcePack.export();
 

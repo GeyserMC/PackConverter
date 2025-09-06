@@ -40,6 +40,8 @@ import org.geysermc.pack.converter.newconverter.model.BedrockModel;
 import org.geysermc.pack.converter.newconverter.model.ModelConverter_;
 import org.geysermc.pack.converter.newconverter.sound.SoundConverter_;
 import org.geysermc.pack.converter.newconverter.sound.SoundRegistryConverter_;
+import org.geysermc.pack.converter.util.LogListener;
+import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.base.Writable;
 import team.unnamed.creative.lang.Language;
@@ -52,14 +54,19 @@ import team.unnamed.creative.serialize.minecraft.sound.SoundSerializer;
 import team.unnamed.creative.sound.Sound;
 import team.unnamed.creative.sound.SoundRegistry;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
 @SuppressWarnings("UnstableApiUsage")
 public final class AssetConverters {
+    private static final List<ConverterPipeline<?, ?>> CONVERTERS = new ArrayList<>();
+
     public static final ConverterPipeline<PackMeta, Manifest> MANIFEST = createSingle(
             (pack, context) -> pack.packMeta(),
             PackManifestConverter_.INSTANCE,
@@ -102,7 +109,13 @@ public final class AssetConverters {
     private static <JavaAsset, BedrockAsset> ConverterPipeline<JavaAsset, BedrockAsset> create(AssetExtractor<JavaAsset> extractor,
                                                                                                AssetConverter<JavaAsset, BedrockAsset> converter,
                                                                                                AssetCollector<BedrockAsset> collector) {
-        return new ConverterPipeline<>(extractor, converter, collector);
+        ConverterPipeline<JavaAsset, BedrockAsset> pipeline = new ConverterPipeline<>(extractor, converter, collector);
+        CONVERTERS.add(pipeline);
+        return pipeline;
+    }
+
+    public static List<ConverterPipeline<?, ?>> converters() {
+        return CONVERTERS;
     }
 
     private static <JavaAsset extends Keyed & ResourcePackPart> AssetExtractor<JavaAsset> extractor(ResourceCategory<JavaAsset> category) {
@@ -111,5 +124,43 @@ public final class AssetConverters {
 
     public record ConverterPipeline<JavaAsset, BedrockAsset>(AssetExtractor<JavaAsset> extractor,
                                                              AssetConverter<JavaAsset, BedrockAsset> converter,
-                                                             AssetCollector<BedrockAsset> collector) {}
+                                                             AssetCollector<BedrockAsset> collector)
+            implements AssetExtractor<JavaAsset>, AssetConverter<JavaAsset, BedrockAsset>, AssetCollector<BedrockAsset> {
+
+        @Override
+        public Collection<JavaAsset> extract(ResourcePack pack, ExtractionContext context) {
+            return extractor.extract(pack, context);
+        }
+
+        @Override
+        public @Nullable BedrockAsset convert(JavaAsset asset, ConversionContext context) throws Exception {
+            return converter.convert(asset, context);
+        }
+
+        @Override
+        public void include(BedrockResourcePack pack, List<BedrockAsset> assets, CollectionContext context) {
+            collector.include(pack, assets, context);
+        }
+
+        public void convert(ResourcePack pack, Optional<ResourcePack> vanillaPack, BedrockResourcePack bedrockPack, String packName, LogListener logListener) {
+            ExtractionContext extractionContext = new ExtractionContext(vanillaPack, logListener);
+            ConversionContext conversionContext = new ConversionContext(packName, logListener);
+            CollectionContext collectionContext = new CollectionContext(logListener);
+
+            List<BedrockAsset> converted = extract(pack, extractionContext).parallelStream()
+                    .map(asset -> {
+                        try {
+                            return convert(asset, conversionContext);
+                        } catch (Exception exception) {
+                            logListener.error("Failed to convert asset");
+                        }
+                        return null;
+                    })
+                    .filter(Objects::nonNull)
+                    .toList();
+            if (!converted.isEmpty()) {
+                include(bedrockPack, converted, collectionContext);
+            }
+        }
+    }
 }

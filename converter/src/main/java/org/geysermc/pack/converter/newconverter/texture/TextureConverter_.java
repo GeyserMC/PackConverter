@@ -31,11 +31,11 @@ import org.geysermc.pack.converter.newconverter.KeyedAssetConverter;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.texture.Texture;
 
-public class TextureConverter_ implements KeyedAssetConverter<Texture, > {
+// TODO
+public class TextureConverter_ implements KeyedAssetConverter<Texture, Object> {
 
     @Override
-    public @Nullable Object convert(Object o, ConversionContext context) throws Exception {
-        // TODO
+    public @Nullable Object convert(Texture texture, ConversionContext context) throws Exception {
         return null;
     }
 }
