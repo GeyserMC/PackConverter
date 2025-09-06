@@ -84,6 +84,7 @@ public class TextureConverter_ implements AssetExtractor<Texture>, KeyedAssetCon
         TransformContext transformContext = new TransformContext(
                 mappings,
                 textures,
+                context.bedrockResourcePack(),
                 pack,
                 context.vanillaPack(),
                 context.logListener()

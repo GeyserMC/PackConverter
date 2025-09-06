@@ -180,13 +180,11 @@ public class FontTransformer implements TextureTransformer {
                 );
             }
 
-            /* TODO how?
             context.bedrockResourcePack().addExtraFile(
                     ImageUtil.toByteArray(bedrockImage, "png"),
                     "font/glyph_%s.png"
                             .formatted(hexFormat.toHexDigits(data.getKey()).toUpperCase())
             );
-             */
         }
     }
 
@@ -313,7 +311,7 @@ public class FontTransformer implements TextureTransformer {
             );
         }
 
-        // TODO how? context.bedrockResourcePack().addExtraFile(ImageUtil.toByteArray(bedrockImage, "png"), "font/default8.png");
+        context.bedrockResourcePack().addExtraFile(ImageUtil.toByteArray(bedrockImage, "png"), "font/default8.png");
     }
 
     static {

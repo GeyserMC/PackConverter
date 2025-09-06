@@ -27,6 +27,7 @@
 package org.geysermc.pack.converter.converter.texture.transformer;
 
 import net.kyori.adventure.key.Key;
+import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.converter.texture.TextureMappings;
 import org.geysermc.pack.converter.newconverter.LogHelpers;
 import org.geysermc.pack.converter.util.ImageUtil;
@@ -47,6 +48,8 @@ import java.util.Optional;
 public class TransformContext implements LogHelpers {
     private final TextureMappings mappings;
     private final Collection<Texture> textures;
+    @Deprecated(forRemoval = true)
+    private final BedrockResourcePack bedrockPack;
     private final ResourcePack javaPack;
     private final Optional<ResourcePack> vanillaPack;
     private final LogListener logListener;
@@ -55,12 +58,14 @@ public class TransformContext implements LogHelpers {
     public TransformContext(
             TextureMappings mappings,
             Collection<Texture> textures,
+            BedrockResourcePack bedrockPack,
             ResourcePack javaPack,
             Optional<ResourcePack> vanillaPack,
             LogListener logListener
     ) {
         this.mappings = mappings;
         this.textures = textures;
+        this.bedrockPack = bedrockPack;
         this.javaPack = javaPack;
         this.vanillaPack = vanillaPack;
         this.logListener = logListener;
@@ -72,6 +77,11 @@ public class TransformContext implements LogHelpers {
 
     public TextureMappings mappings() {
         return this.mappings;
+    }
+
+    @Deprecated(forRemoval = true)
+    public BedrockResourcePack bedrockResourcePack() {
+        return bedrockPack;
     }
 
     public ResourcePack javaResourcePack() {

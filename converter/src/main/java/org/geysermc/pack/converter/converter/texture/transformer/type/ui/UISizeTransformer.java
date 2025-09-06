@@ -47,9 +47,6 @@ import java.nio.charset.StandardCharsets;
 // Credit to Bedrock Tweaks, wouldn't know how to do this without their packs
 @AutoService(TextureTransformer.class)
 public class UISizeTransformer implements TextureTransformer {
-    private static final Gson GSON = new GsonBuilder()
-            .setPrettyPrinting()
-            .create();
 
     private static final JsonArray FULLBARSLICE = new JsonArray();
 
@@ -97,7 +94,7 @@ public class UISizeTransformer implements TextureTransformer {
         baseSize.add(customHeight);
         rootObject.add("base_size", baseSize);
 
-        // TODO how? context.bedrockResourcePack().addExtraFile(GSON.toJson(rootObject).getBytes(StandardCharsets.UTF_8), "textures/ui/%s.json".formatted(jsonName));
+        context.bedrockResourcePack().addExtraFile(rootObject, "textures/ui/%s.json".formatted(jsonName));
     }
 
     static {

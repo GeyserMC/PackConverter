@@ -26,10 +26,12 @@
 
 package org.geysermc.pack.converter.newconverter;
 
+import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.util.LogListener;
 import team.unnamed.creative.ResourcePack;
 
 import java.util.Optional;
 
-public record ExtractionContext(Optional<ResourcePack> vanillaPack, LogListener logListener) implements LogHelpers {
+public record ExtractionContext(@Deprecated(forRemoval = true) BedrockResourcePack bedrockResourcePack,
+                                Optional<ResourcePack> vanillaPack, LogListener logListener) implements LogHelpers {
 }

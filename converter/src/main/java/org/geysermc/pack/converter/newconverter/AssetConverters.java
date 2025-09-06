@@ -66,7 +66,7 @@ import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 
-@SuppressWarnings("UnstableApiUsage")
+@SuppressWarnings({"UnstableApiUsage", "unused"})
 public final class AssetConverters {
     private static final List<ConverterPipeline<?, ?>> CONVERTERS = new ArrayList<>();
 
@@ -147,7 +147,7 @@ public final class AssetConverters {
         }
 
         public void convert(ResourcePack pack, Optional<ResourcePack> vanillaPack, BedrockResourcePack bedrockPack, String packName, String textureSubDirectory, LogListener logListener) {
-            ExtractionContext extractionContext = new ExtractionContext(vanillaPack, logListener);
+            ExtractionContext extractionContext = new ExtractionContext(bedrockPack, vanillaPack, logListener);
             ConversionContext conversionContext = new ConversionContext(packName, logListener);
             CollectionContext collectionContext = new CollectionContext(textureSubDirectory, logListener);
 
