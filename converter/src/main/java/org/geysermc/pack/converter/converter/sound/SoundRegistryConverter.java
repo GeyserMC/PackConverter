@@ -29,8 +29,8 @@ package org.geysermc.pack.converter.converter.sound;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitions;
 import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.Sounds;
-import org.geysermc.pack.converter.converter.AssetCollector;
-import org.geysermc.pack.converter.converter.CollectionContext;
+import org.geysermc.pack.converter.converter.AssetCombiner;
+import org.geysermc.pack.converter.converter.CombineContext;
 import org.geysermc.pack.converter.converter.ConversionContext;
 import org.geysermc.pack.converter.converter.NamespacedAssetConverter;
 import org.jetbrains.annotations.Nullable;
@@ -43,7 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SoundRegistryConverter implements NamespacedAssetConverter<SoundRegistry, Map<String, SoundDefinitions>>, AssetCollector<Map<String, SoundDefinitions>> {
+public class SoundRegistryConverter implements NamespacedAssetConverter<SoundRegistry, Map<String, SoundDefinitions>>, AssetCombiner<Map<String, SoundDefinitions>> {
     public static final SoundRegistryConverter INSTANCE = new SoundRegistryConverter();
     static final String BEDROCK_SOUNDS_LOCATION = "sounds";
 
@@ -76,7 +76,7 @@ public class SoundRegistryConverter implements NamespacedAssetConverter<SoundReg
     }
 
     @Override
-    public void include(BedrockResourcePack pack, List<Map<String, SoundDefinitions>> maps, CollectionContext context) {
+    public void include(BedrockResourcePack pack, List<Map<String, SoundDefinitions>> maps, CombineContext context) {
         List<String> soundEvents = new ArrayList<>();
 
         for (Map<String, SoundDefinitions> definitions : maps) {

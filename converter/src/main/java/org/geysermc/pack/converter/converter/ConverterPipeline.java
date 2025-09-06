@@ -38,8 +38,8 @@ import java.util.Optional;
 
 public record ConverterPipeline<JavaAsset, BedrockAsset>(AssetExtractor<JavaAsset> extractor,
                                                          AssetConverter<JavaAsset, BedrockAsset> converter,
-                                                         AssetCollector<BedrockAsset> collector)
-        implements AssetExtractor<JavaAsset>, AssetConverter<JavaAsset, BedrockAsset>, AssetCollector<BedrockAsset> {
+                                                         AssetCombiner<BedrockAsset> collector)
+        implements AssetExtractor<JavaAsset>, AssetConverter<JavaAsset, BedrockAsset>, AssetCombiner<BedrockAsset> {
 
     @Override
     public Collection<JavaAsset> extract(ResourcePack pack, ExtractionContext context) {
@@ -52,14 +52,14 @@ public record ConverterPipeline<JavaAsset, BedrockAsset>(AssetExtractor<JavaAsse
     }
 
     @Override
-    public void include(BedrockResourcePack pack, List<BedrockAsset> assets, CollectionContext context) {
+    public void include(BedrockResourcePack pack, List<BedrockAsset> assets, CombineContext context) {
         collector.include(pack, assets, context);
     }
 
     public void convert(ResourcePack pack, Optional<ResourcePack> vanillaPack, BedrockResourcePack bedrockPack, String packName, String textureSubDirectory, LogListener logListener) {
         ExtractionContext extractionContext = new ExtractionContext(bedrockPack, vanillaPack, logListener);
         ConversionContext conversionContext = new ConversionContext(packName, logListener);
-        CollectionContext collectionContext = new CollectionContext(textureSubDirectory, logListener);
+        CombineContext combineContext = new CombineContext(textureSubDirectory, logListener);
 
         List<BedrockAsset> converted = extract(pack, extractionContext).parallelStream()
                 .map(asset -> {
@@ -73,7 +73,7 @@ public record ConverterPipeline<JavaAsset, BedrockAsset>(AssetExtractor<JavaAsse
                 .filter(Objects::nonNull)
                 .toList();
         if (!converted.isEmpty()) {
-            include(bedrockPack, converted, collectionContext);
+            include(bedrockPack, converted, combineContext);
         }
     }
 }

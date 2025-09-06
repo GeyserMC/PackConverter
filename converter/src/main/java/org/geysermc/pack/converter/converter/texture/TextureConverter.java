@@ -30,9 +30,9 @@ import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
 import org.geysermc.pack.converter.converter.texture.transformer.TransformContext;
 import org.geysermc.pack.converter.converter.texture.transformer.TransformedTexture;
-import org.geysermc.pack.converter.converter.AssetCollector;
+import org.geysermc.pack.converter.converter.AssetCombiner;
 import org.geysermc.pack.converter.converter.AssetExtractor;
-import org.geysermc.pack.converter.converter.CollectionContext;
+import org.geysermc.pack.converter.converter.CombineContext;
 import org.geysermc.pack.converter.converter.ConversionContext;
 import org.geysermc.pack.converter.converter.ExtractionContext;
 import org.geysermc.pack.converter.converter.KeyedAssetConverter;
@@ -59,7 +59,7 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.stream.StreamSupport;
 
-public class TextureConverter implements AssetExtractor<Texture>, KeyedAssetConverter<Texture, TransformedTexture>, AssetCollector<TransformedTexture> {
+public class TextureConverter implements AssetExtractor<Texture>, KeyedAssetConverter<Texture, TransformedTexture>, AssetCombiner<TransformedTexture> {
     public static final TextureConverter INSTANCE = new TextureConverter();
     public static final String BEDROCK_TEXTURES_LOCATION = "textures";
 
@@ -145,7 +145,7 @@ public class TextureConverter implements AssetExtractor<Texture>, KeyedAssetConv
     }
 
     @Override
-    public void include(BedrockResourcePack pack, List<TransformedTexture> transformedTextures, CollectionContext context) {
+    public void include(BedrockResourcePack pack, List<TransformedTexture> transformedTextures, CombineContext context) {
         Path texturePath = pack.directory().resolve(BEDROCK_TEXTURES_LOCATION);
         List<String> exportedPaths = new ArrayList<>();
 

@@ -31,7 +31,7 @@ import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import java.util.List;
 
 @FunctionalInterface
-public interface AssetCollector<BedrockAsset> {
+public interface AssetCombiner<BedrockAsset> {
 
-    void include(BedrockResourcePack pack, List<BedrockAsset> assets, CollectionContext context);
+    void include(BedrockResourcePack pack, List<BedrockAsset> assets, CombineContext context);
 }

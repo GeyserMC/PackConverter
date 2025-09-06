@@ -40,9 +40,9 @@ import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bon
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.South;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.Up;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.West;
-import org.geysermc.pack.converter.converter.AssetCollector;
+import org.geysermc.pack.converter.converter.AssetCombiner;
 import org.geysermc.pack.converter.converter.AssetExtractor;
-import org.geysermc.pack.converter.converter.CollectionContext;
+import org.geysermc.pack.converter.converter.CombineContext;
 import org.geysermc.pack.converter.converter.ConversionContext;
 import org.geysermc.pack.converter.converter.ExtractionContext;
 import org.geysermc.pack.converter.converter.KeyedAssetConverter;
@@ -59,7 +59,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class ModelConverter implements AssetExtractor<Model>, KeyedAssetConverter<Model, BedrockModel>, AssetCollector<BedrockModel> {
+public class ModelConverter implements AssetExtractor<Model>, KeyedAssetConverter<Model, BedrockModel>, AssetCombiner<BedrockModel> {
     public static final ModelConverter INSTANCE = new ModelConverter();
 
     private static final String FORMAT_VERSION = "1.16.0";
@@ -181,7 +181,7 @@ public class ModelConverter implements AssetExtractor<Model>, KeyedAssetConverte
     }
 
     @Override
-    public void include(BedrockResourcePack pack, List<BedrockModel> bedrockModels, CollectionContext context) {
+    public void include(BedrockResourcePack pack, List<BedrockModel> bedrockModels, CombineContext context) {
         List<String> entityModels = new ArrayList<>();
         List<String> blockModels = new ArrayList<>();
 

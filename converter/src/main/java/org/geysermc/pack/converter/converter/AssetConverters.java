@@ -94,21 +94,21 @@ public final class AssetConverters {
     }
 
     private static <JavaAsset, BedrockAsset,
-            CollectorConverter extends AssetConverter<JavaAsset, BedrockAsset>
-                    & AssetCollector<BedrockAsset>> ConverterPipeline<JavaAsset, BedrockAsset> create(AssetExtractor<JavaAsset> extractor,
-                                                                                                      CollectorConverter collectorConverter) {
-        return create(extractor, collectorConverter, collectorConverter);
+            ConverterCombiner extends AssetConverter<JavaAsset, BedrockAsset>
+                    & AssetCombiner<BedrockAsset>> ConverterPipeline<JavaAsset, BedrockAsset> create(AssetExtractor<JavaAsset> extractor,
+                                                                                                     ConverterCombiner converterCombiner) {
+        return create(extractor, converterCombiner, converterCombiner);
     }
 
     private static <JavaAsset, BedrockAsset,
             Pipeline extends AssetExtractor<JavaAsset> & AssetConverter<JavaAsset, BedrockAsset>
-                    & AssetCollector<BedrockAsset>> ConverterPipeline<JavaAsset, BedrockAsset> create(Pipeline pipeline) {
+                    & AssetCombiner<BedrockAsset>> ConverterPipeline<JavaAsset, BedrockAsset> create(Pipeline pipeline) {
         return create(pipeline, pipeline, pipeline);
     }
 
     private static <JavaAsset, BedrockAsset> ConverterPipeline<JavaAsset, BedrockAsset> create(AssetExtractor<JavaAsset> extractor,
                                                                                                AssetConverter<JavaAsset, BedrockAsset> converter,
-                                                                                               AssetCollector<BedrockAsset> collector) {
+                                                                                               AssetCombiner<BedrockAsset> collector) {
         ConverterPipeline<JavaAsset, BedrockAsset> pipeline = new ConverterPipeline<>(extractor, converter, collector);
         CONVERTERS.add(pipeline);
         return pipeline;

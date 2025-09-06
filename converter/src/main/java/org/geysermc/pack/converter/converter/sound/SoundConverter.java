@@ -27,9 +27,9 @@
 package org.geysermc.pack.converter.converter.sound;
 
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
-import org.geysermc.pack.converter.converter.AssetCollector;
+import org.geysermc.pack.converter.converter.AssetCombiner;
 import org.geysermc.pack.converter.converter.AssetConverter;
-import org.geysermc.pack.converter.converter.CollectionContext;
+import org.geysermc.pack.converter.converter.CombineContext;
 import org.geysermc.pack.converter.converter.ConversionContext;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.sound.Sound;
@@ -42,7 +42,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SoundConverter implements AssetConverter<Sound, Sound>, AssetCollector<Sound> {
+public class SoundConverter implements AssetConverter<Sound, Sound>, AssetCombiner<Sound> {
     public static final SoundConverter INSTANCE = new SoundConverter();
 
     @Override
@@ -51,7 +51,7 @@ public class SoundConverter implements AssetConverter<Sound, Sound>, AssetCollec
     }
 
     @Override
-    public void include(BedrockResourcePack pack, List<Sound> sounds, CollectionContext context) {
+    public void include(BedrockResourcePack pack, List<Sound> sounds, CombineContext context) {
         List<String> exported = new ArrayList<>();
         Path output = pack.directory().resolve(SoundRegistryConverter.BEDROCK_SOUNDS_LOCATION);
 

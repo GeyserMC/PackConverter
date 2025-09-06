@@ -48,6 +48,7 @@ import java.util.Optional;
 public class TransformContext implements LogHelpers {
     private final TextureMappings mappings;
     private final Collection<Texture> textures;
+    // TODO figure out how to handle this, this is executed in the extraction phase and ideally bedrock pack wouldn't be accessed then
     @Deprecated(forRemoval = true)
     private final BedrockResourcePack bedrockPack;
     private final ResourcePack javaPack;
