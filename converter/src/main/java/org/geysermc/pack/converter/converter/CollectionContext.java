@@ -24,10 +24,9 @@
  *
  */
 
-package org.geysermc.pack.converter.newconverter;
+package org.geysermc.pack.converter.converter;
 
-import net.kyori.adventure.key.Keyed;
-import team.unnamed.creative.part.ResourcePackPart;
+import org.geysermc.pack.converter.util.LogListener;
 
-public interface KeyedAssetConverter<JavaAsset extends Keyed & ResourcePackPart, BedrockAsset> extends AssetConverter<JavaAsset, BedrockAsset> {
+public record CollectionContext(String textureSubDirectory, LogListener logListener) implements LogHelpers {
 }

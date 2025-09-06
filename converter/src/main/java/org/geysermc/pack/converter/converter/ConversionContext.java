@@ -24,10 +24,9 @@
  *
  */
 
-package org.geysermc.pack.converter.newconverter;
+package org.geysermc.pack.converter.converter;
 
-import net.kyori.adventure.key.Namespaced;
-import team.unnamed.creative.part.ResourcePackPart;
+import org.geysermc.pack.converter.util.LogListener;
 
-public interface NamespacedAssetConverter<JavaAsset extends Namespaced & ResourcePackPart, BedrockAsset> extends AssetConverter<JavaAsset, BedrockAsset> {
+public record ConversionContext(String packName, LogListener logListener) implements LogHelpers {
 }

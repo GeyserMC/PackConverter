@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 GeyserMC. http://geysermc.org
+ * Copyright (c) 2025-2025 GeyserMC. http://geysermc.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -24,14 +24,13 @@
  *
  */
 
-package org.geysermc.pack.converter.newconverter;
+package org.geysermc.pack.converter.converter;
 
-import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
-import org.geysermc.pack.converter.util.LogListener;
-import team.unnamed.creative.ResourcePack;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Optional;
+@FunctionalInterface
+public interface AssetConverter<JavaAsset, BedrockAsset> {
 
-public record ExtractionContext(@Deprecated(forRemoval = true) BedrockResourcePack bedrockResourcePack,
-                                Optional<ResourcePack> vanillaPack, LogListener logListener) implements LogHelpers {
+    @Nullable
+    BedrockAsset convert(JavaAsset asset, ConversionContext context) throws Exception;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 GeyserMC. http://geysermc.org
+ * Copyright (c) 2025-2025 GeyserMC. http://geysermc.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -26,31 +26,38 @@
 
 package org.geysermc.pack.converter.converter.base;
 
-import com.google.auto.service.AutoService;
 import net.kyori.adventure.key.Key;
-import org.geysermc.pack.converter.PackConversionContext;
-import org.geysermc.pack.converter.converter.BaseConverter;
-import org.geysermc.pack.converter.converter.Converter;
-import org.geysermc.pack.converter.data.BaseConversionData;
-import org.jetbrains.annotations.NotNull;
+import org.geysermc.pack.converter.converter.AssetConverter;
+import org.geysermc.pack.converter.converter.ConversionContext;
+import org.geysermc.pack.converter.converter.ExtractionContext;
+import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.base.Writable;
 import team.unnamed.creative.texture.Texture;
 
-@AutoService(Converter.class)
-public class PackIconConverter extends BaseConverter {
+import java.util.Optional;
+
+public class PackIconConverter implements AssetConverter<Writable, byte[]> {
+    public static final PackIconConverter INSTANCE = new PackIconConverter();
     private static final Key UNKNOWN_PACK = Key.key(Key.MINECRAFT_NAMESPACE, "misc/unknown_pack.png");
 
-    @Override
-    public void convert(@NotNull PackConversionContext<BaseConversionData> context) throws Exception {
-        Writable packIcon = context.javaResourcePack().icon();
+    public static Writable extractIcon(ResourcePack pack, ExtractionContext context) {
+        Writable packIcon = pack.icon();
         if (packIcon == null) {
-            if (context.javaResourcePack().texture(UNKNOWN_PACK) != null) {
-                packIcon = context.javaResourcePack().texture(UNKNOWN_PACK).data();
+            Texture unknownPackOverride = pack.texture(UNKNOWN_PACK);
+            if (unknownPackOverride != null) {
+                packIcon = unknownPackOverride.data();
             } else {
-                packIcon = context.data().vanillaPack().texture(UNKNOWN_PACK).data();
+                packIcon = context.vanillaPack()
+                        .flatMap(vanilla -> Optional.ofNullable(vanilla.texture(UNKNOWN_PACK)))
+                        .map(Texture::data)
+                        .orElse(null);
             }
         }
+        return packIcon;
+    }
 
-        context.bedrockResourcePack().icon(packIcon.toByteArray());
+    @Override
+    public byte[] convert(Writable writable, ConversionContext context) throws Exception {
+        return writable.toByteArray();
     }
 }

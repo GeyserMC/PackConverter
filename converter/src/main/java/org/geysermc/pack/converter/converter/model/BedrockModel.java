@@ -24,9 +24,14 @@
  *
  */
 
-package org.geysermc.pack.converter.newconverter;
+package org.geysermc.pack.converter.converter.model;
 
-import org.geysermc.pack.converter.util.LogListener;
+import org.geysermc.pack.bedrock.resource.models.entity.ModelEntity;
 
-public record ConversionContext(String packName, LogListener logListener) implements LogHelpers {
+public record BedrockModel(ModelType type, String fileName, ModelEntity model) {
+
+    public enum ModelType {
+        BLOCK,
+        ENTITY
+    }
 }

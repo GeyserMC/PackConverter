@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 GeyserMC. http://geysermc.org
+ * Copyright (c) 2025-2025 GeyserMC. http://geysermc.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -26,50 +26,64 @@
 
 package org.geysermc.pack.converter.converter.lang;
 
-import com.google.auto.service.AutoService;
-import org.geysermc.pack.converter.PackConversionContext;
-import org.geysermc.pack.converter.converter.BaseConverter;
-import org.geysermc.pack.converter.converter.Converter;
-import org.geysermc.pack.converter.data.BaseConversionData;
-import org.jetbrains.annotations.NotNull;
+import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
+import org.geysermc.pack.converter.converter.AssetCollector;
+import org.geysermc.pack.converter.converter.CollectionContext;
+import org.geysermc.pack.converter.converter.ConversionContext;
+import org.geysermc.pack.converter.converter.KeyedAssetConverter;
 import team.unnamed.creative.lang.Language;
 
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-@AutoService(Converter.class)
-public class LangConverter extends BaseConverter {
-    private static final String BEDROCK_TEXTS_LOCATION = "texts";
+public class LangConverter implements KeyedAssetConverter<Language, BedrockLanguage>, AssetCollector<BedrockLanguage> {
+    public static final LangConverter INSTANCE = new LangConverter();
 
-    private final Pattern positionalStringReplacement = Pattern.compile("%([0-9]+)\\$s");
+    private static final Pattern POSITIONAL_STRING_REPLACEMENT = Pattern.compile("%([0-9]+)\\$s");
 
     @Override
-    public void convert(@NotNull PackConversionContext<BaseConversionData> context) throws Exception {
-        Collection<Language> languages = context.javaResourcePack().languages();
-        for (Language language : languages) {
-            Map<String, String> strings = language.translations();
+    public BedrockLanguage convert(Language language, ConversionContext context) throws Exception {
+        Map<String, String> strings = language.translations();
 
-            for (Map.Entry<String, String> entry : strings.entrySet()) {
-                String value = entry.getValue();
+        for (Map.Entry<String, String> entry : strings.entrySet()) {
+            String value = entry.getValue();
 
-                // Replace %d with %s
-                value = value.replace("%d", "%s");
+            // Replace %d with %s
+            value = value.replace("%d", "%s");
 
-                // Replace `%x$s` with `%x`
-                value = positionalStringReplacement.matcher(value).replaceAll("%$1");
+            // Replace `%x$s` with `%x`
+            value = POSITIONAL_STRING_REPLACEMENT.matcher(value).replaceAll("%$1");
 
-                entry.setValue(value);
-            }
-
-            String languageKey = language.key().value();
-
-            // Convert the language key to the Bedrock equivalent
-            if (languageKey.equals("no_no")) {
-                languageKey = "nb_no";
-            }
-
-            context.bedrockResourcePack().addLanguage(languageKey, strings);
+            entry.setValue(value);
         }
+
+        String languageKey = language.key().value();
+
+        // Convert the language key to the Bedrock equivalent
+        if (languageKey.equals("no_no")) {
+            languageKey = "nb_no";
+        }
+
+        return new BedrockLanguage(languageKey, strings);
+    }
+
+    @Override
+    public void include(BedrockResourcePack pack, List<BedrockLanguage> languages, CollectionContext context) {
+        Map<String, Map<String, String>> merged = new HashMap<>();
+
+        for (BedrockLanguage language : languages) {
+            Map<String, String> mergedLanguage = merged.computeIfAbsent(language.language(), name -> new HashMap<>());
+            for (Map.Entry<String, String> entry : language.strings().entrySet()) {
+                if (mergedLanguage.containsKey(entry.getKey())) {
+                    context.warn("Conflicting language string " + entry.getKey() + "!");
+                    continue;
+                }
+                mergedLanguage.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        merged.forEach(pack::addLanguage);
     }
 }

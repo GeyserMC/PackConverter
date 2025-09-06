@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 GeyserMC. http://geysermc.org
+ * Copyright (c) 2025-2025 GeyserMC. http://geysermc.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -26,36 +26,25 @@
 
 package org.geysermc.pack.converter.converter.misc;
 
-import com.google.auto.service.AutoService;
-import com.google.gson.*;
-import net.kyori.adventure.key.Key;
-import org.geysermc.pack.converter.PackConversionContext;
-import org.geysermc.pack.converter.converter.BaseConverter;
-import org.geysermc.pack.converter.converter.Converter;
-import org.geysermc.pack.converter.data.BaseConversionData;
-import org.jetbrains.annotations.NotNull;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import org.geysermc.pack.converter.converter.AssetConverter;
+import org.geysermc.pack.converter.converter.ConversionContext;
 import team.unnamed.creative.base.Writable;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-@AutoService(Converter.class)
-public class SplashTextConverter extends BaseConverter {
-    private static final Gson GSON = new GsonBuilder()
-            .setPrettyPrinting()
-            .create();
+public class SplashTextConverter implements AssetConverter<Writable, JsonElement> {
+    public static final SplashTextConverter INSTANCE = new SplashTextConverter();
 
     @Override
-    public void convert(@NotNull PackConversionContext<BaseConversionData> context) throws Exception {
-        Writable javaSplashText = context.javaResourcePack().unknownFile("assets/minecraft/texts/splashes.txt");
-        if (javaSplashText == null) return;
-
-        String[] splashes = javaSplashText.toUTF8String().split("\n");
+    public JsonElement convert(Writable writable, ConversionContext context) throws Exception {
+        String[] splashes = writable.toUTF8String().split("\n");
         JsonArray splashesArray = new JsonArray();
         Arrays.stream(splashes).toList().forEach(splashesArray::add);
         JsonObject object = new JsonObject();
         object.add("splashes", splashesArray);
-
-        context.bedrockResourcePack().addExtraFile(GSON.toJson(object).getBytes(StandardCharsets.UTF_8), "splashes.json");
+        return object;
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 GeyserMC. http://geysermc.org
+ * Copyright (c) 2025-2025 GeyserMC. http://geysermc.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -26,20 +26,12 @@
 
 package org.geysermc.pack.converter.converter;
 
+import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
+
 import java.util.List;
-import java.util.ServiceLoader;
 
-public class Converters {
+@FunctionalInterface
+public interface AssetCollector<BedrockAsset> {
 
-    public static List<? extends Converter<?>> defaultConverters() {
-        return defaultConverters(false);
-    }
-
-    public static List<? extends Converter<?>> defaultConverters(boolean experimental) {
-        return ServiceLoader.load(Converter.class).stream()
-                .map(ServiceLoader.Provider::get)
-                .map(c -> (Converter<?>)c)
-                .filter(converter -> experimental || !converter.isExperimental())
-                .toList();
-    }
+    void include(BedrockResourcePack pack, List<BedrockAsset> assets, CollectionContext context);
 }

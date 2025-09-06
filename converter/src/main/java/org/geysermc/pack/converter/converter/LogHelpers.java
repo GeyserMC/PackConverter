@@ -24,14 +24,32 @@
  *
  */
 
-package org.geysermc.pack.converter.newconverter;
+package org.geysermc.pack.converter.converter;
 
-import team.unnamed.creative.ResourcePack;
+import org.geysermc.pack.converter.util.LogListener;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Collection;
+public interface LogHelpers {
 
-@FunctionalInterface
-public interface AssetExtractor<JavaAsset> {
+    LogListener logListener();
 
-    Collection<JavaAsset> extract(ResourcePack pack, ExtractionContext context);
+    default void debug(@NotNull String message) {
+        logListener().debug(message);
+    }
+
+    default void info(@NotNull String message) {
+        logListener().info(message);
+    }
+
+    default void warn(@NotNull String message) {
+        logListener().warn(message);
+    }
+
+    default void error(@NotNull String message) {
+        logListener().error(message);
+    }
+
+    default void error(@NotNull String message, @NotNull Throwable exception) {
+        logListener().error(message, exception);
+    }
 }

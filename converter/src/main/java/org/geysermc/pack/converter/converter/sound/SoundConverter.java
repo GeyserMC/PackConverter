@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 GeyserMC. http://geysermc.org
+ * Copyright (c) 2025-2025 GeyserMC. http://geysermc.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -26,67 +26,53 @@
 
 package org.geysermc.pack.converter.converter.sound;
 
-import com.google.auto.service.AutoService;
-import org.apache.commons.io.file.PathUtils;
-import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitions;
-import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.Sounds;
-import org.geysermc.pack.converter.Constants;
-import org.geysermc.pack.converter.PackConversionContext;
-import org.geysermc.pack.converter.converter.BaseConverter;
-import org.geysermc.pack.converter.converter.Converter;
-import org.geysermc.pack.converter.data.BaseConversionData;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Unmodifiable;
-import team.unnamed.creative.sound.SoundEntry;
-import team.unnamed.creative.sound.SoundEvent;
-import team.unnamed.creative.sound.SoundRegistry;
+import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
+import org.geysermc.pack.converter.converter.AssetCollector;
+import org.geysermc.pack.converter.converter.AssetConverter;
+import org.geysermc.pack.converter.converter.CollectionContext;
+import org.geysermc.pack.converter.converter.ConversionContext;
+import org.jetbrains.annotations.Nullable;
+import team.unnamed.creative.sound.Sound;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.List;
 
-@AutoService(Converter.class)
-public class SoundConverter extends BaseConverter {
-    private static final String JAVA_SOUNDS_LOCATION = Constants.JAVA_PACK_LOCATION + "/sounds";
-    private static final String BEDROCK_SOUNDS_LOCATION = "sounds";
+public class SoundConverter implements AssetConverter<Sound, Sound>, AssetCollector<Sound> {
+    public static final SoundConverter INSTANCE = new SoundConverter();
 
     @Override
-    public void convert(@NotNull PackConversionContext<BaseConversionData> context) throws Exception {
-        Collection<SoundRegistry> registry = context.javaResourcePack().soundRegistries();
-        for (SoundRegistry soundRegistry : registry) {
-            @Unmodifiable @NotNull Collection<SoundEvent> sounds = soundRegistry.sounds();
+    public @Nullable Sound convert(Sound sound, ConversionContext context) throws Exception {
+        return sound;
+    }
 
-            for (SoundEvent value : sounds) {
-                String key = value.key().asString();
+    @Override
+    public void include(BedrockResourcePack pack, List<Sound> sounds, CollectionContext context) {
+        List<String> exported = new ArrayList<>();
+        Path output = pack.directory().resolve(SoundRegistryConverter.BEDROCK_SOUNDS_LOCATION);
 
-                SoundDefinitions definition = new SoundDefinitions();
-                definition.useLegacyMaxDistance(true); // TODO: Needed?
-                definition.maxDistance(64); // ???
-                for (SoundEntry sound : value.sounds()) {
-                    Sounds bedrockSound = new Sounds();
-                    bedrockSound.name(BEDROCK_SOUNDS_LOCATION + "/" + sound.key().value());
-                    bedrockSound.stream(sound.stream());
-                    bedrockSound.loadOnLowMemory(true);
-                    bedrockSound.volume(sound.volume());
-                    bedrockSound.pitch(sound.pitch());
-                    bedrockSound.weight(sound.weight());
-
-                    definition.sounds().add(bedrockSound);
+        for (Sound sound : sounds) {
+            String path = sound.key().value();
+            if (exported.contains(path)) {
+                context.warn("Conflicting sound file " + sound.key() + "!");
+                continue;
+            }
+            Path file = output.resolve(path + ".ogg");
+            Path directory = file.getParent();
+            try {
+                Files.createDirectories(directory);
+                try (OutputStream outputStream = new FileOutputStream(file.toFile())) {
+                    sound.data().write(outputStream);
                 }
-
-                context.bedrockResourcePack().addSoundDefinition(key, definition);
+            } catch (IOException exception) {
+                context.error("Failed to write sound file " + sound.key() + "!", exception);
+                continue;
             }
-
-            // Relocate sound files
-            Path input = context.inputDirectory().resolve(String.format(JAVA_SOUNDS_LOCATION, soundRegistry.namespace()));
-            Path output = context.outputDirectory().resolve(BEDROCK_SOUNDS_LOCATION);
-
-            if (Files.notExists(output)) {
-                Files.createDirectories(output);
-            }
-
-            PathUtils.copyDirectory(input, output, StandardCopyOption.REPLACE_EXISTING);
+            exported.add(path);
         }
     }
 }

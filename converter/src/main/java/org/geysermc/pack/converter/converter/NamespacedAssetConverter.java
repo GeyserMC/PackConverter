@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 GeyserMC. http://geysermc.org
+ * Copyright (c) 2025-2025 GeyserMC. http://geysermc.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -24,32 +24,10 @@
  *
  */
 
-package org.geysermc.pack.converter.newconverter;
+package org.geysermc.pack.converter.converter;
 
-import org.geysermc.pack.converter.util.LogListener;
-import org.jetbrains.annotations.NotNull;
+import net.kyori.adventure.key.Namespaced;
+import team.unnamed.creative.part.ResourcePackPart;
 
-public interface LogHelpers {
-
-    LogListener logListener();
-
-    default void debug(@NotNull String message) {
-        logListener().debug(message);
-    }
-
-    default void info(@NotNull String message) {
-        logListener().info(message);
-    }
-
-    default void warn(@NotNull String message) {
-        logListener().warn(message);
-    }
-
-    default void error(@NotNull String message) {
-        logListener().error(message);
-    }
-
-    default void error(@NotNull String message, @NotNull Throwable exception) {
-        logListener().error(message, exception);
-    }
+public interface NamespacedAssetConverter<JavaAsset extends Namespaced & ResourcePackPart, BedrockAsset> extends AssetConverter<JavaAsset, BedrockAsset> {
 }

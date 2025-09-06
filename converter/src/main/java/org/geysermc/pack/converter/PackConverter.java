@@ -29,10 +29,9 @@ package org.geysermc.pack.converter;
 import org.apache.commons.io.file.PathUtils;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.converter.ActionListener;
-import org.geysermc.pack.converter.converter.Converter;
+import org.geysermc.pack.converter.converter.ConverterPipeline;
 import org.geysermc.pack.converter.data.ConversionData;
-import org.geysermc.pack.converter.newconverter.AssetConverter;
-import org.geysermc.pack.converter.newconverter.AssetConverters;
+import org.geysermc.pack.converter.converter.AssetConverters;
 import org.geysermc.pack.converter.util.*;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -70,7 +69,7 @@ public final class PackConverter {
 
     private BiConsumer<ResourcePack, BedrockResourcePack> postProcessor;
 
-    private final List<Converter<?>> converters = new ArrayList<>();
+    private final List<ConverterPipeline<?, ?>> converters = new ArrayList<>();
 
     private Path tmpDir;
 
@@ -190,7 +189,7 @@ public final class PackConverter {
      * @param converter the converter to add
      * @return this instance
      */
-    public PackConverter converter(@NotNull Converter<?> converter) {
+    public PackConverter converter(@NotNull ConverterPipeline<?, ?> converter) {
         this.converters.add(converter);
         return this;
     }
@@ -201,7 +200,7 @@ public final class PackConverter {
      * @param converters the converters to add
      * @return this instance
      */
-    public PackConverter converters(@NotNull List<? extends Converter<?>> converters) {
+    public PackConverter converters(@NotNull List<? extends ConverterPipeline<?, ?>> converters) {
         this.converters.addAll(converters);
         return this;
     }

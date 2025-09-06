@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 GeyserMC. http://geysermc.org
+ * Copyright (c) 2025-2025 GeyserMC. http://geysermc.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -24,14 +24,14 @@
  *
  */
 
-package org.geysermc.pack.converter.newconverter.model;
+package org.geysermc.pack.converter.converter;
 
-import org.geysermc.pack.bedrock.resource.models.entity.ModelEntity;
+import team.unnamed.creative.ResourcePack;
 
-public record BedrockModel(ModelType type, String fileName, ModelEntity model) {
+import java.util.Collection;
 
-    public enum ModelType {
-        BLOCK,
-        ENTITY
-    }
+@FunctionalInterface
+public interface AssetExtractor<JavaAsset> {
+
+    Collection<JavaAsset> extract(ResourcePack pack, ExtractionContext context);
 }

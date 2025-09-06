@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 GeyserMC. http://geysermc.org
+ * Copyright (c) 2025-2025 GeyserMC. http://geysermc.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -26,34 +26,28 @@
 
 package org.geysermc.pack.converter.converter.base;
 
-import com.google.auto.service.AutoService;
 import org.geysermc.pack.bedrock.resource.Manifest;
 import org.geysermc.pack.bedrock.resource.manifest.Header;
 import org.geysermc.pack.bedrock.resource.manifest.Modules;
-import org.geysermc.pack.converter.PackConversionContext;
-import org.geysermc.pack.converter.converter.BaseConverter;
-import org.geysermc.pack.converter.converter.Converter;
-import org.geysermc.pack.converter.data.BaseConversionData;
-import org.jetbrains.annotations.NotNull;
-import team.unnamed.creative.ResourcePack;
+import org.geysermc.pack.converter.converter.AssetConverter;
+import org.geysermc.pack.converter.converter.ConversionContext;
+import team.unnamed.creative.metadata.pack.PackMeta;
 
 import java.util.List;
 import java.util.UUID;
 
-@AutoService(Converter.class)
-public class PackManifestConverter extends BaseConverter {
+public class PackManifestConverter implements AssetConverter<PackMeta, Manifest> {
+    public static final PackManifestConverter INSTANCE = new PackManifestConverter();
     private static final int FORMAT_VERSION = 2;
 
     @Override
-    public void convert(@NotNull PackConversionContext<BaseConversionData> context) throws Exception {
-        ResourcePack javaPack = context.javaResourcePack();
-
+    public Manifest convert(PackMeta packMeta, ConversionContext context) throws Exception {
         Manifest manifest = new Manifest();
         manifest.formatVersion(FORMAT_VERSION);
 
         Header header = new Header();
-        header.description(javaPack.description());
-        header.name(context.packConverter().packName());
+        header.description(packMeta.description());
+        header.name(context.packName());
         header.version(new float[] { 1, 0, 0 });
         header.minEngineVersion(new float[] { 1, 16, 0 });
         header.uuid(UUID.randomUUID().toString());
@@ -61,12 +55,13 @@ public class PackManifestConverter extends BaseConverter {
         manifest.header(header);
 
         Modules module = new Modules();
-        module.description(javaPack.description());
+        module.description(packMeta.description());
         module.type("resources");
         module.uuid(UUID.randomUUID().toString());
         module.version(new float[] { 1, 0, 0 });
 
         manifest.modules(List.of(module));
-        context.bedrockResourcePack().manifest(manifest);
+
+        return manifest;
     }
 }

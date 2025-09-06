@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 GeyserMC. http://geysermc.org
+ * Copyright (c) 2025-2025 GeyserMC. http://geysermc.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@
  *
  */
 
-package org.geysermc.pack.converter.newconverter;
+package org.geysermc.pack.converter.converter;
 
 import com.google.gson.JsonElement;
 import net.kyori.adventure.key.Keyed;
@@ -32,18 +32,16 @@ import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.bedrock.resource.Manifest;
 import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitions;
 import org.geysermc.pack.converter.converter.texture.transformer.TransformedTexture;
-import org.geysermc.pack.converter.newconverter.base.PackIconConverter_;
-import org.geysermc.pack.converter.newconverter.base.PackManifestConverter_;
-import org.geysermc.pack.converter.newconverter.lang.BedrockLanguage;
-import org.geysermc.pack.converter.newconverter.lang.LangConverter_;
-import org.geysermc.pack.converter.newconverter.misc.SplashTextConverter_;
-import org.geysermc.pack.converter.newconverter.model.BedrockModel;
-import org.geysermc.pack.converter.newconverter.model.ModelConverter_;
-import org.geysermc.pack.converter.newconverter.sound.SoundConverter_;
-import org.geysermc.pack.converter.newconverter.sound.SoundRegistryConverter_;
-import org.geysermc.pack.converter.newconverter.texture.TextureConverter_;
-import org.geysermc.pack.converter.util.LogListener;
-import org.jetbrains.annotations.Nullable;
+import org.geysermc.pack.converter.converter.base.PackIconConverter;
+import org.geysermc.pack.converter.converter.base.PackManifestConverter;
+import org.geysermc.pack.converter.converter.lang.BedrockLanguage;
+import org.geysermc.pack.converter.converter.lang.LangConverter;
+import org.geysermc.pack.converter.converter.misc.SplashTextConverter;
+import org.geysermc.pack.converter.converter.model.BedrockModel;
+import org.geysermc.pack.converter.converter.model.ModelConverter;
+import org.geysermc.pack.converter.converter.sound.SoundConverter;
+import org.geysermc.pack.converter.converter.sound.SoundRegistryConverter;
+import org.geysermc.pack.converter.converter.texture.TextureConverter;
 import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.base.Writable;
 import team.unnamed.creative.lang.Language;
@@ -58,10 +56,8 @@ import team.unnamed.creative.sound.SoundRegistry;
 import team.unnamed.creative.texture.Texture;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -72,19 +68,19 @@ public final class AssetConverters {
 
     public static final ConverterPipeline<PackMeta, Manifest> MANIFEST = createSingle(
             (pack, context) -> pack.packMeta(),
-            PackManifestConverter_.INSTANCE,
+            PackManifestConverter.INSTANCE,
             BedrockResourcePack::manifest);
-    public static final ConverterPipeline<Writable, byte[]> ICON = createSingle(PackIconConverter_::extractIcon, PackIconConverter_.INSTANCE, BedrockResourcePack::icon);
+    public static final ConverterPipeline<Writable, byte[]> ICON = createSingle(PackIconConverter::extractIcon, PackIconConverter.INSTANCE, BedrockResourcePack::icon);
     public static final ConverterPipeline<Writable, JsonElement> SPLASH_TEXT = createSingle(
             (pack, context) -> pack.unknownFile("assets/minecraft/texts/splashes.txt"),
-            SplashTextConverter_.INSTANCE,
+            SplashTextConverter.INSTANCE,
             (pack, splashes) -> pack.addExtraFile(splashes, "splashes.json"));
-    public static final ConverterPipeline<Language, BedrockLanguage> LANGUAGE = create(extractor(LanguageSerializer.CATEGORY), LangConverter_.INSTANCE);
-    public static final ConverterPipeline<Model, BedrockModel> MODEL = create(ModelConverter_.INSTANCE);
+    public static final ConverterPipeline<Language, BedrockLanguage> LANGUAGE = create(extractor(LanguageSerializer.CATEGORY), LangConverter.INSTANCE);
+    public static final ConverterPipeline<Model, BedrockModel> MODEL = create(ModelConverter.INSTANCE);
     public static final ConverterPipeline<SoundRegistry, Map<String, SoundDefinitions>> SOUND_REGISTRY = create(
-            (pack, context) -> pack.soundRegistries(), SoundRegistryConverter_.INSTANCE);
-    public static final ConverterPipeline<Sound, Sound> SOUND = create(extractor(SoundSerializer.CATEGORY), SoundConverter_.INSTANCE);
-    public static final ConverterPipeline<Texture, TransformedTexture> TEXTURE = create(TextureConverter_.INSTANCE);
+            (pack, context) -> pack.soundRegistries(), SoundRegistryConverter.INSTANCE);
+    public static final ConverterPipeline<Sound, Sound> SOUND = create(extractor(SoundSerializer.CATEGORY), SoundConverter.INSTANCE);
+    public static final ConverterPipeline<Texture, TransformedTexture> TEXTURE = create(TextureConverter.INSTANCE);
 
     private static <JavaAsset, BedrockAsset> ConverterPipeline<JavaAsset, BedrockAsset> createSingle(BiFunction<ResourcePack, ExtractionContext, JavaAsset> extractor,
                                                                                                      AssetConverter<JavaAsset, BedrockAsset> converter,
@@ -124,47 +120,5 @@ public final class AssetConverters {
 
     private static <JavaAsset extends Keyed & ResourcePackPart> AssetExtractor<JavaAsset> extractor(ResourceCategory<JavaAsset> category) {
         return (pack, context) -> category.lister().apply(pack);
-    }
-
-    public record ConverterPipeline<JavaAsset, BedrockAsset>(AssetExtractor<JavaAsset> extractor,
-                                                             AssetConverter<JavaAsset, BedrockAsset> converter,
-                                                             AssetCollector<BedrockAsset> collector)
-            implements AssetExtractor<JavaAsset>, AssetConverter<JavaAsset, BedrockAsset>, AssetCollector<BedrockAsset> {
-
-        @Override
-        public Collection<JavaAsset> extract(ResourcePack pack, ExtractionContext context) {
-            return extractor.extract(pack, context);
-        }
-
-        @Override
-        public @Nullable BedrockAsset convert(JavaAsset asset, ConversionContext context) throws Exception {
-            return converter.convert(asset, context);
-        }
-
-        @Override
-        public void include(BedrockResourcePack pack, List<BedrockAsset> assets, CollectionContext context) {
-            collector.include(pack, assets, context);
-        }
-
-        public void convert(ResourcePack pack, Optional<ResourcePack> vanillaPack, BedrockResourcePack bedrockPack, String packName, String textureSubDirectory, LogListener logListener) {
-            ExtractionContext extractionContext = new ExtractionContext(bedrockPack, vanillaPack, logListener);
-            ConversionContext conversionContext = new ConversionContext(packName, logListener);
-            CollectionContext collectionContext = new CollectionContext(textureSubDirectory, logListener);
-
-            List<BedrockAsset> converted = extract(pack, extractionContext).parallelStream()
-                    .map(asset -> {
-                        try {
-                            return convert(asset, conversionContext);
-                        } catch (Exception exception) {
-                            logListener.error("Failed to convert asset");
-                        }
-                        return null;
-                    })
-                    .filter(Objects::nonNull)
-                    .toList();
-            if (!converted.isEmpty()) {
-                include(bedrockPack, converted, collectionContext);
-            }
-        }
     }
 }

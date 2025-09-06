@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 GeyserMC. http://geysermc.org
+ * Copyright (c) 2025-2025 GeyserMC. http://geysermc.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -24,9 +24,10 @@
  *
  */
 
-package org.geysermc.pack.converter.newconverter.lang;
+package org.geysermc.pack.converter.converter;
 
-import java.util.Map;
+import net.kyori.adventure.key.Keyed;
+import team.unnamed.creative.part.ResourcePackPart;
 
-public record BedrockLanguage(String language, Map<String, String> strings) {
+public interface KeyedAssetConverter<JavaAsset extends Keyed & ResourcePackPart, BedrockAsset> extends AssetConverter<JavaAsset, BedrockAsset> {
 }
