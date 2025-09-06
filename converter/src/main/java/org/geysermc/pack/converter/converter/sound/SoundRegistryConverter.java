@@ -30,9 +30,9 @@ import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitions;
 import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.Sounds;
 import org.geysermc.pack.converter.converter.AssetCombiner;
+import org.geysermc.pack.converter.converter.AssetConverter;
 import org.geysermc.pack.converter.converter.CombineContext;
 import org.geysermc.pack.converter.converter.ConversionContext;
-import org.geysermc.pack.converter.converter.NamespacedAssetConverter;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.sound.SoundEntry;
 import team.unnamed.creative.sound.SoundEvent;
@@ -43,7 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class SoundRegistryConverter implements NamespacedAssetConverter<SoundRegistry, Map<String, SoundDefinitions>>, AssetCombiner<Map<String, SoundDefinitions>> {
+public class SoundRegistryConverter implements AssetConverter<SoundRegistry, Map<String, SoundDefinitions>>, AssetCombiner<Map<String, SoundDefinitions>> {
     public static final SoundRegistryConverter INSTANCE = new SoundRegistryConverter();
     static final String BEDROCK_SOUNDS_LOCATION = "sounds";
 

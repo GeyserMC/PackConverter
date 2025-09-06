@@ -27,6 +27,7 @@
 package org.geysermc.pack.converter.converter.texture;
 
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
+import org.geysermc.pack.converter.converter.AssetConverter;
 import org.geysermc.pack.converter.converter.texture.transformer.TextureTransformer;
 import org.geysermc.pack.converter.converter.texture.transformer.TransformContext;
 import org.geysermc.pack.converter.converter.texture.transformer.TransformedTexture;
@@ -35,7 +36,6 @@ import org.geysermc.pack.converter.converter.AssetExtractor;
 import org.geysermc.pack.converter.converter.CombineContext;
 import org.geysermc.pack.converter.converter.ConversionContext;
 import org.geysermc.pack.converter.converter.ExtractionContext;
-import org.geysermc.pack.converter.converter.KeyedAssetConverter;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.ResourcePack;
@@ -59,7 +59,7 @@ import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.stream.StreamSupport;
 
-public class TextureConverter implements AssetExtractor<Texture>, KeyedAssetConverter<Texture, TransformedTexture>, AssetCombiner<TransformedTexture> {
+public class TextureConverter implements AssetExtractor<Texture>, AssetConverter<Texture, TransformedTexture>, AssetCombiner<TransformedTexture> {
     public static final TextureConverter INSTANCE = new TextureConverter();
     public static final String BEDROCK_TEXTURES_LOCATION = "textures";
 

@@ -115,7 +115,7 @@ public final class AssetConverters {
     }
 
     public static List<ConverterPipeline<?, ?>> converters() {
-        return CONVERTERS;
+        return List.copyOf(CONVERTERS);
     }
 
     private static <JavaAsset extends Keyed & ResourcePackPart> AssetExtractor<JavaAsset> extractor(ResourceCategory<JavaAsset> category) {

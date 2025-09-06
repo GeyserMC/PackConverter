@@ -41,11 +41,11 @@ import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bon
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.Up;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.West;
 import org.geysermc.pack.converter.converter.AssetCombiner;
+import org.geysermc.pack.converter.converter.AssetConverter;
 import org.geysermc.pack.converter.converter.AssetExtractor;
 import org.geysermc.pack.converter.converter.CombineContext;
 import org.geysermc.pack.converter.converter.ConversionContext;
 import org.geysermc.pack.converter.converter.ExtractionContext;
-import org.geysermc.pack.converter.converter.KeyedAssetConverter;
 import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.base.CubeFace;
 import team.unnamed.creative.model.Element;
@@ -59,7 +59,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class ModelConverter implements AssetExtractor<Model>, KeyedAssetConverter<Model, BedrockModel>, AssetCombiner<BedrockModel> {
+public class ModelConverter implements AssetExtractor<Model>, AssetConverter<Model, BedrockModel>, AssetCombiner<BedrockModel> {
     public static final ModelConverter INSTANCE = new ModelConverter();
 
     private static final String FORMAT_VERSION = "1.16.0";

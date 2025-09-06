@@ -28,9 +28,9 @@ package org.geysermc.pack.converter.converter.lang;
 
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.converter.AssetCombiner;
+import org.geysermc.pack.converter.converter.AssetConverter;
 import org.geysermc.pack.converter.converter.CombineContext;
 import org.geysermc.pack.converter.converter.ConversionContext;
-import org.geysermc.pack.converter.converter.KeyedAssetConverter;
 import team.unnamed.creative.lang.Language;
 
 import java.util.HashMap;
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class LangConverter implements KeyedAssetConverter<Language, BedrockLanguage>, AssetCombiner<BedrockLanguage> {
+public class LangConverter implements AssetConverter<Language, BedrockLanguage>, AssetCombiner<BedrockLanguage> {
     public static final LangConverter INSTANCE = new LangConverter();
 
     private static final Pattern POSITIONAL_STRING_REPLACEMENT = Pattern.compile("%([0-9]+)\\$s");
