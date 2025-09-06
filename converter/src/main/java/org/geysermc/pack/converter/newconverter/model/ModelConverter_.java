@@ -73,6 +73,7 @@ public class ModelConverter_ implements AssetExtractor<Model>, KeyedAssetConvert
         ModelStitcher.Provider modelProvider = context.vanillaPack()
                 .map(vanilla -> ModelStitcher.vanillaProvider(pack, vanilla))
                 .orElseGet(() -> ModelStitcher.baseProvider(pack));
+        // TODO maybe parallel, if model stitching takes a lot of time
         return pack.models().stream()
                 .map(model -> new ModelStitcher(modelProvider, model, context.logListener()).stitch())
                 .toList();

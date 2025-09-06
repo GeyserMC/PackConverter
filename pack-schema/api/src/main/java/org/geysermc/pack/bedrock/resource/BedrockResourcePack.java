@@ -48,7 +48,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -91,6 +90,16 @@ public class BedrockResourcePack {
         this.manifest = manifest;
         this.itemTexture = itemTexture;
         this.terrainTexture = terrainTexture;
+    }
+
+    /**
+     * Get the directory of the resource pack.
+     *
+     * @return the directory of the resource pack
+     */
+    @NotNull
+    public Path directory() {
+        return directory;
     }
 
     /**

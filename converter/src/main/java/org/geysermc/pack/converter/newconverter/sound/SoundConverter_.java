@@ -26,46 +26,53 @@
 
 package org.geysermc.pack.converter.newconverter.sound;
 
-import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitions;
-import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.Sounds;
+import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
+import org.geysermc.pack.converter.newconverter.AssetCollector;
+import org.geysermc.pack.converter.newconverter.AssetConverter;
+import org.geysermc.pack.converter.newconverter.CollectionContext;
 import org.geysermc.pack.converter.newconverter.ConversionContext;
-import org.geysermc.pack.converter.newconverter.NamespacedAssetConverter;
 import org.jetbrains.annotations.Nullable;
-import team.unnamed.creative.sound.SoundEntry;
-import team.unnamed.creative.sound.SoundEvent;
-import team.unnamed.creative.sound.SoundRegistry;
+import team.unnamed.creative.sound.Sound;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 
-public class SoundConverter_ implements NamespacedAssetConverter<SoundRegistry, Map<String, SoundDefinitions>> {
-    private static final String BEDROCK_SOUNDS_LOCATION = "sounds";
+public class SoundConverter_ implements AssetConverter<Sound, Sound>, AssetCollector<Sound> {
+    public static final SoundConverter_ INSTANCE = new SoundConverter_();
 
     @Override
-    public @Nullable Map<String, SoundDefinitions> convert(SoundRegistry soundRegistry, ConversionContext context) throws Exception {
-        Map<String, SoundDefinitions> definitions = new HashMap<>();
+    public @Nullable Sound convert(Sound sound, ConversionContext context) throws Exception {
+        return sound;
+    }
 
-        for (SoundEvent value : soundRegistry.sounds()) {
-            String key = value.key().asString();
+    @Override
+    public void include(BedrockResourcePack pack, List<Sound> sounds, CollectionContext context) {
+        List<String> exported = new ArrayList<>();
+        Path output = pack.directory().resolve(SoundRegistryConverter_.BEDROCK_SOUNDS_LOCATION);
 
-            SoundDefinitions definition = new SoundDefinitions();
-            definition.useLegacyMaxDistance(true); // TODO: Needed?
-            definition.maxDistance(64); // ???
-            for (SoundEntry sound : value.sounds()) {
-                Sounds bedrockSound = new Sounds();
-                bedrockSound.name(BEDROCK_SOUNDS_LOCATION + "/" + sound.key().value());
-                bedrockSound.stream(sound.stream());
-                bedrockSound.loadOnLowMemory(true);
-                bedrockSound.volume(sound.volume());
-                bedrockSound.pitch(sound.pitch());
-                bedrockSound.weight(sound.weight());
-
-                definition.sounds().add(bedrockSound);
+        for (Sound sound : sounds) {
+            String path = sound.key().value();
+            if (exported.contains(path)) {
+                context.warn("Conflicting sound file " + sound.key() + "!");
+                continue;
             }
-
-            definitions.put(key, definition);
+            Path file = output.resolve(path + ".ogg");
+            Path directory = file.getParent();
+            try {
+                Files.createDirectories(directory);
+                try (OutputStream outputStream = new FileOutputStream(file.toFile())) {
+                    sound.data().write(outputStream);
+                }
+            } catch (IOException exception) {
+                context.error("Failed to write sound file " + sound.key() + "!", exception);
+                continue;
+            }
+            exported.add(path);
         }
-
-        return definitions;
     }
 }

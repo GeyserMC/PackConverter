@@ -30,6 +30,7 @@ import com.google.gson.JsonElement;
 import net.kyori.adventure.key.Keyed;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.bedrock.resource.Manifest;
+import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitions;
 import org.geysermc.pack.converter.newconverter.base.PackIconConverter_;
 import org.geysermc.pack.converter.newconverter.base.PackManifestConverter_;
 import org.geysermc.pack.converter.newconverter.lang.BedrockLanguage;
@@ -37,6 +38,8 @@ import org.geysermc.pack.converter.newconverter.lang.LangConverter_;
 import org.geysermc.pack.converter.newconverter.misc.SplashTextConverter_;
 import org.geysermc.pack.converter.newconverter.model.BedrockModel;
 import org.geysermc.pack.converter.newconverter.model.ModelConverter_;
+import org.geysermc.pack.converter.newconverter.sound.SoundConverter_;
+import org.geysermc.pack.converter.newconverter.sound.SoundRegistryConverter_;
 import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.base.Writable;
 import team.unnamed.creative.lang.Language;
@@ -45,8 +48,12 @@ import team.unnamed.creative.model.Model;
 import team.unnamed.creative.part.ResourcePackPart;
 import team.unnamed.creative.serialize.minecraft.ResourceCategory;
 import team.unnamed.creative.serialize.minecraft.language.LanguageSerializer;
+import team.unnamed.creative.serialize.minecraft.sound.SoundSerializer;
+import team.unnamed.creative.sound.Sound;
+import team.unnamed.creative.sound.SoundRegistry;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
@@ -62,8 +69,11 @@ public final class AssetConverters {
             (pack, context) -> pack.unknownFile("assets/minecraft/texts/splashes.txt"),
             SplashTextConverter_.INSTANCE,
             (pack, splashes) -> pack.addExtraFile(splashes, "splashes.json"));
-    public static final ConverterPipeline<Language, BedrockLanguage> LANGUAGE = createKeyed(LanguageSerializer.CATEGORY, LangConverter_.INSTANCE);
-    public static final ConverterPipeline<Model, BedrockModel> MODEL = create(ModelConverter_.INSTANCE, ModelConverter_.INSTANCE, ModelConverter_.INSTANCE);
+    public static final ConverterPipeline<Language, BedrockLanguage> LANGUAGE = create(extractor(LanguageSerializer.CATEGORY), LangConverter_.INSTANCE);
+    public static final ConverterPipeline<Model, BedrockModel> MODEL = create(ModelConverter_.INSTANCE);
+    public static final ConverterPipeline<SoundRegistry, Map<String, SoundDefinitions>> SOUND_REGISTRY = create(
+            (pack, context) -> pack.soundRegistries(), SoundRegistryConverter_.INSTANCE);
+    public static final ConverterPipeline<Sound, Sound> SOUND = create(extractor(SoundSerializer.CATEGORY), SoundConverter_.INSTANCE);
 
     private static <JavaAsset, BedrockAsset> ConverterPipeline<JavaAsset, BedrockAsset> createSingle(BiFunction<ResourcePack, ExtractionContext, JavaAsset> extractor,
                                                                                                      AssetConverter<JavaAsset, BedrockAsset> converter,
@@ -76,11 +86,17 @@ public final class AssetConverters {
                 (pack, assets, context) -> collector.accept(pack, assets.get(0)));
     }
 
-    private static <JavaAsset extends Keyed & ResourcePackPart, BedrockAsset,
-            CollectorConverter extends KeyedAssetConverter<JavaAsset, BedrockAsset>
-                    & AssetCollector<BedrockAsset>> ConverterPipeline<JavaAsset, BedrockAsset> createKeyed(ResourceCategory<JavaAsset> category,
-                                                                                                           CollectorConverter collectorConverter) {
-        return create(extractor(category), collectorConverter, collectorConverter);
+    private static <JavaAsset, BedrockAsset,
+            CollectorConverter extends AssetConverter<JavaAsset, BedrockAsset>
+                    & AssetCollector<BedrockAsset>> ConverterPipeline<JavaAsset, BedrockAsset> create(AssetExtractor<JavaAsset> extractor,
+                                                                                                      CollectorConverter collectorConverter) {
+        return create(extractor, collectorConverter, collectorConverter);
+    }
+
+    private static <JavaAsset, BedrockAsset,
+            Pipeline extends AssetExtractor<JavaAsset> & AssetConverter<JavaAsset, BedrockAsset>
+                    & AssetCollector<BedrockAsset>> ConverterPipeline<JavaAsset, BedrockAsset> create(Pipeline pipeline) {
+        return create(pipeline, pipeline, pipeline);
     }
 
     private static <JavaAsset, BedrockAsset> ConverterPipeline<JavaAsset, BedrockAsset> create(AssetExtractor<JavaAsset> extractor,
