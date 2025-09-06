@@ -65,6 +65,7 @@ import java.util.function.BiFunction;
 @SuppressWarnings({"UnstableApiUsage", "unused"})
 public final class AssetConverters {
     private static final List<ConverterPipeline<?, ?>> CONVERTERS = new ArrayList<>();
+    private static boolean bootstrapped = false;
 
     public static final ConverterPipeline<PackMeta, Manifest> MANIFEST = createSingle(
             (pack, context) -> pack.packMeta(),
@@ -93,29 +94,36 @@ public final class AssetConverters {
                 (pack, assets, context) -> collector.accept(pack, assets.get(0)));
     }
 
-    private static <JavaAsset, BedrockAsset,
+    public static <JavaAsset, BedrockAsset,
             ConverterCombiner extends AssetConverter<JavaAsset, BedrockAsset>
                     & AssetCombiner<BedrockAsset>> ConverterPipeline<JavaAsset, BedrockAsset> create(AssetExtractor<JavaAsset> extractor,
                                                                                                      ConverterCombiner converterCombiner) {
         return create(extractor, converterCombiner, converterCombiner);
     }
 
-    private static <JavaAsset, BedrockAsset,
+    public static <JavaAsset, BedrockAsset,
             Pipeline extends AssetExtractor<JavaAsset> & AssetConverter<JavaAsset, BedrockAsset>
                     & AssetCombiner<BedrockAsset>> ConverterPipeline<JavaAsset, BedrockAsset> create(Pipeline pipeline) {
         return create(pipeline, pipeline, pipeline);
     }
 
-    private static <JavaAsset, BedrockAsset> ConverterPipeline<JavaAsset, BedrockAsset> create(AssetExtractor<JavaAsset> extractor,
-                                                                                               AssetConverter<JavaAsset, BedrockAsset> converter,
-                                                                                               AssetCombiner<BedrockAsset> collector) {
-        ConverterPipeline<JavaAsset, BedrockAsset> pipeline = new ConverterPipeline<>(extractor, converter, collector);
-        CONVERTERS.add(pipeline);
+    public static <JavaAsset, BedrockAsset> ConverterPipeline<JavaAsset, BedrockAsset> create(AssetExtractor<JavaAsset> extractor,
+                                                                                              AssetConverter<JavaAsset, BedrockAsset> converter,
+                                                                                              AssetCombiner<BedrockAsset> combiner) {
+        ConverterPipeline<JavaAsset, BedrockAsset> pipeline = new ConverterPipeline<>(extractor, converter, combiner, Optional.empty());
+        if (!bootstrapped) {
+            CONVERTERS.add(pipeline);
+        }
         return pipeline;
     }
 
     public static List<ConverterPipeline<?, ?>> converters() {
         return List.copyOf(CONVERTERS);
+    }
+
+    static {
+        // This will cause 3rd-party converters made using the utility methods here to not be added to the CONVERTERS array
+        bootstrapped = true;
     }
 
     private static <JavaAsset extends Keyed & ResourcePackPart> AssetExtractor<JavaAsset> extractor(ResourceCategory<JavaAsset> category) {

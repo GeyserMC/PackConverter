@@ -28,9 +28,7 @@ package org.geysermc.pack.converter;
 
 import org.apache.commons.io.file.PathUtils;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
-import org.geysermc.pack.converter.converter.ActionListener;
 import org.geysermc.pack.converter.converter.ConverterPipeline;
-import org.geysermc.pack.converter.data.ConversionData;
 import org.geysermc.pack.converter.converter.AssetConverters;
 import org.geysermc.pack.converter.util.*;
 import org.jetbrains.annotations.NotNull;
@@ -44,9 +42,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
@@ -64,8 +60,6 @@ public final class PackConverter {
 
     private boolean compressed;
     private boolean enforcePackCheck = false;
-
-    private final Map<Class<?>, List<ActionListener<?>>> actionListeners = new IdentityHashMap<>();
 
     private BiConsumer<ResourcePack, BedrockResourcePack> postProcessor;
 
@@ -226,42 +220,6 @@ public final class PackConverter {
      */
     public PackConverter packageHandler(@NotNull PackageHandler packageHandler) {
         this.packageHandler = packageHandler;
-        return this;
-    }
-
-    /**
-     * Sets a list of action listeners for a specific conversion data class.
-     * <p>
-     * This is particularly useful for external programs that may rely on
-     * various bits of information from the pack converter at different
-     * stages.
-     *
-     * @param clazz the conversion data class
-     * @param actionListeners the action listeners
-     * @return this instance
-     * @param <T> the conversion data type
-     */
-    public <T extends ConversionData> PackConverter actionListeners(@NotNull Class<T> clazz, @NotNull ActionListener<T>... actionListeners) {
-        this.actionListeners.put(clazz, List.of(actionListeners));
-        return this;
-    }
-
-    /**
-     * Sets the action listeners.
-     * <p>
-     * This is particularly useful for external programs that may rely on
-     * various bits of information from the pack converter at different
-     * stages.
-     *
-     * @param actionListeners the action listeners
-     * @return this instance
-     * @param <T> the conversion data type
-     */
-    public <T extends ConversionData> PackConverter actionListeners(@NotNull Map<Class<T>, List<ActionListener<T>>> actionListeners) {
-        for (Map.Entry<Class<T>, List<ActionListener<T>>> entry : actionListeners.entrySet()) {
-            this.actionListeners.put(entry.getKey(), (List) entry.getValue());
-        }
-
         return this;
     }
 

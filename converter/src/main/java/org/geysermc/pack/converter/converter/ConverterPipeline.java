@@ -35,38 +35,58 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public record ConverterPipeline<JavaAsset, BedrockAsset>(AssetExtractor<JavaAsset> extractor,
-                                                         AssetConverter<JavaAsset, BedrockAsset> converter,
-                                                         AssetCombiner<BedrockAsset> collector)
+public final class ConverterPipeline<JavaAsset, BedrockAsset>
         implements AssetExtractor<JavaAsset>, AssetConverter<JavaAsset, BedrockAsset>, AssetCombiner<BedrockAsset> {
+    private final AssetExtractor<JavaAsset> extractor;
+    private final AssetConverter<JavaAsset, BedrockAsset> converter;
+    private final AssetCombiner<BedrockAsset> combiner;
+    private final Optional<ActionListener<JavaAsset, BedrockAsset>> listener;
+
+    public ConverterPipeline(AssetExtractor<JavaAsset> extractor,
+                             AssetConverter<JavaAsset, BedrockAsset> converter,
+                             AssetCombiner<BedrockAsset> combiner,
+                             Optional<ActionListener<JavaAsset, BedrockAsset>> listener) {
+        this.extractor = extractor;
+        this.converter = converter;
+        this.combiner = combiner;
+        this.listener = listener;
+    }
 
     @Override
     public Collection<JavaAsset> extract(ResourcePack pack, ExtractionContext context) {
-        return extractor.extract(pack, context);
+        Collection<JavaAsset> extracted = extractor.extract(pack, context);
+        listener.ifPresent(actionListener -> actionListener.postExtract(pack, extracted, context));
+        return extracted;
     }
 
     @Override
     public @Nullable BedrockAsset convert(JavaAsset asset, ConversionContext context) throws Exception {
-        return converter.convert(asset, context);
+        BedrockAsset converted = converter.convert(asset, context);
+        return listener.map(actionListener -> actionListener.postConvert(asset, converted, context))
+                .orElse(converted);
     }
 
     @Override
     public void include(BedrockResourcePack pack, List<BedrockAsset> assets, CombineContext context) {
-        collector.include(pack, assets, context);
+        combiner.include(pack, assets, context);
+        listener.ifPresent(actionListener -> actionListener.postInclude(pack, assets, context));
     }
 
-    public void convert(ResourcePack pack, Optional<ResourcePack> vanillaPack, BedrockResourcePack bedrockPack, String packName, String textureSubDirectory, LogListener logListener) {
+    public int convert(ResourcePack pack, Optional<ResourcePack> vanillaPack, BedrockResourcePack bedrockPack, String packName, String textureSubDirectory, LogListener logListener) {
         ExtractionContext extractionContext = new ExtractionContext(bedrockPack, vanillaPack, logListener);
         ConversionContext conversionContext = new ConversionContext(packName, logListener);
         CombineContext combineContext = new CombineContext(textureSubDirectory, logListener);
 
+        AtomicInteger errors = new AtomicInteger(0);
         List<BedrockAsset> converted = extract(pack, extractionContext).parallelStream()
                 .map(asset -> {
                     try {
                         return convert(asset, conversionContext);
                     } catch (Exception exception) {
-                        logListener.error("Failed to convert asset");
+                        errors.incrementAndGet();
+                        logListener.error("Failed to convert asset", exception);
                     }
                     return null;
                 })
@@ -75,5 +95,11 @@ public record ConverterPipeline<JavaAsset, BedrockAsset>(AssetExtractor<JavaAsse
         if (!converted.isEmpty()) {
             include(bedrockPack, converted, combineContext);
         }
+
+        return errors.get();
+    }
+
+    public ConverterPipeline<JavaAsset, BedrockAsset> withActionListener(ActionListener<JavaAsset, BedrockAsset> listener) {
+        return new ConverterPipeline<>(extractor, converter, combiner, Optional.of(listener));
     }
 }

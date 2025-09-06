@@ -26,17 +26,24 @@
 
 package org.geysermc.pack.converter.converter;
 
-import org.geysermc.pack.converter.PackConversionContext;
-import org.geysermc.pack.converter.data.ConversionData;
+import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
+import team.unnamed.creative.ResourcePack;
+
+import java.util.Collection;
+import java.util.List;
 
 /**
  * A listener for actions that occur during pack conversion.
  */
-public interface ActionListener<T extends ConversionData> {
+public interface ActionListener<JavaAsset, BedrockAsset> {
 
-    default void preConvert(PackConversionContext<T> context) {
+    default void postExtract(ResourcePack pack, Collection<JavaAsset> extracted, ExtractionContext context) {
     }
 
-    default void postConvert(PackConversionContext<T> context) {
+    default BedrockAsset postConvert(JavaAsset asset, BedrockAsset bedrockAsset, ConversionContext context) {
+        return bedrockAsset;
+    }
+
+    default void postInclude(BedrockResourcePack pack, List<BedrockAsset> assets, CombineContext context) {
     }
 }
