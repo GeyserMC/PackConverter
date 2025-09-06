@@ -256,10 +256,9 @@ public final class PackConverter {
             throw new NullPointerException("Vanilla Pack Path cannot be null");
         }
 
-        /*
         if (this.converters.isEmpty()) {
             throw new IllegalStateException("No converters have been added");
-        }*/
+        }
 
         // Load any image plugins
         ImageIO.scanForPlugins();
@@ -281,33 +280,14 @@ public final class PackConverter {
             ResourcePack vanillaResourcePack = MinecraftResourcePackReader.minecraft().readFromZipFile(vanillaPackPath);
             BedrockResourcePack bedrockResourcePack = new BedrockResourcePack(this.tmpDir);
 
-            int errors = 0;
-
-            AssetConverters.converters().forEach(converter -> converter.convert(javaResourcePack, Optional.of(vanillaResourcePack), bedrockResourcePack, packName(), textureSubdirectory, logListener));
-            /*
-            final Converter.ConversionDataCreationContext conversionDataCreationContext = new Converter.ConversionDataCreationContext(
-                this, logListener, input, this.tmpDir, javaResourcePack, vanillaResourcePack
-            );
-
-            int errors = 0;
-            for (Converter converter : this.converters) {
-                ConversionData data = converter.createConversionData(conversionDataCreationContext);
-                PackConversionContext<?> context = new PackConversionContext<>(data, this, javaResourcePack, bedrockResourcePack, this.logListener);
-
-                List<ActionListener<?>> actionListeners = this.actionListeners.getOrDefault(data.getClass(), List.of());
-                try {
-                    actionListeners.forEach(actionListener -> actionListener.preConvert((PackConversionContext) context));
-                    converter.convert(context);
-                    actionListeners.forEach(actionListener -> actionListener.postConvert((PackConversionContext) context));
-                } catch (Throwable t) {
-                    this.logListener.error("Error converting pack!", t);
-                    errors++;
-                }
-            }
+            int errors = converters.stream()
+                    .mapToInt(converter -> converter.convert(javaResourcePack, Optional.of(vanillaResourcePack),
+                            bedrockResourcePack, packName(), textureSubdirectory, logListener))
+                    .sum();
 
             if (this.postProcessor != null) {
                 this.postProcessor.accept(javaResourcePack, bedrockResourcePack);
-            }*/
+            }
 
             bedrockResourcePack.export();
 

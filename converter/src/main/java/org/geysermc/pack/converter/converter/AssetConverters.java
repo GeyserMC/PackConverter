@@ -110,15 +110,17 @@ public final class AssetConverters {
     public static <JavaAsset, BedrockAsset> ConverterPipeline<JavaAsset, BedrockAsset> create(AssetExtractor<JavaAsset> extractor,
                                                                                               AssetConverter<JavaAsset, BedrockAsset> converter,
                                                                                               AssetCombiner<BedrockAsset> combiner) {
-        ConverterPipeline<JavaAsset, BedrockAsset> pipeline = new ConverterPipeline<>(extractor, converter, combiner, Optional.empty());
+        ConverterPipeline<JavaAsset, BedrockAsset> pipeline = new ConverterPipeline<>(extractor, converter, combiner, false, Optional.empty());
         if (!bootstrapped) {
             CONVERTERS.add(pipeline);
         }
         return pipeline;
     }
 
-    public static List<ConverterPipeline<?, ?>> converters() {
-        return List.copyOf(CONVERTERS);
+    public static List<ConverterPipeline<?, ?>> converters(boolean experimental) {
+        return List.copyOf(CONVERTERS).stream()
+                .filter(converter -> experimental || !converter.experimental())
+                .toList();
     }
 
     static {

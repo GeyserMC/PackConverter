@@ -42,15 +42,18 @@ public final class ConverterPipeline<JavaAsset, BedrockAsset>
     private final AssetExtractor<JavaAsset> extractor;
     private final AssetConverter<JavaAsset, BedrockAsset> converter;
     private final AssetCombiner<BedrockAsset> combiner;
+    private final boolean experimental;
     private final Optional<ActionListener<JavaAsset, BedrockAsset>> listener;
 
     public ConverterPipeline(AssetExtractor<JavaAsset> extractor,
                              AssetConverter<JavaAsset, BedrockAsset> converter,
                              AssetCombiner<BedrockAsset> combiner,
+                             boolean experimental,
                              Optional<ActionListener<JavaAsset, BedrockAsset>> listener) {
         this.extractor = extractor;
         this.converter = converter;
         this.combiner = combiner;
+        this.experimental = experimental;
         this.listener = listener;
     }
 
@@ -80,7 +83,7 @@ public final class ConverterPipeline<JavaAsset, BedrockAsset>
         CombineContext combineContext = new CombineContext(textureSubDirectory, logListener);
 
         AtomicInteger errors = new AtomicInteger(0);
-        List<BedrockAsset> converted = extract(pack, extractionContext).parallelStream()
+        List<BedrockAsset> converted = extract(pack, extractionContext).stream()
                 .map(asset -> {
                     try {
                         return convert(asset, conversionContext);
@@ -99,7 +102,11 @@ public final class ConverterPipeline<JavaAsset, BedrockAsset>
         return errors.get();
     }
 
+    public boolean experimental() {
+        return experimental;
+    }
+
     public ConverterPipeline<JavaAsset, BedrockAsset> withActionListener(ActionListener<JavaAsset, BedrockAsset> listener) {
-        return new ConverterPipeline<>(extractor, converter, combiner, Optional.of(listener));
+        return new ConverterPipeline<>(extractor, converter, combiner, experimental, Optional.of(listener));
     }
 }

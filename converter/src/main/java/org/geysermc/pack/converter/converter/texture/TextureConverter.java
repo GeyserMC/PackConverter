@@ -75,6 +75,9 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
 
     @Override
     public Collection<Texture> extract(ResourcePack pack, ExtractionContext context) {
+        // TODO ideally textures should be transformed individually in the convert process, and not together in the extraction process, but this is hard to achieve,
+        // TODO and will need another big refactor to the texture transformation code
+        // TODO for now this will work, but for library users it might be nice to be able to properly convert singular textures with transformations
         TextureMappings mappings = TextureMappings.textureMappings();
         List<Texture> textures = new ArrayList<>(pack.textures());
 

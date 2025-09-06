@@ -128,7 +128,7 @@ public class ThunderGUI extends JFrame {
                                 .output(outputPath)
                                 .packName(packName.getText().isBlank() ? inputPath.getFileName().toString() : packName.getText())
                                 .vanillaPackPath(vanillaPackPath)
-                                .converters(AssetConverters.converters()) // TODO debug mode
+                                .converters(AssetConverters.converters(this.debugMode.get()))
                                 .logListener(logListener)
                                 .convert()
                                 .pack();

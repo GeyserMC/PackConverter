@@ -189,12 +189,11 @@ public final class PngToTgaMappings {
     };
     
     @Nullable
-    public static TgaMapping mapping(@NotNull String key) {
+    static TgaMapping mapping(@NotNull String key) {
         return MAPPINGS.get(key);
     }
 
-    // TODO make package-private again
-    public record TgaMapping(String value, boolean keep) {
+    record TgaMapping(String value, boolean keep) {
         
         public TgaMapping(String value) {
             this(value, false);

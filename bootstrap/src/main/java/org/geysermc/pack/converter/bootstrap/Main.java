@@ -77,7 +77,7 @@ public class Main {
                     .input(Path.of(inputPath))
                     .output(Path.of(outputPath))
                     .packName(packName)
-                    .converters(AssetConverters.converters())
+                    .converters(AssetConverters.converters(debug))
                     .convert()
                     .pack();
         } else {

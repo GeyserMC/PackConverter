@@ -33,5 +33,5 @@ import team.unnamed.creative.ResourcePack;
 import java.util.Optional;
 
 public record ExtractionContext(@Deprecated(forRemoval = true) BedrockResourcePack bedrockResourcePack,
-                                Optional<ResourcePack> vanillaPack, LogListener logListener) implements LogHelpers {
+                                Optional<ResourcePack> vanillaPack, LogListener logListener) implements LogListenerHelper {
 }

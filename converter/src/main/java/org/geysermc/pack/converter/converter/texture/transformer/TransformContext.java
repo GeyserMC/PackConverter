@@ -29,7 +29,7 @@ package org.geysermc.pack.converter.converter.texture.transformer;
 import net.kyori.adventure.key.Key;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.converter.texture.TextureMappings;
-import org.geysermc.pack.converter.converter.LogHelpers;
+import org.geysermc.pack.converter.converter.LogListenerHelper;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.geysermc.pack.converter.util.LogListener;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +45,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class TransformContext implements LogHelpers {
+public class TransformContext implements LogListenerHelper {
     private final TextureMappings mappings;
     private final Collection<Texture> textures;
     // TODO figure out how to handle this, this is executed in the extraction phase and ideally bedrock pack wouldn't be accessed then

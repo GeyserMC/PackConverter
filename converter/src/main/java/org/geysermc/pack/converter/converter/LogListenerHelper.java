@@ -29,7 +29,7 @@ package org.geysermc.pack.converter.converter;
 import org.geysermc.pack.converter.util.LogListener;
 import org.jetbrains.annotations.NotNull;
 
-public interface LogHelpers {
+public interface LogListenerHelper {
 
     LogListener logListener();
 
