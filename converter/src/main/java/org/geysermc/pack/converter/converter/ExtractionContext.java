@@ -28,10 +28,15 @@ package org.geysermc.pack.converter.converter;
 
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.util.LogListener;
+import org.geysermc.pack.converter.util.LogListenerHelper;
 import team.unnamed.creative.ResourcePack;
 
 import java.util.Optional;
 
+/**
+ * @param bedrockResourcePack should never be used. The bedrock resource pack should not be written to during extraction, rather only during combination of converted assets.
+ *                            The bedrock resource pack is only included here for legacy converters still making use of it, which will be rewritten soon.
+ */
 public record ExtractionContext(@Deprecated(forRemoval = true) BedrockResourcePack bedrockResourcePack,
                                 Optional<ResourcePack> vanillaPack, LogListener logListener) implements LogListenerHelper {
 }

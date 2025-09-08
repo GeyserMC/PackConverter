@@ -24,9 +24,8 @@
  *
  */
 
-package org.geysermc.pack.converter.converter;
+package org.geysermc.pack.converter.util;
 
-import org.geysermc.pack.converter.util.LogListener;
 import org.jetbrains.annotations.NotNull;
 
 public interface LogListenerHelper {

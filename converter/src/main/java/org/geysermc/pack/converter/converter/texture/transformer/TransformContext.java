@@ -29,7 +29,7 @@ package org.geysermc.pack.converter.converter.texture.transformer;
 import net.kyori.adventure.key.Key;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.converter.texture.TextureMappings;
-import org.geysermc.pack.converter.converter.LogListenerHelper;
+import org.geysermc.pack.converter.util.LogListenerHelper;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.geysermc.pack.converter.util.LogListener;
 import org.jetbrains.annotations.NotNull;

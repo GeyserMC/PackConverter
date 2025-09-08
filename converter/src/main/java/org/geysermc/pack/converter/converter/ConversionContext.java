@@ -27,6 +27,7 @@
 package org.geysermc.pack.converter.converter;
 
 import org.geysermc.pack.converter.util.LogListener;
+import org.geysermc.pack.converter.util.LogListenerHelper;
 
 public record ConversionContext(String packName, LogListener logListener) implements LogListenerHelper {
 }
