@@ -28,7 +28,7 @@ package org.geysermc.pack.converter.bootstrap;
 
 import com.twelvemonkeys.image.BufferedImageIcon;
 import org.geysermc.pack.converter.PackConverter;
-import org.geysermc.pack.converter.converter.AssetConverters;
+import org.geysermc.pack.converter.pipeline.AssetConverters;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.geysermc.pack.converter.util.ZipUtils;
 

@@ -28,7 +28,7 @@ package org.geysermc.pack.converter.bootstrap;
 
 import com.formdev.flatlaf.intellijthemes.FlatArcDarkIJTheme;
 import org.geysermc.pack.converter.PackConverter;
-import org.geysermc.pack.converter.converter.AssetConverters;
+import org.geysermc.pack.converter.pipeline.AssetConverters;
 
 import java.io.*;
 import java.nio.file.Path;

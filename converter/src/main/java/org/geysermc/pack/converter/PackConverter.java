@@ -28,9 +28,12 @@ package org.geysermc.pack.converter;
 
 import org.apache.commons.io.file.PathUtils;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
-import org.geysermc.pack.converter.converter.ConverterPipeline;
-import org.geysermc.pack.converter.converter.AssetConverters;
-import org.geysermc.pack.converter.util.*;
+import org.geysermc.pack.converter.pipeline.ConverterPipeline;
+import org.geysermc.pack.converter.util.DefaultLogListener;
+import org.geysermc.pack.converter.util.LogListener;
+import org.geysermc.pack.converter.util.NioDirectoryFileTreeReader;
+import org.geysermc.pack.converter.util.VanillaPackProvider;
+import org.geysermc.pack.converter.util.ZipUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.ResourcePack;
