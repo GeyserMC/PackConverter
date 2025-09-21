@@ -28,6 +28,7 @@ package org.geysermc.pack.bedrock.resource;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import org.geysermc.pack.bedrock.resource.attachables.Attachables;
 import org.geysermc.pack.bedrock.resource.models.entity.ModelEntity;
 import org.geysermc.pack.bedrock.resource.render_controllers.RenderControllers;
@@ -44,9 +45,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -89,6 +90,16 @@ public class BedrockResourcePack {
         this.manifest = manifest;
         this.itemTexture = itemTexture;
         this.terrainTexture = terrainTexture;
+    }
+
+    /**
+     * Get the directory of the resource pack.
+     *
+     * @return the directory of the resource pack
+     */
+    @NotNull
+    public Path directory() {
+        return directory;
     }
 
     /**
@@ -498,6 +509,16 @@ public class BedrockResourcePack {
         }
 
         this.extraFiles.put(location, bytes);
+    }
+
+    /**
+     * Add an extra JSON file to the resource pack.
+     *
+     * @param element the contents of the file
+     * @param location the location of the file
+     */
+    public void addExtraFile(@NotNull JsonElement element, @NotNull String location) {
+        addExtraFile(GSON.toJson(element).getBytes(StandardCharsets.UTF_8), location);
     }
 
     /**

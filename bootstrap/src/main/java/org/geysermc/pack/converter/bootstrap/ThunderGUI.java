@@ -28,7 +28,7 @@ package org.geysermc.pack.converter.bootstrap;
 
 import com.twelvemonkeys.image.BufferedImageIcon;
 import org.geysermc.pack.converter.PackConverter;
-import org.geysermc.pack.converter.converter.Converters;
+import org.geysermc.pack.converter.pipeline.AssetConverters;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.geysermc.pack.converter.util.ZipUtils;
 
@@ -128,7 +128,7 @@ public class ThunderGUI extends JFrame {
                                 .output(outputPath)
                                 .packName(packName.getText().isBlank() ? inputPath.getFileName().toString() : packName.getText())
                                 .vanillaPackPath(vanillaPackPath)
-                                .converters(Converters.defaultConverters(this.debugMode.get()))
+                                .converters(AssetConverters.converters(this.debugMode.get()))
                                 .logListener(logListener)
                                 .convert()
                                 .pack();

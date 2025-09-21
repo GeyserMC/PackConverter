@@ -28,7 +28,7 @@ package org.geysermc.pack.converter.bootstrap;
 
 import com.formdev.flatlaf.intellijthemes.FlatArcDarkIJTheme;
 import org.geysermc.pack.converter.PackConverter;
-import org.geysermc.pack.converter.converter.Converters;
+import org.geysermc.pack.converter.pipeline.AssetConverters;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -77,7 +77,7 @@ public class Main {
                     .input(Path.of(inputPath))
                     .output(Path.of(outputPath))
                     .packName(packName)
-                    .converters(Converters.defaultConverters(debug))
+                    .converters(AssetConverters.converters(debug))
                     .convert()
                     .pack();
         } else {

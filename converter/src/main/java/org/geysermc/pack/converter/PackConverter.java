@@ -28,10 +28,12 @@ package org.geysermc.pack.converter;
 
 import org.apache.commons.io.file.PathUtils;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
-import org.geysermc.pack.converter.converter.ActionListener;
-import org.geysermc.pack.converter.converter.Converter;
-import org.geysermc.pack.converter.data.ConversionData;
-import org.geysermc.pack.converter.util.*;
+import org.geysermc.pack.converter.pipeline.ConverterPipeline;
+import org.geysermc.pack.converter.util.DefaultLogListener;
+import org.geysermc.pack.converter.util.LogListener;
+import org.geysermc.pack.converter.util.NioDirectoryFileTreeReader;
+import org.geysermc.pack.converter.util.VanillaPackProvider;
+import org.geysermc.pack.converter.util.ZipUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.ResourcePack;
@@ -43,9 +45,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 
 /**
@@ -63,11 +64,9 @@ public final class PackConverter {
     private boolean compressed;
     private boolean enforcePackCheck = false;
 
-    private final Map<Class<?>, List<ActionListener<?>>> actionListeners = new IdentityHashMap<>();
-
     private BiConsumer<ResourcePack, BedrockResourcePack> postProcessor;
 
-    private final List<Converter<?>> converters = new ArrayList<>();
+    private final List<ConverterPipeline<?, ?>> converters = new ArrayList<>();
 
     private Path tmpDir;
 
@@ -187,7 +186,7 @@ public final class PackConverter {
      * @param converter the converter to add
      * @return this instance
      */
-    public PackConverter converter(@NotNull Converter<?> converter) {
+    public PackConverter converter(@NotNull ConverterPipeline<?, ?> converter) {
         this.converters.add(converter);
         return this;
     }
@@ -198,7 +197,7 @@ public final class PackConverter {
      * @param converters the converters to add
      * @return this instance
      */
-    public PackConverter converters(@NotNull List<? extends Converter<?>> converters) {
+    public PackConverter converters(@NotNull List<? extends ConverterPipeline<?, ?>> converters) {
         this.converters.addAll(converters);
         return this;
     }
@@ -224,42 +223,6 @@ public final class PackConverter {
      */
     public PackConverter packageHandler(@NotNull PackageHandler packageHandler) {
         this.packageHandler = packageHandler;
-        return this;
-    }
-
-    /**
-     * Sets a list of action listeners for a specific conversion data class.
-     * <p>
-     * This is particularly useful for external programs that may rely on
-     * various bits of information from the pack converter at different
-     * stages.
-     *
-     * @param clazz the conversion data class
-     * @param actionListeners the action listeners
-     * @return this instance
-     * @param <T> the conversion data type
-     */
-    public <T extends ConversionData> PackConverter actionListeners(@NotNull Class<T> clazz, @NotNull ActionListener<T>... actionListeners) {
-        this.actionListeners.put(clazz, List.of(actionListeners));
-        return this;
-    }
-
-    /**
-     * Sets the action listeners.
-     * <p>
-     * This is particularly useful for external programs that may rely on
-     * various bits of information from the pack converter at different
-     * stages.
-     *
-     * @param actionListeners the action listeners
-     * @return this instance
-     * @param <T> the conversion data type
-     */
-    public <T extends ConversionData> PackConverter actionListeners(@NotNull Map<Class<T>, List<ActionListener<T>>> actionListeners) {
-        for (Map.Entry<Class<T>, List<ActionListener<T>>> entry : actionListeners.entrySet()) {
-            this.actionListeners.put(entry.getKey(), (List) entry.getValue());
-        }
-
         return this;
     }
 
@@ -320,25 +283,10 @@ public final class PackConverter {
             ResourcePack vanillaResourcePack = MinecraftResourcePackReader.minecraft().readFromZipFile(vanillaPackPath);
             BedrockResourcePack bedrockResourcePack = new BedrockResourcePack(this.tmpDir);
 
-            final Converter.ConversionDataCreationContext conversionDataCreationContext = new Converter.ConversionDataCreationContext(
-                this, logListener, input, this.tmpDir, javaResourcePack, vanillaResourcePack
-            );
-
-            int errors = 0;
-            for (Converter converter : this.converters) {
-                ConversionData data = converter.createConversionData(conversionDataCreationContext);
-                PackConversionContext<?> context = new PackConversionContext<>(data, this, javaResourcePack, bedrockResourcePack, this.logListener);
-
-                List<ActionListener<?>> actionListeners = this.actionListeners.getOrDefault(data.getClass(), List.of());
-                try {
-                    actionListeners.forEach(actionListener -> actionListener.preConvert((PackConversionContext) context));
-                    converter.convert(context);
-                    actionListeners.forEach(actionListener -> actionListener.postConvert((PackConversionContext) context));
-                } catch (Throwable t) {
-                    this.logListener.error("Error converting pack!", t);
-                    errors++;
-                }
-            }
+            int errors = converters.stream()
+                    .mapToInt(converter -> converter.convert(javaResourcePack, Optional.of(vanillaResourcePack),
+                            bedrockResourcePack, packName(), textureSubdirectory, logListener))
+                    .sum();
 
             if (this.postProcessor != null) {
                 this.postProcessor.accept(javaResourcePack, bedrockResourcePack);

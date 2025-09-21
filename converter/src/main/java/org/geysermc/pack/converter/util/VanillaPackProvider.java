@@ -26,12 +26,16 @@
 
 package org.geysermc.pack.converter.util;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import lombok.Getter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.file.PathUtils;
-import org.geysermc.pack.converter.converter.texture.transformer.type.OverlayTransformer;
-import org.geysermc.pack.converter.converter.texture.transformer.type.entity.SheepTransformer;
+import org.geysermc.pack.converter.type.texture.transformer.type.OverlayTransformer;
+import org.geysermc.pack.converter.type.texture.transformer.type.entity.SheepTransformer;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
@@ -40,7 +44,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public final class VanillaPackProvider {
