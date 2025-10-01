@@ -1915,6 +1915,7 @@
   "entity/equipment/humanoid/netherite": "models/armor/netherite_1",
   "entity/equipment/humanoid_leggings/netherite": "models/armor/netherite_2",
   "entity/equipment/humanoid/turtle_scute": "models/armor/turtle_1",
+  "entity/equipment/wings/elytra": "models/armor/elytra",
 
   "gui/sprites/hud/locator_bar_background": "ui/locator_bg",
 
