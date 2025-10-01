@@ -45,7 +45,11 @@ public class ChestDoubleTransformer implements TextureTransformer {
     private static final List<ChestData> CHEST_DATA = List.of(
             new ChestData("entity/chest/normal_left.png", "entity/chest/normal_right.png", "entity/chest/double_normal.png"),
             new ChestData("entity/chest/trapped_left.png", "entity/chest/trapped_right.png", "entity/chest/trapped_double.png"),
-            new ChestData("entity/chest/christmas_left.png", "entity/chest/christmas_right.png", "entity/chest/christmas_double.png")
+            new ChestData("entity/chest/christmas_left.png", "entity/chest/christmas_right.png", "entity/chest/christmas_double.png"),
+            new ChestData("entity/chest/copper_left.png", "entity/chest/copper_right.png", "entity/chest/copper_default_double.png"),
+            new ChestData("entity/chest/copper_exposed_left.png", "entity/chest/copper_exposed_right.png", "entity/chest/copper_exposed_double.png"),
+            new ChestData("entity/chest/copper_weathered_left.png", "entity/chest/copper_weathered_right.png", "entity/chest/copper_weathered_double.png"),
+            new ChestData("entity/chest/copper_oxidized_left.png", "entity/chest/copper_oxidized_right.png", "entity/chest/copper_oxidized_double.png")
     );
     
     @Override

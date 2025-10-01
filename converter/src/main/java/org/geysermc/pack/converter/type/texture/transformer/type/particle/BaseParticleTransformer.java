@@ -58,7 +58,7 @@ public class BaseParticleTransformer implements TextureTransformer {
             new MultiTextureData("particle/note", "particle/critical_hit", "particle/enchanted_hit"),
             new MultiTextureData("particle/heart", "particle/angry", "particle/glint", null), // TODO: Villager?
             new MultiTextureData(null, null, "particle/glow"),
-            new MultiTextureData("particle/drip_hang", "particle/drip_fall", "particle/drip_land"),
+            new MultiTextureData("particle/drip_hang", "particle/drip_fall", "particle/drip_land", null, "particle/copper_fire_flame", null), // TODO: Copper lava??
             new AtlasTextureData("effect", 8),
             new AtlasTextureData("spell", 8),
             new AtlasTextureData("explosion", 16),
