@@ -39,6 +39,7 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @AutoService(TextureTransformer.class)
 public class ChestNormalTransformer implements TextureTransformer {
@@ -48,7 +49,15 @@ public class ChestNormalTransformer implements TextureTransformer {
             "christmas",
             "ender",
             "normal",
-            "trapped"
+            "trapped",
+            "copper",
+            "copper_exposed",
+            "copper_weathered",
+            "copper_oxidized"
+    );
+
+    private static final Map<String, String> MAPPINGS = Map.of(
+            "copper", "copper_default"
     );
     
     @Override
@@ -87,7 +96,7 @@ public class ChestNormalTransformer implements TextureTransformer {
 
             graphics.drawImage(ImageUtil.crop(chestImage, 0, 0, (6 * factor), (6 * factor)), 0, 0, null);
 
-            context.offer(KeyUtil.key(Key.MINECRAFT_NAMESPACE, CHEST_PATH + "/" + variant + ".png"), newChestImage, "png");
+            context.offer(KeyUtil.key(Key.MINECRAFT_NAMESPACE, CHEST_PATH + "/" + MAPPINGS.getOrDefault(variant, variant) + ".png"), newChestImage, "png");
         }
     }
 
