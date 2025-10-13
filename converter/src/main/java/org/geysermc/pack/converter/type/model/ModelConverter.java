@@ -59,8 +59,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class ModelConverter implements AssetExtractor<Model>, AssetConverter<Model, BedrockModel>, AssetCombiner<BedrockModel> {
-    public static final ModelConverter INSTANCE = new ModelConverter();
+public record ModelConverter(boolean convertItemModels) implements AssetExtractor<Model>, AssetConverter<Model, BedrockModel>, AssetCombiner<BedrockModel> {
+    public static final ModelConverter INSTANCE = new ModelConverter(false);
 
     private static final String FORMAT_VERSION = "1.16.0";
     private static final String GEOMETRY_FORMAT = "geometry.%s";
@@ -90,7 +90,7 @@ public class ModelConverter implements AssetExtractor<Model>, AssetConverter<Mod
         context.debug("Converting model " + model.key().key() + ":" + value);
 
         // TODO: Convert item models but save differently?
-        if (value.startsWith("item/")) {
+        if (value.startsWith("item/") && !convertItemModels) {
             return null;
         }
 
