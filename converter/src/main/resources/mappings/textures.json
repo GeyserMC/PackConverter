@@ -967,6 +967,7 @@
     "boat/mangrove": "boat/mangrove_boat",
     "boat/cherry": "boat/cherry_boat",
     "boat/pale_oak": "boat/pale_oak_boat",
+    "camel/camel_husk": "camel_husk/camel_husk",
     "cat/all_black": "cat/allblackcat",
     "cat/black": ["cat/blackcat", "cat/tuxedo"],
     "cat/british_shorthair": "cat/britishshorthair",
@@ -1086,6 +1087,7 @@
     "signs/hanging/spruce": "spruce_hanging_sign",
     "signs/hanging/warped": "warped_hanging_sign",
     "skeleton/bogged_overlay": "skeleton/bogged_clothes",
+    "skeleton/parched": "parched/parched",
     "skeleton/skeleton": ["skeleton/skeleton", "skulls/skeleton"],
     "skeleton/wither_skeleton": ["skeleton/wither_skeleton", "skulls/wither_skeleton"],
     "strider/strider_cold": "strider/strider_suffocated",
@@ -1181,7 +1183,13 @@
     "equipment/horse_body/copper": "horse2/armor/horse_armor_copper",
     "equipment/horse_body/iron": "horse2/armor/horse_armor_iron",
     "equipment/horse_body/gold": "horse2/armor/horse_armor_gold",
-    "equipment/horse_body/diamond": "horse2/armor/horse_armor_diamond"
+    "equipment/horse_body/diamond": "horse2/armor/horse_armor_diamond",
+
+    "equipment/nautilus_body/copper": "nautilus/armor/nautilus_armor_copper",
+    "equipment/nautilus_body/iron": "nautilus/armor/nautilus_armor_iron",
+    "equipment/nautilus_body/gold": "nautilus/armor/nautilus_armor_gold",
+    "equipment/nautilus_body/diamond": "nautilus/armor/nautilus_armor_diamond",
+    "equipment/nautilus_body/netherite": "nautilus/armor/nautilus_armor_netherite"
   },
   "environment": {
     "clouds": "clouds",
@@ -1720,6 +1728,7 @@
     "bogged_spawn_egg": "spawn_eggs/spawn_egg_bogged",
     "breeze_spawn_egg": "spawn_eggs/spawn_egg_breeze",
     "camel_spawn_egg": "spawn_eggs/spawn_egg_camel",
+    "camel_husk_spawn_egg": "spawn_eggs/spawn_egg_camel_husk",
     "cat_spawn_egg": "spawn_eggs/spawn_egg_cat",
     "cave_spider_spawn_egg": "spawn_eggs/spawn_egg_cave_spider",
     "chicken_spawn_egg": "spawn_eggs/spawn_egg_chicken",
@@ -1751,8 +1760,10 @@
     "magma_cube_spawn_egg": "spawn_eggs/spawn_egg_magma_cube",
     "mooshroom_spawn_egg": "spawn_eggs/spawn_egg_mooshroom",
     "mule_spawn_egg": "spawn_eggs/spawn_egg_mule",
+    "nautilus_spawn_egg": "spawn_eggs/spawn_egg_nautilus",
     "ocelot_spawn_egg": "spawn_eggs/spawn_egg_ocelot",
     "panda_spawn_egg": "spawn_eggs/spawn_egg_panda",
+    "parched_spawn_egg": "spawn_eggs/spawn_egg_parched",
     "parrot_spawn_egg": "spawn_eggs/spawn_egg_parrot",
     "phantom_spawn_egg": "spawn_eggs/spawn_egg_phantom",
     "pig_spawn_egg": "spawn_eggs/spawn_egg_pig",
@@ -1792,6 +1803,7 @@
     "zoglin_spawn_egg": "spawn_eggs/spawn_egg_zoglin",
     "zombie_spawn_egg": "spawn_eggs/spawn_egg_zombie",
     "zombie_horse_spawn_egg": "spawn_eggs/spawn_egg_zombie_horse",
+    "zombie_nautilus_spawn_egg": "spawn_eggs/spawn_egg_zombie_nautilus",
     "zombie_villager_spawn_egg": "spawn_eggs/spawn_egg_zombie_villager",
     "zombified_piglin_spawn_egg": "spawn_eggs/spawn_egg_zombified_piglin"
   },
@@ -1993,5 +2005,13 @@
   "entity/decorated_pot/sheaf_pottery_pattern": "blocks/sheaf_pottery_pattern",
   "entity/decorated_pot/shelter_pottery_pattern": "blocks/shelter_pottery_pattern",
   "entity/decorated_pot/skull_pottery_pattern": "blocks/skull_pottery_pattern",
-  "entity/decorated_pot/snort_pottery_pattern": "blocks/snort_pottery_pattern"
+  "entity/decorated_pot/snort_pottery_pattern": "blocks/snort_pottery_pattern",
+
+  "item/wooden_spear_in_hand": "entity/spear/wood_spear",
+  "item/stone_spear_in_hand": "entity/spear/stone_spear",
+  "item/copper_spear_in_hand": "entity/spear/copper_spear",
+  "item/iron_spear_in_hand": "entity/spear/iron_spear",
+  "item/golden_spear_in_hand": "entity/spear/gold_spear",
+  "item/diamond_spear_in_hand": "entity/spear/diamond_spear",
+  "item/netherite_spear_in_hand": "entity/spear/netherite_spear"
 }
