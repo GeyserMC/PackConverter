@@ -1976,6 +1976,7 @@
   "mob_effect/weaving": "ui/weaving_effect",
   "mob_effect/wind_charged": "ui/wind_charged_effect",
   "mob_effect/wither": "ui/wither_effect",
+  "mob_effect/breath_of_the_nautilus": "ui/breath_of_the_nautilus_effect",
 
   "entity/conduit/cage": "blocks/conduit_cage",
   "entity/conduit/wind": "blocks/conduit_wind_horizontal",
