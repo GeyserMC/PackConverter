@@ -1805,7 +1805,13 @@
     "zombie_horse_spawn_egg": "spawn_eggs/spawn_egg_zombie_horse",
     "zombie_nautilus_spawn_egg": "spawn_eggs/spawn_egg_zombie_nautilus",
     "zombie_villager_spawn_egg": "spawn_eggs/spawn_egg_zombie_villager",
-    "zombified_piglin_spawn_egg": "spawn_eggs/spawn_egg_zombified_piglin"
+    "zombified_piglin_spawn_egg": "spawn_eggs/spawn_egg_zombified_piglin",
+
+    "copper_nautilus_armor": "nautilus_armor/copper_nautilus_armor",
+    "iron_nautilus_armor": "nautilus_armor/iron_nautilus_armor",
+    "golden_nautilus_armor": "nautilus_armor/gold_nautilus_armor",
+    "diamond_nautilus_armor": "nautilus_armor/diamond_nautilus_armor",
+    "netherite_nautilus_armor": "nautilus_armor/netherite_nautilus_armor"
   },
   "map": {
     "map_background": "map_background",
