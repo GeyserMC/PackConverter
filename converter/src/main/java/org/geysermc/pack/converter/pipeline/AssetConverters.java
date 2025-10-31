@@ -80,7 +80,7 @@ public final class AssetConverters {
     public static final ConverterPipeline<Model, BedrockModel> MODEL = create(ModelConverter.INSTANCE);
     public static final ConverterPipeline<SoundRegistry, Map<String, SoundDefinitions>> SOUND_REGISTRY = create(
             (pack, context) -> pack.soundRegistries(), SoundRegistryConverter.INSTANCE);
-    public static final ConverterPipeline<Sound, Sound> SOUND = create(extractor(SoundSerializer.CATEGORY), SoundConverter.INSTANCE);
+    public static final ConverterPipeline<Sound, Sound> SOUND = create(SoundConverter.INSTANCE);
     public static final ConverterPipeline<Texture, TransformedTexture> TEXTURE = create(TextureConverter.INSTANCE);
 
     private static <JavaAsset, BedrockAsset> ConverterPipeline<JavaAsset, BedrockAsset> createSingle(BiFunction<ResourcePack, ExtractionContext, JavaAsset> extractor,

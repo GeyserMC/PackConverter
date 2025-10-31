@@ -34,7 +34,7 @@ import java.util.List;
 
 public class TransformedTexture {
     private final Texture texture;
-    private final List<String> outputs = new ArrayList<>();
+    private List<String> outputs = new ArrayList<>();
 
     public TransformedTexture(@NotNull Texture texture) {
         this.texture = texture;
@@ -50,7 +50,7 @@ public class TransformedTexture {
         return outputs;
     }
 
-    public void output(@NotNull String output) {
-        outputs.add(output);
+    public void output(@NotNull List<String> output) {
+        outputs = new ArrayList<>(output);
     }
 }
