@@ -75,7 +75,7 @@ public class BedTransformer implements TextureTransformer {
 
             BufferedImage bedImage = ImageUtil.ensureMinWidth(this.readImage(texture), 64);
 
-            int factor = bedImage.getWidth() / 64;
+            float factor = bedImage.getWidth() / 64f;
 
             BufferedImage newBedImage = new BufferedImage(bedImage.getWidth(), bedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
             Graphics graphics = newBedImage.getGraphics();
@@ -84,10 +84,10 @@ public class BedTransformer implements TextureTransformer {
             graphics.drawImage(ImageUtil.crop(bedImage, 0, 0, (44 * factor), (22 * factor)), 0, 0, null);
 
             // Bottom part
-            graphics.drawImage(ImageUtil.crop(bedImage, 0, (28 * factor), (44 * factor), (16 * factor)), 0, (22 * factor), null);
+            graphics.drawImage(ImageUtil.crop(bedImage, 0, (28 * factor), (44 * factor), (16 * factor)), 0, (int) (22 * factor), null);
 
             // Bottom side
-            graphics.drawImage(ImageUtil.crop(bedImage, (22 * factor), (22 * factor), (16 * factor), (6 * factor)), (22 * factor), 0, null);
+            graphics.drawImage(ImageUtil.crop(bedImage, (22 * factor), (22 * factor), (16 * factor), (6 * factor)), (int) (22 * factor), 0, null);
 
             // Feet
             List<int[]> feet = new ArrayList<>();
@@ -103,12 +103,12 @@ public class BedTransformer implements TextureTransformer {
                 int toY = values[3];
                 int rotateBottom = values[4];
 
-                graphics.drawImage(ImageUtil.crop(bedImage, ((fromX + 3) * factor), (fromY * factor), (3 * factor), (3 * factor)), ((toX + 3) * factor), ((toY + 3) * factor), null);
-                graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(bedImage, ((fromX + 6) * factor), (fromY * factor), (3 * factor), (3 * factor)), rotateBottom), ((toX + 9) * factor), ((toY + 3) * factor), null);
-                graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(bedImage, (fromX * factor), ((fromY + 3) * factor), (3 * factor), (3 * factor)), -90), (toX * factor), ((toY + 3) * factor), null);
-                graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(bedImage, ((fromX + 3) * factor), ((fromY + 3) * factor), (3 * factor), (3 * factor)), 180), ((toX + 6) * factor), (toY * factor), null);
-                graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(bedImage, ((fromX + 6) * factor), ((fromY + 3) * factor), (3 * factor), (3 * factor)), 90), ((toX + 6) * factor), ((toY + 3) * factor), null);
-                graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(bedImage, ((fromX + 9) * factor), ((fromY + 3) * factor), (3 * factor), (3 * factor)), 180), ((toX + 3) * factor), (toY * factor), null);
+                graphics.drawImage(ImageUtil.crop(bedImage, ((fromX + 3) * factor), (fromY * factor), (3 * factor), (3 * factor)), (int) ((toX + 3) * factor), (int) ((toY + 3) * factor), null);
+                graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(bedImage, ((fromX + 6) * factor), (fromY * factor), (3 * factor), (3 * factor)), rotateBottom), (int) ((toX + 9) * factor), (int) ((toY + 3) * factor), null);
+                graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(bedImage, (fromX * factor), ((fromY + 3) * factor), (3 * factor), (3 * factor)), -90), (int) (toX * factor), (int) ((toY + 3) * factor), null);
+                graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(bedImage, ((fromX + 3) * factor), ((fromY + 3) * factor), (3 * factor), (3 * factor)), 180), (int) ((toX + 6) * factor), (int) (toY * factor), null);
+                graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(bedImage, ((fromX + 6) * factor), ((fromY + 3) * factor), (3 * factor), (3 * factor)), 90), (int) ((toX + 6) * factor), (int) ((toY + 3) * factor), null);
+                graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(bedImage, ((fromX + 9) * factor), ((fromY + 3) * factor), (3 * factor), (3 * factor)), 180), (int) ((toX + 3) * factor), (int) (toY * factor), null);
             }
 
             context.offer(KeyUtil.key(Key.MINECRAFT_NAMESPACE, BED_PATH + "/" + bedColor + ".png"), newBedImage, "png");

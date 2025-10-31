@@ -51,12 +51,12 @@ public class HotbarTransformer implements TextureTransformer {
 
         BufferedImage javaHotbarImage = readImage(javaHotbarTexture);
 
-        int scale = javaHotbarImage.getHeight() / 22;
+        float scale = javaHotbarImage.getHeight() / 22f;
 
         int height = javaHotbarImage.getHeight();
 
         // The texture is 1 wide, so 1 * scale = scale
-        BufferedImage bedrockStartHotbar = new BufferedImage(scale, height, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bedrockStartHotbar = new BufferedImage((int) scale, height, BufferedImage.TYPE_INT_ARGB);
 
         Graphics g = bedrockStartHotbar.getGraphics();
 
@@ -65,7 +65,7 @@ public class HotbarTransformer implements TextureTransformer {
         context.offer(KeyUtil.key(Key.MINECRAFT_NAMESPACE, "ui/hotbar_start_cap.png"), bedrockStartHotbar, "png");
 
         for (int i = 0; i <= 8; i++) {
-            BufferedImage bedrockHotbarPart = new BufferedImage(scale * 20, height, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage bedrockHotbarPart = new BufferedImage((int) (scale * 20), height, BufferedImage.TYPE_INT_ARGB);
 
             Graphics graphics = bedrockHotbarPart.getGraphics();
 
@@ -75,7 +75,7 @@ public class HotbarTransformer implements TextureTransformer {
         }
 
         // The texture is 1 wide, so 1 * scale = scale
-        BufferedImage bedrockEndHotbar = new BufferedImage(scale, height, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bedrockEndHotbar = new BufferedImage((int) scale, height, BufferedImage.TYPE_INT_ARGB);
 
         g = bedrockEndHotbar.getGraphics();
 

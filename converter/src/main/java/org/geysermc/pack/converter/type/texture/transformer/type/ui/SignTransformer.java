@@ -68,7 +68,7 @@ public class SignTransformer implements TextureTransformer {
 
             BufferedImage javaImage = this.readImage(javaTexture);
 
-            float scale = (float) javaImage.getHeight() / 32;
+            float scale = javaImage.getHeight() / 32f;
 
             BufferedImage bedrockImage = new BufferedImage((int) (scale * 24), (int) (scale * 12), BufferedImage.TYPE_INT_ARGB);
 

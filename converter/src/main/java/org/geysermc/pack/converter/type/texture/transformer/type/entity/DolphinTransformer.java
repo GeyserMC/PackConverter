@@ -50,7 +50,7 @@ public class DolphinTransformer implements TextureTransformer {
 
         BufferedImage javaImage = this.readImage(javaTexture);
 
-        int scale = javaImage.getWidth() / 64;
+        float scale = javaImage.getWidth() / 64f;
 
         BufferedImage bedrockImage = new BufferedImage(javaImage.getWidth(), javaImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics g = bedrockImage.getGraphics();
@@ -81,7 +81,7 @@ public class DolphinTransformer implements TextureTransformer {
                         6 * scale
                 ),
                 0,
-                13 * scale,
+                (int) (13 * scale),
                 null
         );
 
@@ -95,7 +95,7 @@ public class DolphinTransformer implements TextureTransformer {
                         5 * scale
                 ),
                 0,
-                44 * scale,
+                (int) (44 * scale),
                 null
         );
 
@@ -108,8 +108,8 @@ public class DolphinTransformer implements TextureTransformer {
                         8 * scale,
                         11 * scale
                 ),
-                11 * scale,
-                33 * scale,
+                (int) (11 * scale),
+                (int) (33 * scale),
                 null
         );
 
@@ -123,7 +123,7 @@ public class DolphinTransformer implements TextureTransformer {
                         7 * scale
                 ),
                 0,
-                26 * scale,
+                (int) (26 * scale),
                 null
         );
 
@@ -136,8 +136,8 @@ public class DolphinTransformer implements TextureTransformer {
                         16 * scale,
                         13 * scale
                 ),
-                13 * scale,
-                13 * scale,
+                (int) (13 * scale),
+                (int) (13 * scale),
                 null
         );
 
@@ -151,7 +151,7 @@ public class DolphinTransformer implements TextureTransformer {
                         7 * scale
                 ),
                 0,
-                49 * scale,
+                (int) (49 * scale),
                 null
         );
 
@@ -167,8 +167,8 @@ public class DolphinTransformer implements TextureTransformer {
                         ),
                         270
                 ),
-                34 * scale,
-                4 * scale,
+                (int) (34 * scale),
+                (int) (4 * scale),
                 null
         );
 
@@ -184,8 +184,8 @@ public class DolphinTransformer implements TextureTransformer {
                         ),
                         90
                 ),
-                29 * scale,
-                4 * scale,
+                (int) (29 * scale),
+                (int) (4 * scale),
                 null
         );
 
@@ -201,7 +201,7 @@ public class DolphinTransformer implements TextureTransformer {
                         ),
                         180
                 ),
-                33 * scale,
+                (int) (33 * scale),
                 0,
                 null
         );
@@ -218,7 +218,7 @@ public class DolphinTransformer implements TextureTransformer {
                         ),
                         180
                 ),
-                34 * scale,
+                (int) (34 * scale),
                 0,
                 null
         );
@@ -232,8 +232,8 @@ public class DolphinTransformer implements TextureTransformer {
                         scale,
                         5 * scale
                 ),
-                33 * scale,
-                4 * scale,
+                (int) (33 * scale),
+                (int) (4 * scale),
                 null
         );
 
@@ -246,8 +246,8 @@ public class DolphinTransformer implements TextureTransformer {
                         scale,
                         5 * scale
                 ),
-                38 * scale,
-                4 * scale,
+                (int) (38 * scale),
+                (int) (4 * scale),
                 null
         );
 
@@ -267,7 +267,7 @@ public class DolphinTransformer implements TextureTransformer {
                         false,
                         true
                 ),
-                44 * scale,
+                (int) (44 * scale),
                 0,
                 null
         );
@@ -285,7 +285,7 @@ public class DolphinTransformer implements TextureTransformer {
                         false,
                         true
                 ),
-                51 * scale,
+                (int) (51 * scale),
                 0,
                 null
         );
@@ -302,8 +302,8 @@ public class DolphinTransformer implements TextureTransformer {
                         ),
                         180
                 ),
-                45 * scale,
-                6 * scale,
+                (int) (45 * scale),
+                (int) (6 * scale),
                 null
         );
 
@@ -319,8 +319,8 @@ public class DolphinTransformer implements TextureTransformer {
                         ),
                         180
                 ),
-                44 * scale,
-                6 * scale,
+                (int) (44 * scale),
+                (int) (6 * scale),
                 null
         );
 
@@ -338,7 +338,7 @@ public class DolphinTransformer implements TextureTransformer {
                         false,
                         true
                 ),
-                52 * scale,
+                (int) (52 * scale),
                 0,
                 null
         );
@@ -356,7 +356,7 @@ public class DolphinTransformer implements TextureTransformer {
                         false,
                         true
                 ),
-                59 * scale,
+                (int) (59 * scale),
                 0,
                 null
         );
@@ -373,8 +373,8 @@ public class DolphinTransformer implements TextureTransformer {
                         ),
                         180
                 ),
-                53 * scale,
-                6 * scale,
+                (int) (53 * scale),
+                (int) (6 * scale),
                 null
         );
 
@@ -390,8 +390,8 @@ public class DolphinTransformer implements TextureTransformer {
                         ),
                         180
                 ),
-                52 * scale,
-                6 * scale,
+                (int) (52 * scale),
+                (int) (6 * scale),
                 null
         );
 
@@ -408,8 +408,8 @@ public class DolphinTransformer implements TextureTransformer {
                         ),
                         90
                 ),
-                44 * scale,
-                4 * scale,
+                (int) (44 * scale),
+                (int) (4 * scale),
                 null
         );
 
@@ -422,8 +422,8 @@ public class DolphinTransformer implements TextureTransformer {
                         scale,
                         scale
                 ),
-                51 * scale,
-                4 * scale,
+                (int) (51 * scale),
+                (int) (4 * scale),
                 null
         );
 
@@ -439,8 +439,8 @@ public class DolphinTransformer implements TextureTransformer {
                         ),
                         270
                 ),
-                45 * scale,
-                10 * scale,
+                (int) (45 * scale),
+                (int) (10 * scale),
                 null
         );
 
@@ -453,8 +453,8 @@ public class DolphinTransformer implements TextureTransformer {
                         scale,
                         scale
                 ),
-                44 * scale,
-                10 * scale,
+                (int) (44 * scale),
+                (int) (10 * scale),
                 null
         );
 
@@ -471,8 +471,8 @@ public class DolphinTransformer implements TextureTransformer {
                         ),
                         90
                 ),
-                57 * scale,
-                4 * scale,
+                (int) (57 * scale),
+                (int) (4 * scale),
                 null
         );
 
@@ -485,8 +485,8 @@ public class DolphinTransformer implements TextureTransformer {
                         scale,
                         scale
                 ),
-                56 * scale,
-                4 * scale,
+                (int) (56 * scale),
+                (int) (4 * scale),
                 null
         );
 
@@ -502,8 +502,8 @@ public class DolphinTransformer implements TextureTransformer {
                         ),
                         270
                 ),
-                56 * scale,
-                10 * scale,
+                (int) (56 * scale),
+                (int) (10 * scale),
                 null
         );
 
@@ -516,8 +516,8 @@ public class DolphinTransformer implements TextureTransformer {
                         scale,
                         scale
                 ),
-                63 * scale,
-                10 * scale,
+                (int) (63 * scale),
+                (int) (10 * scale),
                 null
         );
 
@@ -534,8 +534,8 @@ public class DolphinTransformer implements TextureTransformer {
                         ),
                         90
                 ),
-                40 * scale,
-                4 * scale,
+                (int) (40 * scale),
+                (int) (4 * scale),
                 null
         );
 
@@ -551,8 +551,8 @@ public class DolphinTransformer implements TextureTransformer {
                         ),
                         270
                 ),
-                52 * scale,
-                10 * scale,
+                (int) (52 * scale),
+                (int) (10 * scale),
                 null
         );
 
@@ -569,8 +569,8 @@ public class DolphinTransformer implements TextureTransformer {
                         ),
                         90
                 ),
-                52 * scale,
-                4 * scale,
+                (int) (52 * scale),
+                (int) (4 * scale),
                 null
         );
 
@@ -586,8 +586,8 @@ public class DolphinTransformer implements TextureTransformer {
                         ),
                         270
                 ),
-                40 * scale,
-                10 * scale,
+                (int) (40 * scale),
+                (int) (10 * scale),
                 null
         );
 

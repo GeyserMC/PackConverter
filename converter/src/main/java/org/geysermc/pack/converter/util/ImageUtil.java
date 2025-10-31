@@ -52,10 +52,31 @@ import java.nio.file.StandardOpenOption;
 public class ImageUtil {
 
     /**
+     * @see ImageUtil#crop(BufferedImage, float, float, float, float)
+     */
+    public static BufferedImage crop(BufferedImage img, float width, float height) {
+        return crop(img, 0, 0, width, height);
+    }
+
+    /**
      * @see ImageUtil#crop(BufferedImage, int, int, int, int)
      */
     public static BufferedImage crop(BufferedImage img, int width, int height) {
         return crop(img, 0, 0, width, height);
+    }
+
+    /**
+     * Crop an image
+     *
+     * @param img Image to use
+     * @param x Starting X
+     * @param y Starting Y
+     * @param width Final width
+     * @param height Final height
+     * @return Cropped image
+     */
+    public static BufferedImage crop(BufferedImage img, float x, float y, float width, float height) {
+        return crop(img, (int) x, (int) y, (int) width, (int) height);
     }
 
     /**

@@ -87,8 +87,8 @@ public class CamelTransformer implements TextureTransformer {
         graphics.drawImage(
                 ImageUtil.crop(
                         scaledSaddleImage,
-                        0, (int) (64 * scale),
-                        (int) (128 * scale), (int) (64 * scale)
+                        0, 64 * scale,
+                        128 * scale, 64 * scale
                 ),
                 0, (int) (64 * scale), null
         );
@@ -96,8 +96,8 @@ public class CamelTransformer implements TextureTransformer {
         graphics.drawImage(
                 ImageUtil.crop(
                         scaledSaddleImage,
-                        (int) (84 * scale), (int) (51 * scale),
-                        (int) (44 * scale), (int) (13 * scale)
+                        84 * scale, 51 * scale,
+                        44 * scale, 13 * scale
                 ),
                 (int) (84 * scale), (int) (51 * scale), null
         );

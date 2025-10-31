@@ -60,7 +60,7 @@ public class ZombieTransformer implements TextureTransformer {
 
             BufferedImage javaImage = this.readImage(texture);
 
-            float scale = (float) javaImage.getWidth() / 64;
+            float scale = javaImage.getWidth() / 64f;
 
             BufferedImage bedrockImage = new BufferedImage(javaImage.getWidth(), (int) (scale * 32), BufferedImage.TYPE_INT_ARGB);
 

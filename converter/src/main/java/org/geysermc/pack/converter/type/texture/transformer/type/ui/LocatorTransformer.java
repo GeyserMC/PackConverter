@@ -58,10 +58,10 @@ public class LocatorTransformer implements TextureTransformer {
             BufferedImage dotImage = this.readImage(dotTexture);
 
             // The default size for java is 9x9, so a 18x18 texture would have a 2 scale
-            int scale = dotImage.getWidth() / 9;
+            float scale = dotImage.getWidth() / 9f;
 
             // The default size for bedrock is 7x7, so a 18x18 java texture would mean a 14x14 size for bedrock
-            int bedrockSize = scale * 7;
+            int bedrockSize = (int) (scale * 7);
 
             BufferedImage bedrockDotImage = new BufferedImage(bedrockSize, bedrockSize, BufferedImage.TYPE_INT_ARGB);
 
