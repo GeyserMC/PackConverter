@@ -27,11 +27,10 @@
 package org.geysermc.pack.converter.type.sound;
 
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
-import org.geysermc.pack.converter.pipeline.AssetCombiner;
-import org.geysermc.pack.converter.pipeline.AssetConverter;
-import org.geysermc.pack.converter.pipeline.CombineContext;
-import org.geysermc.pack.converter.pipeline.ConversionContext;
+import org.geysermc.pack.converter.pipeline.*;
+import org.geysermc.pack.converter.util.JsonMappings;
 import org.jetbrains.annotations.Nullable;
+import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.sound.Sound;
 
 import java.io.FileOutputStream;
@@ -40,10 +39,16 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-public class SoundConverter implements AssetConverter<Sound, Sound>, AssetCombiner<Sound> {
+public class SoundConverter implements AssetExtractor<Sound>, AssetConverter<Sound, Sound>, AssetCombiner<Sound> {
     public static final SoundConverter INSTANCE = new SoundConverter();
+
+    @Override
+    public Collection<Sound> extract(ResourcePack pack, ExtractionContext context) {
+        return pack.sounds();
+    }
 
     @Override
     public @Nullable Sound convert(Sound sound, ConversionContext context) throws Exception {
@@ -52,27 +57,32 @@ public class SoundConverter implements AssetConverter<Sound, Sound>, AssetCombin
 
     @Override
     public void include(BedrockResourcePack pack, List<Sound> sounds, CombineContext context) {
+        JsonMappings mappings = JsonMappings.getMapping("sounds");
+
         List<String> exported = new ArrayList<>();
         Path output = pack.directory().resolve(SoundRegistryConverter.BEDROCK_SOUNDS_LOCATION);
 
         for (Sound sound : sounds) {
-            String path = sound.key().value();
-            if (exported.contains(path)) {
-                context.warn("Conflicting sound file " + sound.key() + "!");
-                continue;
-            }
-            Path file = output.resolve(path + ".ogg");
-            Path directory = file.getParent();
-            try {
-                Files.createDirectories(directory);
-                try (OutputStream outputStream = new FileOutputStream(file.toFile())) {
-                    sound.data().write(outputStream);
+            String javaPath = sound.key().value();
+            List<String> paths = mappings.map(javaPath);
+            for (String path : paths) {
+                if (exported.contains(path)) {
+                    context.warn("Conflicting sound file " + sound.key() + "!");
+                    continue;
                 }
-            } catch (IOException exception) {
-                context.error("Failed to write sound file " + sound.key() + "!", exception);
-                continue;
+                Path file = output.resolve(path + ".ogg");
+                Path directory = file.getParent();
+                try {
+                    Files.createDirectories(directory);
+                    try (OutputStream outputStream = new FileOutputStream(file.toFile())) {
+                        sound.data().write(outputStream);
+                    }
+                } catch (IOException exception) {
+                    context.error("Failed to write sound file " + sound.key() + "!", exception);
+                    continue;
+                }
+                exported.add(path);
             }
-            exported.add(path);
         }
     }
 }

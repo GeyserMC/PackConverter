@@ -26,6 +26,7 @@
 
 package org.geysermc.pack.converter.bootstrap;
 
+import org.geysermc.pack.converter.util.DefaultLogListener;
 import org.geysermc.pack.converter.util.LogListener;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +34,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-public class BootstrapLogListener implements LogListener {
+public class BootstrapLogListener extends DefaultLogListener {
     private final ThunderGUI gui;
 
     public BootstrapLogListener(ThunderGUI gui) {
@@ -45,21 +46,26 @@ public class BootstrapLogListener implements LogListener {
         if (gui.debugMode.get()) {
             appendText("DEBUG: " + message);
         }
+
+        super.debug(message);
     }
 
     @Override
     public void info(@NotNull String message) {
         appendText(message);
+        super.info(message);
     }
 
     @Override
     public void warn(@NotNull String message) {
         appendText("WARNING: " + message);
+        super.warn(message);
     }
 
     @Override
     public void error(@NotNull String message) {
         appendText("ERROR: " + message);
+        super.error(message);
     }
 
     @Override
@@ -73,6 +79,7 @@ public class BootstrapLogListener implements LogListener {
 
             appendText(writer.toString());
         }
+        super.error(message, exception);
     }
 
     private void appendText(String text) {
