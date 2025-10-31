@@ -30,6 +30,7 @@ import net.kyori.adventure.key.Key;
 import org.geysermc.pack.converter.type.texture.transformer.TextureTransformer;
 import org.geysermc.pack.converter.type.texture.transformer.TransformContext;
 import org.geysermc.pack.converter.util.ImageUtil;
+import org.geysermc.pack.converter.util.KeyUtil;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
 
@@ -53,7 +54,7 @@ public class ChainTransformer implements TextureTransformer {
     @Override
     public void transform(@NotNull TransformContext context) throws IOException {
         for (ChainData chainData : CHAIN_DATA) {
-            Key javaKey = Key.key(Key.MINECRAFT_NAMESPACE, JAVA_NAME.formatted(chainData.name()));
+            Key javaKey = KeyUtil.key(Key.MINECRAFT_NAMESPACE, JAVA_NAME.formatted(chainData.name()));
 
             Texture javaTexture = context.poll(javaKey);
             if (javaTexture == null) continue;
@@ -62,8 +63,8 @@ public class ChainTransformer implements TextureTransformer {
 
             float scale = javaImage.getHeight() / 16f;
 
-            Key bedrock1Key = Key.key(Key.MINECRAFT_NAMESPACE, BEDROCK_1.formatted(chainData.name()));
-            Key bedrock2Key = Key.key(Key.MINECRAFT_NAMESPACE, BEDROCK_2.formatted(chainData.name()));
+            Key bedrock1Key = KeyUtil.key(Key.MINECRAFT_NAMESPACE, BEDROCK_1.formatted(chainData.name()));
+            Key bedrock2Key = KeyUtil.key(Key.MINECRAFT_NAMESPACE, BEDROCK_2.formatted(chainData.name()));
 
             BufferedImage bedrock1Image = new BufferedImage(javaImage.getWidth(), javaImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
             BufferedImage bedrock2Image = new BufferedImage(javaImage.getWidth(), javaImage.getHeight(), BufferedImage.TYPE_INT_ARGB);

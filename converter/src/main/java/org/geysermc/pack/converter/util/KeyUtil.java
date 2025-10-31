@@ -36,10 +36,10 @@ public final class KeyUtil {
     }
 
     public static @NotNull Key key(final @NotNull String string) {
-        return Key.key(string);
+        return UnsafeKey.key(string);
     }
 
     public static @NotNull Key key(final @NotNull String namespace, final @NotNull String value) {
-        return Key.key(namespace, value);
+        return UnsafeKey.key(namespace, value);
     }
 }

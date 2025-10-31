@@ -29,6 +29,7 @@ package org.geysermc.pack.converter.type.texture.transformer.type.entity;
 import net.kyori.adventure.key.Key;
 import org.geysermc.pack.converter.type.texture.transformer.TextureTransformer;
 import org.geysermc.pack.converter.type.texture.transformer.TransformContext;
+import org.geysermc.pack.converter.util.KeyUtil;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
 
@@ -37,8 +38,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class CopperGolemTransformer implements TextureTransformer {
-    private static final Key POPPY = Key.key(Key.MINECRAFT_NAMESPACE, "block/poppy.png");
-    private static final Key COPPER_POPPY = Key.key(Key.MINECRAFT_NAMESPACE, "entity/copper_golem/copper_golem_flower.png");
+    private static final Key POPPY = KeyUtil.key(Key.MINECRAFT_NAMESPACE, "block/poppy.png");
+    private static final Key COPPER_POPPY = KeyUtil.key(Key.MINECRAFT_NAMESPACE, "entity/copper_golem/copper_golem_flower.png");
 
     @Override
     public void transform(@NotNull TransformContext context) throws IOException {
