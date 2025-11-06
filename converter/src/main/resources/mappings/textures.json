@@ -1184,6 +1184,7 @@
     "equipment/horse_body/iron": "horse2/armor/horse_armor_iron",
     "equipment/horse_body/gold": "horse2/armor/horse_armor_gold",
     "equipment/horse_body/diamond": "horse2/armor/horse_armor_diamond",
+    "equipment/horse_body/netherite": "horse2/armor/horse_armor_netherite",
 
     "equipment/nautilus_body/copper": "nautilus/armor/nautilus_armor_copper",
     "equipment/nautilus_body/iron": "nautilus/armor/nautilus_armor_iron",
