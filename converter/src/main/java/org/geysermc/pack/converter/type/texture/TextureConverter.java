@@ -178,6 +178,10 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
                 byte[] bytes = textureToExport.texture().data().toByteArray();
 
                 BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
+                if (image == null) {
+                    context.warn("Invalid texture " + texturePath + "!");
+                    continue;
+                }
 
                 for (Path output : outputs) {
                     if (output.getParent() != null && Files.notExists(output.getParent())) {
