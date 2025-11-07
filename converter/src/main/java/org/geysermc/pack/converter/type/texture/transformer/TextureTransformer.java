@@ -26,14 +26,20 @@
 
 package org.geysermc.pack.converter.type.texture.transformer;
 
+import net.kyori.adventure.key.Key;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.DoubleStream;
 
 public interface TextureTransformer {
     int ORDER_FIRST = 0;
@@ -50,5 +56,58 @@ public interface TextureTransformer {
 
     default int order() {
         return ORDER_NORMAL;
+    }
+
+    // Adds images in rows and columns
+    default void gridTransform(@NotNull TransformContext context, boolean poll, int rows, int columns, Key bedrockOutput, Key... javaInputs) throws IOException {
+        if (rows * columns != javaInputs.length) {
+            throw new IllegalStateException("Images do not match row and column count.");
+        }
+
+        boolean exists = false;
+
+        for (Key javaInput : javaInputs) {
+            if (context.isTexturePresent(javaInput)) {
+                exists = true;
+                break;
+            }
+        }
+
+        if (!exists) return;
+
+        List<Texture> textures = Arrays.stream(javaInputs)
+                .map(key -> poll ? context.pollOrPeekVanilla(key) : context.peekOrVanilla(key)).toList();
+
+        List<BufferedImage> images = new ArrayList<>(textures.size());
+
+        for (Texture texture : textures) {
+            if (texture == null) images.add(null);
+            else images.add(this.readImage(texture));
+        }
+
+        float maxScale = (float) images.stream()
+                .flatMapToDouble(img -> DoubleStream.of(img == null ? 1f : img.getWidth() / 16f))
+                .max().orElseThrow();
+
+        BufferedImage bedrockOutputImage = new BufferedImage((int) (maxScale * 16 * images.size()), (int) (maxScale * 16), BufferedImage.TYPE_INT_ARGB);
+
+        Graphics graphics = bedrockOutputImage.getGraphics();
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                BufferedImage image = images.get(i);
+                if (image != null) {
+                    float scale = maxScale / (image.getWidth() / 16f);
+
+                    graphics.drawImage(
+                            ImageUtil.scale(image, scale),
+                            (int) (maxScale * 16 * j),
+                            (int) (maxScale * 16 * i), null
+                    );
+                }
+            }
+        }
+
+        context.offer(bedrockOutput, bedrockOutputImage, "png");
     }
 }

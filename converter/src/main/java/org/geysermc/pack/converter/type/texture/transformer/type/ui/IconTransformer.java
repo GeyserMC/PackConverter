@@ -30,18 +30,11 @@ import com.google.auto.service.AutoService;
 import net.kyori.adventure.key.Key;
 import org.geysermc.pack.converter.type.texture.transformer.TextureTransformer;
 import org.geysermc.pack.converter.type.texture.transformer.TransformContext;
-import org.geysermc.pack.converter.util.ImageUtil;
 import org.jetbrains.annotations.NotNull;
-import team.unnamed.creative.texture.Texture;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.DoubleStream;
 
 @AutoService(TextureTransformer.class)
 public class IconTransformer implements TextureTransformer {
@@ -91,12 +84,12 @@ public class IconTransformer implements TextureTransformer {
 
     @Override
     public void transform(@NotNull TransformContext context) throws IOException {
-        horizontalTransform(
-                context, false, BEDROCK_ARMOR,
+        gridTransform(
+                context, false, 1, 4, BEDROCK_ARMOR,
                 HELMET,  CHESTPLATE, LEGGINGS, BOOTS
         );
-        horizontalTransform(
-                context, true, BEDROCK_ARMOR_TOOLS,
+        gridTransform(
+                context, true, 1, 12, BEDROCK_ARMOR_TOOLS,
                 HELMET, SWORD, CHESTPLATE, PICKAXE, LEGGINGS, AXE,
                 BOOTS, HOE, SPEAR, SHOVEL, HORSE_ARMOR, NAUTILUS_ARMOR
         );
@@ -104,16 +97,16 @@ public class IconTransformer implements TextureTransformer {
                 context, false, BEDROCK_LAPIS_LAZULI, BEDROCK_IMAGE_LAPIS_LAZULI,
                 LAPIS_LAZULI
         );
-        horizontalTransform(
-                context, true, BEDROCK_MATERIALS,
+        gridTransform(
+                context, true, 1, 7, BEDROCK_MATERIALS,
                 INGOT, REDSTONE_DUST, LAPIS_LAZULI, QUARTZ, DIAMOND,
                 EMERALD, AMETHYST_SHARD
         );
         passThroughTransform(context, true, BEDROCK_BANNER, BANNER);
         passThroughTransform(context, true, BEDROCK_DYE, DYE);
         passThroughTransform(context, true, BEDROCK_BANNER_PATTERN, BANNER_PATTERN);
-        horizontalTransform(
-                context, true, BEDROCK_TEMPLATES,
+        gridTransform(
+                context, true, 1, 2, BEDROCK_TEMPLATES,
                 NETHERITE_UPGRADE, ARMOR_TRIM
         );
         passThroughTransform(context, true, BEDROCK_BREWING_FUEL, BREWING_FUEL);
@@ -143,51 +136,5 @@ public class IconTransformer implements TextureTransformer {
         graphics.drawImage(img1, 0, 0, null);
 
         context.offer(bedrockImageOutput, img2, "png");
-    }
-
-    private void horizontalTransform(@NotNull TransformContext context, boolean poll, Key bedrockOutput, Key... javaInputs) throws IOException {
-        boolean exists = false;
-
-        for (Key javaInput : javaInputs) {
-            if (context.isTexturePresent(javaInput)) {
-                exists = true;
-                break;
-            }
-        }
-
-        if (!exists) return;
-
-        List<Texture> textures = Arrays.stream(javaInputs)
-                .map(key -> poll ? context.pollOrPeekVanilla(key) : context.peekOrVanilla(key)).toList();
-
-        List<BufferedImage> images = new ArrayList<>(textures.size());
-
-        for (Texture texture : textures) {
-            if (texture == null) images.add(null);
-            else images.add(this.readImage(texture));
-        }
-
-        float maxScale = (float) images.stream()
-                .flatMapToDouble(img -> DoubleStream.of(img == null ? 1f : img.getWidth() / 16f))
-                .max().orElseThrow();
-
-        BufferedImage bedrockOutputImage = new BufferedImage((int) (maxScale * 16 * images.size()), (int) (maxScale * 16), BufferedImage.TYPE_INT_ARGB);
-
-        Graphics graphics = bedrockOutputImage.getGraphics();
-
-        for (int i = 0; i < images.size(); i++) {
-            BufferedImage image = images.get(i);
-            if (image != null) {
-                float scale = maxScale / (image.getWidth() / 16f);
-
-                graphics.drawImage(
-                        ImageUtil.scale(image, scale),
-                        (int) (maxScale * 16 * i),
-                        0, null
-                );
-            }
-        }
-
-        context.offer(bedrockOutput, bedrockOutputImage, "png");
     }
 }

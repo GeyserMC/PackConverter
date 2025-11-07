@@ -1194,7 +1194,7 @@
   },
   "environment": {
     "clouds": "clouds",
-    "moon_phases": "moon_phases"
+    "celestial/sun": "sun"
   },
   "font": {
 
