@@ -158,17 +158,17 @@ public class IconTransformer implements TextureTransformer {
         if (!exists) return;
 
         List<Texture> textures = Arrays.stream(javaInputs)
-                .map(key -> poll ? context.pollOrPeekVanilla(key) : context.peekOrVanilla(key))
-                .filter(Objects::nonNull).toList();
+                .map(key -> poll ? context.pollOrPeekVanilla(key) : context.peekOrVanilla(key)).toList();
 
         List<BufferedImage> images = new ArrayList<>(textures.size());
 
         for (Texture texture : textures) {
-            images.add(this.readImage(texture));
+            if (texture == null) images.add(null);
+            else images.add(this.readImage(texture));
         }
 
         float maxScale = (float) images.stream()
-                .flatMapToDouble(img -> DoubleStream.of(img.getWidth() / 16f))
+                .flatMapToDouble(img -> DoubleStream.of(img == null ? 1f : img.getWidth() / 16f))
                 .max().orElseThrow();
 
         BufferedImage bedrockOutputImage = new BufferedImage((int) (maxScale * 16 * images.size()), (int) (maxScale * 16), BufferedImage.TYPE_INT_ARGB);
@@ -177,13 +177,15 @@ public class IconTransformer implements TextureTransformer {
 
         for (int i = 0; i < images.size(); i++) {
             BufferedImage image = images.get(i);
-            float scale = maxScale / (image.getWidth() / 16f);
+            if (image != null) {
+                float scale = maxScale / (image.getWidth() / 16f);
 
-            graphics.drawImage(
-                    ImageUtil.scale(image, scale),
-                    (int) (maxScale * 16 * i),
-                    0, null
-            );
+                graphics.drawImage(
+                        ImageUtil.scale(image, scale),
+                        (int) (maxScale * 16 * i),
+                        0, null
+                );
+            }
         }
 
         context.offer(bedrockOutput, bedrockOutputImage, "png");
