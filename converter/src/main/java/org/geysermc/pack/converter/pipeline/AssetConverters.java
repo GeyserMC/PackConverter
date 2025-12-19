@@ -50,7 +50,6 @@ import team.unnamed.creative.model.Model;
 import team.unnamed.creative.part.ResourcePackPart;
 import team.unnamed.creative.serialize.minecraft.ResourceCategory;
 import team.unnamed.creative.serialize.minecraft.language.LanguageSerializer;
-import team.unnamed.creative.serialize.minecraft.sound.SoundSerializer;
 import team.unnamed.creative.sound.Sound;
 import team.unnamed.creative.sound.SoundRegistry;
 import team.unnamed.creative.texture.Texture;
