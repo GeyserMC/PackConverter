@@ -66,13 +66,13 @@ public class CamelTransformer implements TextureTransformer {
     private void handleCamel(@NotNull TransformContext context, Texture camelTexture, Texture saddleTexture, Key bedrockKey) throws IOException {
         BufferedImage camelImage = this.readImage(camelTexture);
         if (camelImage == null) {
-            context.error("Unable to read camel image! Skipping...");
+            context.error("Unable to read camel image! (%s) Skipping...".formatted(camelTexture.key().asString()));
             return;
         }
 
         BufferedImage saddleImage = this.readImage(saddleTexture);
         if (saddleImage == null) {
-            context.error("Unable to read camel saddle image! Skipping...");
+            context.error("Unable to read camel saddle image! (%s) Skipping...".formatted(saddleTexture.key().asString()));
             return;
         }
 

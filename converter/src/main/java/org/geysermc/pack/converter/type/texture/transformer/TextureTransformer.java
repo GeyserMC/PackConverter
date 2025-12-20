@@ -61,7 +61,7 @@ public interface TextureTransformer {
     // Adds images in rows and columns
     default void gridTransform(@NotNull TransformContext context, boolean poll, int rows, int columns, Key bedrockOutput, Key... javaInputs) throws IOException {
         if (rows * columns != javaInputs.length) {
-            throw new IllegalStateException("Images do not match row and column count.");
+            throw new IllegalStateException("Images do not match row (%d) and column (%d) count.".formatted(rows, columns));
         }
 
         boolean exists = false;
@@ -73,7 +73,10 @@ public interface TextureTransformer {
             }
         }
 
-        if (!exists) return;
+        if (!exists) {
+            context.debug("Not completing grid transform for %s, no java inputs found, so there is nothing to transform.".formatted(bedrockOutput.asString()));
+            return;
+        }
 
         List<Texture> textures = Arrays.stream(javaInputs)
                 .map(key -> poll ? context.pollOrPeekVanilla(key) : context.peekOrVanilla(key)).toList();
