@@ -28,12 +28,14 @@ package org.geysermc.pack.converter.type.base;
 
 import org.geysermc.pack.bedrock.resource.Manifest;
 import org.geysermc.pack.bedrock.resource.manifest.Header;
+import org.geysermc.pack.bedrock.resource.manifest.Metadata;
 import org.geysermc.pack.bedrock.resource.manifest.Modules;
 import org.geysermc.pack.converter.pipeline.AssetConverter;
 import org.geysermc.pack.converter.pipeline.ConversionContext;
 import team.unnamed.creative.metadata.pack.PackMeta;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class PackManifestConverter implements AssetConverter<PackMeta, Manifest> {
@@ -53,6 +55,11 @@ public class PackManifestConverter implements AssetConverter<PackMeta, Manifest>
         header.uuid(UUID.randomUUID().toString());
 
         manifest.header(header);
+
+        Metadata metadata = new Metadata();
+        metadata.generatedWith(Map.of("PackConverter", new String[]{"GeyserMC"}));
+
+        manifest.metadata(metadata);
 
         Modules module = new Modules();
         module.description(packMeta.description());
