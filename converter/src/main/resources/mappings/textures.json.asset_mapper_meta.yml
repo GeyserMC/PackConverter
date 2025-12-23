@@ -371,6 +371,11 @@ java:
         - entity/parrot/parrot_grey
         - entity/parrot/parrot_red_blue
         - entity/parrot/parrot_yellow_blue
+        - item/netherite_horse_armor
+        - entity/nautilus/nautilus
+        - entity/nautilus/nautilus_baby
+        - entity/nautilus/zombie_nautilus
+        - entity/nautilus/zombie_nautilus_coral
     transformed-paths:
         - block/copper_chain
         - entity/conduit/base
@@ -971,6 +976,11 @@ bedrock:
         - entity/parrot/parrot_grey
         - entity/parrot/parrot_red_blue
         - entity/parrot/parrot_yellow_blue
+        - items/netherite_horse_armor
+        - entity/nautilus/nautilus
+        - entity/nautilus/nautilus_baby
+        - entity/nautilus/zombie_nautilus
+        - entity/nautilus/zombie_nautilus_coral
     transformed-paths:
         - blocks/chest_front
         - blocks/chest_side
