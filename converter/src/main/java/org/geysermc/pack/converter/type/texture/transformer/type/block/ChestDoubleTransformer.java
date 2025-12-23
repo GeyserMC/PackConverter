@@ -66,42 +66,42 @@ public class ChestDoubleTransformer implements TextureTransformer {
             BufferedImage leftImage = ImageUtil.ensureMinWidth(this.readImage(leftTexture), 64);
             BufferedImage rightImage = ImageUtil.ensureMinWidth(this.readImage(rightTexture), 64);
 
-            int factor = leftImage.getWidth() / 64;
+            float factor = leftImage.getWidth() / 64f;
 
-            BufferedImage newImage = new BufferedImage((128 * factor), (64 * factor), BufferedImage.TYPE_INT_ARGB);
+            BufferedImage newImage = new BufferedImage((int) (128 * factor), (int) (64 * factor), BufferedImage.TYPE_INT_ARGB);
             Graphics graphics = newImage.getGraphics();
 
-            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(rightImage, 0, (14 * factor), (14 * factor), (5 * factor)), 180), 0, (14 * factor), null);
-            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(leftImage, (29 * factor), (14 * factor), (14 * factor), (5 * factor)), 180), (44 * factor), (14 * factor), null);
+            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(rightImage, 0, (14 * factor), (14 * factor), (5 * factor)), 180), 0, (int) (14 * factor), null);
+            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(leftImage, (29 * factor), (14 * factor), (14 * factor), (5 * factor)), 180), (int) (44 * factor), (int) (14 * factor), null);
 
-            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(rightImage, 0, (33 * factor), (14 * factor), (10 * factor)), 180), 0, (33 * factor), null);
-            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(leftImage, (29 * factor), (33 * factor), (14 * factor), (10 * factor)), 180), (44 * factor), (33 * factor), null);
+            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(rightImage, 0, (33 * factor), (14 * factor), (10 * factor)), 180), 0, (int) (33 * factor), null);
+            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(leftImage, (29 * factor), (33 * factor), (14 * factor), (10 * factor)), 180), (int) (44 * factor), (int) (33 * factor), null);
 
-            graphics.drawImage(ImageUtil.flip(ImageUtil.crop(rightImage, (29 * factor), 0, (15 * factor), (14 * factor)), false, true), (14 * factor), 0, null);
-            graphics.drawImage(ImageUtil.flip(ImageUtil.crop(leftImage, (29 * factor), 0, (15 * factor), (14 * factor)), false, true), (29 * factor), 0, null);
+            graphics.drawImage(ImageUtil.flip(ImageUtil.crop(rightImage, (29 * factor), 0, (15 * factor), (14 * factor)), false, true), (int) (14 * factor), 0, null);
+            graphics.drawImage(ImageUtil.flip(ImageUtil.crop(leftImage, (29 * factor), 0, (15 * factor), (14 * factor)), false, true), (int) (29 * factor), 0, null);
 
-            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(rightImage, (43 * factor), (14 * factor), (15 * factor), (5 * factor)), 180), (14 * factor), (14 * factor), null);
-            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(leftImage, (43 * factor), (14 * factor), (15 * factor), (5 * factor)), 180), (29 * factor), (14 * factor), null);
+            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(rightImage, (43 * factor), (14 * factor), (15 * factor), (5 * factor)), 180), (int) (14 * factor), (int) (14 * factor), null);
+            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(leftImage, (43 * factor), (14 * factor), (15 * factor), (5 * factor)), 180), (int) (29 * factor), (int) (14 * factor), null);
 
-            graphics.drawImage(ImageUtil.flip(ImageUtil.crop(rightImage, (29 * factor), (19 * factor), (15 * factor), (14 * factor)), false, true), (14 * factor), (19 * factor), null);
-            graphics.drawImage(ImageUtil.flip(ImageUtil.crop(leftImage, (29 * factor), (19 * factor), (15 * factor), (14 * factor)), false, true), (29 * factor), (19 * factor), null);
+            graphics.drawImage(ImageUtil.flip(ImageUtil.crop(rightImage, (29 * factor), (19 * factor), (15 * factor), (14 * factor)), false, true), (int) (14 * factor), (int) (19 * factor), null);
+            graphics.drawImage(ImageUtil.flip(ImageUtil.crop(leftImage, (29 * factor), (19 * factor), (15 * factor), (14 * factor)), false, true), (int) (29 * factor), (int) (19 * factor), null);
 
-            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(rightImage, (43 * factor), (33 * factor), (15 * factor), (10 * factor)), 180), (14 * factor), (33 * factor), null);
-            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(leftImage, (43 * factor), (33 * factor), (15 * factor), (10 * factor)), 180), (29 * factor), (33 * factor), null);
+            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(rightImage, (43 * factor), (33 * factor), (15 * factor), (10 * factor)), 180), (int) (14 * factor), (int) (33 * factor), null);
+            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(leftImage, (43 * factor), (33 * factor), (15 * factor), (10 * factor)), 180), (int) (29 * factor), (int) (33 * factor), null);
 
-            graphics.drawImage(ImageUtil.flip(ImageUtil.crop(rightImage, (14 * factor), 0, (15 * factor), (14 * factor)), false, true), (44 * factor), 0, null);
-            graphics.drawImage(ImageUtil.flip(ImageUtil.crop(leftImage, (14 * factor), 0, (15 * factor), (14 * factor)), false, true), (59 * factor), 0, null);
+            graphics.drawImage(ImageUtil.flip(ImageUtil.crop(rightImage, (14 * factor), 0, (15 * factor), (14 * factor)), false, true), (int) (44 * factor), 0, null);
+            graphics.drawImage(ImageUtil.flip(ImageUtil.crop(leftImage, (14 * factor), 0, (15 * factor), (14 * factor)), false, true), (int) (59 * factor), 0, null);
 
-            graphics.drawImage(ImageUtil.flip(ImageUtil.crop(rightImage, (14 * factor), (19 * factor), (15 * factor), (14 * factor)), false, true), (44 * factor), (19 * factor), null);
-            graphics.drawImage(ImageUtil.flip(ImageUtil.crop(leftImage, (14 * factor), (19 * factor), (15 * factor), (14 * factor)), false, true), (59 * factor), (19 * factor), null);
+            graphics.drawImage(ImageUtil.flip(ImageUtil.crop(rightImage, (14 * factor), (19 * factor), (15 * factor), (14 * factor)), false, true), (int) (44 * factor), (int) (19 * factor), null);
+            graphics.drawImage(ImageUtil.flip(ImageUtil.crop(leftImage, (14 * factor), (19 * factor), (15 * factor), (14 * factor)), false, true), (int) (59 * factor), (int) (19 * factor), null);
 
-            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(rightImage, (14 * factor), (14 * factor), (15 * factor), (5 * factor)), 180), (73 * factor), (14 * factor), null);
+            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(rightImage, (14 * factor), (14 * factor), (15 * factor), (5 * factor)), 180), (int) (73 * factor), (int) (14 * factor), null);
 
-            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(leftImage, (14 * factor), (14 * factor), (15 * factor), (5 * factor)), 180), (58 * factor), (14 * factor), null);
-            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(rightImage, (14 * factor), (14 * factor), (15 * factor), (5 * factor)), 180), (73 * factor), (14 * factor), null);
+            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(leftImage, (14 * factor), (14 * factor), (15 * factor), (5 * factor)), 180), (int) (58 * factor), (int) (14 * factor), null);
+            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(rightImage, (14 * factor), (14 * factor), (15 * factor), (5 * factor)), 180), (int) (73 * factor), (int) (14 * factor), null);
 
-            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(leftImage, (14 * factor), (33 * factor), (15 * factor), (10 * factor)), 180), (58 * factor), (33 * factor), null);
-            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(rightImage, (14 * factor), (33 * factor), (15 * factor), (10 * factor)), 180), (73 * factor), (33 * factor), null);
+            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(leftImage, (14 * factor), (33 * factor), (15 * factor), (10 * factor)), 180), (int) (58 * factor), (int) (33 * factor), null);
+            graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(rightImage, (14 * factor), (33 * factor), (15 * factor), (10 * factor)), 180), (int) (73 * factor), (int) (33 * factor), null);
 
             graphics.drawImage(ImageUtil.crop(leftImage, 0, 0, (6 * factor), (6 * factor)), 0, 0, null);
             graphics.drawImage(ImageUtil.crop(rightImage, 0, 0, (6 * factor), (6 * factor)), 0, 0, null);

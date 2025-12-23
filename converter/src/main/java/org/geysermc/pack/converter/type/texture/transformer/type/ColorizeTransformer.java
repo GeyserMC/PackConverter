@@ -292,7 +292,7 @@ public class ColorizeTransformer implements TextureTransformer {
             }
 
             if (finalImage != null) {
-                context.offer(UnsafeKey.key(Key.MINECRAFT_NAMESPACE, data.outputPath()), finalImage, "png");
+                context.offer(KeyUtil.key(Key.MINECRAFT_NAMESPACE, data.outputPath()), finalImage, "png");
             }
         }
     }

@@ -58,7 +58,7 @@ public class WeatherTransformer implements TextureTransformer {
         BufferedImage snowImage = this.readImage(snowTexture);
         BufferedImage rainImage = this.readImage(rainTexture);
 
-        float factor = (float) snowImage.getWidth() / 64;
+        float factor = snowImage.getWidth() / 64f;
 
         BufferedImage weatherImage = new BufferedImage((int) (32 * factor), (int) (32 * factor), BufferedImage.TYPE_INT_ARGB);
 

@@ -24,37 +24,34 @@
  *
  */
 
-package org.geysermc.pack.converter.type.texture.transformer.type.entity;
+package org.geysermc.pack.converter.type.texture.transformer.type;
 
+import com.google.auto.service.AutoService;
 import net.kyori.adventure.key.Key;
 import org.geysermc.pack.converter.type.texture.transformer.TextureTransformer;
 import org.geysermc.pack.converter.type.texture.transformer.TransformContext;
-import org.geysermc.pack.converter.util.KeyUtil;
 import org.jetbrains.annotations.NotNull;
-import team.unnamed.creative.texture.Texture;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class CopperGolemTransformer implements TextureTransformer {
-    private static final Key POPPY = KeyUtil.key(Key.MINECRAFT_NAMESPACE, "block/poppy.png");
-    private static final Key COPPER_POPPY = KeyUtil.key(Key.MINECRAFT_NAMESPACE, "entity/copper_golem/copper_golem_flower.png");
+@AutoService(TextureTransformer.class)
+public class EnvironmentTransformer implements TextureTransformer {
+    private static final Key NEW_MOON = Key.key(Key.MINECRAFT_NAMESPACE, "environment/celestial/moon/new_moon.png");
+    private static final Key WAXING_CRESCENT = Key.key(Key.MINECRAFT_NAMESPACE, "environment/celestial/moon/waxing_crescent.png");
+    private static final Key FIRST_QUARTER = Key.key(Key.MINECRAFT_NAMESPACE, "environment/celestial/moon/first_quarter.png");
+    private static final Key WAXING_GIBBOUS = Key.key(Key.MINECRAFT_NAMESPACE, "environment/celestial/moon/waxing_gibbous.png");
+    private static final Key FULL_MOON = Key.key(Key.MINECRAFT_NAMESPACE, "environment/celestial/moon/full_moon.png");
+    private static final Key WANING_GIBBOUS = Key.key(Key.MINECRAFT_NAMESPACE, "environment/celestial/moon/waning_gibbous.png");
+    private static final Key THIRD_QUARTER = Key.key(Key.MINECRAFT_NAMESPACE, "environment/celestial/moon/third_quarter.png");
+    private static final Key WANING_CRESCENT = Key.key(Key.MINECRAFT_NAMESPACE, "environment/celestial/moon/waning_crescent.png");
+    private static final Key MOON_PHASES = Key.key(Key.MINECRAFT_NAMESPACE, "environment/moon_phases.png");
 
     @Override
     public void transform(@NotNull TransformContext context) throws IOException {
-        if (context.isTexturePresent(POPPY)) {
-            Texture texture = context.peek(POPPY);
-            if (texture == null) return;
-            BufferedImage javaImage = this.readImage(texture);
-
-            float scale = javaImage.getHeight() / 16f;
-
-            BufferedImage bedrockImage = new BufferedImage((int) (scale * 4), (int) (scale * 4), BufferedImage.TYPE_INT_ARGB);
-
-            bedrockImage.getGraphics().drawImage(javaImage, (int) (44 * scale), (int) (33 * scale), null);
-
-            context.offer(COPPER_POPPY, bedrockImage, "png");
-        }
+        gridTransform(
+                context, true, 2, 4, MOON_PHASES,
+                FULL_MOON, WANING_GIBBOUS, THIRD_QUARTER, WANING_CRESCENT,
+                NEW_MOON, WAXING_CRESCENT, FIRST_QUARTER, WAXING_GIBBOUS
+        );
     }
 }

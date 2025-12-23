@@ -47,7 +47,7 @@ public class ConduitTransformer implements TextureTransformer {
         if (baseTexture != null) {
             BufferedImage baseImage = this.readImage(baseTexture);
 
-            float scale = (float) baseImage.getHeight() / 16;
+            float scale = baseImage.getHeight() / 16f;
 
             BufferedImage bedrockBaseImage = new BufferedImage((int) (24 * scale), (int) (12 * scale), BufferedImage.TYPE_INT_ARGB);
 
@@ -61,7 +61,7 @@ public class ConduitTransformer implements TextureTransformer {
         if (eyeTexture != null) {
             BufferedImage image = this.readImage(eyeTexture);
 
-            float scale = (float) image.getHeight() / 16;
+            float scale = image.getHeight() / 16f;
 
             BufferedImage bedrockImage = new BufferedImage((int) (8 * scale), (int) (8 * scale), BufferedImage.TYPE_INT_ARGB);
 

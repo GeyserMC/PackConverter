@@ -56,8 +56,8 @@ public class ArrowTransformer implements TextureTransformer {
 
         BufferedImage fromImage = this.readImage(texture);
 
-        int factor = fromImage.getWidth() / 32;
-        BufferedImage newArrowImage = new BufferedImage((32 * factor), (32 * factor), BufferedImage.TYPE_INT_ARGB);
+        float factor = fromImage.getWidth() / 32f;
+        BufferedImage newArrowImage = new BufferedImage((int) (32 * factor), (int) (32 * factor), BufferedImage.TYPE_INT_ARGB);
         fromImage = ImageUtil.crop(fromImage, 0, 0, fromImage.getWidth(), 10 * factor);
 
         Graphics graphics = newArrowImage.getGraphics();
@@ -75,7 +75,7 @@ public class ArrowTransformer implements TextureTransformer {
             }
         }
 
-        graphics.drawImage(fromImage, 0, 10 * factor, null);
+        graphics.drawImage(fromImage, 0, (int) (10 * factor), null);
 
         context.offer(KeyUtil.key(Key.MINECRAFT_NAMESPACE, OUTPUT), newArrowImage, "png");
     }

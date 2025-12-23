@@ -54,7 +54,7 @@ public class UISizeTransformer implements TextureTransformer {
         if (emptyXp != null) {
             writeUiJson(context, this.readImage(emptyXp), "experiencebarempty", FULLBARSLICE);
 
-            // Since we have the full image, we *don't* want this
+            // Since we have the full image, we *don't* want this, offer an empty image
             BufferedImage nubImage = new BufferedImage(11, 5, BufferedImage.TYPE_INT_ARGB);
             context.offer(KeyUtil.key(Key.MINECRAFT_NAMESPACE, "ui/experiencenub.png"), nubImage, "png");
         }

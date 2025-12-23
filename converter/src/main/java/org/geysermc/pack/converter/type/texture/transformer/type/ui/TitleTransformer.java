@@ -48,7 +48,7 @@ public class TitleTransformer implements TextureTransformer {
 
         BufferedImage javaImage = this.readImage(javaTexture);
 
-        float scale = ((float) javaImage.getHeight()) / 256;
+        float scale = javaImage.getHeight() / 256f;
 
         // Magic numbers! title.png width and height, bedrock doesn't appear it like different sizes, so we scale
         BufferedImage bedrockImage = new BufferedImage(1937, 333, BufferedImage.TYPE_INT_ARGB);

@@ -116,6 +116,13 @@ public class UnsafeKey implements Key {
         return Key.super.compareTo(that);
     }
 
+    public static @NotNull Key key(final @NotNull String string) {
+        final int index = string.indexOf(':');
+        final String namespace = index >= 1 ? string.substring(0, index) : MINECRAFT_NAMESPACE;
+        final String value = index >= 0 ? string.substring(index + 1) : string;
+        return key(namespace, value);
+    }
+
     public static @NotNull Key key(final @NotNull String namespace, final @NotNull String value) {
         return new UnsafeKey(namespace, value);
     }
