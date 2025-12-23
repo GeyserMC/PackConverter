@@ -28,8 +28,8 @@ package org.geysermc.pack.converter.type.texture.transformer;
 
 import net.kyori.adventure.key.Key;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
-import org.geysermc.pack.converter.type.texture.TextureMappings;
 import org.geysermc.pack.converter.util.ImageUtil;
+import org.geysermc.pack.converter.util.JsonMappings;
 import org.geysermc.pack.converter.util.LogListener;
 import org.geysermc.pack.converter.util.LogListenerHelper;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +46,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class TransformContext implements LogListenerHelper {
-    private final TextureMappings mappings;
+    private final JsonMappings mappings;
     private final Collection<Texture> textures;
     // TODO figure out how to handle this, this is executed in the extraction phase and ideally bedrock pack wouldn't be accessed then
     @Deprecated(forRemoval = true)
@@ -57,7 +57,7 @@ public class TransformContext implements LogListenerHelper {
     private final Map<Key, Texture> byKey = new HashMap<>();
 
     public TransformContext(
-            TextureMappings mappings,
+            JsonMappings mappings,
             Collection<Texture> textures,
             BedrockResourcePack bedrockPack,
             ResourcePack javaPack,
@@ -76,7 +76,7 @@ public class TransformContext implements LogListenerHelper {
         }
     }
 
-    public TextureMappings mappings() {
+    public JsonMappings mappings() {
         return this.mappings;
     }
 

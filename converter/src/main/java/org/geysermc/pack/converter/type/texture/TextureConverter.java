@@ -37,6 +37,8 @@ import org.geysermc.pack.converter.type.texture.transformer.TextureTransformer;
 import org.geysermc.pack.converter.type.texture.transformer.TransformContext;
 import org.geysermc.pack.converter.type.texture.transformer.TransformedTexture;
 import org.geysermc.pack.converter.util.ImageUtil;
+import org.geysermc.pack.converter.util.JsonMappings;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.texture.Texture;
@@ -78,7 +80,7 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
         // TODO ideally textures should be transformed individually in the convert process, and not together in the extraction process, but this is hard to achieve,
         // TODO and will need another big refactor to the texture transformation code
         // TODO for now this will work, but for library users it might be nice to be able to properly convert singular textures with transformations
-        TextureMappings mappings = TextureMappings.textureMappings();
+        JsonMappings mappings = JsonMappings.getMapping("textures");
         List<Texture> textures = new ArrayList<>(pack.textures());
 
         context.info("Transforming textures...");
@@ -103,8 +105,8 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
     }
 
     @Override
-    public @Nullable TransformedTexture convert(Texture texture, ConversionContext context) throws Exception {
-        TextureMappings mappings = TextureMappings.textureMappings();
+    public @NotNull TransformedTexture convert(Texture texture, ConversionContext context) throws Exception {
+        JsonMappings mappings = JsonMappings.getMapping("textures");
         TransformedTexture transformed = new TransformedTexture(texture);
 
         String input = texture.key().value();
@@ -113,36 +115,13 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
         String rootPath = relativePath.substring(0, relativePath.indexOf('/'));
         String bedrockRoot = DIRECTORY_LOCATIONS.getOrDefault(rootPath, rootPath);
 
-        Object mappingObject = mappings.textures(relativePath);
-
-        if (mappingObject == null) {
-            mappingObject = mappings.textures(rootPath);
+        List<String> mapping = mappings.map(relativePath);
+        List<String> transformedOutputs = new ArrayList<>();
+        for (String item : mapping) {
+            transformedOutputs.add(bedrockRoot + item.substring(item.indexOf('/')) + ".png");
         }
 
-        String fallbackPath = bedrockRoot + "/" + relativePath.substring(relativePath.indexOf('/') + 1) + ".png";
-        if (mappingObject instanceof Map<?,?> keyMappings) { // Handles common subdirectories
-            String sanitizedName = input.substring(input.indexOf('/') + 1);
-            if (sanitizedName.endsWith(".png")) sanitizedName = sanitizedName.substring(0, sanitizedName.length() - 4);
-
-            Object bedrockOutput = keyMappings.get(sanitizedName);
-            if (bedrockOutput instanceof String bedrockPath) {
-                transformed.output(bedrockRoot + "/" + bedrockPath + ".png");
-            } else if (bedrockOutput instanceof List<?> paths) {
-                for (String bedrockPath : (List<String>) paths) {
-                    transformed.output(bedrockRoot + "/" + bedrockPath + ".png");
-                }
-            } else { // Fallback
-                transformed.output(fallbackPath);
-            }
-        } else if (mappingObject instanceof String str) { // Direct mappings
-            transformed.output(str + ".png");
-        } else if (mappingObject instanceof List<?> paths) { // Mappings where duplicate code paths exist
-            for (String path : (List<String>) paths) {
-                transformed.output(path + ".png");
-            }
-        } else { // Fallback
-            transformed.output(fallbackPath);
-        }
+        transformed.output(transformedOutputs);
 
         return transformed;
     }
@@ -209,6 +188,8 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
                             continue;
                         }
                     }
+
+                    Files.createDirectories(output.getParent());
 
                     try (OutputStream stream = Files.newOutputStream(output)) {
                         ImageIO.write(bedrockImage, "png", stream);
