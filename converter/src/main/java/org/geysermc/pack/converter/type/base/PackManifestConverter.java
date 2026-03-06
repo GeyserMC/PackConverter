@@ -26,6 +26,7 @@
 
 package org.geysermc.pack.converter.type.base;
 
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.geysermc.pack.bedrock.resource.Manifest;
 import org.geysermc.pack.bedrock.resource.manifest.Header;
 import org.geysermc.pack.bedrock.resource.manifest.Metadata;
@@ -48,7 +49,7 @@ public class PackManifestConverter implements AssetConverter<PackMeta, Manifest>
         manifest.formatVersion(FORMAT_VERSION);
 
         Header header = new Header();
-        header.description(packMeta.description());
+        header.description(LegacyComponentSerializer.legacySection().serialize(packMeta.description()));
         header.name(context.packName());
         header.version(new float[] { 1, 0, 0 });
         header.minEngineVersion(new float[] { 1, 16, 0 });
@@ -62,7 +63,7 @@ public class PackManifestConverter implements AssetConverter<PackMeta, Manifest>
         manifest.metadata(metadata);
 
         Modules module = new Modules();
-        module.description(packMeta.description());
+        module.description(LegacyComponentSerializer.legacySection().serialize(packMeta.description()));
         module.type("resources");
         module.uuid(UUID.randomUUID().toString());
         module.version(new float[] { 1, 0, 0 });
