@@ -25,15 +25,7 @@ dependencyResolutionManagement {
         maven("https://repo.opencollab.dev/main")
         maven("https://repo.opencollab.dev/maven-snapshots")
 
-        // Java pack library
-        // maven("https://repo.unnamed.team/repository/unnamed-public/")
-
-        // This repo is dead.
-//        maven { // We need a snapshot version of creative for now
-//            url = uri("https://s01.oss.sonatype.org/content/repositories/snapshots/")
-//        }
-
-        // But we still need creative... jitpack it is
-        maven("https://jitpack.io")
+        // creative
+        maven("https://repo.nexomc.com/releases/")
     }
 }
