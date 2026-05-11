@@ -151,7 +151,7 @@ public record ModelConverter(boolean convertItemModels) implements AssetExtracto
             for (Map.Entry<CubeFace, ElementFace> entry : element.faces().entrySet()) {
                 CubeFace face = entry.getKey();
                 ElementFace elementFace = entry.getValue();
-                if (elementFace.uv0() == null) {
+                if (elementFace.uv() == null) {
                     continue;
                 }
 
@@ -159,7 +159,7 @@ public record ModelConverter(boolean convertItemModels) implements AssetExtracto
                 // divides the UV by 16, so we need to multiply it by 16
 
                 String texture = elementFace.texture().replace("#", "");
-                applyUv(uv, face, texture, multiplyUv(elementFace.uv0(), 16f));
+                applyUv(uv, face, texture, multiplyUv(elementFace.uv(), 16f));
             }
 
             cube.uv(uv);
