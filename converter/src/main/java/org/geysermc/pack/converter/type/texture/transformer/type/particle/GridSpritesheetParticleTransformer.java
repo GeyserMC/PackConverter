@@ -37,6 +37,8 @@ import team.unnamed.creative.texture.Texture;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class GridSpritesheetParticleTransformer implements TextureTransformer {
     private final String[] javaPaths;
@@ -70,24 +72,41 @@ public abstract class GridSpritesheetParticleTransformer implements TextureTrans
 
     @Override
     public void transform(@NotNull TransformContext context) throws IOException {
-        BufferedImage image = new BufferedImage(columns * particleWidth, rows * particleHeight, BufferedImage.TYPE_INT_ARGB);
-        Graphics g = image.getGraphics();
-
-        context.debug(String.format("Creating particle spritesheet %s", this.bedrockPath));
+        List<ItemData> itemDatas = new ArrayList<>();
+        boolean anyTexturePresent = false;
 
         int k = 0;
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                Texture texture = context.pollOrPeekVanilla(KeyUtil.key(Key.MINECRAFT_NAMESPACE, javaPaths[k++]));
-                if (texture == null) {
-                    context.warn("%s is missing. Please report this.".formatted(javaPaths[k]));
-                    continue;
-                }
+                Key key = KeyUtil.key(Key.MINECRAFT_NAMESPACE, javaPaths[k++]);
+                Texture texture = context.pollOrPeekVanilla(key);
+                itemDatas.add(new ItemData(
+                        key,
+                        texture,
+                        j * particleWidth,
+                        i * particleHeight
+                ));
 
-                BufferedImage javaImage = this.preProcessImage(this.readImage(texture));
-
-                g.drawImage(javaImage, j * particleWidth, i * particleHeight, null);
+                if (texture == null) anyTexturePresent = true;
             }
+        }
+
+        if (!anyTexturePresent) return;
+
+        context.debug(String.format("Creating particle spritesheet %s", this.bedrockPath));
+
+        BufferedImage image = new BufferedImage(columns * particleWidth, rows * particleHeight, BufferedImage.TYPE_INT_ARGB);
+        Graphics g = image.getGraphics();
+
+        for (ItemData itemData : itemDatas) {
+            if (itemData.texture() == null) {
+                context.warn("%s is missing. Please report this.".formatted(itemData.key()));
+                continue;
+            }
+
+            BufferedImage javaImage = this.preProcessImage(this.readImage(itemData.texture()));
+
+            g.drawImage(javaImage, itemData.x(), itemData.y(), null);
         }
 
         context.offer(KeyUtil.key(Key.MINECRAFT_NAMESPACE, this.bedrockPath), image, "png");
@@ -96,6 +115,8 @@ public abstract class GridSpritesheetParticleTransformer implements TextureTrans
     public BufferedImage preProcessImage(BufferedImage image) {
         return image;
     }
+
+    private record ItemData(Key key, Texture texture, int x, int y) {}
 
     public static abstract class Row extends GridSpritesheetParticleTransformer {
         public Row(String bedrockPath, int particleWidth, int particleHeight, String javaPath, int amount) {

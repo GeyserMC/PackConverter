@@ -1140,6 +1140,7 @@
         "guardian/guardian_beam": "guardian_beam",
         "guardian/guardian_elder": "guardian_elder",
         "hoglin/zoglin": "zoglin/zoglin",
+        "hoglin/zoglin_baby": "zoglin/zoglin_baby",
         "horse/donkey_baby": "horse2/donkey_baby",
         "horse/horse_black_baby": "horse2/horse_black_baby",
         "horse/horse_brown_baby": "horse2/horse_brown_baby",
@@ -1180,8 +1181,14 @@
         },
         "minecart/minecart": "minecart",
         "panda": {
+            "aggressive_panda_baby": "panda_aggressive_baby",
+            "brown_panda_baby": "panda_brown_baby",
+            "lazy_panda_baby": "panda_lazy_baby",
             "panda": "panda",
-            "panda_weak": "panda_sneezy"
+            "panda_weak": "panda_sneezy",
+            "playful_panda_baby": "panda_playful_baby",
+            "weak_panda_baby": "panda_weak_baby",
+            "worried_panda_baby": "panda_worried_baby"
         },
         "pig": {
             "pig_temperate": "pig_v3"

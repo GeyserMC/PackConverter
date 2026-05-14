@@ -547,6 +547,11 @@ java:
         - entity/zombie/husk_baby
         - entity/zombie/zombie_baby
         - entity/piglin/piglin_baby
+        - entity/strider/strider_cold_baby
+        - entity/strider/strider_baby
+        - entity/panda/panda_baby
+        - entity/hoglin/hoglin_baby
+        - entity/sniffer/snifflet
     transformed-paths:
         - block/copper_chain
         - entity/conduit/base
@@ -1838,6 +1843,11 @@ bedrock:
         - entity/zombie/husk_baby
         - entity/zombie/zombie_baby
         - entity/piglin/piglin_baby
+        - entity/strider/strider_cold_baby
+        - entity/strider/strider_baby
+        - entity/panda/panda_baby
+        - entity/hoglin/hoglin_baby
+        - entity/sniffer/snifflet
     transformed-paths:
         - blocks/chest_front
         - blocks/chest_side
