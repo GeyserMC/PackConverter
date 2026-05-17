@@ -87,7 +87,7 @@ public abstract class GridSpritesheetParticleTransformer implements TextureTrans
                         i * particleHeight
                 ));
 
-                if (texture == null) anyTexturePresent = true;
+                if (texture != null) anyTexturePresent = true;
             }
         }
 
