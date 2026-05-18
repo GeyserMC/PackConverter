@@ -112,13 +112,15 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
         String input = texture.key().value();
         String relativePath = input.replaceAll("\\.png$", "");
 
-        String rootPath = relativePath.substring(0, relativePath.indexOf('/'));
+        int slashIndex = relativePath.indexOf('/');
+        String rootPath = slashIndex != -1 ? relativePath.substring(0, slashIndex) : "";
         String bedrockRoot = DIRECTORY_LOCATIONS.getOrDefault(rootPath, rootPath);
 
         List<String> mapping = mappings.map(relativePath);
         List<String> transformedOutputs = new ArrayList<>();
         for (String item : mapping) {
-            transformedOutputs.add(bedrockRoot + item.substring(item.indexOf('/')) + ".png");
+            int itemSlashIndex = item.indexOf('/');
+            transformedOutputs.add(bedrockRoot + (itemSlashIndex != -1 ? item.substring(itemSlashIndex) : "/" + item) + ".png");
         }
 
         transformed.output(transformedOutputs);
@@ -145,8 +147,9 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
                 }
                 exportedPaths.add(outputPath);
 
-                String root = outputPath.substring(0, outputPath.indexOf('/'));
-                String value = outputPath.substring(outputPath.indexOf('/') + 1);
+                int slashIndex = outputPath.indexOf('/');
+                String root = slashIndex != -1 ? outputPath.substring(0, slashIndex) : "";
+                String value = slashIndex != -1 ? outputPath.substring(slashIndex + 1) : outputPath;
 
                 outputs.add(texturePath.resolve((
                         bedrockDirectory.formatted(root, value)

@@ -100,7 +100,10 @@ public class TransformContext implements LogListenerHelper {
      * @return the texture that was removed, or null if it didn't exist
      */
     @Nullable
-    public Texture poll(@NotNull Key key) {
+    public Texture poll(@Nullable Key key) {
+        if (key == null) {
+            return null;
+        }
         Texture remove = this.byKey.remove(key);
         if (remove == null) {
             return null;
@@ -117,7 +120,10 @@ public class TransformContext implements LogListenerHelper {
      * @return the texture with the given key, or null if it doesn't exist
      */
     @Nullable
-    public Texture peek(@NotNull Key key) {
+    public Texture peek(@Nullable Key key) {
+        if (key == null) {
+            return null;
+        }
         return this.byKey.get(key);
     }
 
@@ -130,7 +136,10 @@ public class TransformContext implements LogListenerHelper {
      * @return the texture that was removed, or the vanilla one if it didn't exist, or null
      */
     @Nullable
-    public Texture pollOrPeekVanilla(@NotNull Key key) {
+    public Texture pollOrPeekVanilla(@Nullable Key key) {
+        if (key == null) {
+            return null;
+        }
         Texture remove = this.byKey.remove(key);
         if (remove == null) {
             return vanillaPack.map(pack -> pack.texture(key)).orElse(null);
@@ -149,7 +158,10 @@ public class TransformContext implements LogListenerHelper {
      * @return the texture that was removed, or the vanilla one if it didn't exist, or null
      */
     @Nullable
-    public Texture peekOrVanilla(@NotNull Key key) {
+    public Texture peekOrVanilla(@Nullable Key key) {
+        if (key == null) {
+            return null;
+        }
         Texture texture = this.byKey.get(key);
         if (texture == null) {
             return vanillaPack.map(pack -> pack.texture(key)).orElse(null);
@@ -165,7 +177,10 @@ public class TransformContext implements LogListenerHelper {
      * @return true if the texture is present, else false
      */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted") // It just doesn't make sense.
-    public boolean isTexturePresent(@NotNull Key key) {
+    public boolean isTexturePresent(@Nullable Key key) {
+        if (key == null) {
+            return false;
+        }
         return this.byKey.containsKey(key);
     }
 

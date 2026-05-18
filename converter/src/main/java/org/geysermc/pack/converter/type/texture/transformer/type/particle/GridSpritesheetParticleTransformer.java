@@ -32,6 +32,7 @@ import org.geysermc.pack.converter.type.texture.transformer.TransformContext;
 import org.geysermc.pack.converter.util.KeyUtil;
 import org.geysermc.pack.converter.util.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.texture.Texture;
 
 import java.awt.*;
@@ -78,7 +79,8 @@ public abstract class GridSpritesheetParticleTransformer implements TextureTrans
         int k = 0;
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                Key key = KeyUtil.key(Key.MINECRAFT_NAMESPACE, javaPaths[k++]);
+                String javaPath = javaPaths[k++];
+                Key key = javaPath == null ? null : KeyUtil.key(Key.MINECRAFT_NAMESPACE, javaPath);
                 Texture texture = context.pollOrPeekVanilla(key);
                 itemDatas.add(new ItemData(
                         key,
@@ -116,7 +118,7 @@ public abstract class GridSpritesheetParticleTransformer implements TextureTrans
         return image;
     }
 
-    private record ItemData(Key key, Texture texture, int x, int y) {}
+    private record ItemData(@Nullable Key key, @Nullable Texture texture, int x, int y) {}
 
     public static abstract class Row extends GridSpritesheetParticleTransformer {
         public Row(String bedrockPath, int particleWidth, int particleHeight, String javaPath, int amount) {

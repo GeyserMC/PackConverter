@@ -93,7 +93,10 @@ public interface TextureTransformer {
         }
 
         List<Texture> textures = Arrays.stream(javaInputs)
-                .map(key -> poll ? context.pollOrPeekVanilla(key) : context.peekOrVanilla(key)).toList();
+                .map(key -> {
+                    if (key == null) return null;
+                    return poll ? context.pollOrPeekVanilla(key) : context.peekOrVanilla(key);
+                }).toList();
 
         List<BufferedImage> images = new ArrayList<>(textures.size());
 

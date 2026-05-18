@@ -40,9 +40,9 @@ public class MapIconsTransformer implements TextureTransformer {
         this.gridTransform(
                 context, true, 4, 4, "map/map_icons.png",
                 "map/decorations/player.png", "map/decorations/frame.png", "map/decorations/red_marker.png", "map/decorations/blue_marker.png",
-                "map/decorations/red_x.png", "map/decorations/target_point.png", "map/decorations/player_off_map.png", "map/decorations/player_off_limits.png",
-                "map/decorations/woodland_mansion.png", "map/decorations/ocean_monument.png", null, null,
-                null, null, null, null
+                "map/decorations/red_x.png", "map/decorations/target_point.png", "map/decorations/player_off_map.png", null,
+                null, null, null, null, // TODO Colorise player, god damn you bedrock
+                null, "map/decorations/player_off_limits.png", "map/decorations/woodland_mansion.png", "map/decorations/ocean_monument.png"
         );
     }
 }
