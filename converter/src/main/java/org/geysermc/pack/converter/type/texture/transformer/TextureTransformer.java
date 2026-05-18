@@ -60,7 +60,15 @@ public interface TextureTransformer {
     }
 
     default void gridTransform(@NotNull TransformContext context, boolean poll, int rows, int columns, String bedrockOutput, String... javaInputs) throws IOException {
-        gridTransform(context, poll, rows, columns, KeyUtil.key(Key.MINECRAFT_NAMESPACE, bedrockOutput), Arrays.stream(javaInputs).map(str -> KeyUtil.key(Key.MINECRAFT_NAMESPACE, str)).toArray(Key[]::new));
+        gridTransform(
+                context,
+                poll,
+                rows,
+                columns,
+                KeyUtil.key(Key.MINECRAFT_NAMESPACE, bedrockOutput),
+                Arrays.stream(javaInputs).map(
+                        str ->
+                                str == null ? null : KeyUtil.key(Key.MINECRAFT_NAMESPACE, str)).toArray(Key[]::new));
     }
 
     // Adds images in rows and columns

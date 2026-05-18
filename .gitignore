@@ -241,3 +241,7 @@ gradle-app.setting
 !.idea/copyright/
 
 test/
+
+
+publish-local.bat
+publish-local.sh
