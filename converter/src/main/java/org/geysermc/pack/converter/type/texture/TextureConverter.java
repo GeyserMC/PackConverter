@@ -134,11 +134,6 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
         List<String> exportedPaths = new ArrayList<>();
 
         for (TransformedTexture textureToExport : transformedTextures) {
-            String bedrockDirectory = "%s/%s";
-            if (context.textureSubDirectory() != null) {
-                bedrockDirectory = "%s/" + context.textureSubDirectory() + "/%s";
-            }
-
             List<Path> outputs = new ArrayList<>();
             for (String outputPath : textureToExport.output()) {
                 if (exportedPaths.contains(outputPath)) {
@@ -147,13 +142,7 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
                 }
                 exportedPaths.add(outputPath);
 
-                int slashIndex = outputPath.indexOf('/');
-                String root = slashIndex != -1 ? outputPath.substring(0, slashIndex) : "";
-                String value = slashIndex != -1 ? outputPath.substring(slashIndex + 1) : outputPath;
-
-                outputs.add(texturePath.resolve((
-                        bedrockDirectory.formatted(root, value)
-                ).replace('/', File.separatorChar)));
+                outputs.add(resolveOutputPath(texturePath, outputPath, context.textureSubDirectory()));
             }
 
             try {
@@ -202,5 +191,37 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
                 context.error("Failed to write texture " + textureToExport.texture().key() + "!", exception);
             }
         }
+    }
+
+    /**
+     * Resolves the on-disk output path for a texture inside the Bedrock pack's {@code textures} directory.
+     *
+     * <p>Path segments are joined without a leading separator. A top-level texture such as
+     * {@code textures/icons.png} has an empty {@code root}, and the previous
+     * {@code "%s/%s".formatted("", value)} produced {@code "/value"}. {@link Path#resolve(String)} treats a
+     * string beginning with a separator as an <b>absolute</b> path, so the output escaped the pack and was
+     * written to the filesystem root — e.g. {@code Files.createDirectories("/appleskin")} failing with
+     * {@code AccessDeniedException} for {@code appleskin:icons.png}. See GeyserMC/PackConverter#68.
+     *
+     * @param texturePath         the pack's {@code textures} directory
+     * @param outputPath          the transformed output path, e.g. {@code "blocks/foo.png"} or {@code "/icons.png"}
+     * @param textureSubDirectory optional per-namespace subdirectory, or {@code null}
+     * @return a path that always stays within {@code texturePath}
+     */
+    static Path resolveOutputPath(Path texturePath, String outputPath, @Nullable String textureSubDirectory) {
+        int slashIndex = outputPath.indexOf('/');
+        String root = slashIndex != -1 ? outputPath.substring(0, slashIndex) : "";
+        String value = slashIndex != -1 ? outputPath.substring(slashIndex + 1) : outputPath;
+
+        List<String> segments = new ArrayList<>();
+        if (!root.isEmpty()) {
+            segments.add(root);
+        }
+        if (textureSubDirectory != null) {
+            segments.add(textureSubDirectory);
+        }
+        segments.add(value);
+
+        return texturePath.resolve(String.join("/", segments).replace('/', File.separatorChar));
     }
 }
