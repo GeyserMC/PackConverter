@@ -56,15 +56,17 @@ public class SulfurCubeTntTransformer implements TextureTransformer {
         Texture tntSideTexture = context.peekOrVanilla(TNT_SIDE);
         BufferedImage tntSideImage = this.readImage(tntSideTexture);
 
-        BufferedImage result = new BufferedImage(tntTopImage.getWidth() * 8, tntTopImage.getHeight() * 8, BufferedImage.TYPE_INT_ARGB);
+        float scale = tntTopImage.getWidth() / 8f;
+
+        BufferedImage result = new BufferedImage((int) (scale * 128), (int) (scale * 128), BufferedImage.TYPE_INT_ARGB);
         Graphics g = result.getGraphics();
 
-        g.drawImage(tntTopImage, 16, 36, null);
-        g.drawImage(tntBottomImage, 32, 36, null);
-        g.drawImage(tntSideImage, 0, 52, null);
-        g.drawImage(tntSideImage, 16, 52, null);
-        g.drawImage(tntSideImage, 32, 52, null);
-        g.drawImage(tntSideImage, 48, 52, null);
+        g.drawImage(tntTopImage, (int) (scale * 16), (int) (scale * 36), null);
+        g.drawImage(tntBottomImage, (int) (scale * 32), (int) (scale * 36), null);
+        g.drawImage(tntSideImage, 0, (int) (scale * 52), null);
+        g.drawImage(tntSideImage, (int) (scale * 16), (int) (scale * 52), null);
+        g.drawImage(tntSideImage, (int) (scale * 32), (int) (scale * 52), null);
+        g.drawImage(tntSideImage, (int) (scale * 48), (int) (scale * 52), null);
 
         context.offer(KeyUtil.key(Key.MINECRAFT_NAMESPACE, "entity/sulfur_cube.png"), result, "PNG");
     }
