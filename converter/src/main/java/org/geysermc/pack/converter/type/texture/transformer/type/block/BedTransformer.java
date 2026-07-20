@@ -65,51 +65,253 @@ public class BedTransformer implements TextureTransformer {
 
     @Override
     public void transform(@NotNull TransformContext context) throws IOException {
+        Texture bedHeadNorth = context.pollOrPeekVanilla(KeyUtil.key(Key.MINECRAFT_NAMESPACE, "block/bed_head_north.png"));
+        BufferedImage bedHeadNorthImage = this.readImage(bedHeadNorth);
+        Texture bedBottom = context.pollOrPeekVanilla(KeyUtil.key(Key.MINECRAFT_NAMESPACE, "block/bed_bottom.png"));
+        BufferedImage bedBottomImage = this.readImage(bedBottom);
+
+        float scale = bedBottomImage.getWidth() / 16f;
+
         for (String bedColor : BED_COLORS) {
-            Texture texture = context.poll(KeyUtil.key(Key.MINECRAFT_NAMESPACE, BED_PATH + "/" + bedColor + ".png"));
-            if (texture == null) {
-                continue;
-            }
+            Texture bedFootEast = context.pollOrPeekVanilla(KeyUtil.key(Key.MINECRAFT_NAMESPACE, "block/" + bedColor + "_bed_foot_east.png"));
+            BufferedImage bedFootEastImage = this.readImage(bedFootEast);
+            Texture bedFootWest = context.pollOrPeekVanilla(KeyUtil.key(Key.MINECRAFT_NAMESPACE, "block/" + bedColor + "_bed_foot_west.png"));
+            BufferedImage bedFootWestImage = this.readImage(bedFootWest);
+            Texture bedFootSouth = context.pollOrPeekVanilla(KeyUtil.key(Key.MINECRAFT_NAMESPACE, "block/" + bedColor + "_bed_foot_south.png"));
+            BufferedImage bedFootSouthImage = this.readImage(bedFootSouth);
+            Texture bedFootUp = context.pollOrPeekVanilla(KeyUtil.key(Key.MINECRAFT_NAMESPACE, "block/" + bedColor + "_bed_foot_up.png"));
+            BufferedImage bedFootUpImage = this.readImage(bedFootUp);
+            Texture bedHeadEast = context.pollOrPeekVanilla(KeyUtil.key(Key.MINECRAFT_NAMESPACE, "block/" + bedColor + "_bed_head_east.png"));
+            BufferedImage bedHeadEastImage = this.readImage(bedHeadEast);
+            Texture bedHeadWest = context.pollOrPeekVanilla(KeyUtil.key(Key.MINECRAFT_NAMESPACE, "block/" + bedColor + "_bed_head_west.png"));
+            BufferedImage bedHeadWestImage = this.readImage(bedHeadWest);
+            Texture bedHeadUp = context.pollOrPeekVanilla(KeyUtil.key(Key.MINECRAFT_NAMESPACE, "block/" + bedColor + "_bed_head_up.png"));
+            BufferedImage bedHeadUpImage = this.readImage(bedHeadUp);
 
             context.debug(String.format("Convert bed %s", bedColor));
 
-            BufferedImage bedImage = ImageUtil.ensureMinWidth(this.readImage(texture), 64);
-
-            float factor = bedImage.getWidth() / 64f;
-
-            BufferedImage newBedImage = new BufferedImage(bedImage.getWidth(), bedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            BufferedImage newBedImage = new BufferedImage((int) (scale * 64), (int) (scale * 64), BufferedImage.TYPE_INT_ARGB);
             Graphics graphics = newBedImage.getGraphics();
 
-            // Top part
-            graphics.drawImage(ImageUtil.crop(bedImage, 0, 0, (44 * factor), (22 * factor)), 0, 0, null);
+            // Head Bed North
+            graphics.drawImage(
+                    ImageUtil.rotate(
+                            ImageUtil.crop(
+                                    bedHeadNorthImage,
+                                    0, 7,
+                                    16, 6
+                            ),
+                            180
+                    ),
+                    6, 0, null
+            );
+            // Head Bed Up
+            graphics.drawImage(bedHeadUpImage, 6, 6, null);
+            // Head Bed East
+            graphics.drawImage(
+                    ImageUtil.rotate(
+                            ImageUtil.crop(
+                                    bedHeadEastImage,
+                                    0, 7,
+                                    16, 6
+                            ),
+                            270
+                    ),
+                    22, 6, null
+            );
+            // Head Bed West
+            graphics.drawImage(
+                    ImageUtil.rotate(
+                            ImageUtil.crop(
+                                    bedHeadWestImage,
+                                    0, 7,
+                                    16, 6
+                            ),
+                            90
+                    ),
+                    0, 6, null
+            );
 
-            // Bottom part
-            graphics.drawImage(ImageUtil.crop(bedImage, 0, (28 * factor), (44 * factor), (16 * factor)), 0, (int) (22 * factor), null);
+            // Foot Bed South
+            graphics.drawImage(
+                    ImageUtil.rotate(
+                            ImageUtil.crop(
+                                    bedFootSouthImage,
+                                    0, 7,
+                                    16, 6
+                            ),
+                            180
+                    ),
+                    22, 0, null
+            );
+            // Foot Bed Up
+            graphics.drawImage(bedFootUpImage, 6, 22, null);
+            // Foot Bed East
+            graphics.drawImage(
+                    ImageUtil.rotate(
+                            ImageUtil.crop(
+                                    bedFootEastImage,
+                                    0, 7,
+                                    16, 6
+                            ),
+                            270
+                    ),
+                    22, 22, null
+            );
+            // Foot Bed West
+            graphics.drawImage(
+                    ImageUtil.rotate(
+                            ImageUtil.crop(
+                                    bedHeadWestImage,
+                                    0, 7,
+                                    16, 6
+                            ),
+                            90
+                    ),
+                    0, 22, null
+            );
 
-            // Bottom side
-            graphics.drawImage(ImageUtil.crop(bedImage, (22 * factor), (22 * factor), (16 * factor), (6 * factor)), (int) (22 * factor), 0, null);
+            // Bottom
+            graphics.drawImage(
+                    ImageUtil.rotate(bedBottomImage, 180),
+                    28, 6, null
+            );
+            graphics.drawImage(
+                    ImageUtil.rotate(bedBottomImage, 180),
+                    28, 22, null
+            );
 
             // Feet
-            List<int[]> feet = new ArrayList<>();
-            feet.add(new int[] {50, 0, 0, 44, 0});
-            feet.add(new int[] {50, 6, 0, 38, 90});
-            feet.add(new int[] {50, 12, 12, 44, -90});
-            feet.add(new int[] {50, 18, 12, 38, 180});
+            graphics.drawImage(
+                    ImageUtil.flip(
+                            ImageUtil.crop(
+                                    bedHeadNorthImage,
+                                    0, 13, 6, 3
+                            ), false, true
+                    ),
+                    3, 38, null
+            );
+            graphics.drawImage(
+                    ImageUtil.flip(
+                            ImageUtil.crop(
+                                    bedHeadNorthImage,
+                                    10, 13, 6, 3
+                            ), false, true
+                    ),
+                    15, 38, null
+            );
 
-            for (int[] values : feet) {
-                int fromX = values[0];
-                int fromY = values[1];
-                int toX = values[2];
-                int toY = values[3];
-                int rotateBottom = values[4];
+            graphics.drawImage(
+                    ImageUtil.rotate(
+                            ImageUtil.crop(
+                                    bedFootSouthImage,
+                                    0, 13, 6, 3
+                            ), 180
+                    ),
+                    15, 44, null
+            );
+            graphics.drawImage(
+                    ImageUtil.rotate(
+                            ImageUtil.crop(
+                                    bedFootSouthImage,
+                                    10, 13, 6, 3
+                            ), 180
+                    ),
+                    3, 44, null
+            );
 
-                graphics.drawImage(ImageUtil.crop(bedImage, ((fromX + 3) * factor), (fromY * factor), (3 * factor), (3 * factor)), (int) ((toX + 3) * factor), (int) ((toY + 3) * factor), null);
-                graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(bedImage, ((fromX + 6) * factor), (fromY * factor), (3 * factor), (3 * factor)), rotateBottom), (int) ((toX + 9) * factor), (int) ((toY + 3) * factor), null);
-                graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(bedImage, (fromX * factor), ((fromY + 3) * factor), (3 * factor), (3 * factor)), -90), (int) (toX * factor), (int) ((toY + 3) * factor), null);
-                graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(bedImage, ((fromX + 3) * factor), ((fromY + 3) * factor), (3 * factor), (3 * factor)), 180), (int) ((toX + 6) * factor), (int) (toY * factor), null);
-                graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(bedImage, ((fromX + 6) * factor), ((fromY + 3) * factor), (3 * factor), (3 * factor)), 90), (int) ((toX + 6) * factor), (int) ((toY + 3) * factor), null);
-                graphics.drawImage(ImageUtil.rotate(ImageUtil.crop(bedImage, ((fromX + 9) * factor), ((fromY + 3) * factor), (3 * factor), (3 * factor)), 180), (int) ((toX + 3) * factor), (int) (toY * factor), null);
-            }
+            graphics.drawImage(
+                    ImageUtil.rotate(
+                            ImageUtil.crop(
+                                    bedFootSouthImage,
+                                    0, 13, 6, 3
+                            ), 180
+                    ),
+                    15, 44, null
+            );
+            graphics.drawImage(
+                    ImageUtil.rotate(
+                            ImageUtil.crop(
+                                    bedFootSouthImage,
+                                    10, 13, 6, 3
+                            ), 180
+                    ),
+                    3, 44, null
+            );
+
+            graphics.drawImage(
+                    ImageUtil.flip(
+                            ImageUtil.crop(
+                                    bedHeadEastImage,
+                                    7, 13, 6, 3
+                            ), true, false
+                    ),
+                    0, 41, null
+            );
+            graphics.drawImage(
+                    ImageUtil.flip(
+                            ImageUtil.crop(
+                                    bedHeadEastImage,
+                                    7, 13, 6, 3
+                            ), true, true
+                    ),
+                    0, 47, null
+            );
+
+            graphics.drawImage(
+                    ImageUtil.crop(
+                            bedHeadWestImage,
+                            3, 13, 6, 3
+                    ),
+                    6, 41, null
+            );
+            graphics.drawImage(
+                    ImageUtil.flip(
+                            ImageUtil.crop(
+                                    bedHeadWestImage,
+                                    3, 13, 6, 3
+                            ), false, true
+                    ),
+                    6, 47, null
+            );
+
+            graphics.drawImage(
+                    ImageUtil.flip(
+                            ImageUtil.crop(
+                                    bedFootWestImage,
+                                    7, 13, 6, 3
+                            ), true, false
+                    ),
+                    12, 41, null
+            );
+            graphics.drawImage(
+                    ImageUtil.flip(
+                            ImageUtil.crop(
+                                    bedFootWestImage,
+                                    7, 13, 6, 3
+                            ), true, true
+                    ),
+                    12, 47, null
+            );
+
+            graphics.drawImage(
+                    ImageUtil.crop(
+                            bedFootEastImage,
+                            3, 13, 6, 3
+                    ),
+                    18, 41, null
+            );
+            graphics.drawImage(
+                    ImageUtil.flip(
+                            ImageUtil.crop(
+                                    bedFootEastImage,
+                                    3, 13, 6, 3
+                            ), false, true
+                    ),
+                    18, 47, null
+            );
+
+            if (bedColor.equals("light_gray")) bedColor = "sliver";
 
             context.offer(KeyUtil.key(Key.MINECRAFT_NAMESPACE, BED_PATH + "/" + bedColor + ".png"), newBedImage, "png");
         }

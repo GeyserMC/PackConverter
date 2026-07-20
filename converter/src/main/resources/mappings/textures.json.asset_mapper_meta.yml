@@ -570,6 +570,8 @@ java:
         - block/chiseled_cinnabar
         - block/chiseled_sulfur
         - block/cinnabar_bricks
+        - entity/sulfur_cube/sulfur_cube_inner_small
+        - entity/sulfur_cube/sulfur_cube_outer_small
     transformed-paths:
         - block/copper_chain
         - entity/conduit/base
@@ -1884,6 +1886,8 @@ bedrock:
         - blocks/chiseled_cinnabar
         - blocks/chiseled_sulfur
         - blocks/cinnabar_bricks
+        - entity/sulfur_cube/sulfur_cube_inner_small
+        - entity/sulfur_cube/sulfur_cube_outer_small
     transformed-paths:
         - blocks/chest_front
         - blocks/chest_side

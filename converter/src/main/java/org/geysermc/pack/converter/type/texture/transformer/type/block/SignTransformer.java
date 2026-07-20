@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 GeyserMC. http://geysermc.org
+ * Copyright (c) 2026 GeyserMC. http://geysermc.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +24,7 @@
  *
  */
 
-package org.geysermc.pack.converter.type.texture.transformer.type.ui;
+package org.geysermc.pack.converter.type.texture.transformer.type.block;
 
 import com.google.auto.service.AutoService;
 import net.kyori.adventure.key.Key;
@@ -58,7 +58,7 @@ public class SignTransformer implements TextureTransformer {
     );
 
     private static final String JAVA_LOCATION = "block/%s.png";
-    private static final String BEDROCK_LOCATION = "ui/%s.png";
+    private static final String BEDROCK_LOCATION = "entity/%s.png";
 
     @Override
     public void transform(@NotNull TransformContext context) throws IOException {
@@ -74,7 +74,72 @@ public class SignTransformer implements TextureTransformer {
 
             Graphics g = bedrockImage.getGraphics();
 
-            g.drawImage(ImageUtil.crop(javaImage, 0, (int) (2 * scale), (int) (scale * 24), (int) (scale * 12)), 0, 0, null);
+            g.drawImage(ImageUtil.crop(javaImage, 0, (int) (2 * scale), (int) (scale * 24), (int) (scale * 12)), (int) (2 * scale), (int) (2 * scale), null);
+            g.drawImage(ImageUtil.crop(javaImage, 0, 0, (int) (scale * 24), (int) (scale * 2)), (int) (2 * scale), 0, null);
+            g.drawImage(
+                    ImageUtil.flip(ImageUtil.crop(
+                            javaImage, (int) (24 * scale),
+                            (int) (2 * scale), (int) (scale * 2),
+                            (int) (scale * 12)
+                    ), true, false),
+                    (int) (50 * scale), (int) (2 * scale), null
+            );
+
+            g.drawImage(ImageUtil.crop(javaImage, 0, (int) (18 * scale), (int) (scale * 24), (int) (scale * 12)), (int) (26 * scale), (int) (2 * scale), null);
+            g.drawImage(
+                    ImageUtil.flip(
+                            ImageUtil.crop(javaImage, 0, (int) (28 * scale), (int) (scale * 24), (int) (scale * 2)),
+                            false, true
+                    ), (int) (26 * scale), 0, null);
+            g.drawImage(
+                    ImageUtil.flip(ImageUtil.crop(
+                            javaImage, (int) (24 * scale),
+                            (int) (16 * scale), (int) (scale * 2),
+                            (int) (scale * 12)
+                    ), true, false),
+                    0, (int) (2 * scale), null
+            );
+
+            g.drawImage(
+                    ImageUtil.flip(
+                            ImageUtil.crop(
+                                    javaImage,
+                                    (int) (28 * scale), 0,
+                                    (int) (4 * scale), (int) (14 * scale)
+                            ), true, false
+                    ),
+                    0, (int) (16 * scale), null
+            );
+            g.drawImage(
+                    ImageUtil.flip(
+                            ImageUtil.crop(
+                                    javaImage,
+                                    (int) (28 * scale), (int) (16 * scale),
+                                    (int) (4 * scale), (int) (14 * scale)
+                            ), true, false
+                    ),
+                    (int) (4 * scale), (int) (16 * scale), null
+            );
+            g.drawImage(
+                    ImageUtil.flip(
+                            ImageUtil.crop(
+                                    javaImage,
+                                    (int) (28 * scale), (int) (30 * scale),
+                                    (int) (2 * scale), (int) (2 * scale)
+                            ), false, true
+                    ),
+                    (int) (2 * scale), (int) (14 * scale), null
+            );
+            g.drawImage(
+                    ImageUtil.flip(
+                            ImageUtil.crop(
+                                    javaImage,
+                                    (int) (28 * scale), (int) (30 * scale),
+                                    (int) (2 * scale), (int) (2 * scale)
+                            ), false, true
+                    ),
+                    (int) (4 * scale), (int) (14 * scale), null
+            );
 
             context.offer(KeyUtil.key(Key.MINECRAFT_NAMESPACE, BEDROCK_LOCATION.formatted(signData.bedrockName)), bedrockImage, "png");
         }
