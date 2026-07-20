@@ -68,6 +68,6 @@ public class SulfurCubeTntTransformer implements TextureTransformer {
         g.drawImage(tntSideImage, (int) (scale * 32), (int) (scale * 52), null);
         g.drawImage(tntSideImage, (int) (scale * 48), (int) (scale * 52), null);
 
-        context.offer(KeyUtil.key(Key.MINECRAFT_NAMESPACE, "entity/sulfur_cube.png"), result, "PNG");
+        context.offer(KeyUtil.key(Key.MINECRAFT_NAMESPACE, "entity/sulfur_cube/sulfur_cube_tnt.png"), result, "PNG");
     }
 }
