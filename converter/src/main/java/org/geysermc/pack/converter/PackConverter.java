@@ -184,7 +184,7 @@ public final class PackConverter {
      * Adds a converter to the converter list.
      *
      * @param converter the converter to add
-     * @return this instance
+     * @return this
      */
     public PackConverter converter(@NotNull ConverterPipeline<?, ?> converter) {
         this.converters.add(converter);
@@ -247,21 +247,7 @@ public final class PackConverter {
      * @throws IOException if an I/O error occurs
      */
     public PackConverter convert() throws IOException {
-        if (this.input == null) {
-            throw new NullPointerException("Input cannot be null");
-        }
-
-        if (this.output == null) {
-            throw new NullPointerException("Output cannot be null");
-        }
-
-        if (this.vanillaPackPath == null) {
-            throw new NullPointerException("Vanilla Pack Path cannot be null");
-        }
-
-        if (this.converters.isEmpty()) {
-            throw new IllegalStateException("No converters have been added");
-        }
+        validateConfiguration();
 
         // Load any image plugins
         ImageIO.scanForPlugins();
@@ -273,11 +259,19 @@ public final class PackConverter {
 
         ZipUtils.openFileSystem(this.input, this.compressed, input -> {
             if (this.enforcePackCheck && !Files.exists(input.resolve("pack.mcmeta"))) {
-                logListener.error("Invalid Java Edition resource pack. No pack.mcmeta found.");
-                return;
+                throw new IllegalArgumentException("Invalid Java Edition resource pack. No pack.mcmeta found.");
             }
 
-            this.tmpDir = this.output.toAbsolutePath().getParent().resolve(this.output.getFileName() + "_mcpack/");
+            Path absoluteOutput = this.output.toAbsolutePath().normalize();
+            Path outputParent = absoluteOutput.getParent();
+            if (outputParent == null) {
+                throw new IllegalArgumentException("Output must resolve to a filesystem path with a parent directory");
+            }
+
+            this.tmpDir = outputParent.resolve(absoluteOutput.getFileName() + "_mcpack");
+            if (Files.exists(this.tmpDir)) {
+                PathUtils.delete(this.tmpDir);
+            }
 
             ResourcePack javaResourcePack = this.compressed ? MinecraftResourcePackReader.minecraft().readFromZipFile(this.input) : MinecraftResourcePackReader.minecraft().read(NioDirectoryFileTreeReader.read(this.input));
             ResourcePack vanillaResourcePack = MinecraftResourcePackReader.minecraft().readFromZipFile(vanillaPackPath);
@@ -302,6 +296,39 @@ public final class PackConverter {
         });
 
         return this;
+    }
+
+    /**
+     * Validate the converter configuration before doing any external work.
+     */
+    private void validateConfiguration() {
+        if (this.input == null) {
+            throw new NullPointerException("Input cannot be null");
+        }
+
+        if (this.output == null) {
+            throw new NullPointerException("Output cannot be null");
+        }
+
+        if (this.vanillaPackPath == null) {
+            throw new NullPointerException("Vanilla Pack Path cannot be null");
+        }
+
+        if (this.converters.isEmpty()) {
+            throw new IllegalStateException("No converters have been added");
+        }
+
+        if (!Files.exists(this.input)) {
+            throw new IllegalArgumentException("Input does not exist: " + this.input);
+        }
+
+        if (this.compressed && !Files.isRegularFile(this.input)) {
+            throw new IllegalArgumentException("Compressed input must be a regular file: " + this.input);
+        }
+
+        if (!this.compressed && !Files.isDirectory(this.input)) {
+            throw new IllegalArgumentException("Uncompressed input must be a directory: " + this.input);
+        }
     }
 
     /**
