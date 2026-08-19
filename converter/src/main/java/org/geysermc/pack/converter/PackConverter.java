@@ -50,240 +50,111 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
-/**
- * Handles the conversion of a resource pack.
- */
+/** Handles the conversion of a resource pack. */
 public final class PackConverter {
     private Path input;
     private Path output;
     private String packName;
-
     private Path vanillaPackPath = Paths.get("vanilla-pack.zip");
-
     private String textureSubdirectory;
-
     private boolean compressed;
     private boolean enforcePackCheck = false;
     private boolean autoExtractModResources;
-
     private BiConsumer<ResourcePack, BedrockResourcePack> postProcessor;
-
     private final List<ConverterPipeline<?, ?>> converters = new ArrayList<>();
-
     private Path tmpDir;
     private Path modResourceDir;
-
     private PackageHandler packageHandler = PackageHandler.ZIP;
     private LogListener logListener = new DefaultLogListener();
 
-    /**
-     * Gets the subdirectory used for textures in the converted
-     * resource pack.
-     * <p>
-     * This option is only necessary for non-vanilla resource packs.
-     *
-     * @return the texture subdirectory
-     */
     @Nullable
     public String textureSubdirectory() {
         return this.textureSubdirectory;
     }
 
-    /**
-     * Sets the input (Java Edition) pack location.
-     *
-     * @param input the input pack location
-     * @return this instance
-     */
     public PackConverter input(@NotNull Path input) {
         return this.input(input, true);
     }
 
-    /**
-     * Sets the input (Java Edition) pack location.
-     * <p>
-     * Set {@code compressed} to {@code true} if the input pack is
-     * compressed, {@code false} otherwise.
-     *
-     * @param input the input pack location
-     * @param compressed whether the input pack is compressed
-     * @return this instance
-     */
     public PackConverter input(@NotNull Path input, boolean compressed) {
         this.input = input;
         this.compressed = compressed;
         return this;
     }
 
-    /**
-     * Sets a directory of Minecraft mod JARs as the input and enables
-     * automatic extraction of their client resources into one deterministic
-     * resource-pack tree before conversion.
-     *
-     * @param modDirectory the directory containing mod JARs
-     * @return this instance
-     */
+    /** Sets a directory of mod JARs as the input and enables automatic extraction. */
     public PackConverter modDirectory(@NotNull Path modDirectory) {
         this.input(modDirectory, false);
         this.autoExtractModResources = true;
         return this;
     }
 
-    /**
-     * Enables or disables automatic extraction when the uncompressed input
-     * directory contains mod JARs.
-     *
-     * @param enabled whether mod resource extraction should be automatic
-     * @return this instance
-     */
+    /** Enables or disables automatic extraction from an uncompressed mod directory. */
     public PackConverter autoExtractModResources(boolean enabled) {
         this.autoExtractModResources = enabled;
         return this;
     }
 
-    /**
-     * Sets the output (Bedrock Edition) pack location.
-     *
-     * @param output the output pack location
-     * @return this instance
-     */
     public PackConverter output(@NotNull Path output) {
         this.output = output;
         return this;
     }
 
-    /**
-     * Sets the output (Bedrock Edition) pack name.
-     *
-     * @param packName the output pack name
-     * @return this instance
-     */
     public PackConverter packName(@NotNull String packName) {
         this.packName = packName;
         return this;
     }
 
-    /**
-     * Gets the output (Bedrock Edition) pack name.
-     *
-     * @return the pack name
-     */
     public @NotNull String packName() {
-        if (packName == null || packName.isBlank()) return input.getFileName().toString().replaceFirst("[.][^.]+$", "");
-
+        if (packName == null || packName.isBlank()) {
+            return input.getFileName().toString().replaceFirst("[.][^.]+$", "");
+        }
         return packName;
     }
 
-    /**
-     * Sets the path where the vanilla pack is downloaded to
-     *
-     * @param vanillaPackPath the vanilla pack location
-     * @return this instance
-     */
     public PackConverter vanillaPackPath(@NotNull Path vanillaPackPath) {
         this.vanillaPackPath = vanillaPackPath;
         return this;
     }
 
-    /**
-     * Sets the texture subdirectory.
-     * <p>
-     * This option is only necessary for non-vanilla resource packs.
-     *
-     * @param textureSubdirectory the texture subdirectory
-     * @return this instance
-     */
     public PackConverter textureSubdirectory(@NotNull String textureSubdirectory) {
         this.textureSubdirectory = textureSubdirectory;
         return this;
     }
 
-    /**
-     * Sets if PackConverter should enforce a check for `pack.mcmeta` in the input.
-     *
-     * @param enforcePackCheck whether the check should be done
-     * @return this instance
-     */
     public PackConverter enforcePackCheck(boolean enforcePackCheck) {
         this.enforcePackCheck = enforcePackCheck;
         return this;
     }
 
-    /**
-     * Adds a converter to the converter list.
-     *
-     * @param converter the converter to add
-     * @return this
-     */
     public PackConverter converter(@NotNull ConverterPipeline<?, ?> converter) {
         this.converters.add(converter);
         return this;
     }
 
-    /**
-     * Adds a list of converters to the converter list.
-     *
-     * @param converters the converters to add
-     * @return this instance
-     */
     public PackConverter converters(@NotNull List<? extends ConverterPipeline<?, ?>> converters) {
         this.converters.addAll(converters);
         return this;
     }
 
-    /**
-     * Sets the log listener for displaying conversion information.
-     *
-     * @param logListener the log listener
-     * @return this instance
-     */
     public PackConverter logListener(@NotNull LogListener logListener) {
         this.logListener = logListener;
         return this;
     }
 
-    /**
-     * Sets the handler used to package the resource pack. By default,
-     * the resource pack is zipped, but this can be changed to a different
-     * handler through this method.
-     *
-     * @param packageHandler the package handler
-     * @return this instance
-     */
     public PackConverter packageHandler(@NotNull PackageHandler packageHandler) {
         this.packageHandler = packageHandler;
         return this;
     }
 
-    /**
-     * Sets the post processor for the converted resource pack.
-     * <p>
-     * This is called after the pack conversion is complete, but
-     * before the pack is packaged.
-     *
-     * @param postProcessor the post processor
-     * @return this instance
-     */
     public PackConverter postProcessor(@NotNull BiConsumer<ResourcePack, BedrockResourcePack> postProcessor) {
         this.postProcessor = postProcessor;
         return this;
     }
 
-    /**
-     * Convert all resources in the pack using the converters
-     *
-     * @return this instance
-     * @throws IOException if an I/O error occurs
-     */
     public PackConverter convert() throws IOException {
         validateConfiguration();
-
-        // Load any image plugins
         ImageIO.scanForPlugins();
-
-        // Need to download the client jar, then use the
-        // client jar to get the vanilla models and textures, so we can
-        // ensure all parent models exist to convert them to Bedrock.
         VanillaPackProvider.create(this.vanillaPackPath, this.logListener);
 
         Path conversionInput = this.input;
@@ -299,13 +170,21 @@ public final class PackConverter {
                 PathUtils.delete(this.modResourceDir);
             }
 
-            List<Path> mods = ModJarExtractor.extractAll(this.input, this.modResourceDir);
-            this.logListener.info("Extracted resources from " + mods.size() + " mod JARs in deterministic order.");
+            ModJarExtractor.ExtractionReport report = ModJarExtractor.extractAll(this.input, this.modResourceDir);
+            this.logListener.info("Extracted " + report.filesExtracted() + " resources from "
+                    + report.mods().size() + " mod JARs in deterministic order.");
+            if (!report.collisions().isEmpty()) {
+                this.logListener.warn("Detected " + report.collisions().size()
+                        + " duplicate resource paths; later sorted mods override earlier ones.");
+                for (String collision : report.collisions()) {
+                    this.logListener.warn("Resource override: " + collision);
+                }
+            }
             conversionInput = this.modResourceDir;
         }
 
         Path sourceInput = conversionInput;
-        ZipUtils.openFileSystem(sourceInput, false, input -> {
+        ZipUtils.openFileSystem(sourceInput, this.compressed && sourceInput.equals(this.input), input -> {
             if (this.enforcePackCheck && !Files.exists(input.resolve("pack.mcmeta"))) {
                 throw new IllegalArgumentException("Invalid Java Edition resource pack. No pack.mcmeta found.");
             }
@@ -321,7 +200,9 @@ public final class PackConverter {
                 PathUtils.delete(this.tmpDir);
             }
 
-            ResourcePack javaResourcePack = MinecraftResourcePackReader.minecraft().read(NioDirectoryFileTreeReader.read(sourceInput));
+            ResourcePack javaResourcePack = (this.compressed && sourceInput.equals(this.input))
+                    ? MinecraftResourcePackReader.minecraft().readFromZipFile(sourceInput)
+                    : MinecraftResourcePackReader.minecraft().read(NioDirectoryFileTreeReader.read(sourceInput));
             ResourcePack vanillaResourcePack = MinecraftResourcePackReader.minecraft().readFromZipFile(vanillaPackPath);
             BedrockResourcePack bedrockResourcePack = new BedrockResourcePack(this.tmpDir);
 
@@ -333,7 +214,6 @@ public final class PackConverter {
             if (this.postProcessor != null) {
                 this.postProcessor.accept(javaResourcePack, bedrockResourcePack);
             }
-
             bedrockResourcePack.export();
 
             if (errors > 0) {
@@ -342,75 +222,38 @@ public final class PackConverter {
                 this.logListener.info("Pack conversion completed successfully!");
             }
         });
-
         return this;
     }
 
-    /**
-     * Validate the converter configuration before doing any external work.
-     */
     private void validateConfiguration() {
-        if (this.input == null) {
-            throw new NullPointerException("Input cannot be null");
-        }
-
-        if (this.output == null) {
-            throw new NullPointerException("Output cannot be null");
-        }
-
-        if (this.vanillaPackPath == null) {
-            throw new NullPointerException("Vanilla Pack Path cannot be null");
-        }
-
-        if (this.converters.isEmpty()) {
-            throw new IllegalStateException("No converters have been added");
-        }
-
-        if (!Files.exists(this.input)) {
-            throw new IllegalArgumentException("Input does not exist: " + this.input);
-        }
-
+        if (this.input == null) throw new NullPointerException("Input cannot be null");
+        if (this.output == null) throw new NullPointerException("Output cannot be null");
+        if (this.vanillaPackPath == null) throw new NullPointerException("Vanilla Pack Path cannot be null");
+        if (this.converters.isEmpty()) throw new IllegalStateException("No converters have been added");
+        if (!Files.exists(this.input)) throw new IllegalArgumentException("Input does not exist: " + this.input);
         if (this.compressed && !Files.isRegularFile(this.input)) {
             throw new IllegalArgumentException("Compressed input must be a regular file: " + this.input);
         }
-
         if (!this.compressed && !Files.isDirectory(this.input)) {
             throw new IllegalArgumentException("Uncompressed input must be a directory: " + this.input);
         }
     }
 
-    /**
-     * Convert the temporary folder into the output zip
-     *
-     * @return this instance
-     * @throws IOException if an I/O error occurs
-     */
     public PackConverter pack() throws IOException {
-        if (tmpDir == null || !Files.exists(this.tmpDir)) return this;
-
-        this.logListener.info("Packaging pack...");
-
-        this.packageHandler.pack(this, this.tmpDir, this.output, this.logListener);
-        this.logListener.info("Packaged pack! Cleaning up...");
-
-        this.cleanup();
-
-        this.logListener.info("Pack converted.");
-
+        if (tmpDir == null || !Files.exists(tmpDir)) return this;
+        logListener.info("Packaging pack...");
+        packageHandler.pack(this, tmpDir, output, logListener);
+        logListener.info("Packaged pack! Cleaning up...");
+        cleanup();
+        logListener.info("Pack converted.");
         return this;
     }
 
-    /**
-     * Remove the temporary folders generated by the converter.
-     * <p>
-     * Silently fails.
-     */
     private void cleanup() {
         try {
             PathUtils.delete(tmpDir);
         } catch (IOException ignored) {
         }
-
         try {
             PathUtils.delete(modResourceDir);
         } catch (IOException ignored) {
