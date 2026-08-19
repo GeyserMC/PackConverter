@@ -155,16 +155,16 @@ public final class PackConverter {
     public PackConverter convert() throws IOException {
         validateConfiguration();
         ImageIO.scanForPlugins();
+        Path absoluteOutput = this.output.toAbsolutePath().normalize();
+        Path outputParent = absoluteOutput.getParent();
+        if (outputParent == null) {
+            throw new IllegalArgumentException("Output must resolve to a filesystem path with a parent directory");
+        }
+        Files.createDirectories(outputParent);
         VanillaPackProvider.create(this.vanillaPackPath, this.logListener);
 
         Path conversionInput = this.input;
         if (!this.compressed && this.autoExtractModResources && ModJarExtractor.isModDirectory(this.input)) {
-            Path absoluteOutput = this.output.toAbsolutePath().normalize();
-            Path outputParent = absoluteOutput.getParent();
-            if (outputParent == null) {
-                throw new IllegalArgumentException("Output must resolve to a filesystem path with a parent directory");
-            }
-
             this.modResourceDir = outputParent.resolve(absoluteOutput.getFileName() + "_modresources");
             if (Files.exists(this.modResourceDir)) {
                 PathUtils.delete(this.modResourceDir);
@@ -187,12 +187,6 @@ public final class PackConverter {
         ZipUtils.openFileSystem(sourceInput, this.compressed && sourceInput.equals(this.input), input -> {
             if (this.enforcePackCheck && !Files.exists(input.resolve("pack.mcmeta"))) {
                 throw new IllegalArgumentException("Invalid Java Edition resource pack. No pack.mcmeta found.");
-            }
-
-            Path absoluteOutput = this.output.toAbsolutePath().normalize();
-            Path outputParent = absoluteOutput.getParent();
-            if (outputParent == null) {
-                throw new IllegalArgumentException("Output must resolve to a filesystem path with a parent directory");
             }
 
             this.tmpDir = outputParent.resolve(absoluteOutput.getFileName() + "_mcpack");
@@ -231,6 +225,9 @@ public final class PackConverter {
         if (this.vanillaPackPath == null) throw new NullPointerException("Vanilla Pack Path cannot be null");
         if (this.converters.isEmpty()) throw new IllegalStateException("No converters have been added");
         if (!Files.exists(this.input)) throw new IllegalArgumentException("Input does not exist: " + this.input);
+        if (!Files.isRegularFile(this.vanillaPackPath)) {
+            throw new IllegalArgumentException("Vanilla pack must be a regular file: " + this.vanillaPackPath);
+        }
         if (this.compressed && !Files.isRegularFile(this.input)) {
             throw new IllegalArgumentException("Compressed input must be a regular file: " + this.input);
         }
