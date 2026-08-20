@@ -154,6 +154,7 @@ public final class PackConverter {
 
     public PackConverter convert() throws IOException {
         validateConfiguration();
+        cleanupTemporaryState();
         ImageIO.scanForPlugins();
         Path absoluteOutput = this.output.toAbsolutePath().normalize();
         Path outputParent = absoluteOutput.getParent();
@@ -246,14 +247,31 @@ public final class PackConverter {
         return this;
     }
 
-    private void cleanup() {
-        try {
+    private void cleanupTemporaryState() throws IOException {
+        if (tmpDir != null && Files.exists(tmpDir)) {
             PathUtils.delete(tmpDir);
-        } catch (IOException ignored) {
         }
-        try {
+        if (modResourceDir != null && Files.exists(modResourceDir)) {
             PathUtils.delete(modResourceDir);
-        } catch (IOException ignored) {
+        }
+        tmpDir = null;
+        modResourceDir = null;
+    }
+
+    private void cleanup() {
+        if (tmpDir != null) {
+            try {
+                PathUtils.delete(tmpDir);
+            } catch (IOException ignored) {
+            }
+            tmpDir = null;
+        }
+        if (modResourceDir != null) {
+            try {
+                PathUtils.delete(modResourceDir);
+            } catch (IOException ignored) {
+            }
+            modResourceDir = null;
         }
     }
 }
