@@ -8,6 +8,8 @@ on:
       - 'LICENSE'
       - 'README.md'
 
+# PR validation may cancel an older validation for the same PR, but it can never
+# cancel a normal branch/scheduled build because the group namespace is different.
 concurrency:
   group: pr-build-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
