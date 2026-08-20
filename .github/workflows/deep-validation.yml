@@ -15,7 +15,7 @@ permissions:
 jobs:
   regression:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     env:
       GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx2g
     steps:
@@ -38,11 +38,25 @@ jobs:
       - name: Repository integrity
         run: bash scripts/ci/validate-repository.sh
 
+      - name: Resource tree integrity
+        run: bash scripts/ci/validate-resources.sh
+
+      - name: Gradle wrapper validation
+        run: ./gradlew --version
+
       - name: Converter regression tests
         run: ./gradlew :converter:test --no-daemon --stacktrace
 
       - name: Full verification
         run: ./gradlew check --no-daemon --stacktrace
+
+      - name: Build reproducibility check
+        shell: bash
+        run: |
+          set -euo pipefail
+          ./gradlew clean build --no-daemon --stacktrace
+          test -s bootstrap/build/libs/Thunder.jar
+          sha256sum bootstrap/build/libs/Thunder.jar | tee build/deep-validation-artifact.sha256
 
       - name: Upload deep diagnostics
         if: failure()
@@ -50,7 +64,7 @@ jobs:
         with:
           name: deep-validation-${{ github.run_id }}
           path: |
-            build/reports/**
+            build/**
             **/build/test-results/**
             **/build/reports/tests/**
           if-no-files-found: ignore
