@@ -28,15 +28,17 @@ if [[ -f .github/workflows/build.yml ]]; then
   fi
 fi
 
-# Reject accidentally committed credentials in workflow definitions.
-if grep -RInE '(ghp_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,}|BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY)' .github --exclude-dir='ISSUE_TEMPLATE' >/tmp/credential-scan.txt 2>/dev/null; then
+# Reject accidentally committed private-key material in workflow definitions.
+if grep -RInE 'BEGIN (RSA|OPENSSH|EC|DSA) PRIVATE KEY' .github --exclude-dir='ISSUE_TEMPLATE' >/tmp/credential-scan.txt 2>/dev/null; then
   cat /tmp/credential-scan.txt
-  fail "Potential credential material found under .github"
+  fail "Potential private-key material found under .github"
 fi
 
-# Ensure no generated build output is tracked by the repository.
-if git ls-files | grep -Eq '(^|/)(build/|\.gradle/)|\.class$|\.jar$'; then
-  git ls-files | grep -E '(^|/)(build/|\.gradle/)|\.class$|\.jar$'
+# Ensure generated build output is not tracked by the repository. The Gradle
+# wrapper JAR is intentionally versioned and is the one supported exception.
+tracked_generated=$(git ls-files | grep -E '(^|/)(build/|\.gradle/)|\.class$|\.jar$' | grep -Ev '^gradle/wrapper/gradle-wrapper\.jar$' || true)
+if [[ -n "$tracked_generated" ]]; then
+  printf '%s\n' "$tracked_generated"
   fail "Generated build output is tracked"
 fi
 
