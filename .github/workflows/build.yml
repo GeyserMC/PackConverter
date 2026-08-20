@@ -13,9 +13,12 @@ on:
       - 'LICENSE'
       - 'README.md'
 
+# Keep every ref isolated and queue newer runs instead of cancelling work already in progress.
+# This is important for scheduled unattended builds: a later trigger must not kill the build
+# that is currently doing the actual Gradle validation.
 concurrency:
-  group: build-${{ github.ref }}
-  cancel-in-progress: true
+  group: build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
 
 permissions:
   contents: read
@@ -98,8 +101,8 @@ jobs:
 
       - name: Get Release Metadata
         if: ${{ (success() || failure()) && github.repository == 'GeyserMC/PackConverter' }}
-        uses: GeyserMC/actions/release@master
         id: metadata
+        uses: GeyserMC/actions/release@master
         with:
           appID: ${{ secrets.RELEASE_APP_ID }}
           appPrivateKey: ${{ secrets.RELEASE_APP_PK }}
