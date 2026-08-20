@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -11,10 +12,18 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ModJarExtractorTest {
+    @Test
+    void recognizesJarAndJarxCaseInsensitively() {
+        assertTrue(ModJarExtractor.isModJar(Path.of("example.jar")));
+        assertTrue(ModJarExtractor.isModJar(Path.of("example.JARX")));
+        assertFalse(ModJarExtractor.isModJar(Path.of("example.zip")));
+    }
+
     @Test
     void extractsOnlyResourcePackEntries() throws Exception {
         Path root = Files.createTempDirectory("packconverter-extractor-");
@@ -32,6 +41,26 @@ class ModJarExtractorTest {
             assertTrue(Files.exists(output.resolve("assets/example/models/item/test.json")));
             assertTrue(Files.exists(output.resolve("assets/example/textures/item/test.png")));
             assertTrue(Files.notExists(output.resolve("META-INF/mods.toml")));
+        } finally {
+            deleteTree(root);
+        }
+    }
+
+    @Test
+    void singleJarExtractionKeepsPackMetadata() throws Exception {
+        Path root = Files.createTempDirectory("packconverter-metadata-");
+        try {
+            Path jar = root.resolve("example.jar");
+            Path output = root.resolve("out");
+            writeJar(jar,
+                    "pack.mcmeta", "{\"pack\":{\"pack_format\":1}}",
+                    "pack.png", "png-placeholder",
+                    "assets/example/models/item/test.json", "{}" );
+
+            ModJarExtractor.extract(jar, output);
+
+            assertTrue(Files.exists(output.resolve("pack.mcmeta")));
+            assertTrue(Files.exists(output.resolve("pack.png")));
         } finally {
             deleteTree(root);
         }
@@ -82,7 +111,7 @@ class ModJarExtractorTest {
         try (OutputStream output = Files.newOutputStream(jar); ZipOutputStream zip = new ZipOutputStream(output)) {
             for (int i = 0; i < entries.length; i += 2) {
                 zip.putNextEntry(new ZipEntry(entries[i]));
-                zip.write(entries[i + 1].getBytes());
+                zip.write(entries[i + 1].getBytes(StandardCharsets.UTF_8));
                 zip.closeEntry();
             }
         }
