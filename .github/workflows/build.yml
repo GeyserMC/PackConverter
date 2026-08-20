@@ -26,7 +26,9 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
+    env:
+      GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx2g
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,8 +49,28 @@ jobs:
       - name: Validate Gradle wrapper
         run: ./gradlew --version
 
-      - name: Build and test
-        run: ./gradlew clean build --no-daemon --stacktrace
+      # Retry only the complete build operation. This handles transient Maven/network
+      # failures without hiding deterministic compiler/test failures: every attempt is
+      # logged, and the final attempt still fails the job if the problem is reproducible.
+      - name: Build and test with recovery
+        shell: bash
+        run: |
+          set -uo pipefail
+          mkdir -p build/ci-attempts
+          for attempt in 1 2 3; do
+            echo "===== unattended build attempt ${attempt}/3 ====="
+            log="build/ci-attempts/attempt-${attempt}.log"
+            if ./gradlew clean build --no-daemon --stacktrace 2>&1 | tee "$log"; then
+              echo "Build succeeded on attempt ${attempt}."
+              exit 0
+            fi
+            echo "Build attempt ${attempt} failed."
+            if [ "$attempt" -lt 3 ]; then
+              sleep $((attempt * 15))
+            fi
+          done
+          echo "All build attempts failed."
+          exit 1
 
       - name: Verify release artifact
         run: |
@@ -71,11 +93,12 @@ jobs:
         with:
           name: build-diagnostics-${{ github.run_id }}
           path: |
+            build/ci-attempts/**
             build/reports/**
             **/build/test-results/**
             **/build/reports/tests/**
           if-no-files-found: ignore
-          retention-days: 7
+          retention-days: 14
 
       - name: Upstream-only release metadata
         if: ${{ success() && github.repository == 'GeyserMC/PackConverter' && github.ref_name == 'master' }}
@@ -97,6 +120,7 @@ jobs:
         id: get-version
         run: |
           version=$(grep -oE '^version=[0-9.]+([A-Za-z0-9.-]*)?' gradle.properties | cut -d= -f2)
+          test -n "$version"
           echo "VERSION=${version}" >> "$GITHUB_OUTPUT"
 
       - name: Get Release Metadata
