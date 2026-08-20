@@ -68,16 +68,17 @@ public final class ModJarExtractor {
         }
     }
 
-    /** Extracts one mod JAR into a resource-pack directory. */
+    /** Extracts one mod JAR, including its pack metadata, into a resource-pack directory. */
     public static @NotNull Path extract(@NotNull Path jar, @NotNull Path destination) throws IOException {
-        extractInternal(jar, destination, new LinkedHashSet<>());
+        extractInternal(jar, destination, new LinkedHashSet<>(), new LinkedHashSet<>(), true);
         return destination.toAbsolutePath().normalize();
     }
 
     /**
      * Extracts every mod JAR directly inside a directory in deterministic filename order.
-     * If multiple mods contain the same resource, the later mod in sorted order wins and
-     * the collision is reported instead of being silently hidden.
+     * Multi-mod extraction intentionally merges only {@code assets/}. Pack-level metadata
+     * such as {@code pack.mcmeta} and {@code pack.png} belongs to the generated pack and
+     * must not be selected accidentally from whichever mod happens to sort last.
      */
     public static @NotNull ExtractionReport extractAll(@NotNull Path directory, @NotNull Path destination) throws IOException {
         Path root = directory.toAbsolutePath().normalize();
@@ -98,17 +99,13 @@ public final class ModJarExtractor {
         Set<String> collisions = new LinkedHashSet<>();
         int filesExtracted = 0;
         for (Path jar : jars) {
-            filesExtracted += extractInternal(jar, destination, extracted, collisions);
+            filesExtracted += extractInternal(jar, destination, extracted, collisions, false);
         }
         return new ExtractionReport(jars, filesExtracted, new ArrayList<>(collisions));
     }
 
-    private static void extractInternal(Path jar, Path destination, Set<String> extracted) throws IOException {
-        extractInternal(jar, destination, extracted, new LinkedHashSet<>());
-    }
-
     private static int extractInternal(Path jar, Path destination, Set<String> extracted,
-                                       Set<String> collisions) throws IOException {
+                                       Set<String> collisions, boolean includePackMetadata) throws IOException {
         Path root = destination.toAbsolutePath().normalize();
         Files.createDirectories(root);
         int count = 0;
@@ -117,7 +114,7 @@ public final class ModJarExtractor {
             ZipEntry entry;
             while ((entry = zip.getNextEntry()) != null) {
                 String name = entry.getName().replace('\\', '/');
-                if (entry.isDirectory() || !isResourcePackEntry(name)) continue;
+                if (entry.isDirectory() || !isResourcePackEntry(name, includePackMetadata)) continue;
 
                 Path target = root.resolve(name).normalize();
                 if (!target.startsWith(root)) {
@@ -134,9 +131,8 @@ public final class ModJarExtractor {
         return count;
     }
 
-    private static boolean isResourcePackEntry(String name) {
-        return name.equals("pack.mcmeta")
-                || name.equals("pack.png")
-                || name.startsWith(ASSETS_PREFIX);
+    private static boolean isResourcePackEntry(String name, boolean includePackMetadata) {
+        if (name.startsWith(ASSETS_PREFIX)) return true;
+        return includePackMetadata && (name.equals("pack.mcmeta") || name.equals("pack.png"));
     }
 }
