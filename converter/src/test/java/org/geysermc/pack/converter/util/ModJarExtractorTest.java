@@ -43,15 +43,21 @@ class ModJarExtractorTest {
         try {
             Path mods = Files.createDirectory(root.resolve("mods"));
             Path output = root.resolve("out");
-            writeJar(mods.resolve("01-first.jar"), "assets/test/models/item/shared.json", "first");
-            writeJar(mods.resolve("02-second.jar"), "assets/test/models/item/shared.json", "second");
+            writeJar(mods.resolve("01-first.jar"),
+                    "assets/test/models/item/shared.json", "first",
+                    "pack.mcmeta", "first metadata");
+            writeJar(mods.resolve("02-second.jar"),
+                    "assets/test/models/item/shared.json", "second",
+                    "pack.mcmeta", "second metadata");
 
             ModJarExtractor.ExtractionReport report = ModJarExtractor.extractAll(mods, output);
 
             assertEquals(2, report.filesExtracted());
             assertEquals(2, report.mods().size());
             assertEquals(1, report.collisions().size());
+            assertEquals("assets/test/models/item/shared.json", report.collisions().get(0));
             assertEquals("second", Files.readString(output.resolve("assets/test/models/item/shared.json")));
+            assertTrue(Files.notExists(output.resolve("pack.mcmeta")));
         } finally {
             deleteTree(root);
         }
