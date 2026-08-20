@@ -1,5 +1,8 @@
 name: Build
 
+# Baseline rebuild from autonomous-ci-hardening-2026-08-20.
+# Keep this workflow functionally unchanged while validating the known-good baseline.
+
 on:
   workflow_dispatch:
   schedule:
