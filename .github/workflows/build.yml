@@ -46,6 +46,9 @@ jobs:
       - name: Validate repository invariants
         run: bash scripts/ci/validate-repository.sh
 
+      - name: Validate resource tree
+        run: bash scripts/ci/validate-resources.sh
+
       - name: Validate Gradle wrapper
         run: ./gradlew --version
 
