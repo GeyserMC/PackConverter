@@ -14,8 +14,6 @@ on:
       - 'README.md'
 
 # Keep every ref isolated and queue newer runs instead of cancelling work already in progress.
-# This is important for scheduled unattended builds: a later trigger must not kill the build
-# that is currently doing the actual Gradle validation.
 concurrency:
   group: build-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
@@ -26,7 +24,7 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 40
     env:
       GRADLE_OPTS: -Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-Xmx2g
     steps:
@@ -46,12 +44,14 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Validate repository invariants
+        run: bash scripts/ci/validate-repository.sh
+
       - name: Validate Gradle wrapper
         run: ./gradlew --version
 
-      # Retry only the complete build operation. This handles transient Maven/network
-      # failures without hiding deterministic compiler/test failures: every attempt is
-      # logged, and the final attempt still fails the job if the problem is reproducible.
+      # Retry only the complete build operation. Transient infrastructure failures are retried;
+      # deterministic compiler/test failures remain failures after the final attempt.
       - name: Build and test with recovery
         shell: bash
         run: |
@@ -71,6 +71,12 @@ jobs:
           done
           echo "All build attempts failed."
           exit 1
+
+      # Scheduled runs deliberately repeat the converter test task from a clean Gradle state.
+      # This catches flaky fixture/order issues that a warm-cache developer build may miss.
+      - name: Deep converter regression pass
+        if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
+        run: ./gradlew :converter:test --rerun-tasks --no-daemon --stacktrace
 
       - name: Verify release artifact
         run: |
