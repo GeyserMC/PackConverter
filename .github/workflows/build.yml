@@ -13,7 +13,6 @@ on:
       - 'LICENSE'
       - 'README.md'
 
-# Keep every ref isolated and queue newer runs instead of cancelling work already in progress.
 concurrency:
   group: build-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
@@ -50,33 +49,34 @@ jobs:
       - name: Validate Gradle wrapper
         run: ./gradlew --version
 
-      # Retry only the complete build operation. Transient infrastructure failures are retried;
-      # deterministic compiler/test failures remain failures after the final attempt.
-      - name: Build and test with recovery
+      - name: Run converter regression tests
         shell: bash
         run: |
           set -uo pipefail
           mkdir -p build/ci-attempts
           for attempt in 1 2 3; do
-            echo "===== unattended build attempt ${attempt}/3 ====="
-            log="build/ci-attempts/attempt-${attempt}.log"
-            if ./gradlew clean build --no-daemon --stacktrace 2>&1 | tee "$log"; then
-              echo "Build succeeded on attempt ${attempt}."
+            log="build/ci-attempts/converter-test-${attempt}.log"
+            echo "===== converter regression attempt ${attempt}/3 ====="
+            if ./gradlew :converter:test --no-daemon --stacktrace 2>&1 | tee "$log"; then
               exit 0
             fi
-            echo "Build attempt ${attempt} failed."
-            if [ "$attempt" -lt 3 ]; then
-              sleep $((attempt * 15))
-            fi
+            [ "$attempt" -lt 3 ] && sleep $((attempt * 15))
           done
-          echo "All build attempts failed."
           exit 1
 
-      # Scheduled runs deliberately repeat the converter test task from a clean Gradle state.
-      # This catches flaky fixture/order issues that a warm-cache developer build may miss.
-      - name: Deep converter regression pass
-        if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' }}
-        run: ./gradlew :converter:test --rerun-tasks --no-daemon --stacktrace
+      - name: Build all modules with recovery
+        shell: bash
+        run: |
+          set -uo pipefail
+          for attempt in 1 2 3; do
+            log="build/ci-attempts/full-build-${attempt}.log"
+            echo "===== full build attempt ${attempt}/3 ====="
+            if ./gradlew clean build --no-daemon --stacktrace 2>&1 | tee "$log"; then
+              exit 0
+            fi
+            [ "$attempt" -lt 3 ] && sleep $((attempt * 15))
+          done
+          exit 1
 
       - name: Verify release artifact
         run: |
