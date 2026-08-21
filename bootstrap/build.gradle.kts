@@ -23,6 +23,6 @@ application {
     mainClass.set("org.geysermc.pack.converter.bootstrap.Main")
 }
 
-tasks.withType<com.gradleup.shadow.tasks.ShadowJar> {
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     archiveFileName.set("Thunder.jar")
 }
