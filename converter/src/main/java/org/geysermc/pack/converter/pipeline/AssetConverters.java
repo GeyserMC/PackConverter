@@ -33,6 +33,8 @@ import org.geysermc.pack.bedrock.resource.Manifest;
 import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitions;
 import org.geysermc.pack.converter.type.base.PackIconConverter;
 import org.geysermc.pack.converter.type.base.PackManifestConverter;
+import org.geysermc.pack.converter.type.entity.gecko.GeckoLibModelConverter;
+import org.geysermc.pack.converter.type.entity.gecko.GeckoModelAsset;
 import org.geysermc.pack.converter.type.lang.BedrockLanguage;
 import org.geysermc.pack.converter.type.lang.LangConverter;
 import org.geysermc.pack.converter.type.misc.SplashTextConverter;
@@ -77,6 +79,13 @@ public final class AssetConverters {
             (pack, splashes) -> pack.addExtraFile(splashes, "splashes.json"));
     public static final ConverterPipeline<Language, BedrockLanguage> LANGUAGE = create(extractor(LanguageSerializer.CATEGORY), LangConverter.INSTANCE);
     public static final ConverterPipeline<Model, BedrockModel> MODEL = create(ModelConverter.INSTANCE);
+    /**
+     * Converts GeckoLib {@code .geo.json} entity models into Bedrock entity geometry.
+     * Registered as experimental (only runs with {@code --debug}) since it has not yet been
+     * validated against a real Bedrock client - see {@link GeckoLibModelConverter}.
+     */
+    public static final ConverterPipeline<GeckoModelAsset, BedrockModel> GECKO_MODEL = registerExperimental(
+            new ConverterPipeline<>(GeckoLibModelConverter.INSTANCE, GeckoLibModelConverter.INSTANCE, GeckoLibModelConverter.INSTANCE, true, Optional.empty()));
     public static final ConverterPipeline<SoundRegistry, Map<String, SoundDefinitions>> SOUND_REGISTRY = create(
             (pack, context) -> pack.soundRegistries(), SoundRegistryConverter.INSTANCE);
     public static final ConverterPipeline<Sound, Sound> SOUND = create(SoundConverter.INSTANCE);
@@ -110,6 +119,13 @@ public final class AssetConverters {
                                                                                               AssetConverter<JavaAsset, BedrockAsset> converter,
                                                                                               AssetCombiner<BedrockAsset> combiner) {
         ConverterPipeline<JavaAsset, BedrockAsset> pipeline = new ConverterPipeline<>(extractor, converter, combiner, false, Optional.empty());
+        if (!bootstrapped) {
+            CONVERTERS.add(pipeline);
+        }
+        return pipeline;
+    }
+
+    private static <JavaAsset, BedrockAsset> ConverterPipeline<JavaAsset, BedrockAsset> registerExperimental(ConverterPipeline<JavaAsset, BedrockAsset> pipeline) {
         if (!bootstrapped) {
             CONVERTERS.add(pipeline);
         }
