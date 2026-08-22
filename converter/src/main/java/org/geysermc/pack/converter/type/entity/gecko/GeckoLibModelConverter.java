@@ -51,6 +51,7 @@ import org.geysermc.pack.converter.type.model.BedrockModel;
 import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.base.Writable;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -110,7 +111,7 @@ public record GeckoLibModelConverter() implements AssetExtractor<GeckoModelAsset
             try {
                 GeckoModel model = GSON.fromJson(entry.getValue().toUTF8String(), GeckoModel.class);
                 assets.add(new GeckoModelAsset(namespace, fileName, model));
-            } catch (JsonSyntaxException e) {
+            } catch (IOException | JsonSyntaxException e) {
                 context.warn("Failed to parse GeckoLib model at " + path + ": " + e.getMessage());
             }
         }
