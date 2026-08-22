@@ -94,7 +94,7 @@ public record GeckoAnimationConverter() implements AssetExtractor<GeckoAnimation
                 continue;
             }
             String namespace = parts[1];
-            String fileName = path.substring(path.lastIndexOf('/') + 1, path.length() - ANIMATION_SUFFIX.length);
+            String fileName = path.substring(path.lastIndexOf('/') + 1, path.length() - ANIMATION_SUFFIX.length());
 
             try {
                 JsonElement parsed = com.google.gson.JsonParser.parseString(entry.getValue().toUTF8String());
