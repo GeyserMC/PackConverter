@@ -127,13 +127,22 @@ public record GeckoLibModelConverter() implements AssetExtractor<GeckoModelAsset
             return null;
         }
 
-        // A .geo.json can technically define multiple named geometries; GeckoLib entities
-        // typically only use the first one, so - like vanilla Java models - we take the first.
-        GeckoGeometry sourceGeometry = raw.geometry.get(0);
-
+        // A .geo.json can technically define multiple named geometries; Bedrock's own
+        // geometry format supports the same array shape, so every entry is carried
+        // across and consumers pick the one they need by identifier.
         ModelEntity modelEntity = new ModelEntity();
         modelEntity.formatVersion(FORMAT_VERSION);
 
+        List<Geometry> geometries = new ArrayList<>();
+        for (GeckoGeometry sourceGeometry : raw.geometry) {
+            geometries.add(convertGeometry(asset, sourceGeometry, context));
+        }
+        modelEntity.geometry(geometries);
+
+        return new BedrockModel(BedrockModel.ModelType.ENTITY, asset.namespace() + "." + asset.fileName() + ".json", modelEntity);
+    }
+
+    private Geometry convertGeometry(GeckoModelAsset asset, GeckoGeometry sourceGeometry, ConversionContext context) {
         Geometry geometry = new Geometry();
 
         Description description = new Description();
@@ -162,9 +171,7 @@ public record GeckoLibModelConverter() implements AssetExtractor<GeckoModelAsset
         }
         geometry.bones(bones);
 
-        modelEntity.geometry(List.of(geometry));
-
-        return new BedrockModel(BedrockModel.ModelType.ENTITY, asset.namespace() + "." + asset.fileName() + ".json", modelEntity);
+        return geometry;
     }
 
     private Bones convertBone(GeckoBone rawBone, ConversionContext context) {

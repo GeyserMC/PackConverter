@@ -168,6 +168,49 @@ class GeckoLibModelConverterTest {
         assertTrue(result == null, "Expected null result for a model with no geometry entries");
     }
 
+    @Test
+    void convert_carriesEveryNamedGeometry_notJustTheFirst() throws Exception {
+        GeckoModel model = GSON.fromJson(JsonParser.parseString(MULTI_GEOMETRY_JSON), GeckoModel.class);
+
+        BedrockModel result = GeckoLibModelConverter.INSTANCE.convert(
+                new GeckoModelAsset("testmod", "multi_part_mob", model), testContext());
+
+        assertEquals(2, result.model().geometry().size(), "both named geometries should be carried across");
+        assertEquals("geometry.testmod.body", result.model().geometry().get(0).description().identifier());
+        assertEquals("geometry.testmod.head", result.model().geometry().get(1).description().identifier());
+        assertEquals(1, result.model().geometry().get(0).bones().size());
+        assertEquals("body_root", result.model().geometry().get(0).bones().get(0).name());
+        assertEquals("head_root", result.model().geometry().get(1).bones().get(0).name());
+    }
+
+    private static final String MULTI_GEOMETRY_JSON = """
+            {
+              "format_version": "1.12.0",
+              "minecraft:geometry": [
+                {
+                  "description": {
+                    "identifier": "geometry.testmod.body",
+                    "texture_width": 64,
+                    "texture_height": 64
+                  },
+                  "bones": [
+                    { "name": "body_root", "pivot": [0, 0, 0] }
+                  ]
+                },
+                {
+                  "description": {
+                    "identifier": "geometry.testmod.head",
+                    "texture_width": 64,
+                    "texture_height": 64
+                  },
+                  "bones": [
+                    { "name": "head_root", "pivot": [0, 8, 0] }
+                  ]
+                }
+              ]
+            }
+            """;
+
     private BedrockModel convertSample() throws Exception {
         GeckoModel model = GSON.fromJson(JsonParser.parseString(SAMPLE_MODEL_JSON), GeckoModel.class);
         return GeckoLibModelConverter.INSTANCE.convert(
