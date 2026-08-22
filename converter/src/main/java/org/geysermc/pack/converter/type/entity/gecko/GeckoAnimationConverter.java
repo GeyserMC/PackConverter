@@ -119,8 +119,9 @@ public record GeckoAnimationConverter() implements AssetExtractor<GeckoAnimation
             return null;
         }
 
-        // Deep copy so the extracted asset stays untouched for other consumers.
-        JsonObject result = GSON.fromJson(source, JsonObject.class);
+        // Deep copy so the extracted asset stays untouched for other consumers;
+        // gson.fromJson on a JsonElement hands back the same tree, not a copy.
+        JsonObject result = source.deepCopy();
         JsonObject animations = result.getAsJsonObject("animations");
 
         if (result.has("format_version") && result.get("format_version").isJsonPrimitive()) {
