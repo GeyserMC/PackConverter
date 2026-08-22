@@ -51,13 +51,10 @@ import org.geysermc.pack.converter.type.model.BedrockModel;
 import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.base.Writable;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Converts GeckoLib {@code .geo.json} entity models into Bedrock entity geometry.
@@ -90,14 +87,13 @@ public record GeckoLibModelConverter() implements AssetExtractor<GeckoModelAsset
     public Collection<GeckoModelAsset> extract(ResourcePack pack, ExtractionContext context) {
         List<GeckoModelAsset> assets = new ArrayList<>();
 
-        // NOTE: `unknownFiles()` is how team.unnamed's creative-api (1.13.6, as pinned by this
-        // project) exposes files that don't belong to any of its typed resource categories
-        // (models, textures, sounds, ...) - `.geo.json`/`.animation.json` fall into this bucket.
-        // This call has not been compiled/verified against the library in this environment;
-        // if the build fails here, check the actual method name/return shape on `ResourcePack`
-        // for the pinned creative-api version and adjust accordingly.
-        for (var unknown : pack.unknownFiles()) {
-            String path = unknown.path();
+        // `unknownFiles()` is how team.unnamed's creative-api (1.13.6, as pinned by this project)
+        // exposes files that don't belong to any of its typed resource categories (models,
+        // textures, sounds, ...) - `.geo.json`/`.animation.json` fall into this bucket.
+        // It returns a plain path -> Writable map (confirmed against the actual compiled API,
+        // unlike the Collection<UnknownResource>-shaped guess this replaced).
+        for (Map.Entry<String, Writable> entry : pack.unknownFiles().entrySet()) {
+            String path = entry.getKey();
             if (!path.endsWith(GEO_SUFFIX) || !path.contains("/geo/")) {
                 continue;
             }
@@ -112,20 +108,14 @@ public record GeckoLibModelConverter() implements AssetExtractor<GeckoModelAsset
             String fileName = path.substring(path.lastIndexOf('/') + 1, path.length() - GEO_SUFFIX.length());
 
             try {
-                GeckoModel model = readModel(unknown.data());
+                GeckoModel model = GSON.fromJson(entry.getValue().toUTF8String(), GeckoModel.class);
                 assets.add(new GeckoModelAsset(namespace, fileName, model));
-            } catch (IOException | JsonSyntaxException e) {
+            } catch (JsonSyntaxException e) {
                 context.warn("Failed to parse GeckoLib model at " + path + ": " + e.getMessage());
             }
         }
 
         return assets;
-    }
-
-    private GeckoModel readModel(Writable writable) throws IOException {
-        try (Reader reader = new InputStreamReader(writable.toInputStream(), StandardCharsets.UTF_8)) {
-            return GSON.fromJson(reader, GeckoModel.class);
-        }
     }
 
     @Override
