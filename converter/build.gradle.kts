@@ -32,6 +32,7 @@ dependencies {
     annotationProcessor("com.google.auto.service:auto-service:1.0.1")
 
     testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher") // Gradle 9 no longer loads the launcher implicitly
 }
 
 tasks.test {
