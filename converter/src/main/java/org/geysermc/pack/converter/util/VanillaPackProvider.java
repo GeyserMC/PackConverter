@@ -59,28 +59,70 @@ public final class VanillaPackProvider {
     private static final List<String> REQUIRED_ASSETS = List.of(); // While not used yet, it's possible we will need other assets as some point
 
     /**
-     * Downloads the vanilla jar from Mojang's servers.
+     * Downloads the vanilla jar from Mojang's servers, resolving the version
+     * from the {@code packconverter.vanillaVersion} system property or, when
+     * unset, the latest release.
      *
      * @param path The path to download the jar to.
+     * @param log the log listener
      */
     public static void create(@NotNull Path path, @NotNull LogListener log) {
-        // Jar already exists; do nothing
-        if (Files.exists(path)) {
-            log.debug("Vanilla jar already exists, skipping download");
-            return;
+        create(path, System.getProperty("packconverter.vanillaVersion", ""), log);
+    }
+
+    /**
+     * Downloads the vanilla jar from Mojang's servers for the given version.
+     * An empty {@code vanillaVersion} resolves to the latest release. The
+     * cache is invalidated automatically when the requested version changes -
+     * a jar cached for a different Minecraft version produces parent-model
+     * lookups that silently fail against mods built for the running version.
+     *
+     * @param path The path to download the jar to.
+     * @param vanillaVersion the Minecraft version to fetch, or empty for latest release
+     * @param log the log listener
+     */
+    public static void create(@NotNull Path path, @NotNull String vanillaVersion, @NotNull LogListener log) {
+        Path versionMarker = path.resolveSibling(path.getFileName() + ".version");
+
+        // With an explicit version, an up-to-date cache can skip all network access.
+        if (!vanillaVersion.isEmpty() && Files.isRegularFile(path) && Files.isRegularFile(versionMarker)) {
+            try {
+                if (Files.readString(versionMarker).trim().equals(vanillaVersion)) {
+                    log.debug("Vanilla jar for " + vanillaVersion + " already cached, skipping download");
+                    return;
+                }
+            } catch (IOException ignored) {
+                // Fall through to a full re-download.
+            }
         }
 
         try {
-            // Download vanilla jar
-            log.info("Fetching vanilla jar file download...");
             // Get the version manifest from Mojang
             VersionManifest versionManifest = GSON.fromJson(
                     WebUtils.getBody("https://launchermeta.mojang.com/mc/game/version_manifest.json"), VersionManifest.class);
 
-            // Get the url for the latest version of the games manifest
+            if (vanillaVersion.isEmpty()) {
+                vanillaVersion = versionManifest.getLatest().getRelease();
+            }
+
+            if (Files.isRegularFile(path) && Files.isRegularFile(versionMarker)) {
+                try {
+                    String cachedVersion = Files.readString(versionMarker).trim();
+                    if (cachedVersion.equals(vanillaVersion)) {
+                        log.debug("Vanilla jar for " + vanillaVersion + " already cached, skipping download");
+                        return;
+                    }
+                    log.info("Cached vanilla jar is for " + cachedVersion + ", re-downloading for " + vanillaVersion);
+                } catch (IOException ignored) {
+                    // Fall through and re-download.
+                }
+            }
+
+            // Get the url for the requested version's manifest
+            log.info("Fetching vanilla jar file download for " + vanillaVersion + "...");
             String latestInfoURL = "";
             for (Version version : versionManifest.getVersions()) {
-                if (version.getId().equals("1.21.11")) { // TODO De-hardcode this
+                if (version.getId().equals(vanillaVersion)) {
                     latestInfoURL = version.getUrl();
                     break;
                 }
@@ -88,7 +130,7 @@ public final class VanillaPackProvider {
 
             // Make sure we definitely got a version
             if (latestInfoURL.isEmpty()) {
-                throw new IOException("Unable to find a valid version!");
+                throw new IOException("Unable to find version " + vanillaVersion + " in the Mojang manifest!");
             }
 
             // Get the individual version manifest
@@ -119,7 +161,8 @@ public final class VanillaPackProvider {
             PathUtils.copyFile(new URL(clientJarInfo.url), path);
             // Clean the jar
             clean(path, log);
-            log.info("Downloaded vanilla jar!");
+            Files.writeString(versionMarker, vanillaVersion);
+            log.info("Downloaded vanilla jar for " + vanillaVersion + "!");
         } catch (IOException e) {
             log.error("Error downloading vanilla jar", e);
         }
