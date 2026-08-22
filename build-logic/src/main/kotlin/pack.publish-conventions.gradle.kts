@@ -28,7 +28,6 @@ import java.net.URI
 
 plugins {
     `maven-publish` apply true
-    id("com.github.johnrengelman.shadow") apply false
 }
 
 publishing {
@@ -51,9 +50,12 @@ publishing {
         register("publish", MavenPublication::class) {
             from(project.components["java"])
 
-            // skip shadow jar from publishing. Workaround for https://github.com/johnrengelman/shadow/issues/651
+            // skip shadow jar from publishing, for subprojects that apply the Shadow
+            // plugin (e.g. bootstrap). Workaround for https://github.com/johnrengelman/shadow/issues/651
             val javaComponent = project.components["java"] as AdhocComponentWithVariants
-            javaComponent.withVariantsFromConfiguration(configurations["shadowRuntimeElements"]) { skip() }
+            configurations.findByName("shadowRuntimeElements")?.let { shadowRuntimeElements ->
+                javaComponent.withVariantsFromConfiguration(shadowRuntimeElements) { skip() }
+            }
         }
     }
 }

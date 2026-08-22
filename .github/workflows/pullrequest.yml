@@ -8,21 +8,61 @@ on:
       - 'LICENSE'
       - 'README.md'
 
+# PR validation may cancel an older validation for the same PR, but it can never
+# cancel a normal branch/scheduled build because the group namespace is different.
+concurrency:
+  group: pr-build-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
-      - name: Setup Gradle
-        uses: GeyserMC/actions/setup-gradle-composite@master
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          setup-java_java-version: 21
+          submodules: recursive
+          fetch-depth: 1
 
-      - name: Build Thunder
-        run: ./gradlew build
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
 
-      - name: Archive artifacts
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Build and test
+        run: ./gradlew clean build --no-daemon --stacktrace
+
+      - name: Verify artifact
+        run: |
+          test -f bootstrap/build/libs/Thunder.jar
+          test -s bootstrap/build/libs/Thunder.jar
+
+      - name: Archive artifact
         uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: Thunder
+          name: Thunder-${{ github.event.pull_request.head.sha || github.sha }}
           path: bootstrap/build/libs/Thunder.jar
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload diagnostics
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: pr-build-diagnostics-${{ github.run_id }}
+          path: |
+            build/reports/**
+            **/build/test-results/**
+            **/build/reports/tests/**
+          if-no-files-found: ignore
+          retention-days: 7

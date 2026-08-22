@@ -1,5 +1,9 @@
 plugins {
-    id("io.freefair.lombok") version "8.6"
+    id("io.freefair.lombok") version "8.14.4"
+}
+
+lombok {
+    version = "1.18.46"
 }
 
 sourceSets {
@@ -13,6 +17,7 @@ sourceSets {
 dependencies {
     api(project(":pack-schema-api"))
     compileOnly(project(":bedrock-pack-schema")) // Is provided by pack-schema-api for consumers, but not for us during compile time
+    testImplementation(project(":bedrock-pack-schema")) // compileOnly is absent from the test classpath
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("commons-io:commons-io:2.11.0")
     implementation("com.twelvemonkeys.imageio:imageio-tga:3.9.4")
@@ -25,6 +30,12 @@ dependencies {
 
     compileOnly("com.google.auto.service:auto-service:1.0.1")
     annotationProcessor("com.google.auto.service:auto-service:1.0.1")
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 java {
