@@ -59,6 +59,13 @@ public final class VanillaPackProvider {
     private static final List<String> REQUIRED_ASSETS = List.of(); // While not used yet, it's possible we will need other assets as some point
 
     /**
+     * Serialises cache creation: consumers may warm the cache concurrently with
+     * the conversion-time call, and two simultaneous downloads would corrupt
+     * the shared cache file.
+     */
+    private static final Object DOWNLOAD_LOCK = new Object();
+
+    /**
      * Downloads the vanilla jar from Mojang's servers, resolving the version
      * from the {@code packconverter.vanillaVersion} system property or, when
      * unset, the latest release.
@@ -84,6 +91,7 @@ public final class VanillaPackProvider {
     public static void create(@NotNull Path path, @NotNull String vanillaVersion, @NotNull LogListener log) {
         Path versionMarker = path.resolveSibling(path.getFileName() + ".version");
 
+        synchronized (DOWNLOAD_LOCK) {
         // With an explicit version, an up-to-date cache can skip all network access.
         if (!vanillaVersion.isEmpty() && Files.isRegularFile(path) && Files.isRegularFile(versionMarker)) {
             try {
@@ -165,6 +173,7 @@ public final class VanillaPackProvider {
             log.info("Downloaded vanilla jar for " + vanillaVersion + "!");
         } catch (IOException e) {
             log.error("Error downloading vanilla jar", e);
+        }
         }
     }
 
