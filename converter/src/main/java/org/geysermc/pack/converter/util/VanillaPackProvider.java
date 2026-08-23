@@ -169,64 +169,12 @@ public final class VanillaPackProvider {
             PathUtils.copyFile(new URL(clientJarInfo.url), path);
             // Clean the jar
             clean(path, log);
-            // Sanitize model JSONs to handle 26.2+ angle values that exceed [-45, 45] range
-            sanitizeModelAngles(path, log);
             Files.writeString(versionMarker, vanillaVersion);
             log.info("Downloaded vanilla jar for " + vanillaVersion + "!");
         } catch (IOException e) {
             log.error("Error downloading vanilla jar", e);
         }
         }
-    }
-
-    /**
-     * Sanitizes model JSON files to handle 26.2+ angle values that exceed
-     * the traditional [-45, 45] range used in rotation. Newer versions allow
-     * wider ranges for block model rotation angles (e.g., 67.5, 90 degrees
-     * for hanging signs). This prevents deserialization errors during
-     * model conversion.
-     *
-     * @param jarPath the path to the vanilla jar
-     * @param log the log listener
-     * @throws IOException if an I/O error occurs
-     */
-    private static void sanitizeModelAngles(@NotNull Path jarPath, @NotNull LogListener log) throws IOException {
-        ZipUtils.openFileSystem(jarPath, true, rootPath -> {
-            try (Stream<Path> paths = Files.walk(rootPath)) {
-                paths.filter(path -> path.toString().endsWith(".json"))
-                    .forEach(path -> {
-                        try {
-                            String json = Files.readString(path);
-                            if (json.contains("\"rotation\"") || json.contains("\"x\":")) {
-                                // Replace angle values > 45 or < -45 with clamped values
-                                // This is a conservative fix - just relax validation during parsing
-                                String sanitized = json.replaceAll(
-                                    "\"((?:x|y|z))\"\\s*:\\s*(-?\\d+(?:\\.\\d+)?)",
-                                    (match) -> {
-                                        try {
-                                            String[] parts = match.split(":");
-                                            if (parts.length == 2) {
-                                                double val = Double.parseDouble(parts[1].trim().replace(",", "").replace("}", ""));
-                                                // Clamp to [-180, 180] range which is valid for block model rotations
-                                                double clamped = Math.max(-180, Math.min(180, val));
-                                                return "\"x\": " + clamped;
-                                            }
-                                        } catch (Exception e) {
-                                            // Fall through
-                                        }
-                                        return match;
-                                    }
-                                );
-                                if (!json.equals(sanitized)) {
-                                    Files.writeString(path, sanitized);
-                                }
-                            }
-                        } catch (IOException ignored) {
-                            // Skip problematic files
-                        }
-                    });
-            });
-        });
     }
 
     /**
