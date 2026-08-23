@@ -33,6 +33,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 public class WebUtils {
     /**
@@ -54,6 +57,31 @@ public class WebUtils {
             return connectionToString(con);
         } catch (UnknownHostException e) {
             throw new IllegalStateException("Unable to resolve requested url (%s)! Are you offline?".formatted(reqURL), e);
+        }
+    }
+
+    /**
+     * Downloads a URL to a file with connect and read timeouts. Unlike
+     * {@link URL#openStream()}, a connection that stalls mid-transfer cannot
+     * block the caller indefinitely - the read timeout fires after 10 seconds
+     * without data.
+     *
+     * @param reqURL URL to download
+     * @param target file to write; any previous content is replaced
+     * @throws IOException if the download fails or times out
+     */
+    public static void downloadToFile(String reqURL, Path target) throws IOException {
+        HttpURLConnection con = (HttpURLConnection) new URL(reqURL).openConnection();
+        try {
+            con.setRequestProperty("User-Agent", getUserAgent());
+            con.setConnectTimeout(10000);
+            con.setReadTimeout(10000);
+
+            try (InputStream in = con.getInputStream()) {
+                Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
+            }
+        } finally {
+            con.disconnect();
         }
     }
 
