@@ -41,7 +41,6 @@ import org.jetbrains.annotations.NotNull;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -166,7 +165,7 @@ public final class VanillaPackProvider {
 
             if (path.getParent() != null) Files.createDirectories(path.getParent());
 
-            PathUtils.copyFile(new URL(clientJarInfo.url), path);
+            WebUtils.downloadToFile(clientJarInfo.url, path);
             // Clean the jar
             clean(path, log);
             Files.writeString(versionMarker, vanillaVersion);
@@ -276,11 +275,9 @@ public final class VanillaPackProvider {
             for (Map.Entry<String, Asset> asset : ASSET_MAP.entrySet()) {
                 String bytes2 = asset.getValue().hash.substring(0, 2);
 
-                PathUtils.copyFile(
-                        new URL("https://resources.download.minecraft.net/%s/%s"
-                                .formatted(bytes2, asset.getValue().hash)),
-                        rootPath.resolve("assets/" + asset.getKey())
-                );
+                WebUtils.downloadToFile(
+                        "https://resources.download.minecraft.net/%s/%s".formatted(bytes2, asset.getValue().hash),
+                        rootPath.resolve("assets/" + asset.getKey()));
             }
         });
     }
