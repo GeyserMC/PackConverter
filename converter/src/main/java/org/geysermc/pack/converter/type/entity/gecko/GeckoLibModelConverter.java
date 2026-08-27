@@ -93,13 +93,24 @@ public record GeckoLibModelConverter() implements AssetExtractor<GeckoModelAsset
         // textures, sounds, ...) - `.geo.json`/`.animation.json` fall into this bucket.
         // It returns a plain path -> Writable map (confirmed against the actual compiled API,
         // unlike the Collection<UnknownResource>-shaped guess this replaced).
+        int totalUnknown = pack.unknownFiles().size();
+        int geoCandidates = 0;
+        int extracted = 0;
+
         for (Map.Entry<String, Writable> entry : pack.unknownFiles().entrySet()) {
             String path = entry.getKey();
-            if (!path.endsWith(GEO_SUFFIX) || !path.contains("/geo/")) {
+            if (!path.endsWith(GEO_SUFFIX)) {
+                continue;
+            }
+            geoCandidates++;
+
+            // Expected shape: assets/<namespace>/.../<fileName>.geo.json
+            // Accept any .geo.json under assets/<namespace>/, not just /geo/ subdirectory.
+            if (!path.startsWith("assets/")) {
+                context.debug("Skipping GeckoLib model outside assets/: " + path);
                 continue;
             }
 
-            // Expected shape: assets/<namespace>/geo/[.../]<fileName>.geo.json
             String[] parts = path.split("/", 3);
             if (parts.length < 3 || !parts[0].equals("assets")) {
                 context.warn("Skipping GeckoLib model at unexpected path: " + path);
@@ -111,10 +122,14 @@ public record GeckoLibModelConverter() implements AssetExtractor<GeckoModelAsset
             try {
                 GeckoModel model = GSON.fromJson(entry.getValue().toUTF8String(), GeckoModel.class);
                 assets.add(new GeckoModelAsset(namespace, fileName, model));
+                extracted++;
+                context.debug("Extracted GeckoLib model: " + namespace + ":" + fileName + " from " + path);
             } catch (IOException | JsonSyntaxException e) {
                 context.warn("Failed to parse GeckoLib model at " + path + ": " + e.getMessage());
             }
         }
+
+        context.info("GeckoLib extraction: " + totalUnknown + " unknown files, " + geoCandidates + " .geo.json candidates, " + extracted + " extracted");
 
         return assets;
     }
