@@ -80,14 +80,23 @@ public record GeckoAnimationConverter() implements AssetExtractor<GeckoAnimation
     @Override
     public Collection<GeckoAnimationAsset> extract(ResourcePack pack, ExtractionContext context) {
         List<GeckoAnimationAsset> assets = new ArrayList<>();
+        int totalUnknown = pack.unknownFiles().size();
+        int animCandidates = 0;
+        int extracted = 0;
 
         for (Map.Entry<String, Writable> entry : pack.unknownFiles().entrySet()) {
             String path = entry.getKey();
-            if (!path.endsWith(ANIMATION_SUFFIX) || !path.contains("/animations/")) {
+            if (!path.endsWith(ANIMATION_SUFFIX)) {
+                continue;
+            }
+            animCandidates++;
+
+            if (!path.startsWith("assets/")) {
+                context.debug("Skipping GeckoLib animation outside assets/: " + path);
                 continue;
             }
 
-            // Expected shape: assets/<namespace>/animations/[.../]<fileName>.animation.json
+            // Expected shape: assets/<namespace>/.../<fileName>.animation.json
             String[] parts = path.split("/", 3);
             if (parts.length < 3 || !parts[0].equals("assets")) {
                 context.warn("Skipping GeckoLib animation at unexpected path: " + path);
@@ -103,10 +112,14 @@ public record GeckoAnimationConverter() implements AssetExtractor<GeckoAnimation
                     continue;
                 }
                 assets.add(new GeckoAnimationAsset(namespace, fileName, parsed.getAsJsonObject()));
+                extracted++;
+                context.debug("Extracted GeckoLib animation: " + namespace + ":" + fileName + " from " + path);
             } catch (IOException | JsonParseException e) {
                 context.warn("Failed to parse GeckoLib animation at " + path + ": " + e.getMessage());
             }
         }
+
+        context.info("GeckoLib animation extraction: " + totalUnknown + " unknown files, " + animCandidates + " .animation.json candidates, " + extracted + " extracted");
 
         return assets;
     }
