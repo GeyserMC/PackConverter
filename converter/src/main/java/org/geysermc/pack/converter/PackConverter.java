@@ -29,6 +29,7 @@ package org.geysermc.pack.converter;
 import org.apache.commons.io.file.PathUtils;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.pipeline.ConverterPipeline;
+import org.geysermc.pack.converter.type.entity.EntityModelScanner;
 import org.geysermc.pack.converter.util.DefaultLogListener;
 import org.geysermc.pack.converter.util.LogListener;
 import org.geysermc.pack.converter.util.ModJarExtractor;
@@ -209,6 +210,23 @@ public final class PackConverter {
             if (this.postProcessor != null) {
                 this.postProcessor.accept(javaResourcePack, bedrockResourcePack);
             }
+
+            // Run all registered entity model parsers (vanilla, GeckoLib,
+            // Blockbench, Tabula, OBJ, ...) over the Java resource pack
+            // and merge the results into the Bedrock pack. The first
+            // parser to successfully convert a file wins.
+            EntityModelScanner entityModelScanner = EntityModelScanner.discover();
+            EntityModelScanner.ScanResult scan = entityModelScanner.addEntityModels(javaResourcePack, bedrockResourcePack);
+            if (scan.successCount() > 0) {
+                this.logListener.info("Entity model scanner: " + scan.successCount() + " model(s) converted via " + entityModelScanner.parsers().size() + " parser(s)");
+            }
+            for (String dup : scan.duplicates()) {
+                this.logListener.warn("Duplicate entity model skipped: " + dup);
+            }
+            for (String fail : scan.failures()) {
+                this.logListener.warn("Entity model parse failed: " + fail);
+            }
+
             bedrockResourcePack.export();
 
             if (errors > 0) {
