@@ -4,3 +4,4 @@ org.geysermc.pack.converter.type.entity.blockbench.BlockbenchEntityParser
 org.geysermc.pack.converter.type.entity.tabula.TabulaEntityParser
 org.geysermc.pack.converter.type.entity.obj.ObjWavefrontEntityParser
 org.geysermc.pack.converter.type.entity.javarefl.JavaReflectionEntityParser
+org.geysermc.pack.converter.type.entity.javarefl.TabulaReflectionEntityParser
