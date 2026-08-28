@@ -112,6 +112,13 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
         String input = texture.key().value();
         String relativePath = input.replaceAll("\\.png$", "");
 
+        // Some generated textures are keyed as namespace:path rather than a
+        // resource-pack path. Keep them inside the pack; an empty root would
+        // otherwise make Path.resolve discard the texture directory.
+        if (!relativePath.contains("/")) {
+            relativePath = "misc/" + texture.key().namespace() + "/" + relativePath.replace(':', '_');
+        }
+
         int slashIndex = relativePath.indexOf('/');
         String rootPath = slashIndex != -1 ? relativePath.substring(0, slashIndex) : "";
         String bedrockRoot = DIRECTORY_LOCATIONS.getOrDefault(rootPath, rootPath);

@@ -118,6 +118,33 @@ public final class EntityModelScanner {
         return parsers;
     }
 
+    /**
+     * Attempts the explicitly enabled reflection parser for entity ids that
+     * have no static model. Callers must supply ids from a trusted server.
+     */
+    public ScanResult addReflectionEntityModels(ResourcePack source, BedrockResourcePack target, Iterable<String> entityIds) {
+        ScanResult result = new ScanResult();
+        EntityModelParser reflection = parsers.stream()
+                .filter(parser -> parser.id().equals("tabula-reflection"))
+                .findFirst().orElse(null);
+        if (reflection == null) return result;
+
+        for (String entityId : entityIds) {
+            String fileName = entityId.replace(':', '.') + ".json";
+            if (target.entityModels() != null && target.entityModels().containsKey("models/entity/" + fileName)) continue;
+            try {
+                BedrockModel model = reflection.parse(entityId + ".reflection", source);
+                if (model != null) {
+                    target.addEntityModel(model.model(), model.fileName());
+                    result.recordSuccess(reflection.id(), model.fileName());
+                }
+            } catch (RuntimeException e) {
+                result.recordFailure(reflection.id(), entityId, e);
+            }
+        }
+        return result;
+    }
+
     /** Aggregated outcome of one scan, exposed for logging and tests. */
     public static final class ScanResult {
         private final Map<String, Integer> successByParser = new HashMap<>();

@@ -61,6 +61,7 @@ public final class PackConverter {
     private boolean compressed;
     private boolean enforcePackCheck = false;
     private boolean autoExtractModResources;
+    private Iterable<String> reflectionEntityIds = List.of();
     private BiConsumer<ResourcePack, BedrockResourcePack> postProcessor;
     private final List<ConverterPipeline<?, ?>> converters = new ArrayList<>();
     private Path tmpDir;
@@ -120,6 +121,12 @@ public final class PackConverter {
 
     public PackConverter textureSubdirectory(@NotNull String textureSubdirectory) {
         this.textureSubdirectory = textureSubdirectory;
+        return this;
+    }
+
+    /** Supplies trusted entity identifiers for the opt-in runtime-model bridge. */
+    public PackConverter reflectionEntityIds(@NotNull Iterable<String> entityIds) {
+        this.reflectionEntityIds = entityIds;
         return this;
     }
 
@@ -207,16 +214,13 @@ public final class PackConverter {
                             bedrockResourcePack, packName(), textureSubdirectory, logListener))
                     .sum();
 
-            if (this.postProcessor != null) {
-                this.postProcessor.accept(javaResourcePack, bedrockResourcePack);
-            }
-
             // Run all registered entity model parsers (vanilla, GeckoLib,
             // Blockbench, Tabula, OBJ, ...) over the Java resource pack
             // and merge the results into the Bedrock pack. The first
             // parser to successfully convert a file wins.
             EntityModelScanner entityModelScanner = EntityModelScanner.discover();
             EntityModelScanner.ScanResult scan = entityModelScanner.addEntityModels(javaResourcePack, bedrockResourcePack);
+            EntityModelScanner.ScanResult reflected = entityModelScanner.addReflectionEntityModels(javaResourcePack, bedrockResourcePack, reflectionEntityIds);
             if (scan.successCount() > 0) {
                 this.logListener.info("Entity model scanner: " + scan.successCount() + " model(s) converted via " + entityModelScanner.parsers().size() + " parser(s)");
             }
@@ -225,6 +229,13 @@ public final class PackConverter {
             }
             for (String fail : scan.failures()) {
                 this.logListener.warn("Entity model parse failed: " + fail);
+            }
+            for (String fail : reflected.failures()) {
+                this.logListener.warn("Reflection entity model parse failed: " + fail);
+            }
+
+            if (this.postProcessor != null) {
+                this.postProcessor.accept(javaResourcePack, bedrockResourcePack);
             }
 
             bedrockResourcePack.export();
