@@ -33,12 +33,6 @@ import org.geysermc.pack.bedrock.resource.Manifest;
 import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitions;
 import org.geysermc.pack.converter.type.base.PackIconConverter;
 import org.geysermc.pack.converter.type.base.PackManifestConverter;
-import org.geysermc.pack.converter.type.entity.gecko.GeckoAnimationConverter;
-import org.geysermc.pack.converter.type.entity.gecko.GeckoLibModelConverter;
-import org.geysermc.pack.converter.type.entity.blockbench.BlockbenchModelConverter;
-import org.geysermc.pack.converter.type.entity.blockbench.BlockbenchModelAsset;
-import org.geysermc.pack.converter.type.entity.gecko.GeckoAnimationAsset;
-import org.geysermc.pack.converter.type.entity.gecko.GeckoModelAsset;
 import org.geysermc.pack.converter.type.lang.BedrockLanguage;
 import org.geysermc.pack.converter.type.lang.LangConverter;
 import org.geysermc.pack.converter.type.misc.SplashTextConverter;
@@ -85,25 +79,10 @@ public final class AssetConverters {
     public static final ConverterPipeline<Model, BedrockModel> MODEL = create(ModelConverter.INSTANCE);
     /**
      * Converts GeckoLib {@code .geo.json} entity models into Bedrock entity geometry.
-     * Registered as experimental (only runs with {@code --debug}) since it has not yet been
-     * validated against a real Bedrock client - see {@link GeckoLibModelConverter}.
+     * This legacy pipeline was removed in r10 - see the new
+     * {@link org.geysermc.pack.converter.type.entity.EntityModelScanner}
+     * which discovers all parsers via {@link java.util.ServiceLoader}.
      */
-    public static final ConverterPipeline<GeckoModelAsset, BedrockModel> GECKO_MODEL = registerExperimental(
-            new ConverterPipeline<>(GeckoLibModelConverter.INSTANCE, GeckoLibModelConverter.INSTANCE, GeckoLibModelConverter.INSTANCE, true, Optional.empty()));
-    /**
-     * Converts GeckoLib {@code .animation.json} files into Bedrock actor animations.
-     * Registered as experimental (only runs with {@code --debug}) for the same
-     * reason as {@link #GECKO_MODEL} - not yet validated against a real Bedrock client.
-     */
-    public static final ConverterPipeline<GeckoAnimationAsset, GeckoAnimationAsset> GECKO_ANIMATION = registerExperimental(
-            new ConverterPipeline<>(GeckoAnimationConverter.INSTANCE, GeckoAnimationConverter.INSTANCE, GeckoAnimationConverter.INSTANCE, true, Optional.empty()));
-    /**
-     * Converts Blockbench project files (`.bbmodel` / `.bmodel`) into Bedrock entity geometry.
-     * Registered as experimental (only runs with {@code --debug}) for the same reason
-     * as {@link #GECKO_MODEL} - not yet validated against a real Bedrock client.
-     */
-    public static final ConverterPipeline<BlockbenchModelAsset, BedrockModel> BLOCKBENCH_MODEL = registerExperimental(
-            new ConverterPipeline<>(BlockbenchModelConverter.INSTANCE, BlockbenchModelConverter.INSTANCE, BlockbenchModelConverter.INSTANCE, true, Optional.empty()));
     public static final ConverterPipeline<SoundRegistry, Map<String, SoundDefinitions>> SOUND_REGISTRY = create(
             (pack, context) -> pack.soundRegistries(), SoundRegistryConverter.INSTANCE);
     public static final ConverterPipeline<Sound, Sound> SOUND = create(SoundConverter.INSTANCE);

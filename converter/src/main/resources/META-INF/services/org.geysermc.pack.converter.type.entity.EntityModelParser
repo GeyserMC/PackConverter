@@ -1,6 +1,6 @@
 org.geysermc.pack.converter.type.entity.vanilla.VanillaBedrockEntityParser
 org.geysermc.pack.converter.type.entity.gecko.GeckoLibEntityParser
-org.geysermc.pack.converter.type.entity.blockbench.BlockbenchModelConverter
+org.geysermc.pack.converter.type.entity.blockbench.BlockbenchEntityParser
 org.geysermc.pack.converter.type.entity.tabula.TabulaEntityParser
 org.geysermc.pack.converter.type.entity.obj.ObjWavefrontEntityParser
 org.geysermc.pack.converter.type.entity.javarefl.JavaReflectionEntityParser
