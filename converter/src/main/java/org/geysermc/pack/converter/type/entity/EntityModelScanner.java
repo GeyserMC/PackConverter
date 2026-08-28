@@ -48,6 +48,12 @@ import java.util.ServiceLoader;
      * single pack.</p>
  */
 public final class EntityModelScanner {
+    /**
+     * The reflection parser loads classes from the converted mod. That is
+     * useful for legacy Tabula-only mods, but it must remain an explicit
+     * operator choice rather than an implicit side effect of conversion.
+     */
+    public static final String ENABLE_REFLECTION_PARSER_PROPERTY = "packconverter.enableReflectionParser";
 
     private final List<EntityModelParser> parsers;
 
@@ -60,6 +66,9 @@ public final class EntityModelScanner {
         ServiceLoader<EntityModelParser> loader = ServiceLoader.load(EntityModelParser.class);
         for (EntityModelParser p : loader) {
             try {
+                if (p.id().equals("tabula-reflection") && !Boolean.getBoolean(ENABLE_REFLECTION_PARSER_PROPERTY)) {
+                    continue;
+                }
                 found.add(p);
             } catch (ServiceConfigurationError e) {
                 // A misbehaving provider - skip but don't fail the whole scan.
