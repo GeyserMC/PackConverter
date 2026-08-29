@@ -100,6 +100,7 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
     private static final String[] EXTS = {".tbl", ".reflection"};
     private static final Gson GSON = new Gson();
     private static final Set<String> UNAVAILABLE_NAMESPACES = ConcurrentHashMap.newKeySet();
+    private static final Set<String> REPORTED_CLASSPATHS = ConcurrentHashMap.newKeySet();
     // 
 
     @Override
@@ -136,9 +137,8 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
                     urls,
                     null)) {
 
-                ModelCubeData data = loadModelFromMod(loader, ref.namespace, ref.entityName);
+                ModelCubeData data = loadModelFromMod(loader, modJar, ref.namespace, ref.entityName);
                 if (data == null) {
-                    System.err.println("TabulaReflection: no model data found for " + ref.namespace + ":" + ref.entityName);
                     return null;
                 }
                 return buildBedrockModel(ref.namespace, ref.entityName, data);
@@ -225,12 +225,9 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
         // Mod jar is added LAST so its class definitions win when
         // there is a duplicate name across the mod and the libraries.
         urls.add(modJar.toUri().toURL());
-        // First 3 URLs to verify which got picked up.
-        StringBuilder head = new StringBuilder();
-        for (int i = 0; i < Math.min(3, urls.size()); i++) {
-            head.append(urls.get(i).toString()).append(' ');
+        if (REPORTED_CLASSPATHS.add(modJar.toString())) {
+            System.err.println("TabulaReflection classpath for " + modJar.getFileName() + ": " + urls.size() + " URLs");
         }
-        System.err.println("classpath = " + urls.size() + " URLs, first 3: " + head);
         return urls.toArray(new URL[0]);
     }
 
@@ -275,7 +272,7 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
      * (Alex's Mobs, Citadel) or {@code com.<author>.<ns>.client.model.<EntityName>Model}
      * are both supported.</p>
      */
-    private static ModelCubeData loadModelFromMod(URLClassLoader loader, String namespace, String entityName) {
+    private static ModelCubeData loadModelFromMod(URLClassLoader loader, Path modJar, String namespace, String entityName) {
         String pascal = toPascalCase(entityName);
 
         // Build a name -> fqn index from the mod jar entries once.
@@ -283,8 +280,7 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
         // any mod that ships Model<Pascal> classes.
         Map<String, String> nameToFqn = new HashMap<>();
         try {
-            URL jarUrl = new java.io.File(modJarOf(loader).toURI()).toURI().toURL();
-            java.util.jar.JarFile jar = new java.util.jar.JarFile(new java.io.File(jarUrl.toURI()));
+            java.util.jar.JarFile jar = new java.util.jar.JarFile(modJar.toFile());
             try {
                 java.util.Enumeration<java.util.jar.JarEntry> en = jar.entries();
                 while (en.hasMoreElements()) {
@@ -346,8 +342,6 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
             }
         }
         if (modelClass == null) {
-            System.err.println("no model class for entity " + pascal
-                    + " in namespace " + namespace + " (scanned " + nameToFqn.size() + " candidates)");
             return null;
         }
         System.err.println("using model class " + modelClass.getName());
@@ -480,21 +474,6 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
             if (part.length() > 1) out.append(part.substring(1));
         }
         return out.toString();
-    }
-
-    /**
-     * Find the on-disk mod jar backing a URLClassLoader. The first
-     * URL ending in {@code .jar} is treated as the mod; the other
-     * URLs are dependency jars (Mojang, Guava, JOML, ...).
-     */
-    private static java.io.File modJarOf(URLClassLoader loader) {
-        for (URL u : loader.getURLs()) {
-            String s = u.toString();
-            if (s.endsWith(".jar") && !s.contains(".gradle/caches")) {
-                return new java.io.File(s.replaceFirst("^file:", ""));
-            }
-        }
-        return null;
     }
 
     @SuppressWarnings("unchecked")
