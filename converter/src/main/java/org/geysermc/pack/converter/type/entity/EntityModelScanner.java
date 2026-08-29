@@ -48,13 +48,6 @@ import java.util.ServiceLoader;
      * single pack.</p>
  */
 public final class EntityModelScanner {
-    /**
-     * The reflection parser loads classes from the converted mod. That is
-     * useful for legacy Tabula-only mods, but it must remain an explicit
-     * operator choice rather than an implicit side effect of conversion.
-     */
-    public static final String ENABLE_REFLECTION_PARSER_PROPERTY = "packconverter.enableReflectionParser";
-
     private final List<EntityModelParser> parsers;
 
     private EntityModelScanner(List<EntityModelParser> parsers) {
@@ -66,9 +59,6 @@ public final class EntityModelScanner {
         ServiceLoader<EntityModelParser> loader = ServiceLoader.load(EntityModelParser.class);
         for (EntityModelParser p : loader) {
             try {
-                if (p.id().equals("tabula-reflection") && !Boolean.getBoolean(ENABLE_REFLECTION_PARSER_PROPERTY)) {
-                    continue;
-                }
                 found.add(p);
             } catch (ServiceConfigurationError e) {
                 // A misbehaving provider - skip but don't fail the whole scan.
@@ -119,8 +109,9 @@ public final class EntityModelScanner {
     }
 
     /**
-     * Attempts the explicitly enabled reflection parser for entity ids that
-     * have no static model. Callers must supply ids from a trusted server.
+     * Attempts a runtime-model parser for entity ids that have no static
+     * model. This is best-effort: parsers that cannot understand a framework
+     * simply return {@code null}, leaving the normal fallback path intact.
      */
     public ScanResult addReflectionEntityModels(ResourcePack source, BedrockResourcePack target, Iterable<String> entityIds) {
         ScanResult result = new ScanResult();
