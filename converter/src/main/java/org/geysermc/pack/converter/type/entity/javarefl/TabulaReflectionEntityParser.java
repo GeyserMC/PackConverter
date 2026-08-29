@@ -222,6 +222,25 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
             }
         }
 
+        // Fabric/NeoForge launch libraries (JOML, Guava, loader APIs, ...)
+        // live outside mods/. Include their jars without knowing a loader or
+        // framework-specific layout.
+        for (String directory : List.of("libraries", "lib", "libs")) {
+            Path root = Path.of(directory);
+            if (!Files.isDirectory(root)) continue;
+            try (java.util.stream.Stream<Path> files = Files.walk(root, 8)) {
+                files.filter(file -> file.toString().endsWith(".jar"))
+                        .forEach(file -> {
+                            try {
+                                urls.add(file.toUri().toURL());
+                            } catch (java.net.MalformedURLException ignored) {
+                            }
+                        });
+            } catch (IOException ignored) {
+                // A missing optional library directory is normal.
+            }
+        }
+
         // Mod jar is added LAST so its class definitions win when
         // there is a duplicate name across the mod and the libraries.
         urls.add(modJar.toUri().toURL());
