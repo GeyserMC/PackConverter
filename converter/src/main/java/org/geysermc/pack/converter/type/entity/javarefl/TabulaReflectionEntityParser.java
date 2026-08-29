@@ -127,15 +127,14 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
 
         try {
             URL[] urls = collectClasspathUrls(modJar);
-            // parent = null so the URLClassLoader searches only its
-            // own URLs. We layered every Gradle-cache jar above, which
-            // gives the loader full visibility of the project's runtime
-            // classpath (Mojang, Guava, JOML, datafixerupper, etc.)
-            // without depending on a parent that may not expose them.
+            // The launcher has already resolved loader and framework
+            // dependencies (JOML, Fabric API, Citadel, ...). Keep that
+            // classloader as the parent, then add the client and target-mod
+            // jars for classes that only exist in the client distribution.
             try (URLClassLoader loader = new URLClassLoader(
                     "tabula-reflect", 
                     urls,
-                    null)) {
+                    Thread.currentThread().getContextClassLoader())) {
 
                 ModelCubeData data = loadModelFromMod(loader, modJar, ref.namespace, ref.entityName);
                 if (data == null) {
@@ -391,40 +390,28 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
             return buildCubeData(cubes);
         }
 
-        // 2. Citadel path: each AdvancedModelBox is a private field
-        // on the model. Walk every field whose type is an instance
-        // of BasicModelPart (parent class of AdvancedModelBox) and
-        // collect cubes from each.
-        System.err.println("TabulaReflection: trying Citadel field-walk path");
-        Class<?> partClass = lookupBasicModelPart(modelClass.getClassLoader());
-        if (partClass == null) {
-            partClass = lookupBasicModelPart(loader);
-        }
-        if (partClass == null) {
-            System.err.println("TabulaReflection: BasicModelPart not found in mod classpath");
-            return null;
-        }
-        System.err.println("BasicModelPart = " + partClass.getName());
+        // 2. Framework path: model libraries commonly expose one model-part
+        // field per bone. Instead of naming a framework/package, recognize a
+        // part structurally by its inherited cubeList field.
+        System.err.println("TabulaReflection: trying model-part field walk");
         List<CubeSpec> specs = new ArrayList<>();
         int texW = 64;
         int texH = 64;
         int fieldCount = 0;
         for (Field f : collectAllFields(modelClass)) {
-            if (f.getType().isAssignableFrom(partClass)) {
+            f.setAccessible(true);
+            try {
+                Object part = f.get(modelInstance);
+                if (part == null || !hasField(part.getClass(), "cubeList")) continue;
                 fieldCount++;
-                f.setAccessible(true);
-                try {
-                    Object part = f.get(modelInstance);
-                    if (part == null) continue;
-                    CubeSpec spec = readAdvancedModelBox(part);
-                    if (spec == null) continue;
-                    specs.add(spec);
-                    // Sample texture size from each part - they all
-                    // share the same value in practice.
-                    texW = Math.max(texW, (int) readFloatField(part.getClass(), part, "textureWidth", 64f));
-                    texH = Math.max(texH, (int) readFloatField(part.getClass(), part, "textureHeight", 64f));
-                } catch (IllegalAccessException ignored) {
-                }
+                CubeSpec spec = readAdvancedModelBox(part);
+                if (spec == null) continue;
+                specs.add(spec);
+                // Sample texture size from each part - they all share it in
+                // practice, including non-Citadel model frameworks.
+                texW = Math.max(texW, (int) readFloatField(part.getClass(), part, "textureWidth", 64f));
+                texH = Math.max(texH, (int) readFloatField(part.getClass(), part, "textureHeight", 64f));
+            } catch (IllegalAccessException ignored) {
             }
         }
         if (specs.isEmpty()) {
@@ -433,25 +420,6 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
         }
         System.err.println("collected " + specs.size() + " cubes from " + fieldCount + " fields");
         return new ModelCubeData(specs, texW, texH);
-    }
-
-    private static Class<?> lookupBasicModelPart(ClassLoader cl) {
-        String[] candidates = {
-                "com.github.alexthe666.alexsmobs.citadel.client.model.basic.BasicModelPart", 
-                "com.github.alexthe666.alexsmobs.citadel.client.model.AdvancedModelBox", 
-        };
-        for (String fqn : candidates) {
-            try {
-                Class<?> c = Class.forName(fqn, true, cl);
-                if (c != null) {
-                    System.err.println("found class " + fqn);
-                    return c;
-                }
-            } catch (ClassNotFoundException e) {
-                System.err.println("NOT FOUND " + fqn);
-            }
-        }
-        return null;
     }
 
     private static List<Field> collectAllFields(Class<?> type) {
@@ -465,24 +433,6 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
             c = c.getSuperclass();
         }
         return out;
-    }
-
-    private static String[] buildModelClassCandidates(String namespace, String entityName) {
-        // Alex's Mobs convention: com.github.alexthe666.<ns>.client.model.Model<EntityName>
-        // but other mods may use any of:
-        //   com.<author>.<ns>.client.model.Model<EntityName>
-        //   <ns>.client.model.Model<EntityName>
-        //   com.<author>.<ns>.client.model.<EntityName>Model
-        // The scanner tries each, so we accept the first that loads.
-        String pascal = toPascalCase(entityName);
-        return new String[]{
-                "com.github.alexthe666." + namespace + ".client.model.Model" + pascal,
-                "com.github.alexthe666." + namespace + ".client.model." + pascal + "Model", 
-                "com." + namespace + ".client.model.Model" + pascal,
-                "com." + namespace + ".client.model." + pascal + "Model", 
-                namespace + ".client.model.Model" + pascal,
-                namespace + ".client.model." + pascal + "Model", 
-        };
     }
 
     private static String toPascalCase(String snake) {
@@ -637,7 +587,8 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
 
     private static float readFloatField(Class<?> c, Object inst, String name, float fallback) {
         try {
-            Field f = c.getDeclaredField(name);
+            Field f = findField(c, name);
+            if (f == null) return fallback;
             f.setAccessible(true);
             return f.getFloat(inst);
         } catch (Exception e) {
@@ -652,7 +603,8 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
      */
     private static float[] readRenderBoxDims(Object box) {
         try {
-            Field cubeListField = box.getClass().getDeclaredField("cubeList");
+            Field cubeListField = findField(box.getClass(), "cubeList");
+            if (cubeListField == null) return null;
             cubeListField.setAccessible(true);
             Object cubeList = cubeListField.get(box);
             if (!(cubeList instanceof java.util.List<?> list) || list.isEmpty()) return null;
@@ -678,6 +630,21 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    private static boolean hasField(Class<?> type, String name) {
+        return findField(type, name) != null;
+    }
+
+    private static Field findField(Class<?> type, String name) {
+        for (Class<?> current = type; current != null && current != Object.class; current = current.getSuperclass()) {
+            try {
+                return current.getDeclaredField(name);
+            } catch (NoSuchFieldException ignored) {
+                // Continue into the parent model-part type.
+            }
+        }
+        return null;
     }
 
     private static BedrockModel buildBedrockModel(String namespace, String entityName, ModelCubeData data) {
