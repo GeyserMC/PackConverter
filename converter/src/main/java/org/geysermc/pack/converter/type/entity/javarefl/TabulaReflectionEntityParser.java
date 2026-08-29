@@ -127,14 +127,14 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
 
         try {
             URL[] urls = collectClasspathUrls(modJar);
-            // The launcher has already resolved loader and framework
-            // dependencies (JOML, Fabric API, Citadel, ...). Keep that
-            // classloader as the parent, then add the client and target-mod
-            // jars for classes that only exist in the client distribution.
+            // Do not inherit Fabric's transforming classloader: on a dedicated
+            // server it deliberately rejects client-only classes before we can
+            // inspect them. collectClasspathUrls supplies the required runtime
+            // jars directly, including the client jar and launcher libraries.
             try (URLClassLoader loader = new URLClassLoader(
                     "tabula-reflect", 
                     urls,
-                    Thread.currentThread().getContextClassLoader())) {
+                    null)) {
 
                 ModelCubeData data = loadModelFromMod(loader, modJar, ref.namespace, ref.entityName);
                 if (data == null) {
@@ -304,7 +304,7 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
                 while (en.hasMoreElements()) {
                     java.util.jar.JarEntry e = en.nextElement();
                     String n = e.getName();
-                    if (!n.endsWith(".class") || !n.contains("/client/model/")) continue;
+                    if (!n.endsWith(".class") || n.contains("$") || !n.contains("/client/model/")) continue;
                     int slash = n.lastIndexOf('/');
                     String simpleName = n.substring(slash + 1, n.length() - 6);
                     // Match Model<Pascal>, Model<Pascal>Baby,
