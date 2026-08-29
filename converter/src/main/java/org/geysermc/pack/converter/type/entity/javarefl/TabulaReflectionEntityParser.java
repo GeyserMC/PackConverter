@@ -57,6 +57,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Reads entity geometry from a Fabric mod jar at build time, using
@@ -97,6 +99,7 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
 
     private static final String[] EXTS = {".tbl", ".reflection"};
     private static final Gson GSON = new Gson();
+    private static final Set<String> UNAVAILABLE_NAMESPACES = ConcurrentHashMap.newKeySet();
     // 
 
     @Override
@@ -113,6 +116,7 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
     public BedrockModel parse(String path, ResourcePack pack) {
         ParsedEntityRef ref = ParsedEntityRef.from(path);
         if (ref == null) return null;
+        if (UNAVAILABLE_NAMESPACES.contains(ref.namespace)) return null;
         Path modJar = locateModJar(ref.namespace, pack);
         if (modJar == null) {
             // No mod jar available - the scanner will fall back to the
@@ -139,12 +143,14 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
                 }
                 return buildBedrockModel(ref.namespace, ref.entityName, data);
             }
+        } catch (NoClassDefFoundError error) {
+            UNAVAILABLE_NAMESPACES.add(ref.namespace);
+            System.err.println("TabulaReflection disabled for " + ref.namespace
+                    + ": missing runtime class " + error.getMessage());
+            return null;
         } catch (Throwable t) {
-            // Use Throwable so we don't swallow Errors. Reflection
-            // failures (NoClassDefFoundError, etc.) are useful for
-            // diagnosing the parser.
-            System.err.println("TabulaReflection failed");
-            t.printStackTrace(System.err);
+            System.err.println("TabulaReflection failed for " + ref.namespace + ": " + t.getClass().getSimpleName()
+                    + (t.getMessage() == null ? "" : " (" + t.getMessage() + ")"));
             return null;
         }
     }
@@ -204,6 +210,18 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
                 }
             }
         }
+        // Load installed dependencies too; a model framework may be shipped
+        // as a separate mod rather than shaded into the target jar.
+        String modsDirectory = System.getProperty("hydraulic.mods.dir", "mods");
+        File[] dependencies = new File(modsDirectory).listFiles((dir, name) -> name.endsWith(".jar"));
+        if (dependencies != null) {
+            for (File dependency : dependencies) {
+                if (!dependency.toPath().equals(modJar)) {
+                    urls.add(dependency.toPath().toUri().toURL());
+                }
+            }
+        }
+
         // Mod jar is added LAST so its class definitions win when
         // there is a duplicate name across the mod and the libraries.
         urls.add(modJar.toUri().toURL());

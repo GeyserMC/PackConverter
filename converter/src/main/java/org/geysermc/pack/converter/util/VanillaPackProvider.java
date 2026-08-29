@@ -177,6 +177,38 @@ public final class VanillaPackProvider {
     }
 
     /**
+     * Downloads an unmodified vanilla client jar for runtime model extractors.
+     * The resource-pack cache is intentionally stripped, so it cannot supply
+     * client rendering classes.
+     */
+    public static void createClientRuntime(@NotNull Path path, @NotNull String vanillaVersion, @NotNull LogListener log) {
+        Path marker = path.resolveSibling(path.getFileName() + ".version");
+        synchronized (DOWNLOAD_LOCK) {
+            try {
+                if (Files.isRegularFile(path) && Files.isRegularFile(marker)
+                        && Files.readString(marker).trim().equals(vanillaVersion)) {
+                    return;
+                }
+                VersionManifest manifest = GSON.fromJson(
+                        WebUtils.getBody("https://launchermeta.mojang.com/mc/game/version_manifest.json"), VersionManifest.class);
+                String versionUrl = manifest.getVersions().stream()
+                        .filter(version -> version.getId().equals(vanillaVersion))
+                        .map(Version::getUrl).findFirst()
+                        .orElseThrow(() -> new IOException("Unable to find Minecraft " + vanillaVersion));
+                VersionInfo info = GSON.fromJson(WebUtils.getBody(versionUrl), VersionInfo.class);
+                VersionDownload client = info.getDownloads().get("client");
+                if (client == null) throw new IOException("Minecraft " + vanillaVersion + " has no client download");
+                if (path.getParent() != null) Files.createDirectories(path.getParent());
+                log.info("Downloading Minecraft client runtime for entity model extraction...");
+                WebUtils.downloadToFile(client.getUrl(), path);
+                Files.writeString(marker, vanillaVersion);
+            } catch (IOException | RuntimeException e) {
+                log.warn("Runtime entity extraction is unavailable: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
      * Strips the jar of all files that are not needed for pack conversion
      * and cleans up the jar of any potentially problematic files.
      *
