@@ -28,17 +28,11 @@ package org.geysermc.pack.converter.type.entity.javarefl;
 
 import com.google.gson.Gson;
 import org.geysermc.pack.bedrock.resource.models.entity.ModelEntity;
+import org.geysermc.pack.converter.type.entity.gecko.BoxUvMapper;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.Geometry;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.Description;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.Bones;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.Cubes;
-import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.Uv;
-import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.Down;
-import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.East;
-import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.North;
-import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.South;
-import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.Up;
-import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.West;
 import org.geysermc.pack.converter.type.entity.EntityModelParser;
 import org.geysermc.pack.converter.type.model.BedrockModel;
 import team.unnamed.creative.ResourcePack;
@@ -53,6 +47,7 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.IdentityHashMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -101,7 +96,7 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
     private static final Gson GSON = new Gson();
     private static final Set<String> UNAVAILABLE_NAMESPACES = ConcurrentHashMap.newKeySet();
     private static final Set<String> REPORTED_CLASSPATHS = ConcurrentHashMap.newKeySet();
-    // 
+    private static final Map<Path, Map<String, String>> MODEL_CLASS_INDEX = new ConcurrentHashMap<>();
 
     @Override
     public String id() {
@@ -293,38 +288,7 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
     private static ModelCubeData loadModelFromMod(URLClassLoader loader, Path modJar, String namespace, String entityName) {
         String pascal = toPascalCase(entityName);
 
-        // Build a name -> fqn index from the mod jar entries once.
-        // This avoids hardcoding a single namespace and works for
-        // any mod that ships Model<Pascal> classes.
-        Map<String, String> nameToFqn = new HashMap<>();
-        try {
-            java.util.jar.JarFile jar = new java.util.jar.JarFile(modJar.toFile());
-            try {
-                java.util.Enumeration<java.util.jar.JarEntry> en = jar.entries();
-                while (en.hasMoreElements()) {
-                    java.util.jar.JarEntry e = en.nextElement();
-                    String n = e.getName();
-                    if (!n.endsWith(".class") || n.contains("$") || !n.contains("/client/model/")) continue;
-                    int slash = n.lastIndexOf('/');
-                    String simpleName = n.substring(slash + 1, n.length() - 6);
-                    // Match Model<Pascal>, Model<Pascal>Baby,
-                    // <Pascal>Model, and similar variants.
-                    if (simpleName.equals("Model" + pascal)
-                            || simpleName.startsWith("Model" + pascal)
-                            || simpleName.equals(pascal + "Model")
-                            || simpleName.startsWith(pascal + "Model")
-                            || simpleName.startsWith("Model")
-                            || simpleName.endsWith("Model")) {
-                        String fqn = n.replace('/', '.').replace(".class", "");
-                        nameToFqn.putIfAbsent(simpleName, fqn);
-                    }
-                }
-            } finally {
-                jar.close();
-            }
-        } catch (Exception e) {
-            return null;
-        }
+        Map<String, String> nameToFqn = MODEL_CLASS_INDEX.computeIfAbsent(modJar.toAbsolutePath(), TabulaReflectionEntityParser::indexModelClasses);
 
         if (nameToFqn.isEmpty()) return null;
 
@@ -362,29 +326,20 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
         if (modelClass == null) {
             return null;
         }
-        System.err.println("using model class " + modelClass.getName());
-
         Object modelInstance;
         try {
             modelInstance = modelClass.getDeclaredConstructor().newInstance();
         } catch (ReflectiveOperationException e) {
             Throwable cause = e.getCause() != null ? e.getCause() : e;
-            System.err.println("newInstance failed: " + cause);
-            cause.printStackTrace(System.err);
             return null;
         }
 
         // 1. Try the well-known TabulaModel field "cubes" first - it
         // works for mods that use vanilla GeckoLib/Tabula runtime
         // dumped as a single field.
-        System.err.println("TabulaReflection: probing cubes map / static method");
         Map<String, Object> cubes = readCubesMap(modelInstance, modelClass);
         if (cubes == null) {
             cubes = readCubesFromStaticMethod(loader, modelClass);
-        }
-        if (cubes != null) {
-            System.err.println("cubes map has " + cubes.size() + " entries (first 3 keys: "
-                    + cubes.keySet().stream().limit(3).reduce((a, b) -> a + "," + b).orElse("") + ")");
         }
         if (cubes != null && !cubes.isEmpty()) {
             return buildCubeData(cubes);
@@ -393,33 +348,48 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
         // 2. Framework path: model libraries commonly expose one model-part
         // field per bone. Instead of naming a framework/package, recognize a
         // part structurally by its inherited cubeList field.
-        System.err.println("TabulaReflection: trying model-part field walk");
-        List<CubeSpec> specs = new ArrayList<>();
+        List<BoneSpec> bones = new ArrayList<>();
+        Map<Object, String> names = new IdentityHashMap<>();
+        List<PartRef> parts = new ArrayList<>();
         int texW = 64;
         int texH = 64;
-        int fieldCount = 0;
         for (Field f : collectAllFields(modelClass)) {
             f.setAccessible(true);
             try {
                 Object part = f.get(modelInstance);
                 if (part == null || !hasField(part.getClass(), "cubeList")) continue;
-                fieldCount++;
-                CubeSpec spec = readAdvancedModelBox(part);
-                if (spec == null) continue;
-                specs.add(spec);
-                // Sample texture size from each part - they all share it in
-                // practice, including non-Citadel model frameworks.
+                if (names.putIfAbsent(part, f.getName()) == null) {
+                    parts.add(new PartRef(f.getName(), part));
+                }
                 texW = Math.max(texW, (int) readFloatField(part.getClass(), part, "textureWidth", 64f));
                 texH = Math.max(texH, (int) readFloatField(part.getClass(), part, "textureHeight", 64f));
             } catch (IllegalAccessException ignored) {
             }
         }
-        if (specs.isEmpty()) {
-            System.err.println("0 cubes collected (scanned " + fieldCount + " matching fields)");
-            return null;
+        for (PartRef part : parts) {
+            List<CubeSpec> partCubes = readAdvancedModelBoxes(part.value());
+            if (partCubes.isEmpty()) continue;
+            bones.add(new BoneSpec(part.name(), parentName(part.value(), parts, names),
+                    pivot(part.value()), rotation(part.value()), partCubes));
         }
-        System.err.println("collected " + specs.size() + " cubes from " + fieldCount + " fields");
-        return new ModelCubeData(specs, texW, texH);
+        return bones.isEmpty() ? null : new ModelCubeData(bones, texW, texH);
+    }
+
+    private static Map<String, String> indexModelClasses(Path modJar) {
+        Map<String, String> index = new HashMap<>();
+        try (java.util.jar.JarFile jar = new java.util.jar.JarFile(modJar.toFile())) {
+            java.util.Enumeration<java.util.jar.JarEntry> entries = jar.entries();
+            while (entries.hasMoreElements()) {
+                String path = entries.nextElement().getName();
+                if (!path.endsWith(".class") || path.contains("$") || !path.contains("/client/model/")) continue;
+                String simpleName = path.substring(path.lastIndexOf('/') + 1, path.length() - 6);
+                if (simpleName.startsWith("Model") || simpleName.endsWith("Model")) {
+                    index.putIfAbsent(simpleName, path.replace('/', '.').replace(".class", ""));
+                }
+            }
+        } catch (IOException ignored) {
+        }
+        return Map.copyOf(index);
     }
 
     private static List<Field> collectAllFields(Class<?> type) {
@@ -497,9 +467,7 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
         for (Map.Entry<String, Object> entry : cubes.entrySet()) {
             Object box = entry.getValue();
             if (box == null) continue;
-            CubeSpec spec = readAdvancedModelBox(box);
-            if (spec == null) continue;
-            specs.add(spec);
+            specs.addAll(readAdvancedModelBoxes(box));
 
             // Pick the largest textureWidth/Height declared on any
             // box; the Citadel model has one per-instance and they're
@@ -520,10 +488,11 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
             }
         }
 
-        return new ModelCubeData(specs, texW, texH);
+        return specs.isEmpty() ? null : new ModelCubeData(List.of(
+                new BoneSpec("root", null, new float[]{0, 0, 0}, new float[]{0, 0, 0}, specs)), texW, texH);
     }
 
-    private static CubeSpec readAdvancedModelBox(Object box) {
+    private static List<CubeSpec> readAdvancedModelBoxes(Object box) {
         try {
             Class<?> c = box.getClass();
             // AdvancedEntityModel/AdvancedModelBox has the
@@ -545,39 +514,21 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
             // `cubeList[0]`. Width/height come from the render box
             // rather than the rotation pivots so we don't have to
             // walk the GL cube list ourselves.
-            float[] dims = readRenderBoxDims(box);
-            if (dims == null) {
-                return null;
-            }
-
-            float xMin = dims[0], yMin = dims[1], zMin = dims[2];
-            float w = dims[3], h = dims[4], d = dims[5];
-            // Render box is axis-aligned at rest; rotation pivots
-            // around posX/posY/posZ.
             int texX = (int) readFloatField(c, box, "textureOffsetX", 0f);
             int texY = (int) readFloatField(c, box, "textureOffsetY", 0f);
-
-            // Convert to Bedrock origin (cube center) from min-corner
-            // + size.
-            float ox = xMin + w / 2f;
-            float oy = yMin + h / 2f;
-            float oz = zMin + d / 2f;
-
-            // Use scale as a rough proxy for "is this a child bone".
-            // Citadel models expose scale 0 on invisible bones; skip
-            // those so we don't emit garbage cubes.
-            if (scaleX == 0f || scaleY == 0f || scaleZ == 0f) return null;
-            if (w <= 0f || h <= 0f || d <= 0f) return null;
-
-            return new CubeSpec(
-                    box == null ? "" : box.toString(),
-                    new float[]{ox, oy, oz},
-                    new float[]{w, h, d},
-                    new float[]{rotX, rotY, rotZ},
-                    new float[]{posX, posY, posZ},
-                    texX, texY);
+            if (scaleX == 0f || scaleY == 0f || scaleZ == 0f) return List.of();
+            List<CubeSpec> cubes = new ArrayList<>();
+            for (float[] dims : readRenderBoxDims(box)) {
+                float w = dims[3], h = dims[4], d = dims[5];
+                if (w <= 0f || h <= 0f || d <= 0f) continue;
+                cubes.add(new CubeSpec(box.toString(),
+                        new float[]{dims[0] + w / 2f, dims[1] + h / 2f, dims[2] + d / 2f},
+                        new float[]{w, h, d}, new float[]{rotX, rotY, rotZ},
+                        new float[]{posX, posY, posZ}, texX, texY));
+            }
+            return cubes;
         } catch (Exception e) {
-            return null;
+            return List.of();
         }
     }
 
@@ -601,34 +552,36 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
      * AdvancedModelBox. Returns {@code null} when the cube list
      * is empty (e.g. collapsed bone).
      */
-    private static float[] readRenderBoxDims(Object box) {
+    private static List<float[]> readRenderBoxDims(Object box) {
         try {
             Field cubeListField = findField(box.getClass(), "cubeList");
-            if (cubeListField == null) return null;
+            if (cubeListField == null) return List.of();
             cubeListField.setAccessible(true);
             Object cubeList = cubeListField.get(box);
-            if (!(cubeList instanceof java.util.List<?> list) || list.isEmpty()) return null;
-            Object modelBox = list.get(0);
-
-            // Both BasicModelPart.ModelBox and TabulaModelRenderUtils.ModelBox
-            // expose the AABB via final fields posX1/posY1/posZ1 and
-            // posX2/posY2/posZ2. The first set is the min-corner and
-            // the second is the max-corner.
-            Field posX1 = modelBox.getClass().getField("posX1");
-            Field posY1 = modelBox.getClass().getField("posY1");
-            Field posZ1 = modelBox.getClass().getField("posZ1");
-            Field posX2 = modelBox.getClass().getField("posX2");
-            Field posY2 = modelBox.getClass().getField("posY2");
-            Field posZ2 = modelBox.getClass().getField("posZ2");
-            float xMin = posX1.getFloat(modelBox);
-            float yMin = posY1.getFloat(modelBox);
-            float zMin = posZ1.getFloat(modelBox);
-            float xMax = posX2.getFloat(modelBox);
-            float yMax = posY2.getFloat(modelBox);
-            float zMax = posZ2.getFloat(modelBox);
-            return new float[]{xMin, yMin, zMin, xMax - xMin, yMax - yMin, zMax - zMin};
+            if (!(cubeList instanceof java.util.List<?> list) || list.isEmpty()) return List.of();
+            List<float[]> dimensions = new ArrayList<>();
+            for (Object modelBox : list) {
+                // Both BasicModelPart.ModelBox and TabulaModelRenderUtils.ModelBox
+                // expose the AABB via final fields posX1/posY1/posZ1 and
+                // posX2/posY2/posZ2. The first set is the min-corner and
+                // the second is the max-corner.
+                Field posX1 = modelBox.getClass().getField("posX1");
+                Field posY1 = modelBox.getClass().getField("posY1");
+                Field posZ1 = modelBox.getClass().getField("posZ1");
+                Field posX2 = modelBox.getClass().getField("posX2");
+                Field posY2 = modelBox.getClass().getField("posY2");
+                Field posZ2 = modelBox.getClass().getField("posZ2");
+                float xMin = posX1.getFloat(modelBox);
+                float yMin = posY1.getFloat(modelBox);
+                float zMin = posZ1.getFloat(modelBox);
+                float xMax = posX2.getFloat(modelBox);
+                float yMax = posY2.getFloat(modelBox);
+                float zMax = posZ2.getFloat(modelBox);
+                dimensions.add(new float[]{xMin, yMin, zMin, xMax - xMin, yMax - yMin, zMax - zMin});
+            }
+            return dimensions;
         } catch (Exception e) {
-            return null;
+            return List.of();
         }
     }
 
@@ -647,6 +600,45 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
         return null;
     }
 
+    private static String parentName(Object part, List<PartRef> parts, Map<Object, String> names) {
+        for (PartRef candidate : parts) {
+            for (Object child : childParts(candidate.value())) {
+                if (child == part) {
+                    return names.get(candidate.value());
+                }
+            }
+        }
+        return null;
+    }
+
+    private static List<?> childParts(Object part) {
+        try {
+            Field children = findField(part.getClass(), "childModels");
+            if (children == null) return List.of();
+            children.setAccessible(true);
+            Object value = children.get(part);
+            return value instanceof List<?> list ? list : List.of();
+        } catch (IllegalAccessException ignored) {
+            return List.of();
+        }
+    }
+
+    private static float[] pivot(Object part) {
+        Class<?> type = part.getClass();
+        return new float[]{
+                readFloatField(type, part, "defaultPositionX", readFloatField(type, part, "rotationPointX", 0f)),
+                readFloatField(type, part, "defaultPositionY", readFloatField(type, part, "rotationPointY", 0f)),
+                readFloatField(type, part, "defaultPositionZ", readFloatField(type, part, "rotationPointZ", 0f))};
+    }
+
+    private static float[] rotation(Object part) {
+        Class<?> type = part.getClass();
+        return new float[]{
+                readFloatField(type, part, "defaultRotationX", readFloatField(type, part, "rotateAngleX", 0f)),
+                readFloatField(type, part, "defaultRotationY", readFloatField(type, part, "rotateAngleY", 0f)),
+                readFloatField(type, part, "defaultRotationZ", readFloatField(type, part, "rotateAngleZ", 0f))};
+    }
+
     private static BedrockModel buildBedrockModel(String namespace, String entityName, ModelCubeData data) {
         ModelEntity modelEntity = new ModelEntity();
         modelEntity.formatVersion("1.16.0");
@@ -658,97 +650,32 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
         description.textureHeight(data.textureHeight);
         geometry.description(description);
 
-        Bones root = new Bones();
-        root.name("root");
-        root.pivot(new float[]{0, 0, 0});
-        List<Cubes> cubes = new ArrayList<>();
-        for (CubeSpec spec : data.cubes) {
-            Cubes cube = new Cubes();
-            cube.origin(spec.origin);
-            cube.size(spec.size);
-            if (spec.pivot[0] != 0 || spec.pivot[1] != 0 || spec.pivot[2] != 0) {
-                cube.pivot(spec.pivot);
-            }
+        List<Bones> bones = new ArrayList<>();
+        for (BoneSpec spec : data.bones) {
+            Bones bone = new Bones();
+            bone.name(spec.name);
+            if (spec.parent != null) bone.parent(spec.parent);
+            bone.pivot(spec.pivot);
             if (spec.rotation[0] != 0 || spec.rotation[1] != 0 || spec.rotation[2] != 0) {
-                cube.rotation(spec.rotation);
+                bone.rotation(spec.rotation);
             }
-            // UV: simple per-face box mapping. For a 16x16 atlas
-            // tile this produces reasonable results; the rendering
-            // bed-side UV layout may differ and a real mod pipeline
-            // would derive UVs from the render box's per-face
-            // texture coordinates. Keeping it simple for r11.
-            cube.uv(boxUv(spec.size, spec.textureX, spec.textureY, data.textureWidth, data.textureHeight));
-            cubes.add(cube);
+            List<Cubes> cubes = new ArrayList<>();
+            for (CubeSpec cubeSpec : spec.cubes) {
+                Cubes cube = new Cubes();
+                cube.origin(cubeSpec.origin);
+                cube.size(cubeSpec.size);
+                cube.uv(BoxUvMapper.expand(cubeSpec.textureX, cubeSpec.textureY, cubeSpec.size));
+                cubes.add(cube);
+            }
+            bone.cubes(cubes);
+            bones.add(bone);
         }
-        root.cubes(cubes);
-        geometry.bones(List.of(root));
+        geometry.bones(bones);
         modelEntity.geometry(List.of(geometry));
 
         return new BedrockModel(BedrockModel.ModelType.ENTITY,
                 namespace + "." + entityName + ".json", 
                 modelEntity);
-    }
-
-    /**
-     * Build a per-face box UV layout. Returns a 6-entry float
-     * array (uv coords per face) — the Bedrock
-     * {@link Uv} schema is one UV per face (north, south, east,
-     * west, up, down) for vanilla block model conventions; entity
-     * model UV is simpler (single {@code uv} pair, all faces
-     * share). This stub uses the size-derived per-face mapping
-     * that Blockbench's auto-UV does, scaled by textureWidth/
-     * textureHeight.
-     */
-    private static Uv boxUv(float[] size, int texX, int texY, int texW, int texH) {
-        // Single UV pair covering the whole box; Bedrock entity
-        // model UV is a single [u, v] in the default schema.
-        // We map (0,0)-(w,h) into the texture atlas.
-        float u0 = texX / (float) texW;
-        float v0 = texY / (float) texH;
-        Uv uv = new Uv();
-        uv.north = northFace(u0, v0);
-        uv.south = southFace(u0, v0);
-        uv.east = eastFace(u0, v0);
-        uv.west = westFace(u0, v0);
-        uv.up = upFace(u0, v0);
-        uv.down = downFace(u0, v0);
-        return uv;
-    }
-
-    private static North northFace(float u, float v) {
-        North f = new North();
-        f.uv = new float[]{u, v};
-        return f;
-    }
-
-    private static South southFace(float u, float v) {
-        South f = new South();
-        f.uv = new float[]{u, v};
-        return f;
-    }
-
-    private static East eastFace(float u, float v) {
-        East f = new East();
-        f.uv = new float[]{u, v};
-        return f;
-    }
-
-    private static West westFace(float u, float v) {
-        West f = new West();
-        f.uv = new float[]{u, v};
-        return f;
-    }
-
-    private static Up upFace(float u, float v) {
-        Up f = new Up();
-        f.uv = new float[]{u, v};
-        return f;
-    }
-
-    private static Down downFace(float u, float v) {
-        Down f = new Down();
-        f.uv = new float[]{u, v};
-        return f;
     }
 
     private record ParsedEntityRef(String namespace, String entityName) {
@@ -783,7 +710,11 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
         }
     }
 
-    private record ModelCubeData(List<CubeSpec> cubes, int textureWidth, int textureHeight) {}
+    private record ModelCubeData(List<BoneSpec> bones, int textureWidth, int textureHeight) {}
+
+    private record PartRef(String name, Object value) {}
+
+    private record BoneSpec(String name, String parent, float[] pivot, float[] rotation, List<CubeSpec> cubes) {}
 
     private record CubeSpec(
             String identifier,
