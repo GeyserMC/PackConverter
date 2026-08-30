@@ -165,7 +165,7 @@ public final class VanillaPackProvider {
 
             if (path.getParent() != null) Files.createDirectories(path.getParent());
 
-            WebUtils.downloadToFile(clientJarInfo.url, path);
+            WebUtils.downloadToFile(clientJarInfo.url, path, clientJarInfo.sha1, clientJarInfo.size);
             // Clean the jar
             clean(path, log);
             Files.writeString(versionMarker, vanillaVersion);
@@ -200,7 +200,7 @@ public final class VanillaPackProvider {
                 if (client == null) throw new IOException("Minecraft " + vanillaVersion + " has no client download");
                 if (path.getParent() != null) Files.createDirectories(path.getParent());
                 log.info("Downloading Minecraft client runtime for entity model extraction...");
-                WebUtils.downloadToFile(client.getUrl(), path);
+                WebUtils.downloadToFile(client.getUrl(), path, client.getSha1(), client.getSize());
                 Files.writeString(marker, vanillaVersion);
             } catch (IOException | RuntimeException e) {
                 log.warn("Runtime entity extraction is unavailable: " + e.getMessage());
@@ -309,7 +309,7 @@ public final class VanillaPackProvider {
 
                 WebUtils.downloadToFile(
                         "https://resources.download.minecraft.net/%s/%s".formatted(bytes2, asset.getValue().hash),
-                        rootPath.resolve("assets/" + asset.getKey()));
+                        rootPath.resolve("assets/" + asset.getKey()), asset.getValue().hash, asset.getValue().size);
             }
         });
     }
