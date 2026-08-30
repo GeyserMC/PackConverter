@@ -37,6 +37,7 @@ import org.apache.commons.io.file.PathUtils;
 import org.geysermc.pack.converter.type.texture.transformer.type.OverlayTransformer;
 import org.geysermc.pack.converter.type.texture.transformer.type.entity.SheepTransformer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,11 +45,15 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipOutputStream;
 
 public final class VanillaPackProvider {
     private static final Gson GSON = new GsonBuilder()
@@ -58,16 +63,36 @@ public final class VanillaPackProvider {
 
     private static final List<String> REQUIRED_ASSETS = List.of(); // While not used yet, it's possible we will need other assets as some point
 
+    public static final String DEFAULT_VERSION = "26.2";
+
     /**
-     * Downloads the vanilla jar from Mojang's servers.
+     * Downloads the vanilla jar from Mojang's servers using {@link #DEFAULT_VERSION}.
      *
      * @param path The path to download the jar to.
      */
     public static void create(@NotNull Path path, @NotNull LogListener log) {
-        // Jar already exists; do nothing
+        create(path, DEFAULT_VERSION, log);
+    }
+
+    /**
+     * Downloads the vanilla jar from Mojang's servers.
+     *
+     * @param path The path to download the jar to.
+     * @param minecraftVersion The Minecraft version to download.
+     */
+    public static void create(@NotNull Path path, @NotNull String minecraftVersion, @NotNull LogListener log) {
+        Path versionPath = path.resolveSibling(path.getFileName() + ".version");
+        String cachedVersion = readCachedVersion(versionPath);
+
         if (Files.exists(path)) {
-            log.debug("Vanilla jar already exists, skipping download");
-            return;
+            // Jar already exists and was built from the requested version; do nothing
+            if (minecraftVersion.equals(cachedVersion)) {
+                log.debug("Vanilla pack already exists, skipping download");
+                return;
+            }
+
+            log.info("Vanilla pack was built from %s but %s was requested, re-downloading..."
+                    .formatted(cachedVersion == null ? "an unknown version" : cachedVersion, minecraftVersion));
         }
 
         try {
@@ -77,10 +102,10 @@ public final class VanillaPackProvider {
             VersionManifest versionManifest = GSON.fromJson(
                     WebUtils.getBody("https://launchermeta.mojang.com/mc/game/version_manifest.json"), VersionManifest.class);
 
-            // Get the url for the latest version of the games manifest
+            // Get the url for the requested version of the games manifest
             String latestInfoURL = "";
             for (Version version : versionManifest.getVersions()) {
-                if (version.getId().equals("1.21.11")) { // TODO De-hardcode this
+                if (version.getId().equals(minecraftVersion)) {
                     latestInfoURL = version.getUrl();
                     break;
                 }
@@ -88,8 +113,10 @@ public final class VanillaPackProvider {
 
             // Make sure we definitely got a version
             if (latestInfoURL.isEmpty()) {
-                throw new IOException("Unable to find a valid version!");
+                throw new IOException("Unable to find the version '" + minecraftVersion + "'!");
             }
+
+            log.info("Using Minecraft version " + minecraftVersion);
 
             // Get the individual version manifest
             VersionInfo versionInfo = GSON.fromJson(WebUtils.getBody(latestInfoURL), VersionInfo.class);
@@ -116,9 +143,13 @@ public final class VanillaPackProvider {
 
             if (path.getParent() != null) Files.createDirectories(path.getParent());
 
-            PathUtils.copyFile(new URL(clientJarInfo.url), path);
+            // Drop the old version first so a failure part way through isn't mistaken for a good jar
+            Files.deleteIfExists(versionPath);
+
+            PathUtils.copyFile(new URL(clientJarInfo.url), path, StandardCopyOption.REPLACE_EXISTING);
             // Clean the jar
             clean(path, log);
+            Files.writeString(versionPath, minecraftVersion);
             log.info("Downloaded vanilla jar!");
         } catch (IOException e) {
             log.error("Error downloading vanilla jar", e);
@@ -173,6 +204,9 @@ public final class VanillaPackProvider {
                         validPaths.add("/assets/minecraft/textures/" + SheepTransformer.SHEEP_UNDERCOAT);
                         validPaths.add("/assets/minecraft/textures/misc/unknown_pack.png");
 
+                        validPaths.add("/pack.png");
+                        validPaths.add("/version.json"); // Kept so it can be converted into a pack.mcmeta below
+
                         // At the moment, we only care about models and blockstate info from vanilla.
                         String pathName = path.toString();
                         if (
@@ -215,7 +249,88 @@ public final class VanillaPackProvider {
                         rootPath.resolve("assets/" + asset.getKey())
                 );
             }
+
+            // The client jar has no pack.mcmeta of its own, so build one from version.json
+            Path versionJson = rootPath.resolve("version.json");
+            if (Files.exists(versionJson)) {
+                JsonObject version = JsonParser.parseString(Files.readString(versionJson)).getAsJsonObject();
+
+                JsonObject pack = new JsonObject();
+                pack.addProperty("pack_format", version.getAsJsonObject("pack_version").get("resource_major").getAsInt());
+                pack.addProperty("description", version.get("name").getAsString());
+
+                JsonObject root = new JsonObject();
+                root.add("pack", pack);
+
+                Files.writeString(rootPath.resolve("pack.mcmeta"), GSON.toJson(root));
+                Files.delete(versionJson);
+            } else {
+                log.error("`version.json` was not found. Continuing without, issues may occur!");
+            }
         });
+
+        moveMetaToFront(jarPath);
+    }
+
+    /**
+     * Rewrites the jar with its {@code pack.mcmeta} first, dropping directory entries.
+     * <p>
+     * We have to write the pack.mcmeta first otherwise creative doesn't read it until last
+     *
+     * @param jarPath The path to the jar to reorder.
+     */
+    private static void moveMetaToFront(@NotNull Path jarPath) throws IOException {
+        Path tempPath = jarPath.resolveSibling(jarPath.getFileName() + ".tmp");
+
+        try {
+            try (ZipFile jar = new ZipFile(jarPath.toFile());
+                 ZipOutputStream out = new ZipOutputStream(Files.newOutputStream(tempPath))) {
+                ZipEntry meta = jar.getEntry("pack.mcmeta");
+                if (meta == null) {
+                    return;
+                }
+
+                // Directory entries aren't needed, and the strip above leaves plenty of empty ones behind
+                List<ZipEntry> entries = new ArrayList<>();
+                entries.add(meta);
+                jar.stream()
+                        .filter(entry -> !entry.isDirectory() && !entry.getName().equals(meta.getName()))
+                        .forEach(entries::add);
+
+                for (ZipEntry entry : entries) {
+                    out.putNextEntry(new ZipEntry(entry.getName()));
+
+                    try (InputStream in = jar.getInputStream(entry)) {
+                        IOUtils.copy(in, out);
+                    }
+
+                    out.closeEntry();
+                }
+            }
+
+            Files.move(tempPath, jarPath, StandardCopyOption.REPLACE_EXISTING);
+        } finally {
+            Files.deleteIfExists(tempPath);
+        }
+    }
+
+    /**
+     * Reads the Minecraft version a previously downloaded jar was built from.
+     *
+     * @param versionPath The path to the version file.
+     * @return the version, or {@code null} if it couldn't be determined.
+     */
+    @Nullable
+    private static String readCachedVersion(@NotNull Path versionPath) {
+        if (!Files.exists(versionPath)) {
+            return null;
+        }
+
+        try {
+            return Files.readString(versionPath).trim();
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     @Getter

@@ -552,6 +552,26 @@ java:
         - entity/panda/panda_baby
         - entity/hoglin/hoglin_baby
         - entity/sniffer/snifflet
+        - entity/sulfur_cube/sulfur_cube_inner
+        - entity/sulfur_cube/sulfur_cube_outer
+        - block/sulfur
+        - block/sulfur_bricks
+        - block/sulfur_spike_down_base
+        - block/sulfur_spike_down_frustum
+        - block/sulfur_spike_down_middle
+        - block/sulfur_spike_down_tip
+        - block/sulfur_spike_down_tip_merge
+        - block/sulfur_spike_up_base
+        - block/sulfur_spike_up_frustum
+        - block/sulfur_spike_up_middle
+        - block/sulfur_spike_up_tip
+        - block/sulfur_spike_up_tip_merge
+        - block/cinnabar
+        - block/chiseled_cinnabar
+        - block/chiseled_sulfur
+        - block/cinnabar_bricks
+        - entity/sulfur_cube/sulfur_cube_inner_small
+        - entity/sulfur_cube/sulfur_cube_outer_small
     transformed-paths:
         - block/copper_chain
         - entity/conduit/base
@@ -1848,6 +1868,26 @@ bedrock:
         - entity/panda/panda_baby
         - entity/hoglin/hoglin_baby
         - entity/sniffer/snifflet
+        - entity/sulfur_cube/sulfur_cube_inner
+        - entity/sulfur_cube/sulfur_cube_outer
+        - blocks/sulfur
+        - blocks/sulfur_bricks
+        - blocks/sulfur_spike_down_base
+        - blocks/sulfur_spike_down_frustum
+        - blocks/sulfur_spike_down_middle
+        - blocks/sulfur_spike_down_tip
+        - blocks/sulfur_spike_down_tip_merge
+        - blocks/sulfur_spike_up_base
+        - blocks/sulfur_spike_up_frustum
+        - blocks/sulfur_spike_up_middle
+        - blocks/sulfur_spike_up_tip
+        - blocks/sulfur_spike_up_tip_merge
+        - blocks/cinnabar
+        - blocks/chiseled_cinnabar
+        - blocks/chiseled_sulfur
+        - blocks/cinnabar_bricks
+        - entity/sulfur_cube/sulfur_cube_inner_small
+        - entity/sulfur_cube/sulfur_cube_outer_small
     transformed-paths:
         - blocks/chest_front
         - blocks/chest_side

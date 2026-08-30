@@ -58,6 +58,7 @@ public final class PackConverter {
     private String packName;
 
     private Path vanillaPackPath = Paths.get("vanilla-pack.zip");
+    private String vanillaPackVersion;
 
     private String textureSubdirectory;
 
@@ -129,7 +130,7 @@ public final class PackConverter {
      * @param packName the output pack name
      * @return this instance
      */
-    public PackConverter packName(@NotNull String packName) {
+    public PackConverter packName(@Nullable String packName) {
         this.packName = packName;
         return this;
     }
@@ -153,6 +154,28 @@ public final class PackConverter {
      */
     public PackConverter vanillaPackPath(@NotNull Path vanillaPackPath) {
         this.vanillaPackPath = vanillaPackPath;
+        return this;
+    }
+
+    /**
+     * Gets the Minecraft version the vanilla pack is downloaded from.
+     *
+     * @return the vanilla pack version
+     */
+    public @NotNull String vanillaPackVersion() {
+        if (vanillaPackVersion == null || vanillaPackVersion.isBlank()) return VanillaPackProvider.DEFAULT_VERSION;
+
+        return vanillaPackVersion;
+    }
+
+    /**
+     * Sets the Minecraft version the vanilla pack is downloaded from.
+     *
+     * @param vanillaPackVersion the Minecraft version to use
+     * @return this instance
+     */
+    public PackConverter vanillaPackVersion(@Nullable String vanillaPackVersion) {
+        this.vanillaPackVersion = vanillaPackVersion;
         return this;
     }
 
@@ -269,7 +292,7 @@ public final class PackConverter {
         // Need to download the client jar, then use the
         // client jar to get the vanilla models and textures, so we can
         // ensure all parent models exist to convert them to Bedrock.
-        VanillaPackProvider.create(this.vanillaPackPath, this.logListener);
+        VanillaPackProvider.create(this.vanillaPackPath, vanillaPackVersion(), this.logListener);
 
         ZipUtils.openFileSystem(this.input, this.compressed, input -> {
             if (this.enforcePackCheck && !Files.exists(input.resolve("pack.mcmeta"))) {

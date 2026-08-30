@@ -56,8 +56,11 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.ServiceLoader;
 import java.util.stream.StreamSupport;
 
@@ -113,14 +116,16 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
         String relativePath = input.replaceAll("\\.png$", "");
 
         int slashIndex = relativePath.indexOf('/');
-        String rootPath = slashIndex != -1 ? relativePath.substring(0, slashIndex) : "";
-        String bedrockRoot = DIRECTORY_LOCATIONS.getOrDefault(rootPath, rootPath);
+        String javaRoot = slashIndex != -1 ? relativePath.substring(0, slashIndex) : "";
 
         List<String> mapping = mappings.map(relativePath);
         List<String> transformedOutputs = new ArrayList<>();
         for (String item : mapping) {
-            int itemSlashIndex = item.indexOf('/');
-            transformedOutputs.add(bedrockRoot + (itemSlashIndex != -1 ? item.substring(itemSlashIndex) : "/" + item) + ".png");
+            // Mappings without a root directory are relative to the java texture's own root
+            String path = item.indexOf('/') != -1 ? item : javaRoot + "/" + item;
+
+            String rootPath = path.substring(0, path.indexOf('/'));
+            transformedOutputs.add(DIRECTORY_LOCATIONS.getOrDefault(rootPath, rootPath) + path.substring(path.indexOf('/')) + ".png");
         }
 
         transformed.output(transformedOutputs);
@@ -131,7 +136,16 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
     @Override
     public void include(BedrockResourcePack pack, List<TransformedTexture> transformedTextures, CombineContext context) {
         Path texturePath = pack.directory().resolve(BEDROCK_TEXTURES_LOCATION);
-        List<String> exportedPaths = new ArrayList<>();
+
+        // Transformer results are added last, so the last texture to claim an output wins
+        Map<String, TransformedTexture> outputOwners = new HashMap<>();
+        for (TransformedTexture texture : transformedTextures) {
+            for (String outputPath : texture.output()) {
+                outputOwners.put(outputPath, texture);
+            }
+        }
+
+        Set<String> exportedPaths = new HashSet<>();
 
         for (TransformedTexture textureToExport : transformedTextures) {
             String bedrockDirectory = "%s/%s";
@@ -141,11 +155,14 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
 
             List<Path> outputs = new ArrayList<>();
             for (String outputPath : textureToExport.output()) {
-                if (exportedPaths.contains(outputPath)) {
-                    context.warn("Conflicting texture " + outputPath + "!");
+                if (outputOwners.get(outputPath) != textureToExport) {
+                    context.debug("Conflicting texture " + outputPath + ", skipping " + textureToExport.texture().key() + "!");
                     continue;
                 }
-                exportedPaths.add(outputPath);
+
+                if (!exportedPaths.add(outputPath)) {
+                    continue;
+                }
 
                 int slashIndex = outputPath.indexOf('/');
                 String root = slashIndex != -1 ? outputPath.substring(0, slashIndex) : "";
