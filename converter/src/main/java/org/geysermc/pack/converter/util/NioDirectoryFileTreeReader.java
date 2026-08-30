@@ -37,26 +37,37 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 public final class NioDirectoryFileTreeReader implements FileTreeReader {
 
-    private final Path root;
-    private final List<Path> directories = new ArrayList<>();
+    private final List<Directory> directories = new ArrayList<>();
+    private final Set<String> emitted = new HashSet<>();
     private int directoryCursor;
     private Path @Nullable [] paths;
     private int pathCursor;
+    private Path currentRoot;
+    private Path nextPath;
+    private String nextName;
 
     private InputStream currentStream;
 
     NioDirectoryFileTreeReader(Path root) {
-        this.root = root;
-        directories.add(root);
+        this(List.of(root));
+    }
+
+    NioDirectoryFileTreeReader(Collection<Path> roots) {
+        roots.forEach(root -> directories.add(new Directory(root, root)));
     }
 
     @Override
     public boolean hasNext() {
+        if (nextPath != null) return true;
         while (true) {
             if (paths == null) {
                 // we must look for a folder and make
@@ -66,9 +77,12 @@ public final class NioDirectoryFileTreeReader implements FileTreeReader {
                     return false;
                 }
 
-                Path directory = directories.get(directoryCursor++);
+                Directory directory = directories.get(directoryCursor++);
+                currentRoot = directory.root();
                 try {
-                    paths = Files.list(directory).toArray(Path[]::new);
+                    try (var children = Files.list(directory.path())) {
+                        paths = children.sorted(Comparator.comparing(Path::toString)).toArray(Path[]::new);
+                    }
                 } catch (IOException e) {
                     throw new IllegalStateException("Exception listing directories from " + directory, e);
                 }
@@ -79,12 +93,16 @@ public final class NioDirectoryFileTreeReader implements FileTreeReader {
             }
 
             while (pathCursor < paths.length) {
-                Path path = paths[pathCursor];
+                Path path = paths[pathCursor++];
                 if (Files.isDirectory(path)) {
-                    directories.add(path);
-                    pathCursor++;
+                    directories.add(new Directory(currentRoot, path));
                 } else {
-                    return true;
+                    String name = relativize(currentRoot, path);
+                    if (emitted.add(name)) {
+                        nextPath = path;
+                        nextName = name;
+                        return true;
+                    }
                 }
             }
             paths = null;
@@ -103,17 +121,16 @@ public final class NioDirectoryFileTreeReader implements FileTreeReader {
             currentStream = null;
         }
 
-        if (paths == null || pathCursor >= paths.length) {
-            throw new NoSuchElementException("No more elements");
-        } else {
-            Path current = paths[pathCursor++];
-            try {
-                currentStream = Files.newInputStream(current);
-            } catch (IOException e) {
-                throw new IllegalStateException("Couldn't open InputStream for: " + current, e);
-            }
-            return relativize(root, current);
+        Path current = nextPath;
+        String name = nextName;
+        nextPath = null;
+        nextName = null;
+        try {
+            currentStream = Files.newInputStream(current);
+        } catch (IOException e) {
+            throw new IllegalStateException("Couldn't open InputStream for: " + current, e);
         }
+        return name;
     }
 
     @Override
@@ -155,5 +172,13 @@ public final class NioDirectoryFileTreeReader implements FileTreeReader {
 
     public static NioDirectoryFileTreeReader read(Path root) {
         return new NioDirectoryFileTreeReader(root);
+    }
+
+    /** Reads layered resource roots in order; the first occurrence of a path wins. */
+    public static NioDirectoryFileTreeReader read(Collection<Path> roots) {
+        return new NioDirectoryFileTreeReader(roots);
+    }
+
+    private record Directory(Path root, Path path) {
     }
 }

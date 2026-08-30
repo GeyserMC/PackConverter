@@ -48,6 +48,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -55,6 +56,7 @@ import java.util.function.BiConsumer;
 /** Handles the conversion of a resource pack. */
 public final class PackConverter {
     private Path input;
+    private final List<Path> inputs = new ArrayList<>();
     private Path output;
     private String packName;
     private Path vanillaPackPath = Paths.get("vanilla-pack.zip");
@@ -83,7 +85,21 @@ public final class PackConverter {
 
     public PackConverter input(@NotNull Path input, boolean compressed) {
         this.input = input;
+        this.inputs.clear();
+        this.inputs.add(input);
         this.compressed = compressed;
+        this.autoExtractModResources = false;
+        return this;
+    }
+
+    /** Uses layered directory inputs in order; the first occurrence of a resource path wins. */
+    public PackConverter inputs(@NotNull Collection<Path> inputs) {
+        if (inputs.isEmpty()) throw new IllegalArgumentException("Inputs cannot be empty");
+        this.inputs.clear();
+        this.inputs.addAll(inputs);
+        this.input = this.inputs.getFirst();
+        this.compressed = false;
+        this.autoExtractModResources = false;
         return this;
     }
 
@@ -206,9 +222,11 @@ public final class PackConverter {
             conversionInput = this.modResourceDir;
         }
 
+        List<Path> conversionInputs = conversionInput.equals(this.input) ? List.copyOf(this.inputs) : List.of(conversionInput);
         Path sourceInput = conversionInput;
         ZipUtils.openFileSystem(sourceInput, this.compressed && sourceInput.equals(this.input), input -> {
-            if (this.enforcePackCheck && !Files.exists(input.resolve("pack.mcmeta"))) {
+            List<Path> sourceRoots = conversionInputs.size() == 1 ? List.of(input) : conversionInputs;
+            if (this.enforcePackCheck && sourceRoots.stream().noneMatch(root -> Files.exists(root.resolve("pack.mcmeta")))) {
                 throw new IllegalArgumentException("Invalid Java Edition resource pack. No pack.mcmeta found.");
             }
 
@@ -219,7 +237,7 @@ public final class PackConverter {
 
             ResourcePack javaResourcePack = (this.compressed && sourceInput.equals(this.input))
                     ? MinecraftResourcePackReader.minecraft().readFromZipFile(sourceInput)
-                    : MinecraftResourcePackReader.minecraft().read(NioDirectoryFileTreeReader.read(sourceInput));
+                    : MinecraftResourcePackReader.minecraft().read(NioDirectoryFileTreeReader.read(sourceRoots));
             ResourcePack vanillaResourcePack = MinecraftResourcePackReader.minecraft().readFromZipFile(vanillaPackPath);
             BedrockResourcePack bedrockResourcePack = new BedrockResourcePack(this.tmpDir);
 
@@ -273,15 +291,21 @@ public final class PackConverter {
         if (this.output == null) throw new NullPointerException("Output cannot be null");
         if (this.vanillaPackPath == null) throw new NullPointerException("Vanilla Pack Path cannot be null");
         if (this.converters.isEmpty()) throw new IllegalStateException("No converters have been added");
-        if (!Files.exists(this.input)) throw new IllegalArgumentException("Input does not exist: " + this.input);
+        for (Path input : this.inputs) {
+            if (!Files.exists(input)) throw new IllegalArgumentException("Input does not exist: " + input);
+        }
         if (!Files.isRegularFile(this.vanillaPackPath)) {
             throw new IllegalArgumentException("Vanilla pack must be a regular file: " + this.vanillaPackPath);
         }
         if (this.compressed && !Files.isRegularFile(this.input)) {
             throw new IllegalArgumentException("Compressed input must be a regular file: " + this.input);
         }
-        if (!this.compressed && !Files.isDirectory(this.input)) {
-            throw new IllegalArgumentException("Uncompressed input must be a directory: " + this.input);
+        if (!this.compressed) {
+            for (Path input : this.inputs) {
+                if (!Files.isDirectory(input)) {
+                    throw new IllegalArgumentException("Uncompressed input must be a directory: " + input);
+                }
+            }
         }
     }
 
