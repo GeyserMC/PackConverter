@@ -29,11 +29,10 @@ package org.geysermc.pack.converter.util;
 import org.geysermc.pack.converter.PackConverter;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -56,49 +55,31 @@ public class ZipUtils {
         this.sourceFolder = sourceFolder;
     }
 
-    public void zipIt(LogListener listener, String zipFile) {
-        byte[] buffer = new byte[1024];
-        String source = sourceFolder.getName();
-        FileOutputStream fos = null;
-        ZipOutputStream zos = null;
-        try {
-            fos = new FileOutputStream(zipFile);
-            zos = new ZipOutputStream(fos);
-
+    public void zipIt(LogListener listener, String zipFile) throws IOException {
+        byte[] buffer = new byte[8192];
+        try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(Path.of(zipFile)))) {
             listener.debug("Output to zip " + zipFile);
-            FileInputStream in = null;
-
             for (String file: this.fileList) {
                 listener.debug("File added " + file);
                 ZipEntry ze = new ZipEntry(file);
                 zos.putNextEntry(ze);
-                try {
-                    in = new FileInputStream(sourceFolder + File.separator + file);
+                try (var in = Files.newInputStream(sourceFolder.toPath().resolve(file))) {
                     int len;
-                    while ((len = in .read(buffer)) > 0) {
+                    while ((len = in.read(buffer)) > 0) {
                         zos.write(buffer, 0, len);
                     }
                 } finally {
-                    if (in != null)
-                        in.close();
+                    zos.closeEntry();
                 }
             }
-
-            zos.closeEntry();
             listener.debug("Folder successfully compressed");
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        } finally {
-            try {
-                zos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
     public void generateFileList() {
+        fileList.clear();
         generateFileList(sourceFolder);
+        Collections.sort(fileList);
     }
 
     public void generateFileList(File node) {
@@ -109,6 +90,7 @@ public class ZipUtils {
 
         if (node.isDirectory()) {
             String[] subNote = node.list();
+            if (subNote == null) return;
             for (String filename : subNote) {
                 generateFileList(new File(node, filename));
             }

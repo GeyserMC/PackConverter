@@ -18,9 +18,9 @@ dependencies {
     api(project(":pack-schema-api"))
     compileOnly(project(":bedrock-pack-schema")) // Is provided by pack-schema-api for consumers, but not for us during compile time
     testImplementation(project(":bedrock-pack-schema")) // compileOnly is absent from the test classpath
-    implementation("com.google.code.gson:gson:2.10.1")
-    implementation("commons-io:commons-io:2.11.0")
-    implementation("com.twelvemonkeys.imageio:imageio-tga:3.9.4")
+    implementation("com.google.code.gson:gson:2.14.0")
+    implementation("commons-io:commons-io:2.22.0")
+    implementation("com.twelvemonkeys.imageio:imageio-tga:3.14.0")
     implementation("com.nukkitx.fastutil:fastutil-int-object-maps:8.5.3")
     api("net.kyori:adventure-api:4.14.0")
     api("net.kyori:adventure-text-serializer-gson:4.14.0")
@@ -31,7 +31,7 @@ dependencies {
     compileOnly("com.google.auto.service:auto-service:1.0.1")
     annotationProcessor("com.google.auto.service:auto-service:1.0.1")
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.10.2")
+    testImplementation("org.junit.jupiter:junit-jupiter:6.1.3")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher") // Gradle 9 no longer loads the launcher implicitly
 }
 

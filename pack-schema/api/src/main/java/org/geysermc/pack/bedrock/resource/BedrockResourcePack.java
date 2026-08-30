@@ -504,6 +504,7 @@ public class BedrockResourcePack {
      * @param location the location of the file
      */
     public void addExtraFile(byte[] bytes, @NotNull String location) {
+        resolveOutput(location);
         if (this.extraFiles == null) {
             this.extraFiles = new HashMap<>();
         }
@@ -550,25 +551,25 @@ public class BedrockResourcePack {
 
         if (this.attachables != null) {
             for (Map.Entry<String, Attachables> attachable : this.attachables.entrySet()) {
-                exportJson(GSON, this.directory.resolve(attachable.getKey()), attachable.getValue());
+                exportJson(GSON, resolveOutput(attachable.getKey()), attachable.getValue());
             }
         }
 
         if (this.renderControllers != null) {
             for (Map.Entry<String, RenderControllers> renderController : this.renderControllers.entrySet()) {
-                exportJson(GSON, this.directory.resolve(renderController.getKey()), renderController.getValue());
+                exportJson(GSON, resolveOutput(renderController.getKey()), renderController.getValue());
             }
         }
 
         if (this.blockModels != null) {
             for (Map.Entry<String, ModelEntity> blockModel : this.blockModels.entrySet()) {
-                exportJson(GSON, this.directory.resolve(blockModel.getKey()), blockModel.getValue());
+                exportJson(GSON, resolveOutput(blockModel.getKey()), blockModel.getValue());
             }
         }
 
         if (this.entityModels != null) {
             for (Map.Entry<String, ModelEntity> entityModel : this.entityModels.entrySet()) {
-                exportJson(GSON, this.directory.resolve(entityModel.getKey()), entityModel.getValue());
+                exportJson(GSON, resolveOutput(entityModel.getKey()), entityModel.getValue());
             }
         }
 
@@ -580,16 +581,25 @@ public class BedrockResourcePack {
             exportJson(GSON, this.directory.resolve("texts/languages.json"), this.languages.languageCodes());
 
             for (Map.Entry<String, Map<String, String>> language : this.languages.languages().entrySet()) {
-                exportProperties(this.directory.resolve("texts/" + language.getKey() + ".lang"), language.getValue());
+                exportProperties(resolveOutput("texts/" + language.getKey() + ".lang"), language.getValue());
             }
         }
 
         if (this.extraFiles != null) {
             for (Map.Entry<String, byte[]> extraFile : this.extraFiles.entrySet()) {
-                Path extraFilePath = this.directory.resolve(extraFile.getKey());
+                Path extraFilePath = resolveOutput(extraFile.getKey());
                 Files.createDirectories(extraFilePath.getParent());
                 Files.write(extraFilePath, extraFile.getValue());
             }
         }
+    }
+
+    private Path resolveOutput(String location) {
+        Path root = this.directory.toAbsolutePath().normalize();
+        Path output = root.resolve(location).normalize();
+        if (!output.startsWith(root)) {
+            throw new IllegalArgumentException("Pack output path escapes the pack directory: " + location);
+        }
+        return output;
     }
 }

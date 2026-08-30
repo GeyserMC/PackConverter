@@ -26,6 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -41,6 +42,9 @@ import java.util.zip.ZipInputStream;
 /** Extracts client resource-pack data from Minecraft mod JARs. */
 public final class ModJarExtractor {
     private static final String ASSETS_PREFIX = "assets/";
+    private static final int MAX_ENTRIES = 100_000;
+    private static final long MAX_ENTRY_BYTES = 256L * 1024 * 1024;
+    private static final long MAX_TOTAL_BYTES = 2L * 1024 * 1024 * 1024;
 
     private ModJarExtractor() {
     }
@@ -109,12 +113,15 @@ public final class ModJarExtractor {
         Path root = destination.toAbsolutePath().normalize();
         Files.createDirectories(root);
         int count = 0;
+        long totalBytes = 0;
 
         try (InputStream input = Files.newInputStream(jar); ZipInputStream zip = new ZipInputStream(input)) {
             ZipEntry entry;
             while ((entry = zip.getNextEntry()) != null) {
                 String name = entry.getName().replace('\\', '/');
                 if (entry.isDirectory() || !isResourcePackEntry(name, includePackMetadata)) continue;
+                if (++count > MAX_ENTRIES) throw new IOException("Mod JAR contains too many resource entries");
+                if (entry.getSize() > MAX_ENTRY_BYTES) throw new IOException("Mod JAR entry is too large: " + name);
 
                 Path target = root.resolve(name).normalize();
                 if (!target.startsWith(root)) {
@@ -124,11 +131,34 @@ public final class ModJarExtractor {
                 Path parent = target.getParent();
                 if (parent != null) Files.createDirectories(parent);
                 if (!extracted.add(name)) collisions.add(name);
-                Files.copy(zip, target, StandardCopyOption.REPLACE_EXISTING);
-                count++;
+                long entryBytes = copyEntry(zip, target, name);
+                totalBytes += entryBytes;
+                if (totalBytes > MAX_TOTAL_BYTES) {
+                    Files.deleteIfExists(target);
+                    throw new IOException("Mod JAR resources exceed the extraction limit");
+                }
             }
         }
         return count;
+    }
+
+    private static long copyEntry(InputStream input, Path target, String name) throws IOException {
+        long written = 0;
+        byte[] buffer = new byte[8192];
+        try (OutputStream output = Files.newOutputStream(target)) {
+            int read;
+            while ((read = input.read(buffer)) != -1) {
+                written += read;
+                if (written > MAX_ENTRY_BYTES) {
+                    throw new IOException("Mod JAR entry is too large: " + name);
+                }
+                output.write(buffer, 0, read);
+            }
+        } catch (IOException exception) {
+            Files.deleteIfExists(target);
+            throw exception;
+        }
+        return written;
     }
 
     private static boolean isResourcePackEntry(String name, boolean includePackMetadata) {
