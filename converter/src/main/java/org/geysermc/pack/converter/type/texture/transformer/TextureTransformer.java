@@ -60,7 +60,7 @@ public interface TextureTransformer {
     }
 
     default void gridTransform(@NotNull TransformContext context, boolean poll, int rows, int columns, String bedrockOutput, String... javaInputs) throws IOException {
-        gridTransform(context, poll, rows, columns, KeyUtil.key(Key.MINECRAFT_NAMESPACE, bedrockOutput), Arrays.stream(javaInputs).map(str -> KeyUtil.key(Key.MINECRAFT_NAMESPACE, str)).toArray(Key[]::new));
+        gridTransform(context, poll, rows, columns, KeyUtil.key(Key.MINECRAFT_NAMESPACE, bedrockOutput), Arrays.stream(javaInputs).map(str -> str == null ? null : KeyUtil.key(Key.MINECRAFT_NAMESPACE, str)).toArray(Key[]::new));
     }
 
     // Adds images in rows and columns
@@ -85,7 +85,7 @@ public interface TextureTransformer {
         }
 
         List<Texture> textures = Arrays.stream(javaInputs)
-                .map(key -> poll ? context.pollOrPeekVanilla(key) : context.peekOrVanilla(key)).toList();
+                .map(key -> key == null ? null : poll ? context.pollOrPeekVanilla(key) : context.peekOrVanilla(key)).toList();
 
         List<BufferedImage> images = new ArrayList<>(textures.size());
 
@@ -98,13 +98,13 @@ public interface TextureTransformer {
                 .flatMapToDouble(img -> DoubleStream.of(img == null ? 1f : img.getWidth() / 16f))
                 .max().orElseThrow();
 
-        BufferedImage bedrockOutputImage = new BufferedImage((int) (maxScale * 16 * images.size()), (int) (maxScale * 16), BufferedImage.TYPE_INT_ARGB);
+        BufferedImage bedrockOutputImage = new BufferedImage((int) (maxScale * 16 * columns), (int) (maxScale * 16 * rows), BufferedImage.TYPE_INT_ARGB);
 
         Graphics graphics = bedrockOutputImage.getGraphics();
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                BufferedImage image = images.get(i);
+                BufferedImage image = images.get(i * columns + j);
                 if (image != null) {
                     float scale = maxScale / (image.getWidth() / 16f);
 
