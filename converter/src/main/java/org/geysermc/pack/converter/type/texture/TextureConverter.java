@@ -112,17 +112,17 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
         String input = texture.key().value();
         String relativePath = input.replaceAll("\\.png$", "");
 
+        int slashIndex = relativePath.indexOf('/');
+        String javaRoot = slashIndex != -1 ? relativePath.substring(0, slashIndex) : "";
+
         List<String> mapping = mappings.map(relativePath);
         List<String> transformedOutputs = new ArrayList<>();
         for (String item : mapping) {
-            int rootEnd = item.indexOf('/');
-            if (rootEnd == -1) {
-                context.warn("Mapping " + item + " for texture " + input + " has no root directory, skipping!");
-                continue;
-            }
+            // Mappings without a root directory are relative to the java texture's own root
+            String path = item.indexOf('/') != -1 ? item : javaRoot + "/" + item;
 
-            String rootPath = item.substring(0, rootEnd);
-            transformedOutputs.add(DIRECTORY_LOCATIONS.getOrDefault(rootPath, rootPath) + item.substring(rootEnd) + ".png");
+            String rootPath = path.substring(0, path.indexOf('/'));
+            transformedOutputs.add(DIRECTORY_LOCATIONS.getOrDefault(rootPath, rootPath) + path.substring(path.indexOf('/')) + ".png");
         }
 
         transformed.output(transformedOutputs);
@@ -149,8 +149,9 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
                 }
                 exportedPaths.add(outputPath);
 
-                String root = outputPath.substring(0, outputPath.indexOf('/'));
-                String value = outputPath.substring(outputPath.indexOf('/') + 1);
+                int slashIndex = outputPath.indexOf('/');
+                String root = slashIndex != -1 ? outputPath.substring(0, slashIndex) : "";
+                String value = slashIndex != -1 ? outputPath.substring(slashIndex + 1) : outputPath;
 
                 outputs.add(texturePath.resolve((
                         bedrockDirectory.formatted(root, value)

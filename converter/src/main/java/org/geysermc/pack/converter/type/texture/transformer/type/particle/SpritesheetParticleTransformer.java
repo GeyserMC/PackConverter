@@ -60,6 +60,7 @@ public abstract class SpritesheetParticleTransformer implements TextureTransform
         BitSet occupiedSectors = new BitSet(this.atlasCount);
         Spritesheet spritesheet = new Spritesheet();
         for (int i = 0; i < this.atlasCount; i++) {
+            if (javaPath == null) continue;
             Texture texture = context.poll(KeyUtil.key(Key.MINECRAFT_NAMESPACE, String.format(this.javaPath, i)));
             if (texture == null) {
                 continue;
