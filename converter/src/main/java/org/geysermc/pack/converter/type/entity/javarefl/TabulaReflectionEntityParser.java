@@ -394,7 +394,7 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
             }
         }
         for (PartRef part : parts) {
-            List<CubeSpec> partCubes = readAdvancedModelBoxes(part.value());
+            List<CubeSpec> partCubes = readAdvancedModelBoxes(part.value(), false);
             if (partCubes.isEmpty()) continue;
             bones.add(new BoneSpec(part.name(), parentName(part.value(), parts, names),
                     pivot(part.value()), rotation(part.value()), partCubes));
@@ -494,7 +494,7 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
         for (Map.Entry<String, Object> entry : cubes.entrySet()) {
             Object box = entry.getValue();
             if (box == null) continue;
-            specs.addAll(readAdvancedModelBoxes(box));
+            specs.addAll(readAdvancedModelBoxes(box, true));
 
             // Pick the largest textureWidth/Height declared on any
             // box; the Citadel model has one per-instance and they're
@@ -519,7 +519,16 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
                 new BoneSpec("root", null, new float[]{0, 0, 0}, new float[]{0, 0, 0}, specs)), texW, texH);
     }
 
-    private static List<CubeSpec> readAdvancedModelBoxes(Object box) {
+    /**
+     * Converts one Java model-part's cuboids into Bedrock-space cuboids.
+     * Java model rotations are stored in radians whereas Bedrock geometry
+     * expects degrees. Bedrock has no static per-bone scale field, so the
+     * part's rest scale is baked around its pivot instead of being discarded.
+     *
+     * @param retainCubeRotation true only for a flat cube map whose root bone
+     *                            does not already own the part rotation
+     */
+    private static List<CubeSpec> readAdvancedModelBoxes(Object box, boolean retainCubeRotation) {
         try {
             Class<?> c = box.getClass();
             // AdvancedEntityModel/AdvancedModelBox has the
@@ -543,15 +552,18 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
             // walk the GL cube list ourselves.
             int texX = (int) readFloatField(c, box, "textureOffsetX", 0f);
             int texY = (int) readFloatField(c, box, "textureOffsetY", 0f);
-            if (scaleX == 0f || scaleY == 0f || scaleZ == 0f) return List.of();
+            if (scaleX <= 0f || scaleY <= 0f || scaleZ <= 0f) return List.of();
             List<CubeSpec> cubes = new ArrayList<>();
             for (float[] dims : readRenderBoxDims(box)) {
                 float w = dims[3], h = dims[4], d = dims[5];
                 if (w <= 0f || h <= 0f || d <= 0f) continue;
+                float[] pivot = new float[]{posX, posY, posZ};
+                float[] scale = new float[]{scaleX, scaleY, scaleZ};
                 cubes.add(new CubeSpec(box.toString(),
-                        new float[]{dims[0] + w / 2f, dims[1] + h / 2f, dims[2] + d / 2f},
-                        new float[]{w, h, d}, new float[]{rotX, rotY, rotZ},
-                        new float[]{posX, posY, posZ}, texX, texY));
+                        scaleAroundPivot(new float[]{dims[0], dims[1], dims[2]}, pivot, scale),
+                        new float[]{w * scaleX, h * scaleY, d * scaleZ},
+                        retainCubeRotation ? toBedrockRotation(new float[]{rotX, rotY, rotZ}) : new float[]{0, 0, 0},
+                        retainCubeRotation ? pivot : null, texX, texY));
             }
             return cubes;
         } catch (Exception e) {
@@ -660,10 +672,24 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
 
     private static float[] rotation(Object part) {
         Class<?> type = part.getClass();
-        return new float[]{
+        return toBedrockRotation(new float[]{
                 readFloatField(type, part, "defaultRotationX", readFloatField(type, part, "rotateAngleX", 0f)),
                 readFloatField(type, part, "defaultRotationY", readFloatField(type, part, "rotateAngleY", 0f)),
-                readFloatField(type, part, "defaultRotationZ", readFloatField(type, part, "rotateAngleZ", 0f))};
+                readFloatField(type, part, "defaultRotationZ", readFloatField(type, part, "rotateAngleZ", 0f))});
+    }
+
+    private static float[] toBedrockRotation(float[] radians) {
+        return new float[]{
+                (float) Math.toDegrees(radians[0]),
+                (float) Math.toDegrees(radians[1]),
+                (float) Math.toDegrees(radians[2])};
+    }
+
+    private static float[] scaleAroundPivot(float[] origin, float[] pivot, float[] scale) {
+        return new float[]{
+                pivot[0] + (origin[0] - pivot[0]) * scale[0],
+                pivot[1] + (origin[1] - pivot[1]) * scale[1],
+                pivot[2] + (origin[2] - pivot[2]) * scale[2]};
     }
 
     private static BedrockModel buildBedrockModel(String namespace, String entityName, ModelCubeData data) {
@@ -691,6 +717,10 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
                 Cubes cube = new Cubes();
                 cube.origin(cubeSpec.origin);
                 cube.size(cubeSpec.size);
+                if (cubeSpec.pivot != null) cube.pivot(cubeSpec.pivot);
+                if (cubeSpec.rotation[0] != 0 || cubeSpec.rotation[1] != 0 || cubeSpec.rotation[2] != 0) {
+                    cube.rotation(cubeSpec.rotation);
+                }
                 cube.uv(BoxUvMapper.expand(cubeSpec.textureX, cubeSpec.textureY, cubeSpec.size));
                 cubes.add(cube);
             }

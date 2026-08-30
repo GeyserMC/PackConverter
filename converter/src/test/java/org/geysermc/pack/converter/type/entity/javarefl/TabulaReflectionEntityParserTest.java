@@ -1,6 +1,7 @@
 package org.geysermc.pack.converter.type.entity.javarefl;
 
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
+import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.Bones;
 import org.geysermc.pack.converter.type.entity.EntityModelScanner;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -59,6 +60,18 @@ class TabulaReflectionEntityParserTest {
         assertEquals(new TabulaReflectionEntityParser.CacheState(1, 1), TabulaReflectionEntityParser.cacheStateForTests());
         assertNotNull(target.entityModels().get("models/entity/example.good.json"));
         assertNotNull(target.entityModels().get("models/entity/example.other.json"));
+
+        List<Bones> bones = target.entityModels().get("models/entity/example.good.json").geometry().getFirst().bones();
+        Bones body = bones.stream().filter(bone -> bone.name().equals("body")).findFirst().orElseThrow();
+        Bones tail = bones.stream().filter(bone -> bone.name().equals("tail")).findFirst().orElseThrow();
+        assertEquals(2, bones.size());
+        assertEquals(null, body.parent());
+        assertEquals("body", tail.parent());
+        assertEquals(90f, body.rotation()[0], 0.001f, "Java radians must be converted to Bedrock degrees");
+        assertEquals(45f, tail.rotation()[1], 0.001f, "child rest rotation must remain on its bone");
+        assertEquals(4f, tail.cubes().getFirst().size()[0], 0.001f, "part X scale must be baked into cube size");
+        assertEquals(2f, tail.cubes().getFirst().size()[1], 0.001f, "part Y scale must be baked into cube size");
+        assertEquals(9f, tail.cubes().getFirst().size()[2], 0.001f, "part Z scale must be baked into cube size");
     }
 
     private void writeModelJar(Path jar) throws IOException {
@@ -66,17 +79,27 @@ class TabulaReflectionEntityParserTest {
         Path classes = Files.createDirectories(tempDir.resolve("classes"));
         Files.writeString(source.resolve("ModelGood.java"), """
                 package example.client.model;
+                import java.util.ArrayList;
                 import java.util.List;
                 public class ModelGood {
-                    private final Part body = new Part();
+                    private final Part body = new Part(1, 2, 3, (float) (Math.PI / 2), 0, 0, 1, 1, 1);
+                    private final Part tail = new Part(2, 3, 4, 0, (float) (Math.PI / 4), 0, 2, .5f, 1.5f);
+                    public ModelGood() { body.childModels.add(tail); }
                     public static final class Part {
+                        public final List<Part> childModels = new ArrayList<>();
                         public final List<Box> cubeList = List.of(new Box());
-                        public float defaultPositionX = 1, defaultPositionY = 2, defaultPositionZ = 3;
+                        public float defaultPositionX, defaultPositionY, defaultPositionZ;
                         public float defaultRotationX, defaultRotationY, defaultRotationZ;
+                        public float scaleX, scaleY, scaleZ;
                         public float textureWidth = 64, textureHeight = 32;
+                        Part(float x, float y, float z, float rx, float ry, float rz, float sx, float sy, float sz) {
+                            defaultPositionX = x; defaultPositionY = y; defaultPositionZ = z;
+                            defaultRotationX = rx; defaultRotationY = ry; defaultRotationZ = rz;
+                            scaleX = sx; scaleY = sy; scaleZ = sz;
+                        }
                     }
                     public static final class Box {
-                        public float posX1, posY1, posZ1, posX2 = 2, posY2 = 3, posZ2 = 4;
+                        public float posX1, posY1, posZ1, posX2 = 2, posY2 = 4, posZ2 = 6;
                     }
                 }
                 """);
