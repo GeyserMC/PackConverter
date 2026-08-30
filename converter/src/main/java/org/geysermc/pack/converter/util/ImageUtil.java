@@ -350,6 +350,11 @@ public class ImageUtil {
      * @return Rotated image
      */
     public static BufferedImage rotate(BufferedImage img, int angle) {
+        // Rotating below loses a row or column when a side is odd, so map quarter turns directly
+        if (angle % 90 == 0) {
+            return rotateQuarters(img, Math.floorMod(angle, 360) / 90);
+        }
+
         final double rads = Math.toRadians(-angle);
         final double sin = Math.abs(Math.sin(rads));
         final double cos = Math.abs(Math.cos(rads));
@@ -362,6 +367,34 @@ public class ImageUtil {
         at.translate(-img.getWidth() / 2, -img.getHeight() / 2);
         final AffineTransformOp rotateOp = new AffineTransformOp(at, AffineTransformOp.TYPE_BILINEAR);
         return rotateOp.filter(img, rotatedImage);
+    }
+
+    /**
+     * Rotate a given {@link BufferedImage} anti clockwise by a number of quarter turns
+     *
+     * @param img Image to use
+     * @param quarters Amount of quarter turns to rotate by
+     * @return Rotated image
+     */
+    private static BufferedImage rotateQuarters(BufferedImage img, int quarters) {
+        final int width = img.getWidth();
+        final int height = img.getHeight();
+        final boolean swap = quarters % 2 != 0;
+        final BufferedImage rotatedImage = new BufferedImage(swap ? height : width, swap ? width : height, BufferedImage.TYPE_INT_ARGB);
+
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                final int rgb = img.getRGB(x, y);
+                switch (quarters) {
+                    case 1 -> rotatedImage.setRGB(y, width - 1 - x, rgb);
+                    case 2 -> rotatedImage.setRGB(width - 1 - x, height - 1 - y, rgb);
+                    case 3 -> rotatedImage.setRGB(height - 1 - y, x, rgb);
+                    default -> rotatedImage.setRGB(x, y, rgb);
+                }
+            }
+        }
+
+        return rotatedImage;
     }
 
     /**
