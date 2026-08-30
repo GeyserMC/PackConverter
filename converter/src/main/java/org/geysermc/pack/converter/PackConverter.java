@@ -64,6 +64,7 @@ public final class PackConverter {
     private Iterable<String> reflectionEntityIds = List.of();
     private BiConsumer<ResourcePack, BedrockResourcePack> postProcessor;
     private final List<ConverterPipeline<?, ?>> converters = new ArrayList<>();
+    private final List<EntityModelScanner.Diagnostic> entityModelDiagnostics = new ArrayList<>();
     private Path tmpDir;
     private Path modResourceDir;
     private PackageHandler packageHandler = PackageHandler.ZIP;
@@ -128,6 +129,11 @@ public final class PackConverter {
     public PackConverter reflectionEntityIds(@NotNull Iterable<String> entityIds) {
         this.reflectionEntityIds = entityIds;
         return this;
+    }
+
+    /** Non-fatal entity parser fallbacks accumulated across conversion inputs. */
+    public List<EntityModelScanner.Diagnostic> entityModelDiagnostics() {
+        return List.copyOf(entityModelDiagnostics);
     }
 
     public PackConverter enforcePackCheck(boolean enforcePackCheck) {
@@ -221,6 +227,7 @@ public final class PackConverter {
             EntityModelScanner entityModelScanner = EntityModelScanner.discover();
             EntityModelScanner.ScanResult scan = entityModelScanner.addEntityModels(javaResourcePack, bedrockResourcePack);
             EntityModelScanner.ScanResult reflected = entityModelScanner.addReflectionEntityModels(javaResourcePack, bedrockResourcePack, reflectionEntityIds);
+            this.entityModelDiagnostics.addAll(reflected.diagnostics());
             if (scan.successCount() > 0) {
                 this.logListener.info("Entity model scanner: " + scan.successCount() + " model(s) converted via " + entityModelScanner.parsers().size() + " parser(s)");
             }
@@ -232,6 +239,9 @@ public final class PackConverter {
             }
             for (String fail : reflected.failures()) {
                 this.logListener.warn("Reflection entity model parse failed: " + fail);
+            }
+            for (EntityModelScanner.Diagnostic diagnostic : reflected.diagnostics()) {
+                this.logListener.warn("Reflection entity model fallback: " + diagnostic.detail());
             }
 
             if (this.postProcessor != null) {

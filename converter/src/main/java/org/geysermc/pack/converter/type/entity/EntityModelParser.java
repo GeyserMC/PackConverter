@@ -87,4 +87,14 @@ public interface EntityModelParser {
      * format); other parsers will still be tried.
      */
     BedrockModel parse(String path, ResourcePack pack);
+
+    /**
+     * Explains why the most recent {@link #parse(String, ResourcePack)} call
+     * declined a path after reaching a supported source. Returning {@code null}
+     * keeps the normal silent-rejection behavior for formats that simply do not
+     * match the input.
+     */
+    default String failureDetail(String path) {
+        return null;
+    }
 }

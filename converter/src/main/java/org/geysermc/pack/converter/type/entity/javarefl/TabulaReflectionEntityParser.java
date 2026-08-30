@@ -26,7 +26,6 @@
 
 package org.geysermc.pack.converter.type.entity.javarefl;
 
-import com.google.gson.Gson;
 import org.geysermc.pack.bedrock.resource.models.entity.ModelEntity;
 import org.geysermc.pack.converter.type.entity.gecko.BoxUvMapper;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.Geometry;
@@ -47,8 +46,9 @@ import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.IdentityHashMap;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -93,10 +93,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class TabulaReflectionEntityParser implements EntityModelParser {
 
     private static final String[] EXTS = {".tbl", ".reflection"};
-    private static final Gson GSON = new Gson();
-    private static final Set<String> UNAVAILABLE_NAMESPACES = ConcurrentHashMap.newKeySet();
     private static final Set<String> REPORTED_CLASSPATHS = ConcurrentHashMap.newKeySet();
     private static final Map<Path, Map<String, String>> MODEL_CLASS_INDEX = new ConcurrentHashMap<>();
+    private static final Map<Path, ReflectionRuntime> RUNTIMES = new ConcurrentHashMap<>();
+    private static final Map<Path, Map<String, String>> FAILED_MODEL_CLASSES = new ConcurrentHashMap<>();
+
+    private final Map<String, String> failureDetails = new ConcurrentHashMap<>();
 
     @Override
     public String id() {
@@ -112,7 +114,7 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
     public BedrockModel parse(String path, ResourcePack pack) {
         ParsedEntityRef ref = ParsedEntityRef.from(path);
         if (ref == null) return null;
-        if (UNAVAILABLE_NAMESPACES.contains(ref.namespace)) return null;
+        failureDetails.remove(path);
         Path modJar = locateModJar(ref.namespace, pack);
         if (modJar == null) {
             // No mod jar available - the scanner will fall back to the
@@ -121,32 +123,44 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
         }
 
         try {
-            URL[] urls = collectClasspathUrls(modJar);
+            Path cacheKey = modJar.toAbsolutePath().normalize();
             // Do not inherit Fabric's transforming classloader: on a dedicated
             // server it deliberately rejects client-only classes before we can
-            // inspect them. collectClasspathUrls supplies the required runtime
-            // jars directly, including the client jar and launcher libraries.
-            try (URLClassLoader loader = new URLClassLoader(
-                    "tabula-reflect", 
-                    urls,
-                    null)) {
-
-                ModelCubeData data = loadModelFromMod(loader, modJar, ref.namespace, ref.entityName);
-                if (data == null) {
-                    return null;
-                }
-                return buildBedrockModel(ref.namespace, ref.entityName, data);
+            // inspect them. One runtime is retained per immutable mod JAR for
+            // the server lifetime, so every entity does not rescan disk or link
+            // a new copy of the same dependency graph.
+            ReflectionRuntime runtime = RUNTIMES.computeIfAbsent(cacheKey, TabulaReflectionEntityParser::openRuntime);
+            ModelLoadResult loaded = loadModelFromMod(runtime.loader(), cacheKey, ref.entityName);
+            if (loaded.failure() != null) {
+                recordFailure(path, ref, loaded.failure());
             }
-        } catch (NoClassDefFoundError error) {
-            UNAVAILABLE_NAMESPACES.add(ref.namespace);
-            System.err.println("TabulaReflection disabled for " + ref.namespace
-                    + ": missing runtime class " + error.getMessage());
-            return null;
+            if (loaded.data() == null) return null;
+            return buildBedrockModel(ref.namespace, ref.entityName, loaded.data());
         } catch (Throwable t) {
-            System.err.println("TabulaReflection failed for " + ref.namespace + ": " + t.getClass().getSimpleName()
-                    + (t.getMessage() == null ? "" : " (" + t.getMessage() + ")"));
+            recordFailure(path, ref, new ModelLoadFailure("<classpath>", reason(t)));
             return null;
         }
+    }
+
+    @Override
+    public String failureDetail(String path) {
+        return failureDetails.get(path);
+    }
+
+    private static ReflectionRuntime openRuntime(Path modJar) {
+        try {
+            URL[] urls = collectClasspathUrls(modJar);
+            return new ReflectionRuntime(new URLClassLoader("tabula-reflect-" + modJar.getFileName(), urls, null));
+        } catch (java.net.MalformedURLException exception) {
+            throw new IllegalStateException("Could not build reflection classpath for " + modJar, exception);
+        }
+    }
+
+    private void recordFailure(String path, ParsedEntityRef ref, ModelLoadFailure failure) {
+        String detail = "namespace=" + ref.namespace + ", entity=" + ref.entityName
+                + ", class=" + failure.modelClass + ", reason=" + failure.reason;
+        failureDetails.put(path, detail);
+        System.err.println("TabulaReflection fallback: " + detail);
     }
 
     /**
@@ -285,55 +299,68 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
      * (Alex's Mobs, Citadel) or {@code com.<author>.<ns>.client.model.<EntityName>Model}
      * are both supported.</p>
      */
-    private static ModelCubeData loadModelFromMod(URLClassLoader loader, Path modJar, String namespace, String entityName) {
+    private static ModelLoadResult loadModelFromMod(URLClassLoader loader, Path modJar, String entityName) {
         String pascal = toPascalCase(entityName);
 
-        Map<String, String> nameToFqn = MODEL_CLASS_INDEX.computeIfAbsent(modJar.toAbsolutePath(), TabulaReflectionEntityParser::indexModelClasses);
+        Map<String, String> nameToFqn = MODEL_CLASS_INDEX.computeIfAbsent(modJar, TabulaReflectionEntityParser::indexModelClasses);
 
-        if (nameToFqn.isEmpty()) return null;
+        if (nameToFqn.isEmpty()) return new ModelLoadResult(null, null);
 
         // Try the most likely candidates first: exact Model<Pascal> or
         // <Pascal>Model, then prefix matches.
-        String[] order = new String[]{
+        String[] order = {
                 "Model" + pascal,
-                pascal + "Model", 
+                pascal + "Model",
         };
-        Class<?> modelClass = null;
+        LinkedHashSet<String> candidates = new LinkedHashSet<>();
         for (String key : order) {
             String fqn = nameToFqn.get(key);
-            if (fqn != null) {
-                try {
-                    modelClass = loader.loadClass(fqn);
-                    break;
-                } catch (ClassNotFoundException ignored) {
-                }
+            if (fqn != null) candidates.add(fqn);
+        }
+        // Fallback: any class whose simple name starts with Model and is
+        // associated with this entity (handles Baby variants and similar).
+        for (Map.Entry<String, String> entry : nameToFqn.entrySet()) {
+            if (entry.getKey().toLowerCase(Locale.ROOT).contains(pascal.toLowerCase(Locale.ROOT))) {
+                candidates.add(entry.getValue());
             }
-        }
-        if (modelClass == null) {
-            // Fallback: any class whose simple name starts with Model
-            // and is associated with this entity (handles Baby variants
-            // and similar).
-            for (Map.Entry<String, String> e : nameToFqn.entrySet()) {
-                if (e.getKey().toLowerCase(Locale.ROOT).contains(pascal.toLowerCase(Locale.ROOT))) {
-                    try {
-                        modelClass = loader.loadClass(e.getValue());
-                        break;
-                    } catch (ClassNotFoundException ignored) {
-                    }
-                }
-            }
-        }
-        if (modelClass == null) {
-            return null;
-        }
-        Object modelInstance;
-        try {
-            modelInstance = modelClass.getDeclaredConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            Throwable cause = e.getCause() != null ? e.getCause() : e;
-            return null;
         }
 
+        ModelLoadFailure firstFailure = null;
+        Map<String, String> failedClasses = FAILED_MODEL_CLASSES.computeIfAbsent(modJar, ignored -> new ConcurrentHashMap<>());
+        for (String candidate : candidates) {
+            String cachedFailure = failedClasses.get(candidate);
+            if (cachedFailure != null) {
+                if (firstFailure == null) firstFailure = new ModelLoadFailure(candidate, cachedFailure);
+                continue;
+            }
+
+            Class<?> modelClass;
+            Object modelInstance;
+            try {
+                modelClass = loader.loadClass(candidate);
+                modelInstance = modelClass.getDeclaredConstructor().newInstance();
+            } catch (LinkageError | ReflectiveOperationException | SecurityException exception) {
+                String failure = reason(exception);
+                failedClasses.putIfAbsent(candidate, failure);
+                if (firstFailure == null) firstFailure = new ModelLoadFailure(candidate, failure);
+                continue;
+            }
+
+            ModelCubeData data;
+            try {
+                data = extractModelData(loader, modelClass, modelInstance);
+            } catch (LinkageError | RuntimeException exception) {
+                String failure = reason(exception);
+                failedClasses.putIfAbsent(candidate, failure);
+                if (firstFailure == null) firstFailure = new ModelLoadFailure(candidate, failure);
+                continue;
+            }
+            if (data != null) return new ModelLoadResult(data, null);
+        }
+        return new ModelLoadResult(null, firstFailure);
+    }
+
+    private static ModelCubeData extractModelData(URLClassLoader loader, Class<?> modelClass, Object modelInstance) {
         // 1. Try the well-known TabulaModel field "cubes" first - it
         // works for mods that use vanilla GeckoLib/Tabula runtime
         // dumped as a single field.
@@ -678,6 +705,34 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
                 modelEntity);
     }
 
+    private static String reason(Throwable throwable) {
+        Throwable cause = throwable instanceof InvocationTargetException && throwable.getCause() != null
+                ? throwable.getCause() : throwable;
+        String message = cause.getMessage();
+        return cause.getClass().getSimpleName() + (message == null || message.isBlank()
+                ? "" : ": " + message.replace('\n', ' ').replace('\r', ' '));
+    }
+
+    // Package-private test hooks keep the runtime cache observable without
+    // making cache lifecycle part of PackConverter's public API.
+    static CacheState cacheStateForTests() {
+        return new CacheState(RUNTIMES.size(), FAILED_MODEL_CLASSES.values().stream().mapToInt(Map::size).sum());
+    }
+
+    static void clearCachesForTests() {
+        for (ReflectionRuntime runtime : RUNTIMES.values()) {
+            try {
+                runtime.loader.close();
+            } catch (IOException ignored) {
+                // Test cleanup only; the process releases retained loaders in production.
+            }
+        }
+        RUNTIMES.clear();
+        MODEL_CLASS_INDEX.clear();
+        FAILED_MODEL_CLASSES.clear();
+        REPORTED_CLASSPATHS.clear();
+    }
+
     private record ParsedEntityRef(String namespace, String entityName) {
         static ParsedEntityRef from(String path) {
             // Accept both <ns>:<entity>.reflection and
@@ -711,6 +766,14 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
     }
 
     private record ModelCubeData(List<BoneSpec> bones, int textureWidth, int textureHeight) {}
+
+    private record ModelLoadResult(ModelCubeData data, ModelLoadFailure failure) {}
+
+    private record ModelLoadFailure(String modelClass, String reason) {}
+
+    private record ReflectionRuntime(URLClassLoader loader) {}
+
+    record CacheState(int runtimes, int failedModelClasses) {}
 
     private record PartRef(String name, Object value) {}
 

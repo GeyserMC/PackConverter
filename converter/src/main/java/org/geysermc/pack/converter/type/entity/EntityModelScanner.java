@@ -90,7 +90,11 @@ public final class EntityModelScanner {
                     result.recordFailure(parser.id(), path, e);
                     continue;
                 }
-                if (model == null) continue;
+                if (model == null) {
+                    String detail = parser.failureDetail(path);
+                    if (detail != null) result.recordDiagnostic(parser.id(), path, detail);
+                    continue;
+                }
                 String packKey = "models/entity/" + model.fileName();
                 if (target.entityModels() != null && target.entityModels().containsKey(packKey)) {
                     result.recordDuplicate(parser.id(), model.fileName());
@@ -128,6 +132,9 @@ public final class EntityModelScanner {
                 if (model != null) {
                     target.addEntityModel(model.model(), model.fileName());
                     result.recordSuccess(reflection.id(), model.fileName());
+                } else {
+                    String detail = reflection.failureDetail(entityId + ".reflection");
+                    if (detail != null) result.recordDiagnostic(reflection.id(), entityId, detail);
                 }
             } catch (RuntimeException e) {
                 result.recordFailure(reflection.id(), entityId, e);
@@ -142,6 +149,7 @@ public final class EntityModelScanner {
         private final Map<String, Integer> failureByParser = new HashMap<>();
         private final List<String> duplicates = new ArrayList<>();
         private final List<String> failures = new ArrayList<>();
+        private final List<Diagnostic> diagnostics = new ArrayList<>();
 
         void recordSuccess(String parserId, String key) {
             successByParser.merge(parserId, 1, Integer::sum);
@@ -154,6 +162,10 @@ public final class EntityModelScanner {
         void recordFailure(String parserId, String path, Throwable e) {
             failureByParser.merge(parserId, 1, Integer::sum);
             failures.add(parserId + " -> " + path + " (" + e.getClass().getSimpleName() + ": " + e.getMessage() + ")");
+        }
+
+        void recordDiagnostic(String parserId, String path, String detail) {
+            diagnostics.add(new Diagnostic(parserId, path, detail));
         }
 
         public int successCount() {
@@ -171,5 +183,13 @@ public final class EntityModelScanner {
         public List<String> failures() {
             return failures;
         }
+
+        /** Non-fatal parser fallback details for operator reports. */
+        public List<Diagnostic> diagnostics() {
+            return List.copyOf(diagnostics);
+        }
     }
+
+    /** A parser-specific, non-fatal reason why an entity fell back. */
+    public record Diagnostic(String parserId, String path, String detail) {}
 }
