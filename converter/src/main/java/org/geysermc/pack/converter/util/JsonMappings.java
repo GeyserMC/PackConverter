@@ -72,11 +72,12 @@ public class JsonMappings {
 
             return mappings;
         } else if (element.isJsonArray()) {
+            String prefix = prefix(parents);
             List<String> paths = new ArrayList<>();
 
             for (JsonElement arrayElement : element.getAsJsonArray()) {
                 if (arrayElement.isJsonPrimitive()) {
-                    paths.add(arrayElement.getAsString());
+                    paths.add(prefix + arrayElement.getAsString());
                 } else {
                     throw new RuntimeException("Invalid item found within mapping file, items in an array must be primitives.");
                 }
@@ -84,12 +85,15 @@ public class JsonMappings {
 
             return Map.of(key, paths);
         } else if (element.isJsonPrimitive()) {
-            String prefix = "";
-            if (!parents.isEmpty()) prefix = String.join("/", parents) + "/";
-            return Map.of(key, List.of(prefix + element.getAsString()));
+            return Map.of(key, List.of(prefix(parents) + element.getAsString()));
         }
 
         return Map.of();
+    }
+
+    private static String prefix(List<String> parents) {
+        if (parents.isEmpty()) return "";
+        return String.join("/", parents) + "/";
     }
 
     private final Map<String, List<String>> mappings;
