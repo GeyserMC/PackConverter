@@ -49,6 +49,7 @@ public class Main {
 
             String outputPath;
             String packName = null;
+            String mcVersion = null;
 
             if (args.contains("--output")) {
                 if (args.indexOf("--output") + 1 >= args.size()) {
@@ -68,14 +69,23 @@ public class Main {
                 packName = args.get(args.indexOf("--name") + 1);
             }
 
+            if (args.contains("--mc-version")) {
+                if (args.indexOf("--mc-version") + 1 >= args.size()) {
+                    throw new IllegalArgumentException("Minecraft version specified with no value.");
+                }
+
+                mcVersion = args.get(args.indexOf("--mc-version") + 1);
+            }
+
             System.setProperty("PackConverter.Debug", String.valueOf(debug));
 
-            new PackConverter()
+            PackConverter converter = new PackConverter()
                     .enforcePackCheck(true)
                     .input(Path.of(inputPath))
                     .output(Path.of(outputPath))
                     .packName(packName)
                     .converters(AssetConverters.converters(debug))
+                    .vanillaPackVersion(mcVersion)
                     .convert()
                     .pack();
         } else {
