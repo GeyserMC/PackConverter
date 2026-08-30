@@ -33,10 +33,10 @@ import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.Des
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.Bones;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.Cubes;
 import org.geysermc.pack.converter.type.entity.EntityModelParser;
+import org.geysermc.pack.converter.type.entity.ReflectionInput;
 import org.geysermc.pack.converter.type.model.BedrockModel;
 import team.unnamed.creative.ResourcePack;
 
-import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -95,7 +95,7 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
     private static final String[] EXTS = {".tbl", ".reflection"};
     private static final Set<String> REPORTED_CLASSPATHS = ConcurrentHashMap.newKeySet();
     private static final Map<Path, Map<String, String>> MODEL_CLASS_INDEX = new ConcurrentHashMap<>();
-    private static final Map<Path, ReflectionRuntime> RUNTIMES = new ConcurrentHashMap<>();
+    private static final Map<ReflectionInput, ReflectionRuntime> RUNTIMES = new ConcurrentHashMap<>();
     private static final Map<Path, Map<String, String>> FAILED_MODEL_CLASSES = new ConcurrentHashMap<>();
 
     private final Map<String, String> failureDetails = new ConcurrentHashMap<>();
@@ -112,15 +112,15 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
 
     @Override
     public BedrockModel parse(String path, ResourcePack pack) {
+        return null;
+    }
+
+    @Override
+    public BedrockModel parse(String path, ResourcePack pack, ReflectionInput input) {
         ParsedEntityRef ref = ParsedEntityRef.from(path);
         if (ref == null) return null;
         failureDetails.remove(path);
-        Path modJar = locateModJar(ref.namespace, pack);
-        if (modJar == null) {
-            // No mod jar available - the scanner will fall back to the
-            // next parser or vanilla Bedrock geometry.
-            return null;
-        }
+        Path modJar = input.modJar();
 
         try {
             Path cacheKey = modJar.toAbsolutePath().normalize();
@@ -129,7 +129,7 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
             // inspect them. One runtime is retained per immutable mod JAR for
             // the server lifetime, so every entity does not rescan disk or link
             // a new copy of the same dependency graph.
-            ReflectionRuntime runtime = RUNTIMES.computeIfAbsent(cacheKey, TabulaReflectionEntityParser::openRuntime);
+            ReflectionRuntime runtime = RUNTIMES.computeIfAbsent(input, TabulaReflectionEntityParser::openRuntime);
             ModelLoadResult loaded = loadModelFromMod(runtime.loader(), cacheKey, ref.entityName);
             if (loaded.failure() != null) {
                 recordFailure(path, ref, loaded.failure());
@@ -147,12 +147,12 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
         return failureDetails.get(path);
     }
 
-    private static ReflectionRuntime openRuntime(Path modJar) {
+    private static ReflectionRuntime openRuntime(ReflectionInput input) {
         try {
-            URL[] urls = collectClasspathUrls(modJar);
-            return new ReflectionRuntime(new URLClassLoader("tabula-reflect-" + modJar.getFileName(), urls, null));
+            URL[] urls = collectClasspathUrls(input);
+            return new ReflectionRuntime(new URLClassLoader("tabula-reflect-" + input.modJar().getFileName(), urls, null));
         } catch (java.net.MalformedURLException exception) {
-            throw new IllegalStateException("Could not build reflection classpath for " + modJar, exception);
+            throw new IllegalStateException("Could not build reflection classpath for " + input.modJar(), exception);
         }
     }
 
@@ -171,7 +171,7 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
      * pointing at the merged client jar; failing that we walk the
      * local Gradle cache (convenient for tests and CLI runs).
      */
-    private static URL[] collectClasspathUrls(Path modJar) throws java.net.MalformedURLException {
+    private static URL[] collectClasspathUrls(ReflectionInput input) throws java.net.MalformedURLException {
         java.util.List<URL> urls = new java.util.ArrayList<>();
 
         // Mojang mapped client: required for the mod to link against
@@ -183,100 +183,18 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
         // because it duplicates classes with mismatched method
         // signatures (Mob.getLootTable is final in 26.2 mapped but
         // not in obfuscated builds).
-        String explicit = System.getProperty("hydraulic.minecraft.merged");
-        if (explicit != null && !explicit.isEmpty()) {
-            urls.add(Path.of(explicit).toUri().toURL());
-        } else {
-            // Local fixture (added by tests/CLI to keep classpath
-            // self-contained).
-            Path local = Path.of("libs", "mojang-client-26.2.jar");
-            if (Files.isRegularFile(local)) {
-                urls.add(local.toAbsolutePath().toUri().toURL());
-            }
-            // Gradle cache fall-through.
-            String userHome = System.getProperty("user.home");
-            if (userHome != null) {
-                Path[] roots = new Path[]{
-                        Path.of(userHome, ".gradle", "caches", "modules-2", "files-2.1"),
-                        Path.of(userHome, ".gradle", "caches", "fabric-loom"),
-                };
-                for (Path root : roots) {
-                    if (!Files.isDirectory(root)) continue;
-                    try (java.util.stream.Stream<Path> walk = Files.walk(root, 8)) {
-                        walk.filter(p -> p.toString().endsWith(".jar"))
-                                .filter(p -> !p.toString().contains("minecraftMaven"))
-                                .forEach(p -> {
-                                    try {
-                                        urls.add(p.toUri().toURL());
-                                    } catch (java.net.MalformedURLException e) {
-                                        // ignore
-                                    }
-                                });
-                    } catch (java.io.IOException e) {
-                        // best-effort
-                    }
-                }
-            }
-        }
-        // Load installed dependencies too; a model framework may be shipped
-        // as a separate mod rather than shaded into the target jar.
-        String modsDirectory = System.getProperty("hydraulic.mods.dir", "mods");
-        File[] dependencies = new File(modsDirectory).listFiles((dir, name) -> name.endsWith(".jar"));
-        if (dependencies != null) {
-            for (File dependency : dependencies) {
-                if (!dependency.toPath().equals(modJar)) {
-                    urls.add(dependency.toPath().toUri().toURL());
-                }
-            }
-        }
-
-        // Fabric/NeoForge launch libraries (JOML, Guava, loader APIs, ...)
-        // live outside mods/. Include their jars without knowing a loader or
-        // framework-specific layout.
-        for (String directory : List.of("libraries", "lib", "libs")) {
-            Path root = Path.of(directory);
-            if (!Files.isDirectory(root)) continue;
-            try (java.util.stream.Stream<Path> files = Files.walk(root, 8)) {
-                files.filter(file -> file.toString().endsWith(".jar"))
-                        .forEach(file -> {
-                            try {
-                                urls.add(file.toUri().toURL());
-                            } catch (java.net.MalformedURLException ignored) {
-                            }
-                        });
-            } catch (IOException ignored) {
-                // A missing optional library directory is normal.
-            }
+        if (input.clientRuntime() != null && Files.isRegularFile(input.clientRuntime())) urls.add(input.clientRuntime().toUri().toURL());
+        for (Path dependency : input.classpath()) {
+            if (!dependency.equals(input.modJar()) && Files.isRegularFile(dependency)) urls.add(dependency.toUri().toURL());
         }
 
         // Mod jar is added LAST so its class definitions win when
         // there is a duplicate name across the mod and the libraries.
-        urls.add(modJar.toUri().toURL());
-        if (REPORTED_CLASSPATHS.add(modJar.toString())) {
-            System.err.println("TabulaReflection classpath for " + modJar.getFileName() + ": " + urls.size() + " URLs");
+        urls.add(input.modJar().toUri().toURL());
+        if (REPORTED_CLASSPATHS.add(input.modJar().toString())) {
+            System.err.println("TabulaReflection classpath for " + input.modJar().getFileName() + ": " + urls.size() + " URLs");
         }
         return urls.toArray(new URL[0]);
-    }
-
-    /**
-     * Best-effort lookup for the mod jar that ships the given
-     * namespace. Walks up from the resource pack's directory looking
-     * for a sibling {@code mods/} folder; this matches the layout
-     * Hydraulic passes to the converter at build time.
-     */
-    private static Path locateModJar(String namespace, ResourcePack pack) {
-        // creative-api's ResourcePack doesn't expose an absolute path
-        // by default, so fall back to a system-property hint that
-        // Hydraulic sets before invoking the converter. The default
-        // convention is "mods/<namespace>.jar" relative to the
-        // server working directory.
-        String hint = System.getProperty("hydraulic.mods.dir", "mods");
-        File dir = new File(hint);
-        if (!dir.isDirectory()) return null;
-        for (File f : dir.listFiles((d, n) -> n.toLowerCase(Locale.ROOT).startsWith(namespace.toLowerCase(Locale.ROOT)) && n.endsWith(".jar"))) {
-            return f.toPath();
-        }
-        return null;
     }
 
     /**

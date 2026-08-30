@@ -3,6 +3,7 @@ package org.geysermc.pack.converter.type.entity.javarefl;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.Bones;
 import org.geysermc.pack.converter.type.entity.EntityModelScanner;
+import org.geysermc.pack.converter.type.entity.ReflectionInput;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -20,36 +22,27 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class TabulaReflectionEntityParserTest {
-    private static final String MODS_DIRECTORY = "hydraulic.mods.dir";
-    private static final String MINECRAFT_MERGED = "hydraulic.minecraft.merged";
     private static final String BROKEN_ATTEMPTS = "packconverter.test.broken.attempts";
 
     @TempDir
     Path tempDir;
 
-    private final String previousModsDirectory = System.getProperty(MODS_DIRECTORY);
-    private final String previousMinecraftMerged = System.getProperty(MINECRAFT_MERGED);
-
     @AfterEach
     void cleanup() {
-        restore(MODS_DIRECTORY, previousModsDirectory);
-        restore(MINECRAFT_MERGED, previousMinecraftMerged);
         System.clearProperty(BROKEN_ATTEMPTS);
         TabulaReflectionEntityParser.clearCachesForTests();
     }
 
     @Test
     void reusesOneRuntimeCachesBrokenClassAndContinuesNamespace() throws Exception {
-        Path mods = Files.createDirectories(tempDir.resolve("mods"));
-        writeModelJar(mods.resolve("example.jar"));
-        System.setProperty(MODS_DIRECTORY, mods.toString());
-        // Avoid an unrelated Gradle-cache walk while testing this isolated jar.
-        System.setProperty(MINECRAFT_MERGED, tempDir.resolve("client.jar").toString());
+        Path jar = tempDir.resolve("unrelated-filename.jar");
+        writeModelJar(jar);
 
         EntityModelScanner scanner = EntityModelScanner.discover();
         BedrockResourcePack target = new BedrockResourcePack(tempDir.resolve("output"));
         EntityModelScanner.ScanResult result = scanner.addReflectionEntityModels(null, target,
-                List.of("example:good", "example:broken", "example:broken", "example:other"));
+                List.of("example:good", "example:broken", "example:broken", "example:other"),
+                new ReflectionInput(jar, List.of(), null));
 
         assertEquals(2, result.successCount(), "a broken model must not disable the remaining namespace");
         assertEquals(2, result.diagnostics().size());
@@ -72,6 +65,36 @@ class TabulaReflectionEntityParserTest {
         assertEquals(4f, tail.cubes().getFirst().size()[0], 0.001f, "part X scale must be baked into cube size");
         assertEquals(2f, tail.cubes().getFirst().size()[1], 0.001f, "part Y scale must be baked into cube size");
         assertEquals(9f, tail.cubes().getFirst().size()[2], 0.001f, "part Z scale must be baked into cube size");
+
+        BedrockResourcePack secondTarget = new BedrockResourcePack(tempDir.resolve("second-output"));
+        scanner.addReflectionEntityModels(null, secondTarget, List.of("example:good", "example:broken"),
+                new ReflectionInput(jar, List.of(), null));
+        assertEquals(new TabulaReflectionEntityParser.CacheState(1, 1), TabulaReflectionEntityParser.cacheStateForTests(),
+                "unchanged input must reuse its class index, runtime and broken-class cache");
+        assertEquals("1", System.getProperty(BROKEN_ATTEMPTS), "a later conversion must not retry the broken constructor");
+    }
+
+    @Test
+    void isolatesConcurrentReflectionInputs() throws Exception {
+        Path first = tempDir.resolve("not-example-one.jar");
+        writeModelJar(first);
+        Path second = tempDir.resolve("not-example-two.jar");
+        Files.copy(first, second);
+
+        CompletableFuture<BedrockResourcePack> firstConversion = CompletableFuture.supplyAsync(() -> convert("first", first));
+        CompletableFuture<BedrockResourcePack> secondConversion = CompletableFuture.supplyAsync(() -> convert("second", second));
+
+        assertNotNull(firstConversion.join().entityModels().get("models/entity/first.good.json"));
+        assertNotNull(secondConversion.join().entityModels().get("models/entity/second.good.json"));
+        assertEquals(new TabulaReflectionEntityParser.CacheState(2, 0), TabulaReflectionEntityParser.cacheStateForTests(),
+                "distinct mod jars must never share a reflection runtime");
+    }
+
+    private BedrockResourcePack convert(String namespace, Path jar) {
+        BedrockResourcePack target = new BedrockResourcePack(tempDir.resolve(namespace + "-output"));
+        EntityModelScanner.discover().addReflectionEntityModels(null, target, List.of(namespace + ":good"),
+                new ReflectionInput(jar, List.of(jar), null));
+        return target;
     }
 
     private void writeModelJar(Path jar) throws IOException {
@@ -132,8 +155,4 @@ class TabulaReflectionEntityParserTest {
         }
     }
 
-    private static void restore(String name, String value) {
-        if (value == null) System.clearProperty(name);
-        else System.setProperty(name, value);
-    }
 }

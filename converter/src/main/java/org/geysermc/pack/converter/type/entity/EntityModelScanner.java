@@ -117,7 +117,8 @@ public final class EntityModelScanner {
      * model. This is best-effort: parsers that cannot understand a framework
      * simply return {@code null}, leaving the normal fallback path intact.
      */
-    public ScanResult addReflectionEntityModels(ResourcePack source, BedrockResourcePack target, Iterable<String> entityIds) {
+    public ScanResult addReflectionEntityModels(ResourcePack source, BedrockResourcePack target, Iterable<String> entityIds,
+                                                ReflectionInput input) {
         ScanResult result = new ScanResult();
         EntityModelParser reflection = parsers.stream()
                 .filter(parser -> parser.id().equals("tabula-reflection"))
@@ -128,7 +129,7 @@ public final class EntityModelScanner {
             String fileName = entityId.replace(':', '.') + ".json";
             if (target.entityModels() != null && target.entityModels().containsKey("models/entity/" + fileName)) continue;
             try {
-                BedrockModel model = reflection.parse(entityId + ".reflection", source);
+                BedrockModel model = reflection.parse(entityId + ".reflection", source, input);
                 if (model != null) {
                     target.addEntityModel(model.model(), model.fileName());
                     result.recordSuccess(reflection.id(), model.fileName());

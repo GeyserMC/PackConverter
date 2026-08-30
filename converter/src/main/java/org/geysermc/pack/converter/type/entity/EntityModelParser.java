@@ -88,6 +88,11 @@ public interface EntityModelParser {
      */
     BedrockModel parse(String path, ResourcePack pack);
 
+    /** Parses a runtime model using the conversion host's exact classpath. */
+    default BedrockModel parse(String path, ResourcePack pack, ReflectionInput input) {
+        return parse(path, pack);
+    }
+
     /**
      * Explains why the most recent {@link #parse(String, ResourcePack)} call
      * declined a path after reaching a supported source. Returning {@code null}

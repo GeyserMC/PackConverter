@@ -30,6 +30,7 @@ import org.apache.commons.io.file.PathUtils;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
 import org.geysermc.pack.converter.pipeline.ConverterPipeline;
 import org.geysermc.pack.converter.type.entity.EntityModelScanner;
+import org.geysermc.pack.converter.type.entity.ReflectionInput;
 import org.geysermc.pack.converter.util.DefaultLogListener;
 import org.geysermc.pack.converter.util.LogListener;
 import org.geysermc.pack.converter.util.ModJarExtractor;
@@ -62,6 +63,7 @@ public final class PackConverter {
     private boolean enforcePackCheck = false;
     private boolean autoExtractModResources;
     private Iterable<String> reflectionEntityIds = List.of();
+    private ReflectionInput reflectionInput;
     private BiConsumer<ResourcePack, BedrockResourcePack> postProcessor;
     private final List<ConverterPipeline<?, ?>> converters = new ArrayList<>();
     private final List<EntityModelScanner.Diagnostic> entityModelDiagnostics = new ArrayList<>();
@@ -128,6 +130,12 @@ public final class PackConverter {
     /** Supplies trusted entity identifiers for the opt-in runtime-model bridge. */
     public PackConverter reflectionEntityIds(@NotNull Iterable<String> entityIds) {
         this.reflectionEntityIds = entityIds;
+        return this;
+    }
+
+    /** Supplies the exact runtime-model source and classpath for this conversion. */
+    public PackConverter reflectionInput(@Nullable ReflectionInput input) {
+        this.reflectionInput = input;
         return this;
     }
 
@@ -226,7 +234,8 @@ public final class PackConverter {
             // parser to successfully convert a file wins.
             EntityModelScanner entityModelScanner = EntityModelScanner.discover();
             EntityModelScanner.ScanResult scan = entityModelScanner.addEntityModels(javaResourcePack, bedrockResourcePack);
-            EntityModelScanner.ScanResult reflected = entityModelScanner.addReflectionEntityModels(javaResourcePack, bedrockResourcePack, reflectionEntityIds);
+            EntityModelScanner.ScanResult reflected = reflectionInput == null ? new EntityModelScanner.ScanResult()
+                    : entityModelScanner.addReflectionEntityModels(javaResourcePack, bedrockResourcePack, reflectionEntityIds, reflectionInput);
             this.entityModelDiagnostics.addAll(reflected.diagnostics());
             if (scan.successCount() > 0) {
                 this.logListener.info("Entity model scanner: " + scan.successCount() + " model(s) converted via " + entityModelScanner.parsers().size() + " parser(s)");
