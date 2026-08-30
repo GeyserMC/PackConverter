@@ -48,7 +48,7 @@ public class Main {
             String inputPath = args.get(args.indexOf("--input") + 1);
 
             String outputPath;
-            String packName;
+            String packName = null;
 
             if (args.contains("--output")) {
                 if (args.indexOf("--output") + 1 >= args.size()) {
@@ -66,8 +66,6 @@ public class Main {
                 }
 
                 packName = args.get(args.indexOf("--name") + 1);
-            } else {
-                packName = inputPath.replaceFirst("[.][^.]+$", "");
             }
 
             System.setProperty("PackConverter.Debug", String.valueOf(debug));
