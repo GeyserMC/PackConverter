@@ -67,7 +67,7 @@ public class BedTransformer implements TextureTransformer {
     public void transform(@NotNull TransformContext context) throws IOException {
         Texture bedHeadNorth = context.pollOrPeekVanilla(KeyUtil.key(Key.MINECRAFT_NAMESPACE, "block/bed_head_north.png"));
         BufferedImage bedHeadNorthImage = this.readImage(bedHeadNorth);
-        Texture bedBottom = context.pollOrPeekVanilla(KeyUtil.key(Key.MINECRAFT_NAMESPACE, "block/bed_bottom.png"));
+        Texture bedBottom = context.pollOrPeekVanilla(KeyUtil.key(Key.MINECRAFT_NAMESPACE, "block/bed_down.png"));
         BufferedImage bedBottomImage = this.readImage(bedBottom);
 
         float scale = bedBottomImage.getWidth() / 16f;
