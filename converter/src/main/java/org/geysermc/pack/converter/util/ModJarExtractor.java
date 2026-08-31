@@ -74,7 +74,7 @@ public final class ModJarExtractor {
 
     /** Extracts one mod JAR, including its pack metadata, into a resource-pack directory. */
     public static @NotNull Path extract(@NotNull Path jar, @NotNull Path destination) throws IOException {
-        extractInternal(jar, destination, new LinkedHashSet<>(), new LinkedHashSet<>(), true);
+        extractInternal(jar, destination, new LinkedHashSet<>(), new LinkedHashSet<>(), true, new ExtractionBudget());
         return destination.toAbsolutePath().normalize();
     }
 
@@ -101,19 +101,20 @@ public final class ModJarExtractor {
         Files.createDirectories(destination);
         Set<String> extracted = new LinkedHashSet<>();
         Set<String> collisions = new LinkedHashSet<>();
+        ExtractionBudget budget = new ExtractionBudget();
         int filesExtracted = 0;
         for (Path jar : jars) {
-            filesExtracted += extractInternal(jar, destination, extracted, collisions, false);
+            filesExtracted += extractInternal(jar, destination, extracted, collisions, false, budget);
         }
         return new ExtractionReport(jars, filesExtracted, new ArrayList<>(collisions));
     }
 
     private static int extractInternal(Path jar, Path destination, Set<String> extracted,
-                                       Set<String> collisions, boolean includePackMetadata) throws IOException {
+                                       Set<String> collisions, boolean includePackMetadata,
+                                       ExtractionBudget budget) throws IOException {
         Path root = destination.toAbsolutePath().normalize();
         Files.createDirectories(root);
         int count = 0;
-        long totalBytes = 0;
 
         try (InputStream input = Files.newInputStream(jar); ZipInputStream zip = new ZipInputStream(input)) {
             ZipEntry entry;
@@ -132,10 +133,10 @@ public final class ModJarExtractor {
                 if (parent != null) Files.createDirectories(parent);
                 if (!extracted.add(name)) collisions.add(name);
                 long entryBytes = copyEntry(zip, target, name);
-                totalBytes += entryBytes;
-                if (totalBytes > MAX_TOTAL_BYTES) {
+                budget.totalBytes += entryBytes;
+                if (budget.totalBytes > MAX_TOTAL_BYTES) {
                     Files.deleteIfExists(target);
-                    throw new IOException("Mod JAR resources exceed the extraction limit");
+                    throw new IOException("Mod JAR resources exceed the extraction limit for this invocation");
                 }
             }
         }
@@ -164,5 +165,9 @@ public final class ModJarExtractor {
     private static boolean isResourcePackEntry(String name, boolean includePackMetadata) {
         if (name.startsWith(ASSETS_PREFIX)) return true;
         return includePackMetadata && (name.equals("pack.mcmeta") || name.equals("pack.png"));
+    }
+
+    private static final class ExtractionBudget {
+        private long totalBytes;
     }
 }

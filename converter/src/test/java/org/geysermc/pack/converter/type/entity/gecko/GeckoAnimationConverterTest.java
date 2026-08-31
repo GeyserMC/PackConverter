@@ -30,6 +30,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.geysermc.pack.bedrock.resource.BedrockResourcePack;
+import org.geysermc.pack.converter.pipeline.AssetConverters;
 import org.geysermc.pack.converter.pipeline.CombineContext;
 import org.geysermc.pack.converter.pipeline.ConversionContext;
 import org.geysermc.pack.converter.util.LogListener;
@@ -80,6 +81,12 @@ class GeckoAnimationConverterTest {
 
     @TempDir
     Path tempDir;
+
+    @Test
+    void productionConverterListIncludesAnimationPipelineOnlyWhenExperimentalFeaturesAreEnabled() {
+        assertTrue(AssetConverters.converters(true).contains(AssetConverters.GECKO_ANIMATION));
+        assertFalse(AssetConverters.converters(false).contains(AssetConverters.GECKO_ANIMATION));
+    }
 
     @Test
     void convert_anchorsShorthandChannelsAtTimeZero() throws Exception {

@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -94,7 +95,12 @@ public final class NioDirectoryFileTreeReader implements FileTreeReader {
 
             while (pathCursor < paths.length) {
                 Path path = paths[pathCursor++];
-                if (Files.isDirectory(path)) {
+                // Resource roots are data. Following a symlink could escape the
+                // selected pack root or create a directory cycle.
+                if (Files.isSymbolicLink(path)) {
+                    continue;
+                }
+                if (Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) {
                     directories.add(new Directory(currentRoot, path));
                 } else {
                     String name = relativize(currentRoot, path);

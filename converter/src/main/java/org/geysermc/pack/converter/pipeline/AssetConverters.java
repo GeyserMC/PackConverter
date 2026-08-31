@@ -33,6 +33,8 @@ import org.geysermc.pack.bedrock.resource.Manifest;
 import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.SoundDefinitions;
 import org.geysermc.pack.converter.type.base.PackIconConverter;
 import org.geysermc.pack.converter.type.base.PackManifestConverter;
+import org.geysermc.pack.converter.type.entity.gecko.GeckoAnimationAsset;
+import org.geysermc.pack.converter.type.entity.gecko.GeckoAnimationConverter;
 import org.geysermc.pack.converter.type.lang.BedrockLanguage;
 import org.geysermc.pack.converter.type.lang.LangConverter;
 import org.geysermc.pack.converter.type.misc.SplashTextConverter;
@@ -87,6 +89,11 @@ public final class AssetConverters {
             (pack, context) -> pack.soundRegistries(), SoundRegistryConverter.INSTANCE);
     public static final ConverterPipeline<Sound, Sound> SOUND = create(SoundConverter.INSTANCE);
     public static final ConverterPipeline<Texture, TransformedTexture> TEXTURE = create(TextureConverter.INSTANCE);
+    /** Portable GeckoLib animations are experimental, but must be registered
+     * so callers opting into experimental converters actually run them. */
+    public static final ConverterPipeline<GeckoAnimationAsset, GeckoAnimationAsset> GECKO_ANIMATION = registerExperimental(
+            new ConverterPipeline<>(GeckoAnimationConverter.INSTANCE, GeckoAnimationConverter.INSTANCE,
+                    GeckoAnimationConverter.INSTANCE, true, Optional.empty()));
 
     private static <JavaAsset, BedrockAsset> ConverterPipeline<JavaAsset, BedrockAsset> createSingle(BiFunction<ResourcePack, ExtractionContext, JavaAsset> extractor,
                                                                                                      AssetConverter<JavaAsset, BedrockAsset> converter,
