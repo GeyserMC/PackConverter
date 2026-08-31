@@ -94,7 +94,7 @@ public final class VanillaPackProvider {
         // With an explicit version, an up-to-date cache can skip all network access.
         if (!vanillaVersion.isEmpty() && Files.isRegularFile(path) && Files.isRegularFile(versionMarker)) {
             try {
-                if (Files.readString(versionMarker).trim().equals(vanillaVersion)) {
+                if (readVersionMarker(versionMarker).equals(vanillaVersion)) {
                     log.debug("Vanilla jar for " + vanillaVersion + " already cached, skipping download");
                     return;
                 }
@@ -114,7 +114,7 @@ public final class VanillaPackProvider {
 
             if (Files.isRegularFile(path) && Files.isRegularFile(versionMarker)) {
                 try {
-                    String cachedVersion = Files.readString(versionMarker).trim();
+                    String cachedVersion = readVersionMarker(versionMarker);
                     if (cachedVersion.equals(vanillaVersion)) {
                         log.debug("Vanilla jar for " + vanillaVersion + " already cached, skipping download");
                         return;
@@ -186,7 +186,7 @@ public final class VanillaPackProvider {
         synchronized (DOWNLOAD_LOCK) {
             try {
                 if (Files.isRegularFile(path) && Files.isRegularFile(marker)
-                        && Files.readString(marker).trim().equals(vanillaVersion)) {
+                        && readVersionMarker(marker).equals(vanillaVersion)) {
                     return;
                 }
                 VersionManifest manifest = GSON.fromJson(
@@ -206,6 +206,11 @@ public final class VanillaPackProvider {
                 log.warn("Runtime entity extraction is unavailable: " + e.getMessage());
             }
         }
+    }
+
+    private static String readVersionMarker(Path marker) throws IOException {
+        if (Files.size(marker) > 1024) throw new IOException("Oversized vanilla version marker: " + marker);
+        return Files.readString(marker).trim();
     }
 
     /**

@@ -46,6 +46,10 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 
 public final class NioDirectoryFileTreeReader implements FileTreeReader {
+    private static final int MAX_FILES = 100_000;
+    private static final int MAX_DEPTH = 64;
+    private static final long MAX_FILE_BYTES = 256L * 1024 * 1024;
+    private static final long MAX_TOTAL_BYTES = 2L * 1024 * 1024 * 1024;
 
     private final List<Directory> directories = new ArrayList<>();
     private final Set<String> emitted = new HashSet<>();
@@ -55,6 +59,8 @@ public final class NioDirectoryFileTreeReader implements FileTreeReader {
     private Path currentRoot;
     private Path nextPath;
     private String nextName;
+    private int files;
+    private long totalBytes;
 
     private InputStream currentStream;
 
@@ -101,8 +107,21 @@ public final class NioDirectoryFileTreeReader implements FileTreeReader {
                     continue;
                 }
                 if (Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)) {
+                    if (currentRoot.relativize(path).getNameCount() > MAX_DEPTH) {
+                        throw new IllegalStateException("Resource pack directory nesting exceeds " + MAX_DEPTH + ": " + path);
+                    }
                     directories.add(new Directory(currentRoot, path));
-                } else {
+                } else if (Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS)) {
+                    long size;
+                    try {
+                        size = Files.size(path);
+                    } catch (IOException exception) {
+                        throw new IllegalStateException("Could not inspect resource pack file: " + path, exception);
+                    }
+                    if (size > MAX_FILE_BYTES) throw new IllegalStateException("Resource pack file is too large: " + path);
+                    if (++files > MAX_FILES) throw new IllegalStateException("Resource pack contains too many files");
+                    totalBytes += size;
+                    if (totalBytes > MAX_TOTAL_BYTES) throw new IllegalStateException("Resource pack exceeds the input size limit");
                     String name = relativize(currentRoot, path);
                     if (emitted.add(name)) {
                         nextPath = path;

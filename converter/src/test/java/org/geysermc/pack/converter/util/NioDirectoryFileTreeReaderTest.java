@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class NioDirectoryFileTreeReaderTest {
     @TempDir
@@ -37,6 +38,20 @@ class NioDirectoryFileTreeReaderTest {
         assertEquals("one", files.get("assets/example/first.txt"));
         assertEquals("two", files.get("assets/example/second.txt"));
         assertEquals(3, files.size());
+    }
+
+    @Test
+    void rejectsResourceTreesDeeperThanTheTraversalBudget() throws Exception {
+        Path root = Files.createDirectory(temporaryDirectory.resolve("deep"));
+        Path directory = root;
+        for (int index = 0; index < 65; index++) directory = Files.createDirectory(directory.resolve("d"));
+        Files.writeString(directory.resolve("asset.txt"), "data");
+
+        try (var reader = NioDirectoryFileTreeReader.read(root)) {
+            assertThrows(IllegalStateException.class, () -> {
+                while (reader.hasNext()) reader.next();
+            });
+        }
     }
 
     private static void write(Path root, String name, String contents) throws Exception {
