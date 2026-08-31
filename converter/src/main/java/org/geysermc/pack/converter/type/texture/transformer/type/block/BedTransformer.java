@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2019-2023 GeyserMC. http://geysermc.org
+ * Copyright (c) 2019-2026 GeyserMC. http://geysermc.org
  *
  *  Permission is hereby granted, free of charge, to any person obtaining a copy
  *  of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,7 @@ import org.geysermc.pack.converter.type.texture.transformer.TransformContext;
 import org.geysermc.pack.converter.util.ImageUtil;
 import org.geysermc.pack.converter.util.KeyUtil;
 import org.jetbrains.annotations.NotNull;
+import team.unnamed.creative.texture.Texture;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -66,19 +67,27 @@ public class BedTransformer implements TextureTransformer {
         BufferedImage bedHeadNorthImage = this.texture(context, "bed_head_north");
         BufferedImage bedDownImage = this.texture(context, "bed_down");
 
+        if (bedHeadNorthImage == null || bedDownImage == null) {
+            return;
+        }
+
         float scale = bedDownImage.getWidth() / 16f;
 
         // Both halves share the underside
         BufferedImage bedDownFace = ImageUtil.rotate(bedDownImage, 180);
 
         for (String bedColor : BED_COLORS) {
+            BufferedImage bedHeadUpImage = this.texture(context, bedColor + "_bed_head_up");
+            if (bedHeadUpImage == null) {
+                continue;
+            }
+
             BufferedImage bedHeadEastImage = this.texture(context, bedColor + "_bed_head_east");
             BufferedImage bedHeadWestImage = this.texture(context, bedColor + "_bed_head_west");
-            BufferedImage bedHeadUpImage = this.texture(context, bedColor + "_bed_head_up");
+            BufferedImage bedFootUpImage = this.texture(context, bedColor + "_bed_foot_up");
             BufferedImage bedFootSouthImage = this.texture(context, bedColor + "_bed_foot_south");
             BufferedImage bedFootEastImage = this.texture(context, bedColor + "_bed_foot_east");
             BufferedImage bedFootWestImage = this.texture(context, bedColor + "_bed_foot_west");
-            BufferedImage bedFootUpImage = this.texture(context, bedColor + "_bed_foot_up");
 
             context.debug(String.format("Convert bed %s", bedColor));
 
@@ -154,7 +163,8 @@ public class BedTransformer implements TextureTransformer {
      * @return The texture image
      */
     private BufferedImage texture(TransformContext context, String name) throws IOException {
-        return this.readImage(context.pollOrPeekVanilla(KeyUtil.key(Key.MINECRAFT_NAMESPACE, "block/" + name + ".png")));
+        Texture texture = context.pollOrPeekVanilla(KeyUtil.key(Key.MINECRAFT_NAMESPACE, "block/" + name + ".png"));
+        return texture == null ? null :this.readImage(texture);
     }
 
     /**
