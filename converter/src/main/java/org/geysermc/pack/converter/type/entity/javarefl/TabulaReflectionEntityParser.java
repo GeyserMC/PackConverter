@@ -93,7 +93,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class TabulaReflectionEntityParser implements EntityModelParser {
 
     private static final String[] EXTS = {".tbl", ".reflection"};
-    private static final Set<String> REPORTED_CLASSPATHS = ConcurrentHashMap.newKeySet();
     private static final Map<Path, Map<String, String>> MODEL_CLASS_INDEX = new ConcurrentHashMap<>();
     private static final Map<ReflectionInput, ReflectionRuntime> RUNTIMES = new ConcurrentHashMap<>();
     private static final Map<Path, Map<String, String>> FAILED_MODEL_CLASSES = new ConcurrentHashMap<>();
@@ -160,7 +159,6 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
         String detail = "namespace=" + ref.namespace + ", entity=" + ref.entityName
                 + ", class=" + failure.modelClass + ", reason=" + failure.reason;
         failureDetails.put(path, detail);
-        System.err.println("TabulaReflection fallback: " + detail);
     }
 
     /**
@@ -185,15 +183,12 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
         // not in obfuscated builds).
         if (input.clientRuntime() != null && Files.isRegularFile(input.clientRuntime())) urls.add(input.clientRuntime().toUri().toURL());
         for (Path dependency : input.classpath()) {
-            if (!dependency.equals(input.modJar()) && Files.isRegularFile(dependency)) urls.add(dependency.toUri().toURL());
+            if (!dependency.equals(input.modJar()) && Files.exists(dependency)) urls.add(dependency.toUri().toURL());
         }
 
         // Mod jar is added LAST so its class definitions win when
         // there is a duplicate name across the mod and the libraries.
         urls.add(input.modJar().toUri().toURL());
-        if (REPORTED_CLASSPATHS.add(input.modJar().toString())) {
-            System.err.println("TabulaReflection classpath for " + input.modJar().getFileName() + ": " + urls.size() + " URLs");
-        }
         return urls.toArray(new URL[0]);
     }
 
@@ -678,7 +673,6 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
         RUNTIMES.clear();
         MODEL_CLASS_INDEX.clear();
         FAILED_MODEL_CLASSES.clear();
-        REPORTED_CLASSPATHS.clear();
     }
 
     private record ParsedEntityRef(String namespace, String entityName) {

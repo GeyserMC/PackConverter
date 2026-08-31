@@ -193,6 +193,7 @@ public final class PackConverter {
     public PackConverter convert() throws IOException {
         validateConfiguration();
         cleanupTemporaryState();
+        entityModelDiagnostics.clear();
         ImageIO.scanForPlugins();
         Path absoluteOutput = this.output.toAbsolutePath().normalize();
         Path outputParent = absoluteOutput.getParent();
