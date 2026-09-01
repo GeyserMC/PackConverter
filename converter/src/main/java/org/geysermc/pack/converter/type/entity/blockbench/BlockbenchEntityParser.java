@@ -156,7 +156,7 @@ public final class BlockbenchEntityParser implements EntityModelParser {
         if (rawCube.rotation != null) cube.rotation(rawCube.rotation);
         if (rawCube.mirror != null) cube.mirror(rawCube.mirror);
         if (rawCube.inflate != null) cube.inflate(rawCube.inflate);
-        cube.uv(BoxUvMapper.expand(0, 0, rawCube.size != null ? rawCube.size : new float[]{0, 0, 0}));
+        cube.uv(BoxUvMapper.convert(rawCube.uv, rawCube.size != null ? rawCube.size : new float[]{0, 0, 0}));
         return cube;
     }
 

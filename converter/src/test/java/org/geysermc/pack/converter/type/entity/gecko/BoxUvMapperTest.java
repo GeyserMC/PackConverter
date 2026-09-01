@@ -26,12 +26,38 @@
 
 package org.geysermc.pack.converter.type.entity.gecko;
 
+import com.google.gson.JsonParser;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.Uv;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class BoxUvMapperTest {
+
+    @Test
+    void preservesBoxUvAnchor() {
+        Uv uv = BoxUvMapper.convert(JsonParser.parseString("[10,20]"), new float[] { 4, 12, 2 });
+
+        assertArrayEquals(new float[] { 12, 20 }, uv.down().uv());
+        assertArrayEquals(new float[] { 18, 22 }, uv.south().uv());
+    }
+
+    @Test
+    void preservesPerFaceUv() {
+        Uv uv = BoxUvMapper.convert(JsonParser.parseString("""
+                {
+                  "north": {"uv": [1, 2], "uv_size": [3, 4], "material_instance": "cutout"},
+                  "up": {"uv": [5, 6], "uv_size": [-7, 8]}
+                }
+                """), new float[] { 16, 16, 16 });
+
+        assertArrayEquals(new float[] { 1, 2 }, uv.north().uv());
+        assertArrayEquals(new float[] { 3, 4 }, uv.north().uvSize());
+        assertEquals("cutout", uv.north().materialInstance());
+        assertArrayEquals(new float[] { 5, 6 }, uv.up().uv());
+        assertArrayEquals(new float[] { -7, 8 }, uv.up().uvSize());
+    }
 
     // A symmetric 8x8x8 cube at UV anchor (0,0) - e.g. a vanilla arm/leg cube.
     // Every face occupies an equal 8x8 texel square, laid out left-to-right:

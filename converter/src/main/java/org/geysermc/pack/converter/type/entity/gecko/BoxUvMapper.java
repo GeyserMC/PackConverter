@@ -26,6 +26,8 @@
 
 package org.geysermc.pack.converter.type.entity.gecko;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.Uv;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.Down;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones.cubes.uv.East;
@@ -58,7 +60,26 @@ import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bon
  */
 public final class BoxUvMapper {
 
+    private static final Gson GSON = new Gson();
+
     private BoxUvMapper() {
+    }
+
+    /** Converts either Bedrock per-face UV or Gecko/Blockbench box UV. */
+    public static Uv convert(JsonElement source, float[] size) {
+        if (source != null && source.isJsonArray() && source.getAsJsonArray().size() >= 2) {
+            JsonElement u = source.getAsJsonArray().get(0);
+            JsonElement v = source.getAsJsonArray().get(1);
+            if (u.isJsonPrimitive() && u.getAsJsonPrimitive().isNumber()
+                    && v.isJsonPrimitive() && v.getAsJsonPrimitive().isNumber()) {
+                return expand(u.getAsFloat(), v.getAsFloat(), size);
+            }
+        }
+        if (source != null && source.isJsonObject()) {
+            Uv uv = GSON.fromJson(source, Uv.class);
+            if (uv != null) return uv;
+        }
+        return expand(0, 0, size);
     }
 
     /**

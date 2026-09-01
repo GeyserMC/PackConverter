@@ -157,7 +157,7 @@ public final class GeckoLibEntityParser implements EntityModelParser {
     }
 
     private Uv convertUv(GeckoCube rawCube, String boneName) {
-        return BoxUvMapper.expand(0, 0, rawCube.size != null ? rawCube.size : new float[]{0, 0, 0});
+        return BoxUvMapper.convert(rawCube.uv, rawCube.size != null ? rawCube.size : new float[]{0, 0, 0});
     }
 
     /**
