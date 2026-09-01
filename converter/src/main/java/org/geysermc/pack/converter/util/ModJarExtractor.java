@@ -42,10 +42,6 @@ import java.util.zip.ZipInputStream;
 /** Extracts client resource-pack data from Minecraft mod JARs. */
 public final class ModJarExtractor {
     private static final String ASSETS_PREFIX = "assets/";
-    private static final int MAX_ENTRIES = 100_000;
-    private static final long MAX_ENTRY_BYTES = 256L * 1024 * 1024;
-    private static final long MAX_TOTAL_BYTES = 2L * 1024 * 1024 * 1024;
-
     private ModJarExtractor() {
     }
 
@@ -121,8 +117,8 @@ public final class ModJarExtractor {
             while ((entry = zip.getNextEntry()) != null) {
                 String name = entry.getName().replace('\\', '/');
                 if (entry.isDirectory() || !isResourcePackEntry(name, includePackMetadata)) continue;
-                if (++count > MAX_ENTRIES) throw new IOException("Mod JAR contains too many resource entries");
-                if (entry.getSize() > MAX_ENTRY_BYTES) throw new IOException("Mod JAR entry is too large: " + name);
+                if (++count > ResourceBudget.MAX_FILES) throw new IOException("Mod JAR contains too many resource entries");
+                if (entry.getSize() > ResourceBudget.MAX_FILE_BYTES) throw new IOException("Mod JAR entry is too large: " + name);
 
                 Path target = root.resolve(name).normalize();
                 if (!target.startsWith(root)) {
@@ -134,7 +130,7 @@ public final class ModJarExtractor {
                 if (!extracted.add(name)) collisions.add(name);
                 long entryBytes = copyEntry(zip, target, name);
                 budget.totalBytes += entryBytes;
-                if (budget.totalBytes > MAX_TOTAL_BYTES) {
+                if (budget.totalBytes > ResourceBudget.MAX_TOTAL_BYTES) {
                     Files.deleteIfExists(target);
                     throw new IOException("Mod JAR resources exceed the extraction limit for this invocation");
                 }
@@ -150,7 +146,7 @@ public final class ModJarExtractor {
             int read;
             while ((read = input.read(buffer)) != -1) {
                 written += read;
-                if (written > MAX_ENTRY_BYTES) {
+                if (written > ResourceBudget.MAX_FILE_BYTES) {
                     throw new IOException("Mod JAR entry is too large: " + name);
                 }
                 output.write(buffer, 0, read);

@@ -41,10 +41,13 @@ import team.unnamed.creative.model.ModelTextures;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class ModelStitcher {
+    private static final int MAX_PARENT_DEPTH = 64;
     private final Provider provider;
     private final Model baseModel;
     private final LogListener log;
@@ -82,10 +85,18 @@ public class ModelStitcher {
             this.textureVariables.putAll(textures.variables());
         }
 
-        this.inheritTraits(baseModel);
+        this.inheritTraits(baseModel, new HashSet<>(), 0);
     }
 
-    private void inheritTraits(@NotNull Model model) {
+    private void inheritTraits(@NotNull Model model, Set<Key> visited, int depth) {
+        if (depth > MAX_PARENT_DEPTH) {
+            log.error("Model parent depth exceeds " + MAX_PARENT_DEPTH + " for " + this.baseModel.key());
+            return;
+        }
+        if (model.key() != null && !visited.add(model.key())) {
+            log.error("Model parent cycle detected at " + model.key() + " for " + this.baseModel.key());
+            return;
+        }
         // If we have no parent model, that means this is as far as we're
         // going to get with the base model.
         if (model == this.baseModel && this.baseModel.parent() == null) {
@@ -160,7 +171,7 @@ public class ModelStitcher {
                 return;
             }
 
-            this.inheritTraits(parentModel);
+            this.inheritTraits(parentModel, visited, depth + 1);
         }
     }
 

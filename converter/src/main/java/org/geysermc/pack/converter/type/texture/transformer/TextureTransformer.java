@@ -28,14 +28,13 @@ package org.geysermc.pack.converter.type.texture.transformer;
 
 import net.kyori.adventure.key.Key;
 import org.geysermc.pack.converter.util.ImageUtil;
+import org.geysermc.pack.converter.util.ImageBudget;
 import org.geysermc.pack.converter.util.KeyUtil;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.texture.Texture;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +51,7 @@ public interface TextureTransformer {
     void transform(@NotNull TransformContext context) throws IOException;
 
     default BufferedImage readImage(@NotNull Texture texture) throws IOException {
-        return ImageUtil.ensure32BitImage(ImageIO.read(new ByteArrayInputStream(texture.data().toByteArray())));
+        return ImageUtil.ensure32BitImage(ImageBudget.read(texture.data().toByteArray()));
     }
 
     default int order() {

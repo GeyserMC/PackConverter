@@ -62,6 +62,10 @@ import java.util.Map;
 public final class ObjWavefrontEntityParser implements EntityModelParser {
 
     private static final String[] EXTS = {".obj"};
+    private static final int MAX_SOURCE_CHARS = 16 * 1024 * 1024;
+    private static final int MAX_VERTICES = 65_536;
+    private static final int MAX_CUBES = 4_096;
+    private static final long MAX_PARSE_NANOS = 2_000_000_000L;
 
     @Override
     public String id() {
@@ -85,12 +89,14 @@ public final class ObjWavefrontEntityParser implements EntityModelParser {
         } catch (IOException e) {
             return null;
         }
-        if (content == null) return null;
+        if (content == null || content.length() > MAX_SOURCE_CHARS) return null;
 
         List<float[]> vertices = new ArrayList<>();
+        long deadline = System.nanoTime() + MAX_PARSE_NANOS;
         try (BufferedReader br = new BufferedReader(new StringReader(content))) {
             String line;
             while ((line = br.readLine()) != null) {
+                if (System.nanoTime() > deadline) return null;
                 if (line.startsWith("v ")) {
                     String[] t = line.substring(2).trim().split("\\s+");
                     if (t.length >= 3) {
@@ -100,6 +106,7 @@ public final class ObjWavefrontEntityParser implements EntityModelParser {
                                     Float.parseFloat(t[1]),
                                     Float.parseFloat(t[2])
                             });
+                            if (vertices.size() > MAX_VERTICES) return null;
                         } catch (NumberFormatException ignored) {
                         }
                     }
@@ -120,7 +127,9 @@ public final class ObjWavefrontEntityParser implements EntityModelParser {
         // built from boxes.
         boolean[] consumed = new boolean[vertices.size()];
         List<float[]> boxes = new ArrayList<>();
+        extraction:
         for (int i = 0; i < vertices.size(); i++) {
+            if (System.nanoTime() > deadline || boxes.size() >= MAX_CUBES) break;
             if (consumed[i]) continue;
             float[] a = vertices.get(i);
             for (int j = i + 1; j < vertices.size(); j++) {
@@ -128,6 +137,7 @@ public final class ObjWavefrontEntityParser implements EntityModelParser {
                 float[] b = vertices.get(j);
                 // Look for a third vertex sharing an axis.
                 for (int k = j + 1; k < vertices.size(); k++) {
+                    if (System.nanoTime() > deadline) break extraction;
                     if (consumed[k]) continue;
                     float[] c = vertices.get(k);
                     float[] box = tryBoxFromAxes(a, b, c);

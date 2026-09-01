@@ -37,6 +37,7 @@ import org.geysermc.pack.converter.type.texture.transformer.TextureTransformer;
 import org.geysermc.pack.converter.type.texture.transformer.TransformContext;
 import org.geysermc.pack.converter.type.texture.transformer.TransformedTexture;
 import org.geysermc.pack.converter.util.ImageUtil;
+import org.geysermc.pack.converter.util.ImageBudget;
 import org.geysermc.pack.converter.util.JsonMappings;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -47,7 +48,6 @@ import javax.imageio.ImageIO;
 import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -166,7 +166,7 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
             try {
                 byte[] bytes = textureToExport.texture().data().toByteArray();
 
-                BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
+                BufferedImage image = ImageBudget.read(bytes);
                 if (image == null) {
                     context.warn("Invalid texture " + texturePath + "!");
                     continue;

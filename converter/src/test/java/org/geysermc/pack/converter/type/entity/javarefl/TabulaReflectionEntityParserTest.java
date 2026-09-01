@@ -90,6 +90,23 @@ class TabulaReflectionEntityParserTest {
                 "distinct mod jars must never share a reflection runtime");
     }
 
+    @Test
+    void boundsAndClosesReflectionRuntimeCache() throws Exception {
+        Path fixture = tempDir.resolve("fixture.jar");
+        writeModelJar(fixture);
+        EntityModelScanner scanner = EntityModelScanner.discover();
+
+        for (int index = 0; index < 33; index++) {
+            Path jar = tempDir.resolve("copy-" + index + ".jar");
+            Files.copy(fixture, jar);
+            BedrockResourcePack target = new BedrockResourcePack(tempDir.resolve("bounded-" + index));
+            scanner.addReflectionEntityModels(null, target, List.of("example:good"),
+                    new ReflectionInput(jar, List.of(), null));
+        }
+
+        assertEquals(new TabulaReflectionEntityParser.CacheState(1, 0), TabulaReflectionEntityParser.cacheStateForTests());
+    }
+
     private BedrockResourcePack convert(String namespace, Path jar) {
         BedrockResourcePack target = new BedrockResourcePack(tempDir.resolve(namespace + "-output"));
         EntityModelScanner.discover().addReflectionEntityModels(null, target, List.of(namespace + ":good"),

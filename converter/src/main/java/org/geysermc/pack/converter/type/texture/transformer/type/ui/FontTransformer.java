@@ -31,6 +31,7 @@ import net.kyori.adventure.key.Key;
 import org.geysermc.pack.converter.type.texture.transformer.TextureTransformer;
 import org.geysermc.pack.converter.type.texture.transformer.TransformContext;
 import org.geysermc.pack.converter.util.ImageUtil;
+import org.geysermc.pack.converter.util.ImageBudget;
 import org.geysermc.pack.converter.util.KeyUtil;
 import org.jetbrains.annotations.NotNull;
 import team.unnamed.creative.font.BitMapFontProvider;
@@ -41,11 +42,9 @@ import team.unnamed.creative.font.SpaceFontProvider;
 import team.unnamed.creative.font.UnihexFontProvider;
 import team.unnamed.creative.texture.Texture;
 
-import javax.imageio.ImageIO;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -523,7 +522,7 @@ public class FontTransformer implements TextureTransformer {
                     imageCache.put(
                             textureName,
                             ImageUtil.ensure32BitImage(
-                                    ImageIO.read(new ByteArrayInputStream(texture.data().toByteArray()))
+                                    ImageBudget.read(texture.data().toByteArray())
                             )
                     );
                 } catch (IOException e) {

@@ -1,4 +1,3 @@
-org.geysermc.pack.converter.type.entity.vanilla.VanillaBedrockEntityParser
 org.geysermc.pack.converter.type.entity.gecko.GeckoLibEntityParser
 org.geysermc.pack.converter.type.entity.blockbench.BlockbenchEntityParser
 org.geysermc.pack.converter.type.entity.tabula.TabulaEntityParser

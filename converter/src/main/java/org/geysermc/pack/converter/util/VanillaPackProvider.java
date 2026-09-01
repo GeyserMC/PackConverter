@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
+import java.util.zip.ZipFile;
 
 public final class VanillaPackProvider {
     private static final Gson GSON = new GsonBuilder()
@@ -92,7 +93,7 @@ public final class VanillaPackProvider {
 
         synchronized (DOWNLOAD_LOCK) {
         // With an explicit version, an up-to-date cache can skip all network access.
-        if (!vanillaVersion.isEmpty() && Files.isRegularFile(path) && Files.isRegularFile(versionMarker)) {
+        if (!vanillaVersion.isEmpty() && validArchive(path, "assets/minecraft/models/") && Files.isRegularFile(versionMarker)) {
             try {
                 if (readVersionMarker(versionMarker).equals(vanillaVersion)) {
                     log.debug("Vanilla jar for " + vanillaVersion + " already cached, skipping download");
@@ -112,7 +113,7 @@ public final class VanillaPackProvider {
                 vanillaVersion = versionManifest.getLatest().getRelease();
             }
 
-            if (Files.isRegularFile(path) && Files.isRegularFile(versionMarker)) {
+            if (validArchive(path, "assets/minecraft/models/") && Files.isRegularFile(versionMarker)) {
                 try {
                     String cachedVersion = readVersionMarker(versionMarker);
                     if (cachedVersion.equals(vanillaVersion)) {
@@ -185,7 +186,7 @@ public final class VanillaPackProvider {
         Path marker = path.resolveSibling(path.getFileName() + ".version");
         synchronized (DOWNLOAD_LOCK) {
             try {
-                if (Files.isRegularFile(path) && Files.isRegularFile(marker)
+                if (validArchive(path, null) && Files.isRegularFile(marker)
                         && readVersionMarker(marker).equals(vanillaVersion)) {
                     return;
                 }
@@ -211,6 +212,17 @@ public final class VanillaPackProvider {
     private static String readVersionMarker(Path marker) throws IOException {
         if (Files.size(marker) > 1024) throw new IOException("Oversized vanilla version marker: " + marker);
         return Files.readString(marker).trim();
+    }
+
+    static boolean validArchive(Path path, String requiredPrefix) {
+        if (!Files.isRegularFile(path)) return false;
+        try (ZipFile zip = new ZipFile(path.toFile())) {
+            if (zip.size() == 0) return false;
+            if (requiredPrefix == null) return zip.size() > 100;
+            return zip.stream().anyMatch(entry -> !entry.isDirectory() && entry.getName().startsWith(requiredPrefix));
+        } catch (IOException | RuntimeException exception) {
+            return false;
+        }
     }
 
     /**

@@ -93,6 +93,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class TabulaReflectionEntityParser implements EntityModelParser {
 
     private static final String[] EXTS = {".tbl", ".reflection"};
+    private static final int MAX_RUNTIME_CACHE = 32;
+    private static final Object CACHE_LOCK = new Object();
     private static final Map<Path, Map<String, String>> MODEL_CLASS_INDEX = new ConcurrentHashMap<>();
     private static final Map<ReflectionInput, ReflectionRuntime> RUNTIMES = new ConcurrentHashMap<>();
     private static final Map<Path, Map<String, String>> FAILED_MODEL_CLASSES = new ConcurrentHashMap<>();
@@ -128,7 +130,7 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
             // inspect them. One runtime is retained per immutable mod JAR for
             // the server lifetime, so every entity does not rescan disk or link
             // a new copy of the same dependency graph.
-            ReflectionRuntime runtime = RUNTIMES.computeIfAbsent(input, TabulaReflectionEntityParser::openRuntime);
+            ReflectionRuntime runtime = runtime(input);
             ModelLoadResult loaded = loadModelFromMod(runtime.loader(), cacheKey, ref.entityName);
             if (loaded.failure() != null) {
                 recordFailure(path, ref, loaded.failure());
@@ -152,6 +154,17 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
             return new ReflectionRuntime(new URLClassLoader("tabula-reflect-" + input.modJar().getFileName(), urls, null));
         } catch (java.net.MalformedURLException exception) {
             throw new IllegalStateException("Could not build reflection classpath for " + input.modJar(), exception);
+        }
+    }
+
+    private static ReflectionRuntime runtime(ReflectionInput input) {
+        synchronized (CACHE_LOCK) {
+            ReflectionRuntime existing = RUNTIMES.get(input);
+            if (existing != null) return existing;
+            if (RUNTIMES.size() >= MAX_RUNTIME_CACHE) clearCaches();
+            ReflectionRuntime created = openRuntime(input);
+            RUNTIMES.put(input, created);
+            return created;
         }
     }
 
@@ -663,6 +676,12 @@ public final class TabulaReflectionEntityParser implements EntityModelParser {
     }
 
     static void clearCachesForTests() {
+        synchronized (CACHE_LOCK) {
+            clearCaches();
+        }
+    }
+
+    private static void clearCaches() {
         for (ReflectionRuntime runtime : RUNTIMES.values()) {
             try {
                 runtime.loader.close();
