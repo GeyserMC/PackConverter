@@ -143,7 +143,7 @@ public class WebUtils {
     }
 
     public static String getUserAgent() {
-        return "Geyser-PackConverter/3.3.2-SNAPSHOT"; // TODO Pull this from buildscript, BuildConstants?
+        return "Geyser-PackConverter/3.4.3-SNAPSHOT"; // TODO Pull this from buildscript, BuildConstants?
     }
 
     private static URL httpsUrl(String value) throws IOException {

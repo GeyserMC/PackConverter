@@ -37,6 +37,11 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    // Allow passing the mod jar for the live Tabula reflection test.
+    val modjar = System.getProperty("tabula.modjar")
+    if (modjar != null) {
+        systemProperty("tabula.modjar", modjar)
+    }
 }
 
 java {
