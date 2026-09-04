@@ -81,9 +81,9 @@ public final class ConverterPipeline<JavaAsset, BedrockAsset>
     public int convert(ResourcePack pack, Optional<ResourcePack> vanillaPack, BedrockResourcePack bedrockPack, String packName, String textureSubDirectory, LogListener logListener) {
         ExtractionContext extractionContext = new ExtractionContext(bedrockPack, vanillaPack, logListener);
         ConversionContext conversionContext = new ConversionContext(packName, logListener);
-        CombineContext combineContext = new CombineContext(textureSubDirectory, logListener);
-
         AtomicInteger errors = new AtomicInteger(0);
+        CombineContext combineContext = new CombineContext(textureSubDirectory, logListener, errors);
+
         List<BedrockAsset> converted = extract(pack, extractionContext).stream()
                 .map(asset -> {
                     try {
