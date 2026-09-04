@@ -133,6 +133,36 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
         return transformed;
     }
 
+    /**
+     * Resolve {@code combined} against the {@code texturePath} directory, but only
+     * if the result stays inside it. {@link Path#resolve(String)} silently replaces
+     * the receiver when the argument is absolute — that is how the
+     * {@code viaversion:logo.png} case ended up writing to {@code /viaversion/logo.png}
+     * (host filesystem root) and producing a {@code FileSystemException: Read-only file system}
+     * on Linux containers. The previous {@code misc/} fix only patched the
+     * {@code namespace+value} case, not the underlying class of bug.
+     *
+     * <p>Defence-in-depth: even if a future caller passes a string that starts
+     * with the right prefix, the post-resolve {@code startsWith} check guarantees
+     * the result never escapes {@code texturePath}.</p>
+     *
+     * @param texturePath the pack's {@code textures/} directory
+     * @param combined    the relative path produced by the bedrockDirectory format
+     * @return a {@link Path} strictly inside {@code texturePath}
+     * @throws IOException if {@code combined} is absolute or escapes {@code texturePath}
+     */
+    static Path resolveSafeRelative(Path texturePath, String combined) throws IOException {
+        if (combined.startsWith(File.separator) || combined.startsWith("/")) {
+            throw new IOException("Refusing absolute path: " + combined);
+        }
+        Path resolved = texturePath.resolve(combined).normalize();
+        Path root = texturePath.normalize();
+        if (!resolved.startsWith(root)) {
+            throw new IOException("Refusing path " + combined + " that escapes " + root);
+        }
+        return resolved;
+    }
+
     @Override
     public void include(BedrockResourcePack pack, List<TransformedTexture> transformedTextures, CombineContext context) {
         Path texturePath = pack.directory().resolve(BEDROCK_TEXTURES_LOCATION);
@@ -149,7 +179,21 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
 
         for (TransformedTexture textureToExport : transformedTextures) {
             String bedrockDirectory = "%s/%s";
-            if (context.textureSubDirectory() != null) {
+            // The "misc/<namespace>" branch already places the mod's namespace
+            // in the path. Appending textureSubDirectory (which is also the
+            // mod namespace) would produce "misc/<ns>/<ns>/<file>" — a duplicated
+            // namespace that the previous misc/ fix did not anticipate. Skip the
+            // subdirectory prefix when we know root already includes the namespace.
+            boolean skipSubDirectory = false;
+            int firstSlash = textureToExport.output().isEmpty() ? -1
+                    : textureToExport.output().get(0).indexOf('/');
+            if (firstSlash > 0) {
+                String firstRoot = textureToExport.output().get(0).substring(0, firstSlash);
+                if ("misc".equals(firstRoot) && context.textureSubDirectory() != null) {
+                    skipSubDirectory = true;
+                }
+            }
+            if (!skipSubDirectory && context.textureSubDirectory() != null) {
                 bedrockDirectory = "%s/" + context.textureSubDirectory() + "/%s";
             }
 
@@ -168,9 +212,18 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
                 String root = slashIndex != -1 ? outputPath.substring(0, slashIndex) : "";
                 String value = slashIndex != -1 ? outputPath.substring(slashIndex + 1) : outputPath;
 
-                outputs.add(texturePath.resolve((
-                        bedrockDirectory.formatted(root, value)
-                ).replace('/', File.separatorChar)));
+                String combined = bedrockDirectory.formatted(root, value)
+                        .replace('/', File.separatorChar);
+                try {
+                    outputs.add(resolveSafeRelative(texturePath, combined));
+                } catch (IOException exception) {
+                    context.error("Refusing to write texture outside pack directory: " + combined, exception);
+                }
+            }
+            if (outputs.isEmpty()) {
+                context.warn("Skipping texture " + textureToExport.texture().key()
+                        + " — all output paths were rejected as unsafe");
+                continue;
             }
 
             try {
