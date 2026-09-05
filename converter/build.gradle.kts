@@ -8,6 +8,11 @@ sourceSets {
             srcDir("src/main/java/resources")
         }
     }
+    test {
+        resources {
+            srcDir("src/test/java/resources")
+        }
+    }
 }
 
 dependencies {
@@ -25,8 +30,17 @@ dependencies {
 
     compileOnly("com.google.auto.service:auto-service:1.0.1")
     annotationProcessor("com.google.auto.service:auto-service:1.0.1")
+
+    // Test dependencies — required by tests added in PR #72.
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
 }
 
 java {
     withSourcesJar()
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
