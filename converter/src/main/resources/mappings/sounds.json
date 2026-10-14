@@ -1337,30 +1337,38 @@
             "ball/highresistance_push2": "highresistance_push2",
             "ball/highresistance_push3": "highresistance_push3",
             "ball/highresistance_push4": "highresistance_push4",
-            "ball/hit1": [
-                "slowbouncy_hit1",
-                "slowsliding_hit1"
+            "ball/hot_hit1": [
+                "hot_hit1",
+                "slowbouncy_hit1"
             ],
-            "ball/hit2": [
-                "slowbouncy_hit2",
-                "slowsliding_hit2"
+            "ball/hot_hit2": [
+                "hot_hit2",
+                "slowbouncy_hit2"
             ],
-            "ball/hit3": [
-                "slowbouncy_hit3",
-                "slowsliding_hit3"
+            "ball/hot_hit3": [
+                "hot_hit3",
+                "slowbouncy_hit3"
             ],
-            "ball/hit4": [
-                "slowbouncy_hit4",
-                "slowsliding_hit4"
+            "ball/hot_hit4": [
+                "hot_hit4",
+                "slowbouncy_hit4"
             ],
-            "ball/hot_hit1": "hot_hit1",
-            "ball/hot_hit2": "hot_hit2",
-            "ball/hot_hit3": "hot_hit3",
-            "ball/hot_hit4": "hot_hit4",
-            "ball/hot_push1": "hot_push1",
-            "ball/hot_push2": "hot_push2",
-            "ball/hot_push3": "hot_push3",
-            "ball/hot_push4": "hot_push4",
+            "ball/hot_push1": [
+                "hot_push1",
+                "slowbouncy_push1"
+            ],
+            "ball/hot_push2": [
+                "hot_push2",
+                "slowbouncy_push2"
+            ],
+            "ball/hot_push3": [
+                "hot_push3",
+                "slowbouncy_push3"
+            ],
+            "ball/hot_push4": [
+                "hot_push4",
+                "slowbouncy_push4"
+            ],
             "ball/light_hit1": "light_hit1",
             "ball/light_hit2": "light_hit2",
             "ball/light_hit3": "light_hit3",
@@ -1369,10 +1377,6 @@
             "ball/light_push2": "light_push2",
             "ball/light_push3": "light_push3",
             "ball/light_push4": "light_push4",
-            "ball/push1": "slowbouncy_push1",
-            "ball/push2": "slowbouncy_push2",
-            "ball/push3": "slowbouncy_push3",
-            "ball/push4": "slowbouncy_push4",
             "ball/regular_hit1": "regular_hit1",
             "ball/regular_hit2": "regular_hit2",
             "ball/regular_hit3": "regular_hit3",
@@ -1389,6 +1393,10 @@
             "ball/slowflat_push2": "slowflat_push2",
             "ball/slowflat_push3": "slowflat_push3",
             "ball/slowflat_push4": "slowflat_push4",
+            "ball/slowsliding_hit1": "slowsliding_hit1",
+            "ball/slowsliding_hit2": "slowsliding_hit2",
+            "ball/slowsliding_hit3": "slowsliding_hit3",
+            "ball/slowsliding_hit4": "slowsliding_hit4",
             "ball/slowsliding_push1": "slowsliding_push1",
             "ball/slowsliding_push2": "slowsliding_push2",
             "ball/slowsliding_push3": "slowsliding_push3",

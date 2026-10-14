@@ -53,6 +53,7 @@ public class SignTransformer implements TextureTransformer {
             new SignData("mangrove_sign", "mangrove_sign"),
             new SignData("oak_sign", "sign"),
             new SignData("pale_oak_sign", "pale_oak_sign"),
+            new SignData("poplar_sign", "poplar_sign"),
             new SignData("spruce_sign", "sign_spruce"),
             new SignData("warped_sign", "sign_warped")
     );

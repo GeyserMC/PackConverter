@@ -63,7 +63,7 @@ public final class VanillaPackProvider {
 
     private static final List<String> REQUIRED_ASSETS = List.of(); // While not used yet, it's possible we will need other assets as some point
 
-    public static final String DEFAULT_VERSION = "26.2";
+    public static final String DEFAULT_VERSION = "26.3";
 
     /**
      * Downloads the vanilla jar from Mojang's servers using {@link #DEFAULT_VERSION}.

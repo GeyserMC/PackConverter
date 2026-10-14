@@ -30,7 +30,11 @@ import java.awt.image.BufferedImage;
 
 public abstract class BaseLeafParticleTransformer extends GridSpritesheetParticleTransformer {
     public BaseLeafParticleTransformer(String bedrockPath, String javaPath) {
-        super(bedrockPath, javaPath, 3, 4, 5, 5);
+        super(bedrockPath, javaPath, 3, 4, 7, 7);
+    }
+
+    public BaseLeafParticleTransformer(String bedrockPath, int rows, int columns, String... javaPaths) {
+        super(bedrockPath, rows, columns, 7, 7, javaPaths);
     }
 
     @Override

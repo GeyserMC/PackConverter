@@ -47,8 +47,8 @@ public class HangingSignTransformer implements TextureTransformer {
             "birch_hanging_sign", "cherry_hanging_sign",
             "crimson_hanging_sign", "dark_oak_hanging_sign",
             "jungle_hanging_sign", "mangrove_hanging_sign",
-            "oak_hanging_sign", "spruce_hanging_sign",
-            "warped_hanging_sign"
+            "oak_hanging_sign", "poplar_hanging_sign",
+            "spruce_hanging_sign", "warped_hanging_sign"
     );
 
     @Override

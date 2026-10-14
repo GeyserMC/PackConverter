@@ -92,12 +92,7 @@ public class ColorizeTransformer implements TextureTransformer {
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(189, 201, 255)), new Overlay("item/lingering_potion.png") },"items/potion_bottle_lingering_windCharged.png"),
         new ColorizeData(new Overlay[] { new Overlay("item/potion_overlay.png", new Color(120, 105, 90)), new Overlay("item/lingering_potion.png") },"items/potion_bottle_lingering_weaving.png"),
 
-        // Map (Colors from px 6/7 from original bedrock textures)
-        new ColorizeData(new Overlay[] { new Overlay("item/filled_map.png"),  new Overlay("item/filled_map_markings.png", new Color(82, 76, 68)) },"items/map_mansion.png"),
-        new ColorizeData(new Overlay[] { new Overlay("item/filled_map.png"),  new Overlay("item/filled_map_markings.png", new Color(67, 124, 111)) },"items/map_monument.png"),
-        new ColorizeData(new Overlay[] { new Overlay("item/filled_map.png"),  new Overlay("item/filled_map_markings.png", new Color(103, 90, 173)) },"items/map_nautilus.png"),
-        new ColorizeData(new Overlay[] { new Overlay("item/filled_map.png"),  new Overlay("item/filled_map_markings.png", new Color(131, 131, 131)) },"items/map_filled.png"),
-        new ColorizeData(new Overlay[] { new Overlay("item/filled_map.png"),  new Overlay("item/filled_map_markings.png", new Color(131, 131, 131), true) }, "items/map_locked.png"),
+        // Map
         // new ColorizeData(new Overlay[] { new Overlay("ui/cartography_table_map.png"),  new Overlay("ui/cartography_table_glass.png") }, "ui/cartography_table_glass.png"),
 
         // Potion (Colors from px 7/9 from original bedrock textures)

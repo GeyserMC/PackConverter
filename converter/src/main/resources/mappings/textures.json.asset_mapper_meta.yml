@@ -35,6 +35,16 @@ java:
         - entity/zombie_villager/profession_level/gold
         - entity/zombie_villager/profession_level/iron
         - entity/zombie_villager/profession_level/stone
+        - block/destroy_oit_stage_0
+        - block/destroy_oit_stage_1
+        - block/destroy_oit_stage_2
+        - block/destroy_oit_stage_3
+        - block/destroy_oit_stage_4
+        - block/destroy_oit_stage_5
+        - block/destroy_oit_stage_6
+        - block/destroy_oit_stage_7
+        - block/destroy_oit_stage_8
+        - block/destroy_oit_stage_9
     matching-paths:
         - block/acacia_shelf
         - block/bamboo_block
@@ -572,6 +582,56 @@ java:
         - block/cinnabar_bricks
         - entity/sulfur_cube/sulfur_cube_inner_small
         - entity/sulfur_cube/sulfur_cube_outer_small
+        - block/orange_poplar_leaves
+        - block/poplar_door_bottom
+        - block/poplar_door_top
+        - block/poplar_log_top
+        - block/poplar_planks
+        - block/poplar_sapling
+        - block/poplar_shelf
+        - block/poplar_trapdoor
+        - block/red_poplar_leaves
+        - block/red_shrub
+        - block/straw_bed
+        - block/stripped_poplar_log_top
+        - block/yellow_poplar_leaves
+        - entity/cushion/black_cushion
+        - entity/cushion/blue_cushion
+        - entity/cushion/brown_cushion
+        - entity/cushion/cyan_cushion
+        - entity/cushion/gray_cushion
+        - entity/cushion/green_cushion
+        - entity/cushion/light_blue_cushion
+        - entity/cushion/light_gray_cushion
+        - entity/cushion/lime_cushion
+        - entity/cushion/magenta_cushion
+        - entity/cushion/orange_cushion
+        - entity/cushion/pink_cushion
+        - entity/cushion/purple_cushion
+        - entity/cushion/red_cushion
+        - entity/cushion/white_cushion
+        - entity/cushion/yellow_cushion
+        - item/black_cushion
+        - item/blue_cushion
+        - item/brown_cushion
+        - item/cyan_cushion
+        - item/gray_cushion
+        - item/green_cushion
+        - item/light_blue_cushion
+        - item/light_gray_cushion
+        - item/lime_cushion
+        - item/magenta_cushion
+        - item/orange_cushion
+        - item/pink_cushion
+        - item/poplar_boat
+        - item/poplar_chest_boat
+        - item/poplar_door
+        - item/poplar_hanging_sign
+        - item/poplar_sign
+        - item/purple_cushion
+        - item/red_cushion
+        - item/white_cushion
+        - item/yellow_cushion
     transformed-paths:
         - block/copper_chain
         - entity/conduit/base
@@ -1077,6 +1137,18 @@ java:
         - entity/sheep/sheep_wool_baby
         - entity/phantom/phantom
         - entity/phantom/phantom_eyes
+        - particle/orange_poplar_1
+        - particle/orange_poplar_2
+        - particle/orange_poplar_3
+        - particle/orange_poplar_4
+        - particle/red_poplar_1
+        - particle/red_poplar_2
+        - particle/red_poplar_3
+        - particle/red_poplar_4
+        - particle/yellow_poplar_1
+        - particle/yellow_poplar_2
+        - particle/yellow_poplar_3
+        - particle/yellow_poplar_4
     relative-path: textures
 bedrock:
     ignored-paths:
@@ -1888,6 +1960,56 @@ bedrock:
         - blocks/cinnabar_bricks
         - entity/sulfur_cube/sulfur_cube_inner_small
         - entity/sulfur_cube/sulfur_cube_outer_small
+        - blocks/orange_poplar_leaves
+        - blocks/poplar_door_bottom
+        - blocks/poplar_door_top
+        - blocks/poplar_log_top
+        - blocks/poplar_planks
+        - blocks/poplar_sapling
+        - blocks/poplar_shelf
+        - blocks/poplar_trapdoor
+        - blocks/red_poplar_leaves
+        - blocks/red_shrub
+        - blocks/straw_bed
+        - blocks/stripped_poplar_log_top
+        - blocks/yellow_poplar_leaves
+        - entity/cushion/black_cushion
+        - entity/cushion/blue_cushion
+        - entity/cushion/brown_cushion
+        - entity/cushion/cyan_cushion
+        - entity/cushion/gray_cushion
+        - entity/cushion/green_cushion
+        - entity/cushion/light_blue_cushion
+        - entity/cushion/light_gray_cushion
+        - entity/cushion/lime_cushion
+        - entity/cushion/magenta_cushion
+        - entity/cushion/orange_cushion
+        - entity/cushion/pink_cushion
+        - entity/cushion/purple_cushion
+        - entity/cushion/red_cushion
+        - entity/cushion/white_cushion
+        - entity/cushion/yellow_cushion
+        - items/black_cushion
+        - items/blue_cushion
+        - items/brown_cushion
+        - items/cyan_cushion
+        - items/gray_cushion
+        - items/green_cushion
+        - items/light_blue_cushion
+        - items/light_gray_cushion
+        - items/lime_cushion
+        - items/magenta_cushion
+        - items/orange_cushion
+        - items/pink_cushion
+        - items/poplar_boat
+        - items/poplar_chest_boat
+        - items/poplar_door
+        - items/poplar_hanging_sign
+        - items/poplar_sign
+        - items/purple_cushion
+        - items/red_cushion
+        - items/white_cushion
+        - items/yellow_cushion
     transformed-paths:
         - blocks/chest_front
         - blocks/chest_side
@@ -2190,4 +2312,7 @@ bedrock:
         - entity/sheep/sheep
         - entity/sheep/sheep_baby
         - entity/phantom
+        - particle/orange_poplar_leaves_atlas
+        - particle/red_poplar_leaves_atlas
+        - particle/yellow_poplar_leaves_atlas
     relative-path: textures

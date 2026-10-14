@@ -29,6 +29,7 @@ package org.geysermc.pack.converter.util;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -51,7 +52,7 @@ public class JsonMappings {
         Map<String, List<String>> mappings = new HashMap<>();
 
         for (Map.Entry<String, JsonElement> entry : jsonMappings.entrySet()) {
-            mappings.putAll(extractMapping(entry.getValue(), entry.getKey(), List.of()));
+            mappings.putAll(extractMapping(entry.getValue(), entry.getKey(), null));
         }
 
         JsonMappings instance = new JsonMappings(mappings);
@@ -60,19 +61,17 @@ public class JsonMappings {
         return instance;
     }
 
-    private static Map<String, List<String>> extractMapping(JsonElement element, String key, List<String> parents) {
+    private static Map<String, List<String>> extractMapping(JsonElement element, String key, @Nullable String parent) {
         if (element.isJsonObject()) {
             Map<String, List<String>> mappings = new HashMap<>();
 
             for (Map.Entry<String, JsonElement> entry : element.getAsJsonObject().entrySet()) {
-                List<String> newParents = new ArrayList<>(parents);
-                newParents.add(key);
-                mappings.putAll(extractMapping(entry.getValue(), key + "/" + entry.getKey(), newParents));
+                mappings.putAll(extractMapping(entry.getValue(), key + "/" + entry.getKey(), key));
             }
 
             return mappings;
         } else if (element.isJsonArray()) {
-            String prefix = prefix(parents);
+            String prefix = prefix(parent);
             List<String> paths = new ArrayList<>();
 
             for (JsonElement arrayElement : element.getAsJsonArray()) {
@@ -85,15 +84,15 @@ public class JsonMappings {
 
             return Map.of(key, paths);
         } else if (element.isJsonPrimitive()) {
-            return Map.of(key, List.of(prefix(parents) + element.getAsString()));
+            return Map.of(key, List.of(prefix(parent) + element.getAsString()));
         }
 
         return Map.of();
     }
 
-    private static String prefix(List<String> parents) {
-        if (parents.isEmpty()) return "";
-        return String.join("/", parents) + "/";
+    private static String prefix(@Nullable String parent) {
+        if (parent == null) return "";
+        return parent + "/";
     }
 
     private final Map<String, List<String>> mappings;
