@@ -27,9 +27,8 @@
 package org.geysermc.pack.converter.type.texture.transformer.type.ui;
 
 import com.google.auto.service.AutoService;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 import net.kyori.adventure.key.Key;
+import org.geysermc.pack.bedrock.resource.textures.NineSlice;
 import org.geysermc.pack.converter.type.texture.transformer.TextureTransformer;
 import org.geysermc.pack.converter.type.texture.transformer.TransformContext;
 import org.geysermc.pack.converter.util.KeyUtil;
@@ -46,7 +45,7 @@ import java.io.IOException;
 @AutoService(TextureTransformer.class)
 public class UISizeTransformer implements TextureTransformer {
 
-    private static final JsonArray FULLBARSLICE = new JsonArray();
+    private static final float[] FULLBARSLICE = new float[] { 1, 0, 1, 0 };
 
     @Override
     public void transform(@NotNull TransformContext context) throws IOException {
@@ -79,26 +78,15 @@ public class UISizeTransformer implements TextureTransformer {
         return TextureTransformer.ORDER_FIRST;
     }
 
-    private void writeUiJson(TransformContext context, BufferedImage image, String jsonName, JsonArray nineSlice) {
+    private void writeUiJson(TransformContext context, BufferedImage image, String jsonName, float[] nineSlice) {
         writeUiJson(context, image, jsonName, nineSlice, image.getWidth(), image.getHeight());
     }
 
-    private void writeUiJson(TransformContext context, BufferedImage image, String jsonName, JsonArray nineSlice, int customWidth, int customHeight) {
-        JsonObject rootObject = new JsonObject();
-        rootObject.add("nineslice_size", nineSlice);
+    private void writeUiJson(TransformContext context, BufferedImage image, String jsonName, float[] nineSlice, int customWidth, int customHeight) {
+        NineSlice definition = new NineSlice();
+        definition.ninesliceSize(nineSlice);
+        definition.baseSize(new float[] { customWidth, customHeight });
 
-        JsonArray baseSize = new JsonArray();
-        baseSize.add(customWidth);
-        baseSize.add(customHeight);
-        rootObject.add("base_size", baseSize);
-
-        context.bedrockResourcePack().addExtraFile(rootObject, "textures/ui/%s.json".formatted(jsonName));
-    }
-
-    static {
-        FULLBARSLICE.add(1);
-        FULLBARSLICE.add(0);
-        FULLBARSLICE.add(1);
-        FULLBARSLICE.add(0);
+        context.bedrockResourcePack().addNineSlice(definition, "textures/ui/%s.json".formatted(jsonName));
     }
 }

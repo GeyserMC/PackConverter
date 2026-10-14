@@ -2,7 +2,9 @@ package org.geysermc.pack.bedrock.resource.entity.cliententity.description;
 
 import com.google.gson.annotations.SerializedName;
 import java.lang.String;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -11,12 +13,15 @@ import java.util.Map;
  * The place where variables, and animations / controller to be run is specified.
  */
 public class Scripts {
-  public String[] animate;
+  public List<Map<String, String>> animate = new ArrayList<>();
 
   public String[] initialize;
 
   @SerializedName("pre_animation")
   public String[] preAnimation;
+
+  @SerializedName("hide_held_items")
+  public String hideHeldItems;
 
   @SerializedName("parent_setup")
   public String parentSetup;
@@ -42,7 +47,7 @@ public class Scripts {
    *
    * @return Animate
    */
-  public String[] animate() {
+  public List<Map<String, String>> animate() {
     return this.animate;
   }
 
@@ -51,7 +56,7 @@ public class Scripts {
    *
    * @param animate Animate
    */
-  public void animate(String[] animate) {
+  public void animate(List<Map<String, String>> animate) {
     this.animate = animate;
   }
 
@@ -89,6 +94,14 @@ public class Scripts {
    */
   public void preAnimation(String[] preAnimation) {
     this.preAnimation = preAnimation;
+  }
+
+  public String hideHeldItems() {
+    return this.hideHeldItems;
+  }
+
+  public void hideHeldItems(String hideHeldItems) {
+    this.hideHeldItems = hideHeldItems;
   }
 
   /**

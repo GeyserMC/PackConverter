@@ -50,20 +50,10 @@ public class Manifest {
     this.formatVersion = formatVersion;
   }
 
-  /**
-   * These are the different features that the pack makes use of that aren't necessarily enabled by default.
-   *
-   * @return Capabilities
-   */
   public Capabilities capabilities() {
     return this.capabilities;
   }
 
-  /**
-   * These are the different features that the pack makes use of that aren't necessarily enabled by default.
-   *
-   * @param capabilities Capabilities
-   */
   public void capabilities(Capabilities capabilities) {
     this.capabilities = capabilities;
   }

@@ -29,13 +29,17 @@ package org.geysermc.pack.bedrock.resource;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import org.geysermc.pack.bedrock.resource.animations.ActorAnimation;
 import org.geysermc.pack.bedrock.resource.attachables.Attachables;
+import org.geysermc.pack.bedrock.resource.entity.Entity;
 import org.geysermc.pack.bedrock.resource.models.entity.ModelEntity;
 import org.geysermc.pack.bedrock.resource.render_controllers.RenderControllers;
 import org.geysermc.pack.bedrock.resource.sounds.SoundDefinitions;
 import org.geysermc.pack.bedrock.resource.sounds.sounddefinitions.Sounds;
 import org.geysermc.pack.bedrock.resource.textures.FlipbookTexture;
 import org.geysermc.pack.bedrock.resource.textures.ItemTexture;
+import org.geysermc.pack.bedrock.resource.textures.NineSlice;
 import org.geysermc.pack.bedrock.resource.textures.TerrainTexture;
 import org.geysermc.pack.bedrock.resource.textures.itemtexture.TextureData;
 import org.geysermc.pack.bedrock.resource.textures.terraintexture.texturedata.Textures;
@@ -76,6 +80,11 @@ public class BedrockResourcePack {
     private Languages languages;
     private Map<String, RenderControllers> renderControllers;
     private Map<String, FlipbookTexture> flipbookTextures;
+    private Map<String, NineSlice> nineSlices;
+    private Map<String, Entity> clientEntities;
+    private Map<String, ActorAnimation> animations;
+    private Map<String, Blocks> blocks;
+    private org.geysermc.pack.bedrock.resource.Sounds sounds;
 
     private Map<String, ModelEntity> blockModels;
     private Map<String, ModelEntity> entityModels;
@@ -195,6 +204,101 @@ public class BedrockResourcePack {
      */
     public void flipbookTextures(@Nullable Map<String, FlipbookTexture> flipbookTextures) {
         this.flipbookTextures = flipbookTextures;
+    }
+
+    /**
+     * Get the nine-slice definitions of the resource pack.
+     *
+     * @return the nine-slice definitions of the resource pack
+     */
+    @Nullable
+    public Map<String, NineSlice> nineSlices() {
+        return this.nineSlices;
+    }
+
+    /**
+     * Set the nine-slice definitions of the resource pack.
+     *
+     * @param nineSlices the nine-slice definitions of the resource pack
+     */
+    public void nineSlices(@Nullable Map<String, NineSlice> nineSlices) {
+        this.nineSlices = nineSlices;
+    }
+
+    /**
+     * Get the client entities of the resource pack.
+     *
+     * @return the client entities of the resource pack
+     */
+    @Nullable
+    public Map<String, Entity> clientEntities() {
+        return this.clientEntities;
+    }
+
+    /**
+     * Set the client entities of the resource pack.
+     *
+     * @param clientEntities the client entities of the resource pack
+     */
+    public void clientEntities(@Nullable Map<String, Entity> clientEntities) {
+        this.clientEntities = clientEntities;
+    }
+
+    /**
+     * Get the animations of the resource pack.
+     *
+     * @return the animations of the resource pack
+     */
+    @Nullable
+    public Map<String, ActorAnimation> animations() {
+        return this.animations;
+    }
+
+    /**
+     * Set the animations of the resource pack.
+     *
+     * @param animations the animations of the resource pack
+     */
+    public void animations(@Nullable Map<String, ActorAnimation> animations) {
+        this.animations = animations;
+    }
+
+    /**
+     * Get the blocks of the resource pack.
+     *
+     * @return the blocks of the resource pack
+     */
+    @Nullable
+    public Map<String, Blocks> blocks() {
+        return this.blocks;
+    }
+
+    /**
+     * Set the blocks of the resource pack.
+     *
+     * @param blocks the blocks of the resource pack
+     */
+    public void blocks(@Nullable Map<String, Blocks> blocks) {
+        this.blocks = blocks;
+    }
+
+    /**
+     * Get the block and entity sounds of the resource pack.
+     *
+     * @return the block and entity sounds of the resource pack
+     */
+    @Nullable
+    public org.geysermc.pack.bedrock.resource.Sounds sounds() {
+        return this.sounds;
+    }
+
+    /**
+     * Set the block and entity sounds of the resource pack.
+     *
+     * @param sounds the block and entity sounds of the resource pack
+     */
+    public void sounds(@Nullable org.geysermc.pack.bedrock.resource.Sounds sounds) {
+        this.sounds = sounds;
     }
 
     /**
@@ -400,6 +504,62 @@ public class BedrockResourcePack {
     }
 
     /**
+     * Add a nine-slice definition to the resource pack.
+     *
+     * @param nineSlice the data of the nine-slice definition
+     * @param location the location of the final json
+     */
+    public void addNineSlice(@NotNull NineSlice nineSlice, @NotNull String location) {
+        if (this.nineSlices == null) {
+            this.nineSlices = new HashMap<>();
+        }
+
+        this.nineSlices.put(location, nineSlice);
+    }
+
+    /**
+     * Add a client entity to the resource pack.
+     *
+     * @param clientEntity the data of the client entity
+     * @param location the location of the final json
+     */
+    public void addClientEntity(@NotNull Entity clientEntity, @NotNull String location) {
+        if (this.clientEntities == null) {
+            this.clientEntities = new HashMap<>();
+        }
+
+        this.clientEntities.put(location, clientEntity);
+    }
+
+    /**
+     * Add an animation to the resource pack.
+     *
+     * @param animation the data of the animation
+     * @param location the location of the final json
+     */
+    public void addAnimation(@NotNull ActorAnimation animation, @NotNull String location) {
+        if (this.animations == null) {
+            this.animations = new HashMap<>();
+        }
+
+        this.animations.put(location, animation);
+    }
+
+    /**
+     * Add a block to the resource pack.
+     *
+     * @param id the id of the block
+     * @param block the data of the block
+     */
+    public void addBlock(@NotNull String id, @NotNull Blocks block) {
+        if (this.blocks == null) {
+            this.blocks = new HashMap<>();
+        }
+
+        this.blocks.put(id, block);
+    }
+
+    /**
      * Add a render controller to the resource pack.
      *
      * @param renderController the data of the render controller
@@ -558,6 +718,38 @@ public class BedrockResourcePack {
             for (Map.Entry<String, RenderControllers> renderController : this.renderControllers.entrySet()) {
                 exportJson(GSON, this.directory.resolve(renderController.getKey()), renderController.getValue());
             }
+        }
+
+        if (this.nineSlices != null) {
+            for (Map.Entry<String, NineSlice> nineSlice : this.nineSlices.entrySet()) {
+                exportJson(GSON, this.directory.resolve(nineSlice.getKey()), nineSlice.getValue());
+            }
+        }
+
+        if (this.clientEntities != null) {
+            for (Map.Entry<String, Entity> clientEntity : this.clientEntities.entrySet()) {
+                exportJson(GSON, this.directory.resolve(clientEntity.getKey()), clientEntity.getValue());
+            }
+        }
+
+        if (this.animations != null) {
+            for (Map.Entry<String, ActorAnimation> animation : this.animations.entrySet()) {
+                exportJson(GSON, this.directory.resolve(animation.getKey()), animation.getValue());
+            }
+        }
+
+        if (this.blocks != null) {
+            JsonObject blocks = new JsonObject();
+            blocks.add("format_version", GSON.toJsonTree(new int[] { 1, 1, 0 }));
+            for (Map.Entry<String, Blocks> block : this.blocks.entrySet()) {
+                blocks.add(block.getKey(), GSON.toJsonTree(block.getValue()));
+            }
+
+            exportJson(GSON, this.directory.resolve("blocks.json"), blocks);
+        }
+
+        if (this.sounds != null) {
+            exportJson(GSON, this.directory.resolve("sounds.json"), this.sounds);
         }
 
         if (this.blockModels != null) {

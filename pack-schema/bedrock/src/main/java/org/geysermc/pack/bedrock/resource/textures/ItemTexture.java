@@ -47,16 +47,10 @@ public class ItemTexture {
     this.textureData = textureData;
   }
 
-  /**
-   * @return Texture Name
-   */
   public String textureName() {
     return this.textureName;
   }
 
-  /**
-   * @param textureName Texture Name
-   */
   public void textureName(String textureName) {
     this.textureName = textureName;
   }

@@ -13,12 +13,15 @@ import java.util.Map;
 public class Metadata {
   public String[] authors;
 
-  public String license;
-
-  public String url;
-
   @SerializedName("generated_with")
   private Map<String, String[]> generatedWith = new HashMap<>();
+
+  public String license;
+
+  @SerializedName("product_type")
+  public String productType;
+
+  public String url;
 
   /**
    * Name of the author(s) of the pack.
@@ -36,6 +39,24 @@ public class Metadata {
    */
   public void authors(String[] authors) {
     this.authors = authors;
+  }
+
+  /**
+   * A list of tools and their version that have modified this pack.
+   *
+   * @return Generated With
+   */
+  public Map<String, String[]> generatedWith() {
+    return this.generatedWith;
+  }
+
+  /**
+   * A list of tools and their version that have modified this pack.
+   *
+   * @param generatedWith Generated With
+   */
+  public void generatedWith(Map<String, String[]> generatedWith) {
+    this.generatedWith = generatedWith;
   }
 
   /**
@@ -57,6 +78,24 @@ public class Metadata {
   }
 
   /**
+   * The type of product this pack is. This is used to determine how the pack is displayed in the store.
+   *
+   * @return Product Type
+   */
+  public String productType() {
+    return this.productType;
+  }
+
+  /**
+   * The type of product this pack is. This is used to determine how the pack is displayed in the store.
+   *
+   * @param productType Product Type
+   */
+  public void productType(String productType) {
+    this.productType = productType;
+  }
+
+  /**
    * The home website of your pack.
    *
    * @return Url
@@ -72,23 +111,5 @@ public class Metadata {
    */
   public void url(String url) {
     this.url = url;
-  }
-
-  /**
-   * A list of tools and their version that have modified this pack.
-   *
-   * @return Generated With
-   */
-  public Map<String, String[]> generatedWith() {
-    return this.generatedWith;
-  }
-
-  /**
-   * A list of tools and their version that have modified this pack.
-   *
-   * @param generatedWith Generated With
-   */
-  public void generatedWith(Map<String, String[]> generatedWith) {
-    this.generatedWith = generatedWith;
   }
 }

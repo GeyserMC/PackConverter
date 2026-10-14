@@ -5,6 +5,8 @@ import java.lang.String;
 
 /**
  * Fog
+ * <p>
+ * A rendering feature intended for obscuring the player's view distance, usually for colored atmospherics or for seamlessly occluding sharp boundaries such as unloaded chunks..
  */
 public class Fog {
   @SerializedName("format_version")

@@ -192,14 +192,14 @@ public class Bones {
   }
 
   /**
-   * ***EXPERIMENTAL*** A triangle or quad mesh object. Can be used in conjunction with cubes and texture geometry.
+   * A triangle or quad mesh object. Can be used in conjunction with cubes and texture geometry.
    */
   public PolyMesh polyMesh() {
     return this.polyMesh;
   }
 
   /**
-   * ***EXPERIMENTAL*** A triangle or quad mesh object. Can be used in conjunction with cubes and texture geometry.
+   * A triangle or quad mesh object. Can be used in conjunction with cubes and texture geometry.
    */
   public void polyMesh(PolyMesh polyMesh) {
     this.polyMesh = polyMesh;
@@ -232,7 +232,7 @@ public class Bones {
   }
 
   /**
-   * ***EXPERIMENTAL*** Adds a mesh to the bone's geometry by converting texels in a texture into boxes.
+   * Adds a mesh to the bone's geometry by converting texels in a texture into boxes.
    *
    * @return Texture Meshes
    */
@@ -241,7 +241,7 @@ public class Bones {
   }
 
   /**
-   * ***EXPERIMENTAL*** Adds a mesh to the bone's geometry by converting texels in a texture into boxes.
+   * Adds a mesh to the bone's geometry by converting texels in a texture into boxes.
    *
    * @param textureMeshes Texture Meshes
    */

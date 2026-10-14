@@ -4,6 +4,8 @@ import org.geysermc.pack.bedrock.resource.textures.terraintexture.texturedata.Te
 
 /**
  * Texture Data
+ * <p>
+ * A JSON object with shortnames and texture data.
  */
 public class TextureData {
   public Textures textures;

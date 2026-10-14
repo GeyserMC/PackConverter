@@ -57,7 +57,7 @@ public class Modules {
   }
 
   /**
-   * The programming language to use.
+   * Only present if `type` is `script`. This indicates the language in which scripts are written in the pack. The only supported value is `javascript`.
    *
    * @return Language
    */
@@ -66,7 +66,7 @@ public class Modules {
   }
 
   /**
-   * The programming language to use.
+   * Only present if `type` is `script`. This indicates the language in which scripts are written in the pack. The only supported value is `javascript`.
    *
    * @param language Language
    */
@@ -77,7 +77,7 @@ public class Modules {
   /**
    * A valid UUID v4.
    *
-   * @return An UUID V4
+   * @return A UUID Format V4
    */
   public String uuid() {
     return this.uuid;
@@ -86,7 +86,7 @@ public class Modules {
   /**
    * A valid UUID v4.
    *
-   * @param uuid An UUID V4
+   * @param uuid A UUID Format V4
    */
   public void uuid(String uuid) {
     this.uuid = uuid;
@@ -111,7 +111,7 @@ public class Modules {
   }
 
   /**
-   * The javascript entry point for tests, only works if types has been set to `javascript`.
+   * The entry file for the pack's scripts. Requires `type` to be set to `script`.
    *
    * @return Entry
    */
@@ -120,7 +120,7 @@ public class Modules {
   }
 
   /**
-   * The javascript entry point for tests, only works if types has been set to `javascript`.
+   * The entry file for the pack's scripts. Requires `type` to be set to `script`.
    *
    * @param entry Entry
    */

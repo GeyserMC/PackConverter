@@ -18,14 +18,17 @@ public class Sounds {
 
   public Float volume;
 
-  @SerializedName("load_on_low_memory")
-  public Boolean loadOnLowMemory;
-
   public Boolean stream;
 
   public String name;
 
   public Integer weight;
+
+  @SerializedName("allow_concurrent_streaming")
+  public Boolean allowConcurrentStreaming;
+
+  @SerializedName("load_on_low_memory")
+  public Boolean loadOnLowMemory;
 
   /**
    * @return Is 3D
@@ -78,24 +81,6 @@ public class Sounds {
   }
 
   /**
-   * Marks if this audio should be loaded or not on low memory.
-   *
-   * @return Load On Low Memory
-   */
-  public Boolean loadOnLowMemory() {
-    return this.loadOnLowMemory;
-  }
-
-  /**
-   * Marks if this audio should be loaded or not on low memory.
-   *
-   * @param loadOnLowMemory Load On Low Memory
-   */
-  public void loadOnLowMemory(boolean loadOnLowMemory) {
-    this.loadOnLowMemory = loadOnLowMemory;
-  }
-
-  /**
    * If marked true then minecraft will stream the audio.
    *
    * @return Stream
@@ -139,5 +124,41 @@ public class Sounds {
    */
   public void weight(int weight) {
     this.weight = weight;
+  }
+
+  /**
+   * Allows streamed ordinary sound events to play independent simultaneous instances.
+   *
+   * @return Allow Concurrent Streaming
+   */
+  public Boolean allowConcurrentStreaming() {
+    return this.allowConcurrentStreaming;
+  }
+
+  /**
+   * Allows streamed ordinary sound events to play independent simultaneous instances.
+   *
+   * @param allowConcurrentStreaming Allow Concurrent Streaming
+   */
+  public void allowConcurrentStreaming(boolean allowConcurrentStreaming) {
+    this.allowConcurrentStreaming = allowConcurrentStreaming;
+  }
+
+  /**
+   * Marks if this audio should be loaded or not on low memory.
+   *
+   * @return Load On Low Memory
+   */
+  public Boolean loadOnLowMemory() {
+    return this.loadOnLowMemory;
+  }
+
+  /**
+   * Marks if this audio should be loaded or not on low memory.
+   *
+   * @param loadOnLowMemory Load On Low Memory
+   */
+  public void loadOnLowMemory(boolean loadOnLowMemory) {
+    this.loadOnLowMemory = loadOnLowMemory;
   }
 }

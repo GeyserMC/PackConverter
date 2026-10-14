@@ -2,6 +2,7 @@ package org.geysermc.pack.bedrock.resource.entity.cliententity;
 
 import com.google.gson.annotations.SerializedName;
 import java.lang.Boolean;
+import java.lang.Float;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +30,9 @@ public class Description {
 
   @SerializedName("held_item_ignores_lighting")
   public Boolean heldItemIgnoresLighting;
+
+  @SerializedName("held_item_scale")
+  public Float heldItemScale;
 
   public String identifier;
 
@@ -158,6 +162,24 @@ public class Description {
    */
   public void heldItemIgnoresLighting(boolean heldItemIgnoresLighting) {
     this.heldItemIgnoresLighting = heldItemIgnoresLighting;
+  }
+
+  /**
+   * Allows items held by mobs to be scaled by a factor greater than zero
+   *
+   * @return Held Item Scale
+   */
+  public Float heldItemScale() {
+    return this.heldItemScale;
+  }
+
+  /**
+   * Allows items held by mobs to be scaled by a factor greater than zero
+   *
+   * @param heldItemScale Held Item Scale
+   */
+  public void heldItemScale(float heldItemScale) {
+    this.heldItemScale = heldItemScale;
   }
 
   /**

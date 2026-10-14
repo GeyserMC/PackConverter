@@ -21,6 +21,11 @@ public class SoundDefinitions {
   @SerializedName("max_distance")
   public Float maxDistance;
 
+  @SerializedName("min_distance")
+  public Float minDistance;
+
+  public String subtitle;
+
   /**
    * Whenever or not use legacy distance checking.
    *
@@ -87,5 +92,33 @@ public class SoundDefinitions {
    */
   public void maxDistance(float maxDistance) {
     this.maxDistance = maxDistance;
+  }
+
+  /**
+   * @return Min Distance
+   */
+  public Float minDistance() {
+    return this.minDistance;
+  }
+
+  /**
+   * @param minDistance Min Distance
+   */
+  public void minDistance(float minDistance) {
+    this.minDistance = minDistance;
+  }
+
+  /**
+   * @return Subtitle
+   */
+  public String subtitle() {
+    return this.subtitle;
+  }
+
+  /**
+   * @param subtitle Subtitle
+   */
+  public void subtitle(String subtitle) {
+    this.subtitle = subtitle;
   }
 }

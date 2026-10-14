@@ -11,11 +11,31 @@ import org.geysermc.pack.bedrock.resource.sounds.blocksounds.Events;
  * Block sound definitions.
  */
 public class BlockSounds {
+  public String base;
+
   public float[] volume;
 
   public float[] pitch;
 
   private Map<String, Events> events = new HashMap<>();
+
+  /**
+   * Specifying another block sound they should use sounds for if they do not define a sound themselves
+   *
+   * @return Base
+   */
+  public String base() {
+    return this.base;
+  }
+
+  /**
+   * Specifying another block sound they should use sounds for if they do not define a sound themselves
+   *
+   * @param base Base
+   */
+  public void base(String base) {
+    this.base = base;
+  }
 
   /**
    * A random selection between a minimum and maximum.

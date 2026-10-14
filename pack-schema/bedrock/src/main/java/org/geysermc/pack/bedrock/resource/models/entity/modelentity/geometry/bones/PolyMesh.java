@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import java.lang.Boolean;
 
 /**
- * ***EXPERIMENTAL*** A triangle or quad mesh object. Can be used in conjunction with cubes and texture geometry.
+ * A triangle or quad mesh object. Can be used in conjunction with cubes and texture geometry.
  */
 public class PolyMesh {
   @SerializedName("normalized_uvs")

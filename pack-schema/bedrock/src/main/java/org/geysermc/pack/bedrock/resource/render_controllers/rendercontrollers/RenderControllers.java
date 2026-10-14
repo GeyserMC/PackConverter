@@ -42,6 +42,9 @@ public class RenderControllers {
   @SerializedName("part_visibility")
   public List<Map<String, String>> partVisibility = new ArrayList<>();
 
+  @SerializedName("rebuild_animation_matrices")
+  public Boolean rebuildAnimationMatrices;
+
   public String[] textures;
 
   @SerializedName("uv_anim")
@@ -233,6 +236,24 @@ public class RenderControllers {
    */
   public void partVisibility(List<Map<String, String>> partVisibility) {
     this.partVisibility = partVisibility;
+  }
+
+  /**
+   * Whenever or not to rebuild the animation matrices.
+   *
+   * @return Rebuild Animation Matrices
+   */
+  public Boolean rebuildAnimationMatrices() {
+    return this.rebuildAnimationMatrices;
+  }
+
+  /**
+   * Whenever or not to rebuild the animation matrices.
+   *
+   * @param rebuildAnimationMatrices Rebuild Animation Matrices
+   */
+  public void rebuildAnimationMatrices(boolean rebuildAnimationMatrices) {
+    this.rebuildAnimationMatrices = rebuildAnimationMatrices;
   }
 
   /**

@@ -33,6 +33,7 @@ public class SchemaConfig {
 
     private final Map<String, Object> conditionals = new HashMap<>();
     private final Map<String, Object> types = new HashMap<>();
+    private final Map<String, Map<String, Object>> patches = new HashMap<>();
 
     public Map<String, Object> getConditionals() {
         return conditionals;
@@ -40,5 +41,9 @@ public class SchemaConfig {
 
     public Map<String, Object> getTypes() {
         return types;
+    }
+
+    public Map<String, Map<String, Object>> getPatches() {
+        return patches;
     }
 }

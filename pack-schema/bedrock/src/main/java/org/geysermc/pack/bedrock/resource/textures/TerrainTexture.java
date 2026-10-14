@@ -28,6 +28,8 @@ public class TerrainTexture {
   public String textureName;
 
   /**
+   * Sets the number of mipmap levels for reducing texture quality at varying distances. More mipmap levels means reduced texture quality at farther distances.
+   *
    * @return Num Mip Levels
    */
   public Integer numMipLevels() {
@@ -35,6 +37,8 @@ public class TerrainTexture {
   }
 
   /**
+   * Sets the number of mipmap levels for reducing texture quality at varying distances. More mipmap levels means reduced texture quality at farther distances.
+   *
    * @param numMipLevels Num Mip Levels
    */
   public void numMipLevels(int numMipLevels) {
@@ -42,6 +46,8 @@ public class TerrainTexture {
   }
 
   /**
+   * Adds buffer space to prevent textures from bleeding into each other.
+   *
    * @return Padding
    */
   public Integer padding() {
@@ -49,6 +55,8 @@ public class TerrainTexture {
   }
 
   /**
+   * Adds buffer space to prevent textures from bleeding into each other.
+   *
    * @param padding Padding
    */
   public void padding(int padding) {
@@ -56,6 +64,8 @@ public class TerrainTexture {
   }
 
   /**
+   * The name of your resource pack, which should match the name in this pack's manifest.
+   *
    * @return Resource Pack Name
    */
   public String resourcePackName() {
@@ -63,6 +73,8 @@ public class TerrainTexture {
   }
 
   /**
+   * The name of your resource pack, which should match the name in this pack's manifest.
+   *
    * @param resourcePackName Resource Pack Name
    */
   public void resourcePackName(String resourcePackName) {
@@ -70,6 +82,8 @@ public class TerrainTexture {
   }
 
   /**
+   * A JSON object with shortnames and texture data.
+   *
    * @return Texture Data
    */
   public Map<String, TextureData> textureData() {
@@ -77,22 +91,18 @@ public class TerrainTexture {
   }
 
   /**
+   * A JSON object with shortnames and texture data.
+   *
    * @param textureData Texture Data
    */
   public void textureData(Map<String, TextureData> textureData) {
     this.textureData = textureData;
   }
 
-  /**
-   * @return Texture Name
-   */
   public String textureName() {
     return this.textureName;
   }
 
-  /**
-   * @param textureName Texture Name
-   */
   public void textureName(String textureName) {
     this.textureName = textureName;
   }

@@ -38,6 +38,7 @@ import com.squareup.javapoet.TypeName;
 import com.squareup.javapoet.TypeSpec;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.json.pointer.JsonPointer;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -74,8 +75,8 @@ public final class JsonTemplateToClassConverter {
         URL source = PackSchemaGenerator.class.getResource(input);
 
         try (InputStream stream = source.openStream()) {
-            JsonObject schema = new JsonObject(new String(stream.readAllBytes(), StandardCharsets.UTF_8));
-            String className = CaseUtils.toCamelCase(FilenameUtils.getBaseName(input), true, '_');
+            JsonObject schema = readSchema(input, stream, options);
+            String className = CaseUtils.toCamelCase(FilenameUtils.getBaseName(input), true, '_', '.');
 
             // Not a full schema; usually referenced in other schema
             // files, so we just skip here.
@@ -89,6 +90,15 @@ public final class JsonTemplateToClassConverter {
                     .build();
 
             javaFile.writeTo(output);
+
+            // A file that is a list of objects also gets a class for one entry
+            if ("array".equals(schema.getString("type")) && schema.getValue("items") instanceof JsonObject items && items.containsKey("title") && items.containsKey("properties")) {
+                String entryClassName = CaseUtils.toCamelCase(items.getString("title"), true, ' ');
+                TypeSpec entryClass = createClass(input, packageName, schema, items, entryClassName, entryClassName, entryClassName, output, options);
+                JavaFile.builder(packageName, entryClass)
+                        .build()
+                        .writeTo(output);
+            }
         }
     }
 
@@ -200,7 +210,7 @@ public final class JsonTemplateToClassConverter {
             parentSchema = flatRef.parentObject();
         }
 
-        String propertyType = propertyValue.getString("type");
+        String propertyType = propertyType(propertyValue);
         if (propertyType == null) {
             if (propertyValue.containsKey("properties") || propertyValue.containsKey("items")) {
                 propertyType = "object";
@@ -218,6 +228,7 @@ public final class JsonTemplateToClassConverter {
                 case "integer" -> FieldSpec.builder(Integer.class, fieldName, Modifier.PUBLIC);
                 case "number" -> FieldSpec.builder(Float.class, fieldName, Modifier.PUBLIC);
                 case "boolean" -> FieldSpec.builder(Boolean.class, fieldName, Modifier.PUBLIC);
+                case "any" -> FieldSpec.builder(Object.class, fieldName, Modifier.PUBLIC);
                 case "object" -> FieldSpec.builder(ClassName.get(packageName, StringUtils.capitalize(fieldName)), fieldName, Modifier.PUBLIC);
                 default -> null;
             };
@@ -321,7 +332,7 @@ public final class JsonTemplateToClassConverter {
 
         String ref = propertyValue.getString("$ref");
         if (ref != null) {
-            ResolvedReference refSchema = parseRef(input, parentSchema, propertyValue);
+            ResolvedReference refSchema = parseRef(input, parentSchema, propertyValue, options);
             if (refSchema != null) {
                 String newPackageName = packageName;
                 if (!packageName.endsWith(prevClassName.toLowerCase(Locale.ROOT))) {
@@ -349,7 +360,7 @@ public final class JsonTemplateToClassConverter {
         if (propertyValue.getValue("items") instanceof JsonObject items) {
             ResolvedReference resolvedReference;
             if (items.containsKey("$ref")) {
-                resolvedReference = parseRef(input, parentSchema, items);
+                resolvedReference = parseRef(input, parentSchema, items, options);
                 if (resolvedReference != null) {
                     items = resolvedReference.object();
                     parentSchema = resolvedReference.parentObject();
@@ -427,7 +438,7 @@ public final class JsonTemplateToClassConverter {
                 if (array.getValue(0) instanceof JsonObject object) {
                     String type = object.getString("type");
                     if (type == null && object.getString("$ref") != null) {
-                        ResolvedReference resolvedReference = parseRef(input, parentSchema, object);
+                        ResolvedReference resolvedReference = parseRef(input, parentSchema, object, options);
                         if (resolvedReference != null) {
                             JsonObject resolvedObject = resolvedReference.object();
                             ResolvedReference flatReference = flattenReference(
@@ -525,7 +536,7 @@ public final class JsonTemplateToClassConverter {
 
             String ref = object.getString("$ref");
             if (object.getString("type") == null && ref != null) {
-                ResolvedReference refSchema = parseRef(input, parentSchema, object);
+                ResolvedReference refSchema = parseRef(input, parentSchema, object, options);
                 if (refSchema != null) {
                     String refClassName = ConvertUtil.toClassName(fieldName);
                     TypeSpec.Builder refClass = createClass(
@@ -599,7 +610,7 @@ public final class JsonTemplateToClassConverter {
 
             String ref = object.getString("$ref");
             if (ref != null) {
-                ResolvedReference refSchema = parseRef(input, parentSchema, object);
+                ResolvedReference refSchema = parseRef(input, parentSchema, object, options);
                 if (refSchema != null) {
                     object = refSchema.object();
                     parentSchema = refSchema.parentObject();
@@ -769,12 +780,17 @@ public final class JsonTemplateToClassConverter {
                 Object constValue = ifConst.getValue().getValue("const");
                 Object configuredOption = options.schemaConfig().getConditionals().get(ifConst.getKey());
                 if (constValue.toString().equals(configuredOption)) {
-                    return parseRef(input, parentSchema, jsonObject.getJsonObject("then"));
+                    return parseRef(input, parentSchema, jsonObject.getJsonObject("then"), options);
                 } else if (configuredOption == null) {
                     System.err.println("Could not find " + ifConst.getKey() + " in " + options.schemaConfig().getConditionals());
                 } else {
-                    if (jsonObject.getJsonObject("else") != null) {
-                        return parseRef(input, parentSchema, jsonObject.getJsonObject("else"));
+                    JsonObject elseStatement = jsonObject.getJsonObject("else");
+                    if (elseStatement != null) {
+                        if (elseStatement.containsKey("if")) {
+                            return resolveIf(input, elseStatement, parentSchema, rootClassName, options);
+                        }
+
+                        return parseRef(input, parentSchema, elseStatement, options);
                     }
 
                     System.out.println("Skipping " + ifConst.getKey() + " because " + constValue + " != " + configuredOption);
@@ -785,8 +801,37 @@ public final class JsonTemplateToClassConverter {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
+    private static JsonObject readSchema(@NotNull String location, @NotNull InputStream stream, @NotNull ConverterOptions options) throws IOException {
+        JsonObject schema = new JsonObject(new String(stream.readAllBytes(), StandardCharsets.UTF_8));
+        Map<String, Object> patches = options.schemaConfig().getPatches().get(location);
+        if (patches != null) {
+            patches.forEach((pointer, value) -> JsonPointer.from(pointer).writeJson(schema, value instanceof Map<?, ?> map ? new JsonObject((Map<String, Object>) map) : value, true));
+        }
+
+        return schema;
+    }
+
     @Nullable
-    private static ResolvedReference parseRef(@NotNull String input, @NotNull JsonObject parentJson, @NotNull JsonObject object) {
+    private static String propertyType(@NotNull JsonObject object) {
+        Object type = object.getValue("type");
+        if (type instanceof JsonArray types) {
+            return types.stream()
+                    .map(Object::toString)
+                    .filter(value -> !value.equals("null"))
+                    .findFirst()
+                    .orElse(null);
+        }
+
+        if (type == null && object.getValue("const") instanceof String) {
+            return "string";
+        }
+
+        return (String) type;
+    }
+
+    @Nullable
+    private static ResolvedReference parseRef(@NotNull String input, @NotNull JsonObject parentJson, @NotNull JsonObject object, @NotNull ConverterOptions options) {
         String ref = object.getString("$ref");
 
         // Definition is inside this JSON file
@@ -808,7 +853,7 @@ public final class JsonTemplateToClassConverter {
 
             // Parse any additional references
             if (obj.containsKey("$ref")) {
-                return parseRef(input, parentJson, obj);
+                return parseRef(input, parentJson, obj, options);
             }
 
             return new ResolvedReference(obj, parentJson);
@@ -834,7 +879,7 @@ public final class JsonTemplateToClassConverter {
         }
 
         try (InputStream stream = source.openStream()) {
-            JsonObject reference = new JsonObject(new String(stream.readAllBytes(), StandardCharsets.UTF_8));
+            JsonObject reference = readSchema(location, stream, options);
             return new ResolvedReference(reference, reference);
         } catch (IOException ex) {
             ex.printStackTrace();

@@ -3,36 +3,15 @@ package org.geysermc.pack.bedrock.resource.manifest;
 import com.google.gson.annotations.SerializedName;
 import java.lang.Boolean;
 
-/**
- * Capabilities
- * <p>
- * These are the different features that the pack makes use of that aren't necessarily enabled by default.
- */
 public class Capabilities {
+  public Boolean chemistry;
+
+  public Boolean editorExtension;
+
   @SerializedName("experimental_custom_ui")
   public Boolean experimentalCustomUi;
 
-  public Boolean chemistry;
-
   public Boolean raytraced;
-
-  /**
-   * Allows HTML files in the pack to be used for custom UI, and scripts in the pack to call and manipulate custom UI.
-   *
-   * @return Experimental Custom Ui
-   */
-  public Boolean experimentalCustomUi() {
-    return this.experimentalCustomUi;
-  }
-
-  /**
-   * Allows HTML files in the pack to be used for custom UI, and scripts in the pack to call and manipulate custom UI.
-   *
-   * @param experimentalCustomUi Experimental Custom Ui
-   */
-  public void experimentalCustomUi(boolean experimentalCustomUi) {
-    this.experimentalCustomUi = experimentalCustomUi;
-  }
 
   /**
    * Allows the pack to add, change or replace Chemistry functionality.
@@ -50,6 +29,42 @@ public class Capabilities {
    */
   public void chemistry(boolean chemistry) {
     this.chemistry = chemistry;
+  }
+
+  /**
+   * Indicates that this pack contains extensions for editing.
+   *
+   * @return Editor Extension
+   */
+  public Boolean editorExtension() {
+    return this.editorExtension;
+  }
+
+  /**
+   * Indicates that this pack contains extensions for editing.
+   *
+   * @param editorExtension Editor Extension
+   */
+  public void editorExtension(boolean editorExtension) {
+    this.editorExtension = editorExtension;
+  }
+
+  /**
+   * Allows HTML files in the pack to be used for custom UI, and scripts in the pack to call and manipulate custom UI.
+   *
+   * @return Experimental Custom Ui
+   */
+  public Boolean experimentalCustomUi() {
+    return this.experimentalCustomUi;
+  }
+
+  /**
+   * Allows HTML files in the pack to be used for custom UI, and scripts in the pack to call and manipulate custom UI.
+   *
+   * @param experimentalCustomUi Experimental Custom Ui
+   */
+  public void experimentalCustomUi(boolean experimentalCustomUi) {
+    this.experimentalCustomUi = experimentalCustomUi;
   }
 
   /**

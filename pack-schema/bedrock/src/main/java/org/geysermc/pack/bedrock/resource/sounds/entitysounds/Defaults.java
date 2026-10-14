@@ -4,6 +4,7 @@ import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
 import org.geysermc.pack.bedrock.resource.sounds.entitysounds.defaults.Events;
+import org.geysermc.pack.bedrock.resource.sounds.entitysounds.defaults.Variants;
 
 /**
  * Entity Sound
@@ -16,6 +17,8 @@ public class Defaults {
   public float[] pitch;
 
   private Map<String, Events> events = new HashMap<>();
+
+  public Variants variants;
 
   /**
    * A random selection between a minimum and maximum.
@@ -57,5 +60,23 @@ public class Defaults {
    */
   public void events(Map<String, Events> events) {
     this.events = events;
+  }
+
+  /**
+   * Defines sound variants based on the runtime entity
+   *
+   * @return Variants
+   */
+  public Variants variants() {
+    return this.variants;
+  }
+
+  /**
+   * Defines sound variants based on the runtime entity
+   *
+   * @param variants Variants
+   */
+  public void variants(Variants variants) {
+    this.variants = variants;
   }
 }

@@ -10,6 +10,9 @@ import java.lang.String;
  * Section containing information regarding the name of the pack, description, and other features that are public facing.
  */
 public class Header {
+  @SerializedName("allow_random_seed")
+  public Boolean allowRandomSeed;
+
   @SerializedName("base_game_version")
   public float[] baseGameVersion;
 
@@ -23,9 +26,30 @@ public class Header {
 
   public String name;
 
+  @SerializedName("pack_scope")
+  public String packScope;
+
   public String uuid;
 
   public float[] version;
+
+  /**
+   * This option is required for any world templates. This will allow the player to use a random seed when creating a new world from your template.
+   *
+   * @return Allow Random Seed
+   */
+  public Boolean allowRandomSeed() {
+    return this.allowRandomSeed;
+  }
+
+  /**
+   * This option is required for any world templates. This will allow the player to use a random seed when creating a new world from your template.
+   *
+   * @param allowRandomSeed Allow Random Seed
+   */
+  public void allowRandomSeed(boolean allowRandomSeed) {
+    this.allowRandomSeed = allowRandomSeed;
+  }
 
   /**
    * A version made of 3 numbers.
@@ -118,9 +142,27 @@ public class Header {
   }
 
   /**
+   * This is the scope of the pack. This is only for resource packs
+   *
+   * @return Pack Scope
+   */
+  public String packScope() {
+    return this.packScope;
+  }
+
+  /**
+   * This is the scope of the pack. This is only for resource packs
+   *
+   * @param packScope Pack Scope
+   */
+  public void packScope(String packScope) {
+    this.packScope = packScope;
+  }
+
+  /**
    * A valid UUID v4.
    *
-   * @return An UUID V4
+   * @return A UUID Format V4
    */
   public String uuid() {
     return this.uuid;
@@ -129,7 +171,7 @@ public class Header {
   /**
    * A valid UUID v4.
    *
-   * @param uuid An UUID V4
+   * @param uuid A UUID Format V4
    */
   public void uuid(String uuid) {
     this.uuid = uuid;

@@ -13,8 +13,8 @@
     "terraintexture.texturedata.TerrainTexture.TextureData.texture.oneOf.1": "object",
     "itemtexture.texturedata.ItemTexture.texture.oneOf.0": "string",
     "itemtexture.texturedata.ItemTexture.TextureData.texture.oneOf.0": "string",
-    "cliententity.description.scripts.Entity.Scripts.animation_(controller).oneOf.0": "string",
     "cliententity.description.scripts.Entity.Scripts.animation_(controller)_condition.oneOf.1": "object",
+    "cliententity.description.scripts.Entity.Scripts.molang.oneOf.0": "string",
     "cliententity.description.scripts.Entity.Scripts.main.anyOf": "string",
     "blocks.Blocks.main.oneOf.1": "object",
     "particleeffect.curves.Particles.Curves.main.anyOf": "string",
@@ -67,9 +67,13 @@
     "rendercontrollers.RenderControllers.main.anyOf": "string",
     "rendercontrollers.RenderControllers.main.oneOf.0": "string",
     "rendercontrollers.uvanim.RenderControllers.UvAnim.main.anyOf": "string",
-    "fogsettings.volumetric.mediacoefficients.air.Fog.Air.main.oneOf.0": "array",
-    "fogsettings.volumetric.mediacoefficients.water.Fog.Water.main.oneOf.0": "array",
-    "fogsettings.volumetric.mediacoefficients.cloud.Fog.Cloud.main.oneOf.0": "array",
+    "fogsettings.volumetric.mediacoefficients.air.Fog.Air.main.anyOf": "array",
+    "fogsettings.volumetric.mediacoefficients.water.Fog.Water.main.anyOf": "array",
+    "fogsettings.volumetric.mediacoefficients.cloud.Fog.Cloud.main.anyOf": "array",
+    "fogsettings.volumetric.density.air.Fog.Air.main.anyOf": "number",
+    "fogsettings.volumetric.density.water.Fog.Water.main.anyOf": "number",
+    "fogsettings.volumetric.density.lava.Fog.Lava.main.anyOf": "number",
+    "fogsettings.volumetric.density.lavaresistance.Fog.LavaResistance.main.anyOf": "number",
     "sounddefinitions.SoundDefinitions.sounds.anyOf": "object",
     "sounds.blocksounds.Sounds.BlockSounds.main.oneOf.0": "string",
     "sounds.blocksounds.Sounds.BlockSounds.main.oneOf.1": "array",
@@ -97,6 +101,88 @@
     "actoranimation.animations.bones.position.ActorAnimation.Position.main.anyOf": "string",
     "actoranimation.animations.bones.rotation.ActorAnimation.Rotation.main.anyOf": "string",
     "actoranimation.animations.bones.scale.ActorAnimation.Scale.main.anyOf": "string",
-    "manifest.Manifest.dependency.oneOf.0": "object"
+    "manifest.Manifest.dependency.oneOf.0": "object",
+    "manifest.Manifest.main.oneOf.1": "object",
+    "manifest.header.Manifest.Header.main.oneOf.0": "ref",
+    "manifest.modules.Manifest.Modules.main.oneOf.0": "ref",
+    "manifest.dependencies.Manifest.Dependencies.main.oneOf.0": "ref",
+    "nineslice.NineSlice.main.oneOf.1": "array",
+    "sounds.blocksounds.events.Sounds.Events.main.oneOf.1": "array",
+    "sounds.entitysounds.defaults.events.Sounds.Events.main.oneOf.1": "array",
+    "sounds.entitysounds.defaults.variants.map.events.Sounds.Events.main.oneOf.1": "array",
+    "sounds.entitysounds.entities.events.Sounds.Events.main.oneOf.1": "array",
+    "sounds.entitysounds.entities.variants.map.events.Sounds.Events.main.oneOf.1": "array",
+    "sounds.individualeventsounds.events.Sounds.Events.main.oneOf.1": "array",
+    "sounds.interactivesounds.blocksounds.events.Sounds.Events.main.oneOf.1": "array"
+  },
+  "patches": {
+    "/schema/source/resource/animations/actor_animation.json": {
+      "/properties/animations/additionalProperties/properties/loop": {
+        "title": "Loop",
+        "description": "Should this animation stop, loop, or stay on the last frame when finished (true, false, hold_on_last_frame).",
+        "type": "any"
+      }
+    },
+    "/schema/source/general/world_x_packs.json": {
+      "/items/title": "World X Pack"
+    },
+    "/schema/source/resource/fog/fog.json": {
+      "/definitions/height_or_keyframe/anyOf/1/type": "number",
+      "/definitions/color_or_keyframe/anyOf/1": {
+        "type": "array",
+        "items": {
+          "type": "number"
+        }
+      }
+    },
+    "/schema/source/resource/sounds/sound_definitions.json": {
+      "/definitions/SoundSpec/properties/__use_legacy_max_distance/type": "boolean",
+      "/definitions/SoundSpec/properties/sounds/items/anyOf/1/properties/load_on_low_memory": {
+        "type": "boolean",
+        "title": "Load On Low Memory",
+        "description": "Marks if this audio should be loaded or not on low memory."
+      }
+    },
+    "/schema/source/resource/sounds.json": {
+      "/definitions/sound_event": {
+        "title": "Sound Event",
+        "description": "A single sound event definition.",
+        "type": "object",
+        "properties": {
+          "sound": {
+            "type": "string",
+            "title": "Sound Event",
+            "description": "The sound event described in sound_definitions.json"
+          },
+          "volume": {
+            "$ref": "#/definitions/volume"
+          },
+          "pitch": {
+            "$ref": "#/definitions/pitch"
+          }
+        }
+      },
+      "/properties/interactive_sounds/properties/block_sounds/additionalProperties/properties/events/additionalProperties": {
+        "title": "Sound Event",
+        "description": "A single sound event definition.",
+        "type": "object",
+        "properties": {
+          "sound": {
+            "type": "string",
+            "title": "Sound Event",
+            "description": "The sound event described in sound_definitions.json"
+          },
+          "volume": {
+            "$ref": "#/definitions/volume"
+          },
+          "pitch": {
+            "$ref": "#/definitions/pitch"
+          }
+        }
+      }
+    },
+    "/schema/source/resource/textures/terrain_texture.json": {
+      "/definitions/texture/oneOf/1/properties/variations/items/properties/weight/type": "integer"
+    }
   }
 }

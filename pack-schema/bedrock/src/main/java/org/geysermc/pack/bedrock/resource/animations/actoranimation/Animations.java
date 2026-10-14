@@ -3,6 +3,7 @@ package org.geysermc.pack.bedrock.resource.animations.actoranimation;
 import com.google.gson.annotations.SerializedName;
 import java.lang.Boolean;
 import java.lang.Float;
+import java.lang.Object;
 import java.lang.String;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,7 +28,7 @@ public class Animations {
 
   private Map<String, Bones> bones = new HashMap<>();
 
-  public String loop;
+  public Object loop;
 
   @SerializedName("loop_delay")
   public String loopDelay;
@@ -98,11 +99,21 @@ public class Animations {
     this.bones = bones;
   }
 
-  public String loop() {
+  /**
+   * Should this animation stop, loop, or stay on the last frame when finished (true, false, hold_on_last_frame).
+   *
+   * @return Loop
+   */
+  public Object loop() {
     return this.loop;
   }
 
-  public void loop(String loop) {
+  /**
+   * Should this animation stop, loop, or stay on the last frame when finished (true, false, hold_on_last_frame).
+   *
+   * @param loop Loop
+   */
+  public void loop(Object loop) {
     this.loop = loop;
   }
 

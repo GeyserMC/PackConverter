@@ -6,7 +6,7 @@ import java.lang.String;
 /**
  * Variantion
  * <p>
- * One of the variantions, specified along with a possible weight.
+ * One of the variations, specified along with a possible weight.
  */
 public class Variations {
   public String path;

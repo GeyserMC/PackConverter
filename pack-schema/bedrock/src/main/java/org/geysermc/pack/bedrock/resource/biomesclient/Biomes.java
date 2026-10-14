@@ -7,6 +7,7 @@ import org.geysermc.pack.bedrock.resource.biomesclient.biomes.BasaltDeltas;
 import org.geysermc.pack.bedrock.resource.biomesclient.biomes.Beach;
 import org.geysermc.pack.bedrock.resource.biomesclient.biomes.BirchForest;
 import org.geysermc.pack.bedrock.resource.biomesclient.biomes.BirchForestHills;
+import org.geysermc.pack.bedrock.resource.biomesclient.biomes.CherryGrove;
 import org.geysermc.pack.bedrock.resource.biomesclient.biomes.ColdBeach;
 import org.geysermc.pack.bedrock.resource.biomesclient.biomes.ColdOcean;
 import org.geysermc.pack.bedrock.resource.biomesclient.biomes.ColdTaiga;
@@ -94,6 +95,9 @@ public class Biomes {
 
   @SerializedName("birch_forest")
   public BirchForest birchForest;
+
+  @SerializedName("cherry_grove")
+  public CherryGrove cherryGrove;
 
   @SerializedName("cold_beach")
   public ColdBeach coldBeach;
@@ -382,6 +386,24 @@ public class Biomes {
    */
   public void birchForest(BirchForest birchForest) {
     this.birchForest = birchForest;
+  }
+
+  /**
+   * The specification of colors in a given biome.
+   *
+   * @return Biome
+   */
+  public CherryGrove cherryGrove() {
+    return this.cherryGrove;
+  }
+
+  /**
+   * The specification of colors in a given biome.
+   *
+   * @param cherryGrove Biome
+   */
+  public void cherryGrove(CherryGrove cherryGrove) {
+    this.cherryGrove = cherryGrove;
   }
 
   /**

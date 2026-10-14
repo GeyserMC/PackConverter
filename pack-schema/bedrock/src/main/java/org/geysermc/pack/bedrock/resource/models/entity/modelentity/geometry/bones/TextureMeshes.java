@@ -1,6 +1,7 @@
 package org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.bones;
 
 import com.google.gson.annotations.SerializedName;
+import java.lang.Boolean;
 import java.lang.String;
 
 public class TextureMeshes {
@@ -14,6 +15,9 @@ public class TextureMeshes {
   public float[] scale;
 
   public String texture;
+
+  @SerializedName("use_pixel_depth")
+  public Boolean usePixelDepth;
 
   /**
    * The pivot point on the texture (in *texture space* not entity or bone space) of the texture geometry.
@@ -83,5 +87,23 @@ public class TextureMeshes {
    */
   public void texture(String texture) {
     this.texture = texture;
+  }
+
+  /**
+   * Controls how geometry depth relates to texture resolution
+   *
+   * @return Use Pixel Depth
+   */
+  public Boolean usePixelDepth() {
+    return this.usePixelDepth;
+  }
+
+  /**
+   * Controls how geometry depth relates to texture resolution
+   *
+   * @param usePixelDepth Use Pixel Depth
+   */
+  public void usePixelDepth(boolean usePixelDepth) {
+    this.usePixelDepth = usePixelDepth;
   }
 }
