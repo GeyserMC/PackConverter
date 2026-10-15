@@ -4,7 +4,9 @@ plugins {
 
 subprojects {
     plugins.apply("pack.base-conventions")
-    plugins.apply("pack.publish-conventions")
+    if (name != "schema-generator") {
+        plugins.apply("pack.publish-conventions")
+    }
 
     java.sourceCompatibility = JavaVersion.VERSION_21
     java.targetCompatibility = JavaVersion.VERSION_21

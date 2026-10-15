@@ -168,9 +168,15 @@ public class TextureConverter implements AssetExtractor<Texture>, AssetConverter
                 String root = slashIndex != -1 ? outputPath.substring(0, slashIndex) : "";
                 String value = slashIndex != -1 ? outputPath.substring(slashIndex + 1) : outputPath;
 
-                outputs.add(texturePath.resolve((
-                        bedrockDirectory.formatted(root, value)
-                ).replace('/', File.separatorChar)));
+                // Textures at the root of the textures folder have no directory, which would make the path absolute
+                String relative = bedrockDirectory.formatted(root, value).replaceFirst("^/+", "");
+                Path output = texturePath.resolve(relative.replace('/', File.separatorChar)).normalize();
+                if (!output.startsWith(texturePath.normalize())) {
+                    context.warn("Texture " + textureToExport.texture().key() + " would be written outside the pack, skipping!");
+                    continue;
+                }
+
+                outputs.add(output);
             }
 
             try {
