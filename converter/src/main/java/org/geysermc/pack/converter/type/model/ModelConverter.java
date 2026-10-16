@@ -228,7 +228,7 @@ public record ModelConverter(boolean convertItemModels) implements AssetExtracto
         applyUvFace(uv, face, uvs, uvSize, texture);
     }
 
-    static void applyUvFace(Uv uv, CubeFace face, float[] start, float[] size, @Nullable String material) {
+    private static void applyUvFace(Uv uv, CubeFace face, float[] start, float[] size, @Nullable String material) {
         switch (face) {
             case NORTH -> {
                 North north = new North();
