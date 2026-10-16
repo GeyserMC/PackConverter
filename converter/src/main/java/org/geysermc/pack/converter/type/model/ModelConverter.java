@@ -46,6 +46,7 @@ import org.geysermc.pack.converter.pipeline.AssetExtractor;
 import org.geysermc.pack.converter.pipeline.CombineContext;
 import org.geysermc.pack.converter.pipeline.ConversionContext;
 import org.geysermc.pack.converter.pipeline.ExtractionContext;
+import org.jetbrains.annotations.Nullable;
 import team.unnamed.creative.ResourcePack;
 import team.unnamed.creative.base.CubeFace;
 import team.unnamed.creative.model.Element;
@@ -224,53 +225,51 @@ public record ModelConverter(boolean convertItemModels) implements AssetExtracto
             uvSize = new float[] { faceUv.to().x() - faceUv.from().x(), faceUv.to().y() - faceUv.from().y() };
         }
 
+        applyUvFace(uv, face, uvs, uvSize, texture);
+    }
+
+    static void applyUvFace(Uv uv, CubeFace face, float[] start, float[] size, @Nullable String material) {
         switch (face) {
             case NORTH -> {
                 North north = new North();
-                north.uv(uvs);
-                north.uvSize(uvSize);
-                north.materialInstance(texture);
-
+                north.uv(start);
+                north.uvSize(size);
+                north.materialInstance(material);
                 uv.north(north);
             }
             case SOUTH -> {
                 South south = new South();
-                south.uv(uvs);
-                south.uvSize(uvSize);
-                south.materialInstance(texture);
-
+                south.uv(start);
+                south.uvSize(size);
+                south.materialInstance(material);
                 uv.south(south);
             }
             case EAST -> {
                 East east = new East();
-                east.uv(uvs);
-                east.uvSize(uvSize);
-                east.materialInstance(texture);
-
+                east.uv(start);
+                east.uvSize(size);
+                east.materialInstance(material);
                 uv.east(east);
             }
             case WEST -> {
                 West west = new West();
-                west.uv(uvs);
-                west.uvSize(uvSize);
-                west.materialInstance(texture);
-
+                west.uv(start);
+                west.uvSize(size);
+                west.materialInstance(material);
                 uv.west(west);
             }
             case UP -> {
                 Up up = new Up();
-                up.uv(uvs);
-                up.uvSize(uvSize);
-                up.materialInstance(texture);
-
+                up.uv(start);
+                up.uvSize(size);
+                up.materialInstance(material);
                 uv.up(up);
             }
             case DOWN -> {
                 Down down = new Down();
-                down.uv(uvs);
-                down.uvSize(uvSize);
-                down.materialInstance(texture);
-
+                down.uv(start);
+                down.uvSize(size);
+                down.materialInstance(material);
                 uv.down(down);
             }
         }
