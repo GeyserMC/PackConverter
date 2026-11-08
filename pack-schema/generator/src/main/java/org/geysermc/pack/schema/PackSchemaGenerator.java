@@ -86,8 +86,9 @@ public class PackSchemaGenerator {
                     }
 
                     JsonTemplateToClassConverter.convert(
+                            // Resource paths always use forward slashes, which the schema config patches are keyed by
                             schemaPath + "/" +
-                                    relativePath,
+                                    relativePath.toString().replace(File.separatorChar, '/'),
                             output,
                             ConverterOptions.builder()
                                     .collisionPrefix("Minecraft")

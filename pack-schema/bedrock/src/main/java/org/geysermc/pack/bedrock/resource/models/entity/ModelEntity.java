@@ -8,9 +8,9 @@ import java.util.List;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.Geometry;
 
 /**
- * Geometry 1.16.0
+ * Geometry 1.21.0
  * <p>
- * The minecraft resourcepack model schema for 1.16.0
+ * The minecraft resourcepack model schema for 1.21.0
  */
 public class ModelEntity {
   public Boolean debug;

@@ -1,10 +1,12 @@
 package org.geysermc.pack.bedrock.resource.models.entity.modelentity;
 
+import com.google.gson.annotations.SerializedName;
 import java.lang.String;
 import java.util.ArrayList;
 import java.util.List;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.Bones;
 import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.Description;
+import org.geysermc.pack.bedrock.resource.models.entity.modelentity.geometry.ItemDisplayTransforms;
 
 /**
  * Model
@@ -17,6 +19,9 @@ public class Geometry {
   public List<Bones> bones = new ArrayList<>();
 
   public String cape;
+
+  @SerializedName("item_display_transforms")
+  public ItemDisplayTransforms itemDisplayTransforms;
 
   /**
    * The descriptions of the geometry.
@@ -66,5 +71,19 @@ public class Geometry {
    */
   public void cape(String cape) {
     this.cape = cape;
+  }
+
+  /**
+   * @return Item Display Transforms
+   */
+  public ItemDisplayTransforms itemDisplayTransforms() {
+    return this.itemDisplayTransforms;
+  }
+
+  /**
+   * @param itemDisplayTransforms Item Display Transforms
+   */
+  public void itemDisplayTransforms(ItemDisplayTransforms itemDisplayTransforms) {
+    this.itemDisplayTransforms = itemDisplayTransforms;
   }
 }

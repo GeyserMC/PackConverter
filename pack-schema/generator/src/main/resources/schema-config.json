@@ -4,7 +4,7 @@
     "Attachables.properties.format_version": "1.10",
     "Items.properties.format_version": "1.10",
     "Entity.properties.format_version": "1.10.0",
-    "ModelEntity.properties.format_version": "1.16.0"
+    "ModelEntity.properties.format_version": "1.21.0"
   },
   "types": {
     "cliententity.description.Entity.Description.main.oneOf.1": "object",

@@ -19,6 +19,9 @@ public class InitFog {
   @SerializedName("fog_end")
   public Float fogEnd;
 
+  @SerializedName("render_distance_type")
+  public String renderDistanceType;
+
   /**
    * The color that the fog will take on.
    *
@@ -71,5 +74,23 @@ public class InitFog {
    */
   public void fogEnd(float fogEnd) {
     this.fogEnd = fogEnd;
+  }
+
+  /**
+   * Determines how distance value is used. Fixed distance is measured in blocks. Dynamic distance is multiplied by the current render distance.
+   *
+   * @return Render Distance Type
+   */
+  public String renderDistanceType() {
+    return this.renderDistanceType;
+  }
+
+  /**
+   * Determines how distance value is used. Fixed distance is measured in blocks. Dynamic distance is multiplied by the current render distance.
+   *
+   * @param renderDistanceType Render Distance Type
+   */
+  public void renderDistanceType(String renderDistanceType) {
+    this.renderDistanceType = renderDistanceType;
   }
 }

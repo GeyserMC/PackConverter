@@ -827,6 +827,18 @@ public final class JsonTemplateToClassConverter {
             return "string";
         }
 
+        // Infer the type from the values of untyped enums
+        if (type == null && object.getValue("enum") instanceof JsonArray values && !values.isEmpty()) {
+            return switch (values.getValue(0)) {
+                case String ignored -> "string";
+                case Boolean ignored -> "boolean";
+                case Integer ignored -> "integer";
+                case Long ignored -> "integer";
+                case Number ignored -> "number";
+                default -> null;
+            };
+        }
+
         return (String) type;
     }
 
