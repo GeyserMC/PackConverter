@@ -2,7 +2,7 @@ import java.net.URI
 
 plugins {
     `maven-publish` apply true
-    id("com.github.johnrengelman.shadow") apply false
+    id("com.gradleup.shadow") apply false
 }
 
 publishing {

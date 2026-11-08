@@ -1,7 +1,7 @@
 plugins {
     `java-library`
     application
-    id("com.github.johnrengelman.shadow") apply true
+    id("com.gradleup.shadow") apply true
 }
 
 sourceSets {
