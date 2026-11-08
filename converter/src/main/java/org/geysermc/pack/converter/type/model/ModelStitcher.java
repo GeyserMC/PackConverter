@@ -92,13 +92,14 @@ public class ModelStitcher {
             return;
         }
 
+        // Elements and overrides aren't merged, the closest model in the chain that defines them wins
         List<Element> elements = model.elements();
-        if (elements != null && !elements.isEmpty()) {
+        if (elements != null && !elements.isEmpty() && this.elements.isEmpty()) {
             this.elements.addAll(elements);
         }
 
         List<ItemOverride> overrides = model.overrides();
-        if (overrides != null && !overrides.isEmpty()) {
+        if (overrides != null && !overrides.isEmpty() && this.overrides.isEmpty()) {
             this.overrides.addAll(overrides);
         }
 
@@ -122,7 +123,10 @@ public class ModelStitcher {
                     this.textureLayers = new ArrayList<>();
                 }
 
-                this.textureLayers.addAll(layers);
+                // Only fill in layers we don't already have
+                for (int i = this.textureLayers.size(); i < layers.size(); i++) {
+                    this.textureLayers.add(layers.get(i));
+                }
             }
 
             ModelTexture particle = textures.particle();
