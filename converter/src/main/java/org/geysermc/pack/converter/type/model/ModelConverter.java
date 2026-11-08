@@ -63,7 +63,7 @@ import java.util.Map;
 public record ModelConverter(boolean convertItemModels) implements AssetExtractor<Model>, AssetConverter<Model, BedrockModel>, AssetCombiner<BedrockModel> {
     public static final ModelConverter INSTANCE = new ModelConverter(false);
 
-    private static final String FORMAT_VERSION = "1.16.0";
+    private static final String FORMAT_VERSION = "1.21.0";
     private static final String GEOMETRY_FORMAT = "geometry.%s";
 
     private static final float[] ELEMENT_OFFSET = new float[] { 8, 0, 8 };
@@ -135,14 +135,15 @@ public record ModelConverter(boolean convertItemModels) implements AssetExtracto
             ElementRotation elementRotation = element.rotation();
             if (elementRotation != null) {
                 float[] origin = elementRotation.origin().toArray();
-                cube.pivot(new float[] { ELEMENT_OFFSET[0] - origin[0], ELEMENT_OFFSET[1] - origin[1], origin[2] - ELEMENT_OFFSET[2] });
+                cube.pivot(new float[] { ELEMENT_OFFSET[0] - origin[0], origin[1] - ELEMENT_OFFSET[1], origin[2] - ELEMENT_OFFSET[2] });
 
+                // Bedrock rotates the other way to Java, except on Z where negating the X coordinates above cancels it out
                 float angle = elementRotation.angle();
                 float[] rotation = new float[3];
                 switch (elementRotation.axis()) {
                     case X -> rotation[0] = -angle;
                     case Y -> rotation[1] = -angle;
-                    case Z -> rotation[2] = -angle;
+                    case Z -> rotation[2] = angle;
                 }
 
                 cube.rotation(rotation);
@@ -160,7 +161,7 @@ public record ModelConverter(boolean convertItemModels) implements AssetExtracto
                 // divides the UV by 16, so we need to multiply it by 16
 
                 String texture = elementFace.texture().replace("#", "");
-                applyUv(uv, face, texture, multiplyUv(elementFace.uv(), 16f));
+                applyUv(uv, face, texture, multiplyUv(elementFace.uv(), 16f), elementFace.rotation());
             }
 
             cube.uv(uv);
@@ -212,7 +213,7 @@ public record ModelConverter(boolean convertItemModels) implements AssetExtracto
         return TextureUV.uv(textureUV.from().multiply(mult), textureUV.to().multiply(mult));
     }
 
-    private static void applyUv(Uv uv, CubeFace face, String texture, TextureUV faceUv) {
+    private static void applyUv(Uv uv, CubeFace face, String texture, TextureUV faceUv, int rotation) {
         float[] uvs;
         float[] uvSize;
 
@@ -225,16 +226,19 @@ public record ModelConverter(boolean convertItemModels) implements AssetExtracto
             uvSize = new float[] { faceUv.to().x() - faceUv.from().x(), faceUv.to().y() - faceUv.from().y() };
         }
 
-        applyUvFace(uv, face, uvs, uvSize, texture);
+        // Java and Bedrock both rotate the texture clockwise in 90 degree steps
+        Integer uvRotation = Math.floorMod(rotation, 360) == 0 ? null : Math.floorMod(rotation, 360);
+        applyUvFace(uv, face, uvs, uvSize, texture, uvRotation);
     }
 
-    private static void applyUvFace(Uv uv, CubeFace face, float[] start, float[] size, @Nullable String material) {
+    private static void applyUvFace(Uv uv, CubeFace face, float[] start, float[] size, @Nullable String material, @Nullable Integer rotation) {
         switch (face) {
             case NORTH -> {
                 North north = new North();
                 north.uv(start);
                 north.uvSize(size);
                 north.materialInstance(material);
+                if (rotation != null) north.uvRotation(rotation);
                 uv.north(north);
             }
             case SOUTH -> {
@@ -242,6 +246,7 @@ public record ModelConverter(boolean convertItemModels) implements AssetExtracto
                 south.uv(start);
                 south.uvSize(size);
                 south.materialInstance(material);
+                if (rotation != null) south.uvRotation(rotation);
                 uv.south(south);
             }
             case EAST -> {
@@ -249,6 +254,7 @@ public record ModelConverter(boolean convertItemModels) implements AssetExtracto
                 east.uv(start);
                 east.uvSize(size);
                 east.materialInstance(material);
+                if (rotation != null) east.uvRotation(rotation);
                 uv.east(east);
             }
             case WEST -> {
@@ -256,6 +262,7 @@ public record ModelConverter(boolean convertItemModels) implements AssetExtracto
                 west.uv(start);
                 west.uvSize(size);
                 west.materialInstance(material);
+                if (rotation != null) west.uvRotation(rotation);
                 uv.west(west);
             }
             case UP -> {
@@ -263,6 +270,7 @@ public record ModelConverter(boolean convertItemModels) implements AssetExtracto
                 up.uv(start);
                 up.uvSize(size);
                 up.materialInstance(material);
+                if (rotation != null) up.uvRotation(rotation);
                 uv.up(up);
             }
             case DOWN -> {
@@ -270,6 +278,7 @@ public record ModelConverter(boolean convertItemModels) implements AssetExtracto
                 down.uv(start);
                 down.uvSize(size);
                 down.materialInstance(material);
+                if (rotation != null) down.uvRotation(rotation);
                 uv.down(down);
             }
         }
