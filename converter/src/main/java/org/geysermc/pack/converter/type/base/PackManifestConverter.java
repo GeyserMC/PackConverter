@@ -52,7 +52,7 @@ public class PackManifestConverter implements AssetConverter<PackMeta, Manifest>
         header.description(LegacyComponentSerializer.legacySection().serialize(packMeta.description()));
         header.name(context.packName());
         header.version(new float[] { 1, 0, 0 });
-        header.minEngineVersion(new float[] { 1, 16, 0 });
+        header.minEngineVersion(new float[] { 1, 21, 0 }); // Matches highest version in schema-config.json in pack-schema generator
         header.uuid(UUID.randomUUID().toString());
 
         manifest.header(header);
